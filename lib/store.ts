@@ -12,6 +12,14 @@ function blobEnabled() {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
 
+function assertVercelStorageConfigured() {
+  if (process.env.VERCEL && !blobEnabled()) {
+    throw new Error(
+      "BLOB_READ_WRITE_TOKEN is missing from this Vercel deployment. Connect a private Blob store to the project and redeploy.",
+    );
+  }
+}
+
 async function getBlobState() {
   const result = await get(statePath, { access: "private", useCache: false });
   if (!result || result.statusCode !== 200) return null;
@@ -24,6 +32,7 @@ export function storageMode() {
 }
 
 export async function getState(): Promise<TrackerState> {
+  assertVercelStorageConfigured();
   if (blobEnabled()) {
     const current = await getBlobState();
     if (current) return current.payload;
@@ -51,6 +60,7 @@ export async function getState(): Promise<TrackerState> {
 }
 
 export async function setState(state: TrackerState) {
+  assertVercelStorageConfigured();
   const next = { ...state, version: state.version + 1, updatedAt: new Date().toISOString() };
   if (blobEnabled()) {
     const current = await getBlobState();
