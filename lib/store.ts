@@ -2,26 +2,23 @@ import "server-only";
 import { get, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { blobEnabled, blobToken } from "@/lib/blob";
 import { INITIAL_STATE } from "@/lib/seed";
 import type { TrackerState } from "@/lib/types";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
 
-function blobEnabled() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-}
-
 function assertVercelStorageConfigured() {
   if (process.env.VERCEL && !blobEnabled()) {
     throw new Error(
-      "BLOB_READ_WRITE_TOKEN is missing from this Vercel deployment. Connect a private Blob store to the project and redeploy.",
+      "No Vercel Blob read-write token is available in this deployment. Connect a private Blob store to the project and redeploy.",
     );
   }
 }
 
 async function getBlobState() {
-  const result = await get(statePath, { access: "private", useCache: false });
+  const result = await get(statePath, { access: "private", useCache: false, token: blobToken() });
   if (!result || result.statusCode !== 200) return null;
   const payload = JSON.parse(await new Response(result.stream).text()) as TrackerState;
   return { payload, etag: result.blob.etag };
@@ -39,6 +36,7 @@ export async function getState(): Promise<TrackerState> {
     try {
       await put(statePath, JSON.stringify(INITIAL_STATE), {
         access: "private",
+        token: blobToken(),
         contentType: "application/json",
         cacheControlMaxAge: 60,
       });
@@ -69,6 +67,7 @@ export async function setState(state: TrackerState) {
     }
     await put(statePath, JSON.stringify(next), {
       access: "private",
+      token: blobToken(),
       contentType: "application/json",
       cacheControlMaxAge: 60,
       allowOverwrite: true,
