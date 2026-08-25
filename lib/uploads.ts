@@ -2,13 +2,10 @@ import "server-only";
 import { del, put } from "@vercel/blob";
 import { mkdir, unlink, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { blobEnabled, blobToken } from "@/lib/blob";
 import type { UploadRecord } from "@/lib/types";
 
 const FIVE_DAYS = 5 * 24 * 60 * 60 * 1000;
-
-function blobEnabled() {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
-}
 
 export async function retainUpload(file: File): Promise<UploadRecord> {
   const id = crypto.randomUUID();
@@ -20,6 +17,7 @@ export async function retainUpload(file: File): Promise<UploadRecord> {
   if (blobEnabled()) {
     await put(storagePath, bytes, {
       access: "private",
+      token: blobToken(),
       contentType: file.type,
       addRandomSuffix: false,
       maximumSizeInBytes: 4 * 1024 * 1024,
@@ -37,7 +35,7 @@ export async function retainUpload(file: File): Promise<UploadRecord> {
 export async function removeUploads(records: UploadRecord[]) {
   if (!records.length) return;
   if (blobEnabled()) {
-    await del(records.map((record) => record.storagePath));
+    await del(records.map((record) => record.storagePath), { token: blobToken() });
     return;
   }
   await Promise.all(
