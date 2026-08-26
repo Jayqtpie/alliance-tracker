@@ -164,6 +164,11 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
   };
 }
 
+export function removeMemberFromRoster(state: TrackerState, memberId: string): TrackerState {
+  if (!state.members.some((member) => member.id === memberId)) throw new Error("Member no longer exists.");
+  return { ...state, members: state.members.filter((member) => member.id !== memberId) };
+}
+
 export function analyzeLargeChanges(
   rows: Array<ExtractedRow & { memberId?: string }>,
   members: Member[],

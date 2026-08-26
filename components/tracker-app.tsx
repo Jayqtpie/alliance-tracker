@@ -957,6 +957,7 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "departed">("all");
   const [expandedMemberId, setExpandedMemberId] = useState("");
+  const [removingMemberId, setRemovingMemberId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [primaryId, setPrimaryId] = useState("");
@@ -998,6 +999,19 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not merge identities."); }
     setBusy(false);
   }
+  async function removeMember(member: Member) {
+    const appearances = state.snapshots.reduce((total, snapshot) => total + Number(snapshot.entries.some((entry) => entry.memberId === member.id)), 0);
+    const historyMessage = appearances ? ` Their ${appearances} historical snapshot appearance${appearances === 1 ? "" : "s"} will remain in reports.` : "";
+    if (!window.confirm(`Remove ${member.canonicalName} from the roster? Use Departed instead for former members.${historyMessage} This cannot be undone.`)) return;
+    setBusy(true); setRemovingMemberId(member.id); setError("");
+    try {
+      const response = await fetch(`/api/members?id=${encodeURIComponent(member.id)}`, { method: "DELETE" });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not remove member.");
+      setState(body); setMembers(sortMembersByName(body.members)); setExpandedMemberId((current) => current === member.id ? "" : current); notify(`${member.canonicalName} removed from the roster.`);
+    } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not remove member."); }
+    setRemovingMemberId(""); setBusy(false);
+  }
 
   return <div className="page-stack narrow-page">
     <section className="section-heading roster-heading"><div><p className="eyebrow">IDENTITY & MEMBERSHIP</p><h2>Alliance roster</h2><p>Permanent identities keep name changes, departures and returns connected to one history.</p></div><div className="report-actions"><button className="button secondary" onClick={addMember}><UserPlus size={15} /> Add member</button><button className="button primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save roster"}</button></div></section>
@@ -1023,7 +1037,7 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
           <div className="roster-field roster-status"><span>Status</span><label className="toggle-label"><input type="checkbox" checked={member.active} onChange={(event) => update(member.id, { active: event.target.checked, leftAt: event.target.checked ? undefined : member.leftAt || new Date().toISOString().slice(0, 10) })} /><span>{member.active ? "Active" : "Departed"}</span></label></div>
           <label className="roster-field roster-joined"><span>Joined</span><input type="date" value={member.joinedAt || ""} onChange={(event) => update(member.id, { joinedAt: event.target.value || undefined })} /></label>
           <label className="roster-field roster-left"><span>Left</span><input type="date" disabled={member.active} value={member.leftAt || ""} onChange={(event) => update(member.id, { leftAt: event.target.value || undefined })} /></label>
-          <label className="roster-field roster-notes"><span>Officer notes</span><input value={member.notes || ""} placeholder="Transfer, return, officer note…" onChange={(event) => update(member.id, { notes: event.target.value || undefined })} /></label>
+          <div className="roster-field roster-notes"><span>Officer notes</span><div className="roster-notes-editor"><input aria-label={`Officer notes for ${member.canonicalName}`} value={member.notes || ""} placeholder="Transfer, return, officer note…" onChange={(event) => update(member.id, { notes: event.target.value || undefined })} /><button className="roster-remove-button" title={`Remove ${member.canonicalName} from roster`} aria-label={`Remove ${member.canonicalName} from roster`} disabled={busy} onClick={() => removeMember(member)}><Trash2 size={15} /><span>{removingMemberId === member.id ? "Removing…" : "Remove member"}</span></button></div></div>
         </article>
       ))}</div>
     </section>

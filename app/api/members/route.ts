@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
-import { mergeMemberIdentities } from "@/lib/tracker";
+import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
 
 const schema = z.object({
   members: z.array(z.object({
@@ -43,5 +43,17 @@ export async function PATCH(request: Request) {
     return NextResponse.json(await setState(merged));
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not merge members." }, { status: 400 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const memberId = new URL(request.url).searchParams.get("id");
+  if (!memberId) return NextResponse.json({ error: "Choose a member to remove." }, { status: 400 });
+  try {
+    const state = await getState();
+    return NextResponse.json(await setState(removeMemberFromRoster(state, memberId)));
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not remove member." }, { status: 400 });
   }
 }
