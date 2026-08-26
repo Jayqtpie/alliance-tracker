@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
-    "extract:local": "node scripts/extract-local.mjs"
+    "extract:local": "node scripts/extract-local.mjs",
+    "bridge:worker": "node scripts/bridge-worker.mjs"
   },
   "dependencies": {
     "@vercel/blob": "^2.8.0",

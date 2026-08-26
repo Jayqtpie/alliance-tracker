@@ -57,6 +57,35 @@ The original cloud extractor remains available. As an alternative, an officer ca
 
 The companion uses the Codex authentication available in the terminal where it is launched and refuses an explicitly detected API-key login. It runs Codex non-interactively with read-only sandboxing, retains no Codex session, and writes only the result JSON. Screenshots are sent from that computer to Codex and are not uploaded to Alliance Manager or retained in Vercel.
 
+## Phone-to-PC Codex bridge
+
+The queue bridge lets an officer choose a screen recording directly from the deployed Alliance Manager on an iPhone. The browser extracts JPEG frames on the phone, so the original recording never leaves the device. Those frames are uploaded directly to the private Vercel Blob store and wait for a trusted PC worker.
+
+On the PC, add the worker settings to `.env.bridge.local`:
+
+```dotenv
+BRIDGE_URL=https://alliance-tracker-nine.vercel.app
+BRIDGE_SECRET=the-same-value-as-vercel
+```
+
+`BRIDGE_SECRET` is recommended as a separate long random value configured in Vercel Production. If it is absent, the deployed app and local worker both fall back to `OFFICER_PASSCODE`.
+
+Start the worker from this repository and leave the terminal open:
+
+```powershell
+npm run bridge:worker
+```
+
+Then, from the phone:
+
+1. Open **New import** and choose the screen recording.
+2. Wait while the browser prepares up to 18 local frames.
+3. Choose **Queue for PC Codex**.
+4. Keep the PC worker running. The phone page changes from waiting, to processing, to rows ready.
+5. Choose **Load extracted rows**, review them, and publish.
+
+The worker receives only short-lived frame files through authenticated endpoints. Queue records and private frames expire after five days. Run a one-shot worker health check with `npm run bridge:worker -- --once`.
+
 ## Vercel Blob setup
 
 1. Create or import this GitHub repository as a Vercel project.
@@ -76,6 +105,8 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 | `OPENAI_VISION_MODEL` | Optional; defaults to `gpt-5-mini` |
 | `BLOB_READ_WRITE_TOKEN` / `BLOB1_READ_WRITE_TOKEN` | Added by Vercel when the private Blob store is connected |
 | `CRON_SECRET` | Protects the scheduled cleanup endpoint |
+| `BRIDGE_SECRET` | Authenticates the local PC queue worker; falls back to `OFFICER_PASSCODE` |
+| `BRIDGE_URL` | Local worker target; defaults to the production tracker URL |
 
 After connecting this repository to Vercel, deploy normally. [`vercel.json`](vercel.json) schedules a daily cleanup request. Upload metadata and the original private blob are removed after five days; published ranking data remains.
 
