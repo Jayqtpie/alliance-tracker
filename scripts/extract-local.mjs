@@ -125,7 +125,7 @@ const outputPath = options.out
 mkdirSync(dirname(outputPath), { recursive: true });
 
 const batches = [];
-for (let index = 0; index < images.length; index += 8) batches.push(images.slice(index, index + 8));
+for (let index = 0; index < images.length; index += 18) batches.push(images.slice(index, index + 18));
 const allRows = [];
 
 console.log(`Using Codex with ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
@@ -143,6 +143,9 @@ for (let index = 0; index < batches.length; index += 1) {
   const args = [
     "exec",
     "--ephemeral",
+    "--ignore-rules",
+    "--config", 'model_reasoning_effort="low"',
+    "--config", 'model_reasoning_summary="none"',
     "--sandbox", "read-only",
     "--skip-git-repo-check",
     "--output-schema", schemaPath,

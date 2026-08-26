@@ -30,7 +30,7 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
 import type { BridgeJobView } from "@/lib/bridge-types";
@@ -39,6 +39,7 @@ import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from 
 import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
 type View = "overview" | "import" | "reports" | "snapshots" | "members";
+const bridgeJobStorageKey = "alliance-manager:active-bridge-job";
 
 function compact(value: number) {
   const units = [
@@ -560,6 +561,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const [queueing, setQueueing] = useState(false);
   const [bridgeProgress, setBridgeProgress] = useState(0);
   const [bridgeJob, setBridgeJob] = useState<BridgeJobView>();
+  const [bridgeLoadFailed, setBridgeLoadFailed] = useState(false);
   const [preparingVideo, setPreparingVideo] = useState(false);
   const [error, setError] = useState("");
   const [date, setDate] = useState(editingSnapshot?.capturedAt.slice(0, 10) || new Date().toISOString().slice(0, 10));
@@ -569,6 +571,9 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const [snapshotId] = useState<string | undefined>(editingSnapshot?.id);
   const input = useRef<HTMLInputElement>(null);
   const localImportInput = useRef<HTMLInputElement>(null);
+  const reviewPanel = useRef<HTMLElement>(null);
+  const loadedBridgeJobId = useRef<string | undefined>(undefined);
+  const scrollToReviewAfterLoad = useRef(false);
   const diagnosticWarnings = useMemo(() => rows.length ? analyzeImport(rows, state.members) : [], [rows, state.members]);
   const changeWarnings = useMemo(() => rows.length && date ? analyzeLargeChanges(rows, state.members, state.snapshots, date, status) : [], [rows, state.members, state.snapshots, date, status]);
   const allWarnings = [...new Set([...warnings, ...diagnosticWarnings, ...changeWarnings])];
@@ -576,15 +581,42 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const missingActive = state.members.filter((member) => member.active && !linkedMemberIds.has(member.id)).length;
   const unmatched = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members)).length;
 
+  const loadRowsFromBridge = useCallback((job: BridgeJobView) => {
+    if (!job.rows?.length || loadedBridgeJobId.current === job.id) return;
+    try {
+      const merged = dedupeRows(job.rows);
+      loadedBridgeJobId.current = job.id;
+      scrollToReviewAfterLoad.current = window.matchMedia("(max-width: 760px)").matches;
+      setRows(merged.rows);
+      setWarnings(merged.warnings);
+      setSourceType("local-codex");
+      setFiles([]);
+      setBridgeLoadFailed(false);
+    } catch {
+      setBridgeLoadFailed(true);
+      setError("Could not load the extracted rows. Refresh and try again.");
+    }
+  }, []);
+
+  const receiveBridgeJob = useCallback((job: BridgeJobView) => {
+    setBridgeJob(job);
+    if (job.status === "completed") loadRowsFromBridge(job);
+  }, [loadRowsFromBridge]);
+
   useEffect(() => {
     if (!bridgeConfigured || snapshotId) return;
+    const activeJobId = window.localStorage.getItem(bridgeJobStorageKey);
+    if (!activeJobId) return;
     let active = true;
-    fetch("/api/bridge/jobs")
+    fetch(`/api/bridge/jobs?id=${encodeURIComponent(activeJobId)}`)
       .then((response) => response.ok ? response.json() : undefined)
-      .then((body) => { if (active && body?.jobs?.[0]) setBridgeJob(body.jobs[0] as BridgeJobView); })
+      .then((body) => {
+        if (active && body?.job) receiveBridgeJob(body.job as BridgeJobView);
+        else if (active) window.localStorage.removeItem(bridgeJobStorageKey);
+      })
       .catch(() => undefined);
     return () => { active = false; };
-  }, [bridgeConfigured, snapshotId]);
+  }, [bridgeConfigured, receiveBridgeJob, snapshotId]);
 
   useEffect(() => {
     if (!bridgeConfigured || !bridgeJob || !["pending", "processing"].includes(bridgeJob.status)) return;
@@ -593,11 +625,18 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`);
       if (!response.ok) return;
       const body = await response.json();
-      if (active) setBridgeJob(body.job as BridgeJobView);
+      if (active) receiveBridgeJob(body.job as BridgeJobView);
     };
     const timer = window.setInterval(() => void refresh(), 4000);
     return () => { active = false; window.clearInterval(timer); };
-  }, [bridgeConfigured, bridgeJob]);
+  }, [bridgeConfigured, bridgeJob, receiveBridgeJob]);
+
+  useEffect(() => {
+    if (!rows.length || !scrollToReviewAfterLoad.current) return;
+    scrollToReviewAfterLoad.current = false;
+    const frame = window.requestAnimationFrame(() => reviewPanel.current?.scrollIntoView({ behavior: "smooth", block: "start" }));
+    return () => window.cancelAnimationFrame(frame);
+  }, [rows]);
 
   async function addFiles(incoming: File[]) {
     setError("");
@@ -651,8 +690,8 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       const totalBytes = files.reduce((total, file) => total + file.size, 0);
       const uploadedBytes = new Map<number, number>();
       const uploadedFiles: Array<{ id: string; name: string; pathname: string; contentType: string; size: number }> = [];
-      for (let start = 0; start < files.length; start += 3) {
-        const batch = files.slice(start, start + 3);
+      for (let start = 0; start < files.length; start += 5) {
+        const batch = files.slice(start, start + 5);
         const results = await Promise.all(batch.map(async (file, batchIndex) => {
           const index = start + batchIndex;
           const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
@@ -681,6 +720,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       if (!response.ok) throw new Error(body.error || "Could not create the PC bridge job.");
       setBridgeProgress(100);
       setBridgeJob(body.job as BridgeJobView);
+      window.localStorage.setItem(bridgeJobStorageKey, jobId);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : "Could not queue this capture for the PC worker.");
     } finally {
@@ -689,12 +729,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   }
 
   function loadBridgeResults() {
-    if (!bridgeJob?.rows?.length) return;
-    const merged = dedupeRows(bridgeJob.rows);
-    setRows(merged.rows);
-    setWarnings(merged.warnings);
-    setSourceType("local-codex");
-    setFiles([]);
+    if (bridgeJob) loadRowsFromBridge(bridgeJob);
   }
 
   function parseManual() {
@@ -741,7 +776,11 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     });
     const body = await response.json();
     if (!response.ok) setError(body.error || "Could not publish snapshot");
-    else { setState(body.state); onPublished(body.snapshot); }
+    else {
+      if (bridgeJob?.id) window.localStorage.removeItem(bridgeJobStorageKey);
+      setState(body.state);
+      onPublished(body.snapshot);
+    }
     setBusy(false);
   }
 
@@ -765,8 +804,8 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
           {queueing && <div className="bridge-progress" aria-label={`Upload ${bridgeProgress}% complete`}><span style={{ width: `${bridgeProgress}%` }} /></div>}
           {bridgeJob && <div className={`bridge-status ${bridgeJob.status}`}>
             <strong>{bridgeJob.status === "pending" ? "Waiting for PC worker" : bridgeJob.status === "processing" ? "Codex is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
-            <span>{bridgeJob.status === "pending" ? "Start npm run bridge:worker on the PC." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Load the result into the review table." : bridgeJob.error}</span>
-            {bridgeJob.status === "completed" && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Load extracted rows</button>}
+            <span>{bridgeJob.status === "pending" ? "Start npm run bridge:worker on the PC." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
+            {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
           </div>}
           {!bridgeConfigured && <p className="bridge-unavailable">The PC bridge appears after private Blob storage and a worker secret are configured.</p>}
         </div>
@@ -780,9 +819,9 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       </section>}
       {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
       {allWarnings.length > 0 && <div className="warning-list">{allWarnings.slice(0, 12).map((warning) => <span key={warning}><CircleAlert size={14} />{warning}</span>)}</div>}
-      {rows.length > 0 && <section className="panel review-panel">
+      {rows.length > 0 && <section ref={reviewPanel} className="panel review-panel">
         <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} extracted rows</h3></div><span className="retention-note">{unmatched} unmatched · {missingActive} active members not on board · originals expire after 5 days</span></div>
-        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity</th><th /></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.rank}-${index}`} className={row.needsReview || row.confidence < .86 || (!row.memberId && !matchMember(row.displayName, state.members)) ? "needs-review" : ""}><td><input className="tiny" type="number" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td><td><input value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td><td><input className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td><td><select value={row.memberId || matchMember(row.displayName, state.members)?.id || ""} onChange={(event) => updateRow(index, { memberId: event.target.value || undefined })}><option value="">Create as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select></td><td><button className="icon-button" title="Remove row" onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td></tr>)}</tbody></table></div>
+        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity</th><th /></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.rank}-${index}`} className={row.needsReview || row.confidence < .86 || (!row.memberId && !matchMember(row.displayName, state.members)) ? "needs-review" : ""}><td data-label="Rank"><input className="tiny" type="number" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td><td data-label="Commander"><input value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td><td data-label="Points"><input className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td><td data-label="Matched identity"><select value={row.memberId || matchMember(row.displayName, state.members)?.id || ""} onChange={(event) => updateRow(index, { memberId: event.target.value || undefined })}><option value="">Create as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select></td><td><button className="icon-button" title="Remove row" onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td></tr>)}</tbody></table></div>
         <div className="publish-row"><div><strong>Ready to publish?</strong><span>Unmatched names become new members; selected identities record the displayed name as an alias.</span></div><button className="button primary" disabled={busy || !date || !rows.length} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
       </section>}
     </div>
