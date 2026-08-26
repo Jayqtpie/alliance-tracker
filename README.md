@@ -1,4 +1,4 @@
-# Rascals Command
+# Alliance Manager
 
 A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers can upload overlapping Last War leaderboard screenshots or an iPhone screen recording, review extracted rankings, publish live or final snapshots, compare matching weeks, manage commander identities, and export officer-ready reports.
 
@@ -17,6 +17,7 @@ A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers ca
 - Five-day retention for original screenshots
 - Private Vercel Blob persistence with a local JSON development fallback
 - Responsive officer dashboard, dedicated reports, detailed CSV, and shareable PNG export
+- Commander profiles with score history, rank records, participation rate, aliases, and week-over-week movement
 
 ## Local development
 
