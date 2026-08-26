@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { AllianceMark } from "@/components/alliance-mark";
 import { TrackerApp } from "@/components/tracker-app";
 import { isAuthenticated } from "@/lib/auth";
 import { getState, storageMode } from "@/lib/store";
@@ -15,7 +16,7 @@ export default async function Home() {
     return (
       <main className="login-shell">
         <section className="login-panel storage-error-panel">
-          <div className="brand-mark">!</div>
+          <AllianceMark />
           <p className="eyebrow">STORAGE DIAGNOSTIC</p>
           <h1>Shared storage could not load</h1>
           <p className="muted">

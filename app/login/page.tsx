@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { AllianceMark } from "@/components/alliance-mark";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -29,9 +30,9 @@ export default function LoginPage() {
   return (
     <main className="login-shell">
       <section className="login-panel">
-        <div className="brand-mark">R</div>
+        <AllianceMark />
         <p className="eyebrow">RSCL · SERVER 927</p>
-        <h1>Rascals Command</h1>
+        <h1>Alliance Manager</h1>
         <p className="muted">A clear view of who is moving the alliance forward.</p>
         <form onSubmit={submit} className="login-form">
           <label htmlFor="passcode">Officer passcode</label>
@@ -45,7 +46,7 @@ export default function LoginPage() {
           />
           {error && <p className="form-error">{error}</p>}
           <button className="button primary wide" disabled={busy || !passcode}>
-            {busy ? "Checking…" : "Enter command centre"} <ArrowRight size={17} />
+            {busy ? "Checking…" : "Open alliance manager"} <ArrowRight size={17} />
           </button>
         </form>
         <div className="login-note"><ShieldCheck size={15} /> Lightweight officer access</div>

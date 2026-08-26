@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Rascals Command | Alliance Tracker",
+  title: "Alliance Manager | RSCL",
   description: "RSCL weekly Alliance Duel performance tracker",
 };
 
