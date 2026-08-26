@@ -25,7 +25,6 @@ import type {
   TrackerState,
   TrainAssignment,
   TrainStatus,
-  TrainVipType,
 } from "@/lib/types";
 
 type OperationsTab = "storm" | "train";
@@ -264,7 +263,7 @@ function TrainPlanner({ operations, setOperations, members, notify }: { operatio
     Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)).forEach((date) => {
       const assignment = byDate.get(date);
       const day = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));
-      lines.push(`${day}: Conductor — ${memberName(members, assignment?.conductorMemberId)} | ${assignment?.vipType === "guardian-defender" ? "Guardian" : assignment?.vipType === "special-guest" ? "Special Guest" : "VIP"} — ${memberName(members, assignment?.vipMemberId)}`);
+      lines.push(`${day}: Conductor — ${memberName(members, assignment?.conductorMemberId)} | ${assignment?.vipType === "special-guest" ? "Special Guest" : "Guardian"} — ${memberName(members, assignment?.vipMemberId)}`);
     });
     await navigator.clipboard.writeText(lines.join("\n"));
     notify("Train schedule copied.");
@@ -287,7 +286,7 @@ function TrainPlanner({ operations, setOperations, members, notify }: { operatio
       <div className="guardian-actions"><p>{duplicateGuardians ? "Every position must use a different member." : operations.guardianPool.length < 7 ? "Fill all seven positions before generating the week." : "One Guardian Defender will be assigned to each day, Monday through Sunday."}</p><button className="button secondary" disabled={operations.guardianPool.length !== 7 || duplicateGuardians} onClick={generateRotation}><RotateCw size={15} />Apply to week</button></div>
     </section>
     <section className="panel train-week-panel">
-      <div className="panel-head train-week-head"><div><p className="eyebrow">WEEKLY SCHEDULE</p><h3>Conductors and VIP invitations</h3></div><div className="operation-toolbar"><label className="week-picker"><span>Week starting</span><input type="date" value={weekStart} onChange={(event) => setWeekStart(mondayFor(event.target.value))} /></label><button className="button secondary" onClick={copySchedule}><ClipboardCopy size={14} />Copy schedule</button></div></div>
+      <div className="panel-head train-week-head"><div><p className="eyebrow">WEEKLY SCHEDULE</p><h3>Conductors and Guardian Defenders</h3></div><div className="operation-toolbar"><label className="week-picker"><span>Week starting</span><input type="date" value={weekStart} onChange={(event) => setWeekStart(mondayFor(event.target.value))} /></label><button className="button secondary" onClick={copySchedule}><ClipboardCopy size={14} />Copy schedule</button></div></div>
       <div className="train-week-grid">
         {Array.from({ length: 7 }, (_, index) => {
           const date = addDays(weekStart, index);
@@ -296,10 +295,9 @@ function TrainPlanner({ operations, setOperations, members, notify }: { operatio
           const sameMember = assignment.conductorMemberId && assignment.conductorMemberId === assignment.vipMemberId;
           return <article className={`train-day-card ${sameMember ? "warning" : ""}`} key={date}>
             <header><div><strong>{day}</strong><span>{date}</span></div><select aria-label={`${day} status`} value={assignment.status} onChange={(event) => updateAssignment(date, { status: event.target.value as TrainStatus })}><option value="planned">Planned</option><option value="completed">Completed</option><option value="reassigned">Reassigned</option><option value="skipped">Skipped</option></select></header>
-            {sameMember && <p className="train-warning">Conductor and VIP must be different members.</p>}
+            {sameMember && <p className="train-warning">Conductor and Guardian Defender must be different members.</p>}
             <label><span>Conductor</span><MemberSelect members={activeMembers} value={assignment.conductorMemberId} onChange={(value) => updateAssignment(date, { conductorMemberId: value })} /></label>
-            <label><span>VIP invitation</span><select value={assignment.vipType} onChange={(event) => updateAssignment(date, { vipType: event.target.value as TrainVipType, vipMemberId: event.target.value === "none" ? undefined : assignment.vipMemberId })}><option value="none">No invitation</option><option value="guardian-defender">Guardian Defender</option><option value="special-guest">Special Guest</option></select></label>
-            {assignment.vipType !== "none" && <label><span>{assignment.vipType === "guardian-defender" ? "Guardian" : "Special Guest"}</span><MemberSelect members={activeMembers.filter((member) => member.id !== assignment.conductorMemberId)} value={assignment.vipMemberId} onChange={(value) => updateAssignment(date, { vipMemberId: value })} /></label>}
+            <label><span>Guardian Defender</span><MemberSelect members={activeMembers.filter((member) => member.id !== assignment.conductorMemberId)} value={assignment.vipMemberId} onChange={(value) => updateAssignment(date, { vipType: value ? "guardian-defender" : "none", vipMemberId: value })} /></label>
             <label><span>Backup</span><MemberSelect members={activeMembers.filter((member) => member.id !== assignment.conductorMemberId && member.id !== assignment.vipMemberId)} value={assignment.backupMemberId} onChange={(value) => updateAssignment(date, { backupMemberId: value })} /></label>
             <label><span>Officer notes</span><input value={assignment.notes || ""} onChange={(event) => updateAssignment(date, { notes: event.target.value || undefined })} placeholder="Reward reason, reassignment…" /></label>
           </article>;
