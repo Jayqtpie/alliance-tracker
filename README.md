@@ -1,21 +1,22 @@
 # Rascals Command
 
-A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers can upload overlapping Last War leaderboard screenshots, review extracted rankings, publish live or final snapshots, compare matching weeks, manage commander aliases, and export CSV reports.
+A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers can upload overlapping Last War leaderboard screenshots or an iPhone screen recording, review extracted rankings, publish live or final snapshots, compare matching weeks, manage commander identities, and export officer-ready reports.
 
 ## Included in this MVP
 
 - Shared officer passcode with a signed, HTTP-only session cookie
 - Tuesday 25 August 2026 seed snapshot for ranks 1–90
 - Multi-image extraction through the OpenAI Responses API
+- On-device screen-recording frame extraction (the original video is never uploaded)
 - Automatic removal of the repeated green pinned-player card
-- Rank deduplication, gap warnings, confidence flags, and human review
+- Rank deduplication, gap/order warnings, likely name-change suggestions, large-change checks, confidence flags, and human review
 - Same-weekday comparison for Monday–Friday live captures
 - Week-over-week comparison for Saturday final captures
 - Score difference, percentage change, and rank movement
-- Commander aliases for common name changes
+- Stable commander identities, aliases, join/leave dates, transfer notes, and duplicate-profile merging
 - Five-day retention for original screenshots
 - Private Vercel Blob persistence with a local JSON development fallback
-- Responsive officer dashboard and CSV export
+- Responsive officer dashboard, dedicated reports, detailed CSV, and shareable PNG export
 
 ## Local development
 
@@ -52,6 +53,7 @@ After connecting this repository to Vercel, deploy normally. [`vercel.json`](ver
 ## Capture guidance
 
 - Take overlapping screenshots while scrolling slowly.
+- Alternatively, upload one slow iPhone screen recording. Frames are extracted in the browser before OCR, so the original recording stays on the officer's device.
 - Ensure every rank appears fully in at least one screenshot.
 - Repeated ranges are safe and are deduplicated by rank.
 - The fixed green personal-rank card is detected and ignored.
