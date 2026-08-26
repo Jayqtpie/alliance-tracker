@@ -75,7 +75,10 @@ async function processJob(job) {
     const extraction = spawnSync(process.execPath, [extractor, "--out", output, ...images], { stdio: "inherit" });
     if (extraction.error || extraction.status !== 0) throw new Error("Local Codex extraction did not complete.");
     const parsed = JSON.parse(readFileSync(output, "utf8"));
-    if (!Array.isArray(parsed.rows) || !parsed.rows.length) throw new Error("Local Codex returned no ranking rows.");
+    if (!Array.isArray(parsed.rows) || !parsed.rows.length) {
+      const firstFile = job.files[0]?.name || "the retained upload";
+      throw new Error(`No leaderboard rows were detected after two OCR passes across ${job.files.length} file${job.files.length === 1 ? "" : "s"} (first: ${firstFile}). Confirm the upload shows rank, commander, and points columns.`);
+    }
     await request("/api/bridge/worker", {
       method: "POST",
       headers,

@@ -36,3 +36,17 @@ export function claimNextBridgeJob(jobs: BridgeJob[], workerId: string, now = ne
   candidate.error = undefined;
   return candidate;
 }
+
+export function retryBridgeJob(jobs: BridgeJob[], jobId: string, now = new Date()) {
+  const job = jobs.find((item) => item.id === jobId);
+  if (!job) throw new Error("Bridge job not found.");
+  if (job.status !== "failed") throw new Error("Only a failed extraction can be retried.");
+  job.status = "pending";
+  job.updatedAt = now.toISOString();
+  job.workerId = undefined;
+  job.leaseExpiresAt = undefined;
+  job.completedAt = undefined;
+  job.error = undefined;
+  job.rows = undefined;
+  return job;
+}

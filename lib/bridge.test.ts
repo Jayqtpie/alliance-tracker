@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bridgeJobView, claimNextBridgeJob } from "./bridge";
+import { bridgeJobView, claimNextBridgeJob, retryBridgeJob } from "./bridge";
 import type { BridgeJob } from "./bridge-types";
 
 function job(patch: Partial<BridgeJob> = {}): BridgeJob {
@@ -35,5 +35,16 @@ describe("bridge queue", () => {
   it("does not expose private blob paths to officers", () => {
     expect(bridgeJobView(job())).not.toHaveProperty("files");
     expect(bridgeJobView(job()).fileNames).toEqual(["frame.jpg"]);
+  });
+
+  it("requeues a failed job without discarding its retained files", () => {
+    const failed = job({ status: "failed", attempts: 1, workerId: "worker-1", error: "No rows", leaseExpiresAt: "2026-08-26T04:00:00.000Z" });
+    const retried = retryBridgeJob([failed], failed.id, new Date("2026-08-26T05:00:00.000Z"));
+    expect(retried.status).toBe("pending");
+    expect(retried.files).toHaveLength(1);
+    expect(retried.attempts).toBe(1);
+    expect(retried.error).toBeUndefined();
+    expect(retried.workerId).toBeUndefined();
+    expect(retried.leaseExpiresAt).toBeUndefined();
   });
 });

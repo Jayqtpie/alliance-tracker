@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
-import { bridgeJobView } from "@/lib/bridge";
+import { bridgeJobView, retryBridgeJob } from "@/lib/bridge";
 import { getBridgeQueue, mutateBridgeQueue } from "@/lib/bridge-store";
 import type { BridgeJob } from "@/lib/bridge-types";
 
@@ -20,6 +20,7 @@ const createSchema = z.object({
   id: z.string().uuid(),
   files: z.array(fileSchema).min(1).max(25),
 });
+const retrySchema = z.object({ id: z.string().uuid() });
 
 export async function GET(request: Request) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
@@ -66,6 +67,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not queue this capture." }, { status: 409 });
+  }
+}
+
+export async function PATCH(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const parsed = retrySchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
+  try {
+    const job = await mutateBridgeQueue((jobs) => retryBridgeJob(jobs, parsed.data.id));
+    return NextResponse.json({ job: bridgeJobView(job) });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not retry this bridge job." }, { status: 409 });
   }
 }
 

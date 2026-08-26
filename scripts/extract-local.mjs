@@ -128,23 +128,26 @@ const batches = [];
 for (let index = 0; index < images.length; index += 18) batches.push(images.slice(index, index + 18));
 const allRows = [];
 
-console.log(`Using Codex with ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
-for (let index = 0; index < batches.length; index += 1) {
-  const batch = batches[index];
-  const temporaryOutput = join(tmpdir(), `alliance-tracker-codex-${process.pid}-${index}.json`);
+function readBatch(batch, batchIndex, focusedRetry = false) {
+  const attempt = focusedRetry ? "retry" : "initial";
+  const temporaryOutput = join(tmpdir(), `alliance-tracker-codex-${process.pid}-${batchIndex}-${attempt}.json`);
   const fileList = batch.map((image, imageIndex) => `Image ${imageIndex + 1}: ${basename(image)}`).join("\n");
+  const retryInstruction = focusedRetry
+    ? "The first pass returned no rows. Inspect the full image carefully, including any inset or padded area. Look for a leaderboard with rank at left, commander name in the middle, and points at right. Extract a row whenever those three values are readable, even if decorative panel edges or the alliance subtitle are cropped. Return an empty rows array only when no such leaderboard row exists anywhere in any attached image. "
+    : "";
   const prompt =
     "Read the attached Last War Alliance Duel Weekly Rank screenshots as OCR only. " +
-    "Extract every fully visible player row from every image. Preserve each commander display name exactly, including Unicode, spacing, punctuation, and case. " +
+    retryInstruction +
+    "Extract every readable complete player row from every image. Preserve each commander display name exactly, including Unicode, spacing, punctuation, and case. " +
     "Return points as integers without commas. The green player card fixed at the bottom is the viewer's pinned rank: include it only with isPinned=true. " +
-    "Set isPinned=false for ordinary leaderboard rows. Ignore headers, alliance text, chat banners, and partially obscured rows. " +
+    "Set isPinned=false for ordinary leaderboard rows. Ignore headers, alliance text, chat banners, and rows where rank, name, or points are not readable. " +
     "Set needsReview=true when any character or number is uncertain and lower confidence accordingly. Keep overlapping duplicate observations; the tracker will reconcile them. " +
     "Do not use tools, edit files, or add commentary. Return only the JSON required by the provided schema.\n\n" + fileList;
   const args = [
     "exec",
     "--ephemeral",
     "--ignore-rules",
-    "--config", 'model_reasoning_effort="low"',
+    "--config", `model_reasoning_effort="${focusedRetry ? "medium" : "low"}"`,
     "--config", 'model_reasoning_summary="none"',
     "--sandbox", "read-only",
     "--skip-git-repo-check",
@@ -156,20 +159,31 @@ for (let index = 0; index < batches.length; index += 1) {
   batch.forEach((image) => args.push("--image", image));
   args.push("--", prompt);
 
-  console.log(`\nReading batch ${index + 1}/${batches.length}...`);
   const result = commandResult(args);
   if (result.error || result.status !== 0) {
     rmSync(temporaryOutput, { force: true });
-    fail(`Codex extraction failed for batch ${index + 1}.`);
+    fail(`Codex extraction failed for batch ${batchIndex + 1}${focusedRetry ? " during its focused retry" : ""}.`);
   }
   try {
     const parsed = JSON.parse(readFileSync(temporaryOutput, "utf8"));
-    allRows.push(...validateRows(parsed, `batch ${index + 1}`));
+    return validateRows(parsed, `batch ${batchIndex + 1}`);
   } catch (error) {
-    fail(error instanceof Error ? error.message : `Could not read batch ${index + 1}.`);
+    fail(error instanceof Error ? error.message : `Could not read batch ${batchIndex + 1}.`);
   } finally {
     rmSync(temporaryOutput, { force: true });
   }
+}
+
+console.log(`Using Codex with ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
+for (let index = 0; index < batches.length; index += 1) {
+  const batch = batches[index];
+  console.log(`\nReading batch ${index + 1}/${batches.length}...`);
+  let rows = readBatch(batch, index);
+  if (!rows.length) {
+    console.warn(`No ranking rows were found in batch ${index + 1}; retrying once with a focused inspection...`);
+    rows = readBatch(batch, index, true);
+  }
+  allRows.push(...rows);
 }
 
 const result = {
