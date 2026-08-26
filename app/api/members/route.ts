@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
+import { mergeMemberIdentities } from "@/lib/tracker";
 
 const schema = z.object({
   members: z.array(z.object({
@@ -19,6 +20,28 @@ export async function PUT(request: Request) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
-  const state = await getState();
-  return NextResponse.json(await setState({ ...state, members: parsed.data.members }));
+  try {
+    const state = await getState();
+    return NextResponse.json(await setState({ ...state, members: parsed.data.members }));
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save roster changes." }, { status: 409 });
+  }
+}
+
+const mergeSchema = z.object({
+  primaryId: z.string().min(1),
+  duplicateId: z.string().min(1),
+});
+
+export async function PATCH(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const parsed = mergeSchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
+  try {
+    const state = await getState();
+    const merged = mergeMemberIdentities(state, parsed.data.primaryId, parsed.data.duplicateId);
+    return NextResponse.json(await setState(merged));
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not merge members." }, { status: 400 });
+  }
 }
