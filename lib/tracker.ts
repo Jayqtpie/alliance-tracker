@@ -161,12 +161,31 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
       ...snapshot,
       entries: snapshot.entries.map((entry) => entry.memberId === duplicateId ? { ...entry, memberId: primaryId } : entry),
     })),
+    operations: state.operations ? {
+      ...state.operations,
+      guardianPool: [...new Set(state.operations.guardianPool.map((id) => id === duplicateId ? primaryId : id))].slice(0, 7),
+      stormEvents: state.operations.stormEvents.map((event) => ({
+        ...event,
+        participants: event.participants.map((participant) => participant.memberId === duplicateId ? { ...participant, memberId: primaryId } : participant)
+          .filter((participant, index, all) => all.findIndex((item) => item.memberId === participant.memberId) === index),
+      })),
+      trainAssignments: state.operations.trainAssignments.map((assignment) => ({
+        ...assignment,
+        conductorMemberId: assignment.conductorMemberId === duplicateId ? primaryId : assignment.conductorMemberId,
+        vipMemberId: assignment.vipMemberId === duplicateId ? primaryId : assignment.vipMemberId,
+        backupMemberId: assignment.backupMemberId === duplicateId ? primaryId : assignment.backupMemberId,
+      })),
+    } : undefined,
   };
 }
 
 export function removeMemberFromRoster(state: TrackerState, memberId: string): TrackerState {
   if (!state.members.some((member) => member.id === memberId)) throw new Error("Member no longer exists.");
-  return { ...state, members: state.members.filter((member) => member.id !== memberId) };
+  return {
+    ...state,
+    members: state.members.filter((member) => member.id !== memberId),
+    operations: state.operations ? { ...state.operations, guardianPool: state.operations.guardianPool.filter((id) => id !== memberId) } : undefined,
+  };
 }
 
 export function analyzeLargeChanges(
