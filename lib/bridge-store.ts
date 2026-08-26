@@ -37,6 +37,10 @@ export async function mutateBridgeQueue<T>(mutator: (jobs: BridgeJob[]) => T): P
     const queue = current?.payload || (blobEnabled() ? emptyQueue() : await getLocalQueue());
     const jobs = structuredClone(queue.jobs);
     const value = mutator(jobs);
+    // Polling workers commonly have nothing to claim. Avoid rewriting an
+    // unchanged queue because every write changes the Blob ETag and can make a
+    // real claim or completion from another worker fail its optimistic lock.
+    if (JSON.stringify(jobs) === JSON.stringify(queue.jobs)) return value;
     const next: BridgeQueue = {
       version: queue.version + 1,
       jobs,
