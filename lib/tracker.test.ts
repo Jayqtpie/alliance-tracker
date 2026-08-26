@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeImport, analyzeLargeChanges, dedupeRows, memberPerformance, mergeMemberIdentities, normalizeName, snapshotComparison, weekStartFor } from "./tracker";
+import { analyzeImport, analyzeLargeChanges, dedupeRows, memberPerformance, mergeMemberIdentities, normalizeName, removeMemberFromRoster, snapshotComparison, weekStartFor } from "./tracker";
 import type { Snapshot } from "./types";
 
 describe("leaderboard processing", () => {
@@ -90,6 +90,31 @@ describe("leaderboard processing", () => {
     expect(merged.members[0].aliases).toEqual(["Old Jay", "Older Jay"]);
     expect(merged.members[0].joinedAt).toBe("2025-01-01");
     expect(merged.snapshots[0].entries[0].memberId).toBe("keep");
+  });
+
+  it("removes a member from the roster without erasing historical snapshots", () => {
+    const history: Snapshot = {
+      id: "one",
+      capturedAt: "2026-08-25T12:00:00Z",
+      weekStart: "2026-08-24",
+      dayLabel: "Tuesday",
+      status: "live",
+      sourceType: "manual",
+      entries: [{ id: "entry", memberId: "remove", rank: 1, displayName: "Old member", points: 10, confidence: 1 }],
+    };
+    const result = removeMemberFromRoster({
+      version: 1,
+      alliance: { name: "The Rascals", tag: "RSCL", server: "927" },
+      updatedAt: "2026-08-25T00:00:00Z",
+      uploads: [],
+      members: [
+        { id: "keep", canonicalName: "Current member", aliases: [], active: true },
+        { id: "remove", canonicalName: "Old member", aliases: [], active: false },
+      ],
+      snapshots: [history],
+    }, "remove");
+    expect(result.members.map((member) => member.id)).toEqual(["keep"]);
+    expect(result.snapshots).toEqual([history]);
   });
 
   it("builds a commander history with matching week-over-week changes", () => {
