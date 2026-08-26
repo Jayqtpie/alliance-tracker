@@ -12,6 +12,7 @@ import {
   Cloud,
   Download,
   FileImage,
+  FileJson,
   FileVideo,
   GitMerge,
   History,
@@ -31,6 +32,7 @@ import {
 import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
+import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
@@ -558,6 +560,7 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
   const [notes, setNotes] = useState(editingSnapshot?.notes || "");
   const [snapshotId] = useState<string | undefined>(editingSnapshot?.id);
   const input = useRef<HTMLInputElement>(null);
+  const localImportInput = useRef<HTMLInputElement>(null);
   const diagnosticWarnings = useMemo(() => rows.length ? analyzeImport(rows, state.members) : [], [rows, state.members]);
   const changeWarnings = useMemo(() => rows.length && date ? analyzeLargeChanges(rows, state.members, state.snapshots, date, status) : [], [rows, state.members, state.snapshots, date, status]);
   const allWarnings = [...new Set([...warnings, ...diagnosticWarnings, ...changeWarnings])];
@@ -623,6 +626,23 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
     setWarnings(failed.length ? [`Could not read pasted line${failed.length === 1 ? "" : "s"}: ${failed.join(", ")}`] : []);
   }
 
+  async function importLocalExtraction(file?: File) {
+    if (!file) return;
+    setError("");
+    try {
+      if (file.size > 2_000_000) throw new Error("The Codex JSON file is unexpectedly large.");
+      const parsed = parseLocalExtractionText(await file.text());
+      const merged = dedupeRows(parsed);
+      setRows(merged.rows);
+      setWarnings(merged.warnings);
+      setSourceType("local-codex");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not import the Codex extraction file.");
+    } finally {
+      if (localImportInput.current) localImportInput.current.value = "";
+    }
+  }
+
   function updateRow(index: number, patch: Partial<(typeof rows)[number]>) {
     setRows((current) => current.map((row, rowIndex) => rowIndex === index ? { ...row, ...patch, needsReview: false } : row));
   }
@@ -642,8 +662,8 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
 
   return (
     <div className="page-stack narrow-page">
-      <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload overlapping screenshots, select an iPhone screen recording, or paste rows manually.</p></div></section>
-      {!ocrConfigured && <div className="review-banner warning"><CircleAlert size={18} /><span><strong>Automatic extraction is not configured.</strong> Add OPENAI_API_KEY or use manual paste.</span></div>}
+      <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload screenshots for cloud extraction, import a local Codex result, or paste rows manually.</p></div></section>
+      {!ocrConfigured && <div className="review-banner warning"><CircleAlert size={18} /><span><strong>Cloud extraction is not configured.</strong> You can still import Codex JSON generated on an officer&apos;s computer or paste rows manually.</span></div>}
       <section className="panel import-meta">
         <label><span>Capture date</span><input type="date" value={date} onChange={(event) => { setDate(event.target.value); setStatus(new Date(`${event.target.value}T12:00:00Z`).getUTCDay() === 6 ? "final" : "live"); }} /></label>
         <label><span>Snapshot type</span><select value={status} onChange={(event) => setStatus(event.target.value as "live" | "final")}><option value="live">Live Mon–Fri</option><option value="final">Final Saturday</option></select></label>
@@ -657,7 +677,13 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
           {files.length > 0 && <div className="file-list"><div>{sourceType === "video" ? <FileVideo size={16} /> : <FileImage size={16} />}<strong>{files.length} frame{files.length === 1 ? "" : "s"} ready</strong></div><button onClick={() => { setFiles([]); setSourceType("screenshots"); }}><X size={15} /> Clear</button></div>}
           <button className="button primary wide" disabled={!files.length || busy || preparingVideo || !ocrConfigured} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract rankings</>}</button>
         </div>
-        <div className="panel manual-paste"><p className="eyebrow">MANUAL FALLBACK</p><h3>Paste rank, name and points</h3><p>Accepts CSV or tab-separated rows copied from a spreadsheet.</p><textarea value={manual} onChange={(event) => setManual(event.target.value)} placeholder={'1,Super McNasty,74,831,650\n2,Retired Goblin,49,744,827'} /><button className="button secondary wide" disabled={!manual.trim()} onClick={parseManual}>Build review table</button></div>
+        <div className="panel manual-paste">
+          <p className="eyebrow">LOCAL CODEX</p><h3>Import an extracted JSON file</h3><p>Generate it on a signed-in computer with <code>npm run extract:local</code>. Screenshots never pass through Vercel.</p>
+          <input ref={localImportInput} hidden type="file" accept="application/json,.json" onChange={(event) => void importLocalExtraction(event.target.files?.[0])} />
+          <button className="button secondary wide" onClick={() => localImportInput.current?.click()}><FileJson size={16} /> Import Codex JSON</button>
+          <div className="import-divider"><span>or paste manually</span></div>
+          <p>Accepts CSV or tab-separated rank, name and points.</p><textarea value={manual} onChange={(event) => setManual(event.target.value)} placeholder={'1,Super McNasty,74,831,650\n2,Retired Goblin,49,744,827'} /><button className="button secondary wide" disabled={!manual.trim()} onClick={parseManual}>Build review table</button>
+        </div>
       </section>}
       {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
       {allWarnings.length > 0 && <div className="warning-list">{allWarnings.slice(0, 12).map((warning) => <span key={warning}><CircleAlert size={14} />{warning}</span>)}</div>}

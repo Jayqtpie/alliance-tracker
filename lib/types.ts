@@ -27,7 +27,7 @@ export interface Snapshot {
   weekStart: string;
   dayLabel: string;
   status: SnapshotStatus;
-  sourceType: "screenshots" | "video" | "manual";
+  sourceType: "screenshots" | "video" | "local-codex" | "manual";
   notes?: string;
   createdBy?: string;
   entries: RankingEntry[];
