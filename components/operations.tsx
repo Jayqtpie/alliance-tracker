@@ -24,7 +24,6 @@ import type {
   StormRole,
   TrackerState,
   TrainAssignment,
-  TrainInvitationStatus,
   TrainStatus,
   TrainVipType,
 } from "@/lib/types";
@@ -301,7 +300,6 @@ function TrainPlanner({ operations, setOperations, members, notify }: { operatio
             <label><span>Conductor</span><MemberSelect members={activeMembers} value={assignment.conductorMemberId} onChange={(value) => updateAssignment(date, { conductorMemberId: value })} /></label>
             <label><span>VIP invitation</span><select value={assignment.vipType} onChange={(event) => updateAssignment(date, { vipType: event.target.value as TrainVipType, vipMemberId: event.target.value === "none" ? undefined : assignment.vipMemberId })}><option value="none">No invitation</option><option value="guardian-defender">Guardian Defender</option><option value="special-guest">Special Guest</option></select></label>
             {assignment.vipType !== "none" && <label><span>{assignment.vipType === "guardian-defender" ? "Guardian" : "Special Guest"}</span><MemberSelect members={activeMembers.filter((member) => member.id !== assignment.conductorMemberId)} value={assignment.vipMemberId} onChange={(value) => updateAssignment(date, { vipMemberId: value })} /></label>}
-            <label><span>Invitation</span><select value={assignment.invitationStatus} onChange={(event) => updateAssignment(date, { invitationStatus: event.target.value as TrainInvitationStatus })}><option value="not-sent">Not sent</option><option value="pending">Pending</option><option value="accepted">Accepted</option><option value="declined">Declined</option><option value="expired">Expired</option></select></label>
             <label><span>Backup</span><MemberSelect members={activeMembers.filter((member) => member.id !== assignment.conductorMemberId && member.id !== assignment.vipMemberId)} value={assignment.backupMemberId} onChange={(value) => updateAssignment(date, { backupMemberId: value })} /></label>
             <label><span>Officer notes</span><input value={assignment.notes || ""} onChange={(event) => updateAssignment(date, { notes: event.target.value || undefined })} placeholder="Reward reason, reassignment…" /></label>
           </article>;
