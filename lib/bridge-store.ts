@@ -1,5 +1,5 @@
 import "server-only";
-import { del, get, put } from "@vercel/blob";
+import { del, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
@@ -41,6 +41,9 @@ export async function mutateBridgeQueue<T>(mutator: (jobs: BridgeJob[]) => T): P
     // unchanged queue because every write changes the Blob ETag and can make a
     // real claim or completion from another worker fail its optimistic lock.
     if (JSON.stringify(jobs) === JSON.stringify(queue.jobs)) return value;
+    // `get()` downloads through the Blob delivery path. Vercel's control-plane
+    // `head()` response is the authoritative ETag for a conditional overwrite.
+    const currentEtag = current ? (await head(queuePath, { token: blobToken() })).etag : undefined;
     const next: BridgeQueue = {
       version: queue.version + 1,
       jobs,
@@ -55,7 +58,7 @@ export async function mutateBridgeQueue<T>(mutator: (jobs: BridgeJob[]) => T): P
           cacheControlMaxAge: 60,
           addRandomSuffix: false,
           allowOverwrite: Boolean(current),
-          ...(current ? { ifMatch: current.etag } : {}),
+          ...(currentEtag ? { ifMatch: currentEtag } : {}),
         });
       } else {
         await mkdir(path.dirname(queueFile), { recursive: true });
