@@ -924,6 +924,10 @@ function ReportList({ title, rows, empty }: { title: string; rows: Array<{ name:
   return <section className="panel report-list"><div className="panel-head"><h3>{title}</h3></div>{rows.length ? <ol>{rows.map((row, index) => <li key={`${row.name}-${index}`}><span>{row.name}</span><strong>{row.value}</strong></li>)}</ol> : <p className="empty-copy">{empty}</p>}</section>;
 }
 
+function sortMembersByName(members: Member[]) {
+  return [...members].sort((a, b) => a.canonicalName.localeCompare(b.canonicalName, undefined, { sensitivity: "base" }));
+}
+
 function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void> }) {
   const [deletingId, setDeletingId] = useState("");
   const [error, setError] = useState("");
@@ -949,9 +953,10 @@ function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapsho
 }
 
 function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState; setState: (state: TrackerState) => void; notify: (message: string) => void; onOpenMember: (id: string) => void }) {
-  const [members, setMembers] = useState(state.members);
+  const [members, setMembers] = useState(() => sortMembersByName(state.members));
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "departed">("all");
+  const [expandedMemberId, setExpandedMemberId] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [primaryId, setPrimaryId] = useState("");
@@ -965,6 +970,7 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
   function addMember() {
     const member: Member = { id: crypto.randomUUID(), canonicalName: "New member", aliases: [], active: true, joinedAt: new Date().toISOString().slice(0, 10) };
     setMembers((current) => [member, ...current]);
+    setExpandedMemberId(member.id);
     setFilter("all");
     setQuery("");
   }
@@ -974,7 +980,7 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
       const response = await fetch("/api/members", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ members }) });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Could not save roster changes.");
-      setState(body); setMembers(body.members); notify("Roster changes saved.");
+      setState(body); setMembers(sortMembersByName(body.members)); notify("Roster changes saved.");
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not save roster changes."); }
     setBusy(false);
   }
@@ -988,7 +994,7 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
       const response = await fetch("/api/members", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ primaryId, duplicateId }) });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || "Could not merge identities.");
-      setState(body); setMembers(body.members); setPrimaryId(""); setDuplicateId(""); notify("Member identities merged.");
+      setState(body); setMembers(sortMembersByName(body.members)); setPrimaryId(""); setDuplicateId(""); notify("Member identities merged.");
     } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not merge identities."); }
     setBusy(false);
   }
@@ -997,12 +1003,21 @@ function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState
     <section className="section-heading roster-heading"><div><p className="eyebrow">IDENTITY & MEMBERSHIP</p><h2>Alliance roster</h2><p>Permanent identities keep name changes, departures and returns connected to one history.</p></div><div className="report-actions"><button className="button secondary" onClick={addMember}><UserPlus size={15} /> Add member</button><button className="button primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save roster"}</button></div></section>
     <div className="review-banner warning"><CircleAlert size={18} /><span>Transfer period is active. Mark departures and arrivals here after the final roster is supplied; historical scores will remain attached.</span></div>
     {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
-    <section className="panel merge-panel"><div><GitMerge size={20} /><span><strong>Merge duplicate identities</strong><small>Keep the first identity; the second becomes aliases and all historical entries are reassigned.</small></span></div><select value={primaryId} onChange={(event) => setPrimaryId(event.target.value)}><option value="">Identity to keep</option>{members.map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><select value={duplicateId} onChange={(event) => setDuplicateId(event.target.value)}><option value="">Duplicate identity</option>{members.filter((member) => member.id !== primaryId).map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><button className="button secondary" disabled={busy || !primaryId || !duplicateId} onClick={merge}>Merge</button></section>
+    <details className="panel roster-admin-tools"><summary><span><GitMerge size={19} /><span><strong>Roster tools</strong><small>Merge duplicate identities</small></span></span><ChevronDown size={18} /></summary><div className="roster-admin-tools-body"><div><strong>Merge duplicate identities</strong><small>Keep the first identity; the second becomes aliases and all historical entries are reassigned.</small></div><select value={primaryId} onChange={(event) => setPrimaryId(event.target.value)}><option value="">Identity to keep</option>{members.map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><select value={duplicateId} onChange={(event) => setDuplicateId(event.target.value)}><option value="">Duplicate identity</option>{members.filter((member) => member.id !== primaryId).map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><button className="button secondary" disabled={busy || !primaryId || !duplicateId} onClick={merge}>Merge</button></div></details>
     <section className="panel roster-panel">
-      <div className="panel-head roster-tools"><div><p className="eyebrow">{members.filter((member) => member.active).length} ACTIVE · {members.filter((member) => !member.active).length} DEPARTED</p><h3>Commander identities</h3></div><select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}><option value="all">All members</option><option value="active">Active only</option><option value="departed">Departed only</option></select><div className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search names or aliases" /></div></div>
+      <div className="panel-head roster-tools"><div><p className="eyebrow">{filtered.length} OF {members.length} MEMBERS</p><h3>Commander identities</h3></div><button className="button primary mobile-roster-save" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button><select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}><option value="all">All members</option><option value="active">Active only</option><option value="departed">Departed only</option></select><div className="search-box"><Search size={16} /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search names or aliases" /></div></div>
       <div className="roster-list-head" aria-hidden="true"><span>Commander</span><span>Known aliases</span><span>Status</span><span>Joined</span><span>Left</span><span>Officer notes</span></div>
       <div className="roster-list">{filtered.map((member) => (
-        <article className="roster-member-row" key={member.id}>
+        <article className={`roster-member-row ${expandedMemberId === member.id ? "expanded" : ""}`} key={member.id}>
+          <div className="mobile-roster-summary">
+            <button className="mobile-roster-toggle" aria-expanded={expandedMemberId === member.id} onClick={() => setExpandedMemberId((current) => current === member.id ? "" : member.id)}>
+              <span className="avatar-fallback">{member.canonicalName.trim().charAt(0).toLocaleUpperCase() || "?"}</span>
+              <span className="mobile-roster-identity"><strong>{member.canonicalName}</strong><small>{member.aliases.length ? `Also: ${member.aliases.slice(0, 2).join(", ")}` : "No known aliases"}</small></span>
+              <span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active" : "Departed"}</span>
+              <ChevronDown className="mobile-roster-chevron" size={18} />
+            </button>
+            <button className="profile-button" title={`View ${member.canonicalName} profile`} aria-label={`View ${member.canonicalName} profile`} onClick={() => onOpenMember(member.id)}><BarChart3 size={15} /></button>
+          </div>
           <div className="roster-field roster-name"><span>Commander</span><div className="roster-name-editor"><input value={member.canonicalName} onChange={(event) => update(member.id, { canonicalName: event.target.value })} /><button className="profile-button" title={`View ${member.canonicalName} profile`} aria-label={`View ${member.canonicalName} profile`} onClick={() => onOpenMember(member.id)}><BarChart3 size={15} /></button></div></div>
           <label className="roster-field roster-aliases"><span>Known aliases</span><input value={member.aliases.join(", ")} placeholder="Previous names, comma separated" onChange={(event) => update(member.id, { aliases: event.target.value.split(",").map((alias) => alias.trim()).filter(Boolean) })} /></label>
           <div className="roster-field roster-status"><span>Status</span><label className="toggle-label"><input type="checkbox" checked={member.active} onChange={(event) => update(member.id, { active: event.target.checked, leftAt: event.target.checked ? undefined : member.leftAt || new Date().toISOString().slice(0, 10) })} /><span>{member.active ? "Active" : "Departed"}</span></label></div>
