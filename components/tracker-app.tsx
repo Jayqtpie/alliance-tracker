@@ -578,6 +578,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const [bridgeProgress, setBridgeProgress] = useState(0);
   const [bridgeJob, setBridgeJob] = useState<BridgeJobView>();
   const [bridgeLoadFailed, setBridgeLoadFailed] = useState(false);
+  const [retryingBridge, setRetryingBridge] = useState(false);
   const [preparingVideo, setPreparingVideo] = useState(false);
   const [error, setError] = useState("");
   const [date, setDate] = useState(editingSnapshot?.capturedAt.slice(0, 10) || new Date().toISOString().slice(0, 10));
@@ -744,6 +745,27 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     }
   }
 
+  async function retryBridgeExtraction() {
+    if (!bridgeJob || bridgeJob.status !== "failed") return;
+    setRetryingBridge(true);
+    setError("");
+    try {
+      const response = await fetch("/api/bridge/jobs", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: bridgeJob.id }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not retry this extraction.");
+      receiveBridgeJob(body.job as BridgeJobView);
+      window.localStorage.setItem(bridgeJobStorageKey, bridgeJob.id);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not retry this extraction.");
+    } finally {
+      setRetryingBridge(false);
+    }
+  }
+
   function loadBridgeResults() {
     if (bridgeJob) loadRowsFromBridge(bridgeJob);
   }
@@ -822,6 +844,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
             <strong>{bridgeJob.status === "pending" ? "Waiting for PC worker" : bridgeJob.status === "processing" ? "Codex is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
             <span>{bridgeJob.status === "pending" ? "Start npm run bridge:worker on the PC." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
             {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
+            {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {retryingBridge ? "Requeueing…" : "Retry retained upload"}</button>}
           </div>}
           {!bridgeConfigured && <p className="bridge-unavailable">The PC bridge appears after private Blob storage and a worker secret are configured.</p>}
         </div>
