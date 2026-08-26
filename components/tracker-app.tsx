@@ -25,6 +25,7 @@ import {
   Share2,
   Shield,
   Sparkles,
+  Trash2,
   UploadCloud,
   UserPlus,
   Users,
@@ -276,6 +277,17 @@ export function TrackerApp({
     router.push("/login");
   }
 
+  async function deleteSnapshot(snapshot: Snapshot) {
+    const response = await fetch(`/api/snapshots?id=${encodeURIComponent(snapshot.id)}`, { method: "DELETE" });
+    const body = await response.json();
+    if (!response.ok) throw new Error(body.error || "Could not delete this snapshot.");
+    const nextState = body.state as TrackerState;
+    const latestRemaining = [...nextState.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt))[0];
+    setState(nextState);
+    if (selectedSnapshotId === snapshot.id) setSelectedSnapshotId(latestRemaining?.id || "");
+    showNotice("Snapshot deleted.");
+  }
+
   const nav = [
     ["overview", "Overview", LayoutDashboard],
     ["import", "New import", UploadCloud],
@@ -330,6 +342,9 @@ export function TrackerApp({
             onOpenMember={setSelectedMemberId}
           />
         )}
+        {view === "overview" && !selected && (
+          <div className="page-stack"><div className="review-banner warning"><CircleAlert size={18} />No snapshots recorded. Use New import to publish a capture.</div></div>
+        )}
         {view === "import" && (
           <Importer
             state={state}
@@ -354,6 +369,7 @@ export function TrackerApp({
               setEditingSnapshot(snapshot);
               setView("import");
             }}
+            onDelete={deleteSnapshot}
           />
         )}
         {view === "members" && <Roster state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
@@ -885,8 +901,28 @@ function ReportList({ title, rows, empty }: { title: string; rows: Array<{ name:
   return <section className="panel report-list"><div className="panel-head"><h3>{title}</h3></div>{rows.length ? <ol>{rows.map((row, index) => <li key={`${row.name}-${index}`}><span>{row.name}</span><strong>{row.value}</strong></li>)}</ol> : <p className="empty-copy">{empty}</p>}</section>;
 }
 
-function Snapshots({ snapshots, onOpen, onEdit }: { snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void }) {
-  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section><div className="snapshot-list">{[...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt)).map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" onClick={() => exportSnapshot(snapshot)}><Download size={15} /> CSV</button><button className="button ghost" onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button secondary" onClick={() => onOpen(snapshot)}>Open</button></div></article>; })}</div></div>;
+function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void> }) {
+  const [deletingId, setDeletingId] = useState("");
+  const [error, setError] = useState("");
+
+  async function removeSnapshot(snapshot: Snapshot) {
+    const confirmed = window.confirm(
+      `Delete the ${snapshot.dayLabel} capture from ${dateLabel(snapshot.capturedAt)}?\n\nThis removes its ranking results and comparisons. Roster members will not be deleted.`,
+    );
+    if (!confirmed) return;
+    setDeletingId(snapshot.id);
+    setError("");
+    try {
+      await onDelete(snapshot);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not delete this snapshot.");
+    } finally {
+      setDeletingId("");
+    }
+  }
+
+  const ordered = [...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
+  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot)}><Download size={15} /> CSV</button><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button danger" disabled={Boolean(deletingId)} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {deleting ? "Deleting…" : "Delete"}</button><button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>Open</button></div></article>; }) : <section className="panel"><p className="empty-copy">No snapshots have been published yet.</p></section>}</div></div>;
 }
 
 function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState; setState: (state: TrackerState) => void; notify: (message: string) => void; onOpenMember: (id: string) => void }) {

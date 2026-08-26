@@ -23,6 +23,8 @@ const schema = z.object({
   })).min(1).max(150),
 });
 
+const snapshotIdSchema = z.string().min(1).max(100);
+
 export async function POST(request: Request) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
@@ -86,5 +88,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ state: next, snapshot });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not publish this snapshot." }, { status: 409 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const parsedId = snapshotIdSchema.safeParse(new URL(request.url).searchParams.get("id"));
+  if (!parsedId.success) return NextResponse.json({ error: "A valid snapshot ID is required." }, { status: 400 });
+
+  try {
+    const state = await getState();
+    const snapshot = state.snapshots.find((item) => item.id === parsedId.data);
+    if (!snapshot) return NextResponse.json({ error: "This snapshot no longer exists." }, { status: 404 });
+
+    const next = await setState({
+      ...state,
+      snapshots: state.snapshots.filter((item) => item.id !== snapshot.id),
+    });
+    return NextResponse.json({ state: next, deletedSnapshot: snapshot });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not delete this snapshot." }, { status: 409 });
   }
 }
