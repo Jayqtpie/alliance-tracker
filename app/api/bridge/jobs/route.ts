@@ -1,4 +1,4 @@
-import { head } from "@vercel/blob";
+import { del, head } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/auth";
@@ -66,5 +66,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not queue this capture." }, { status: 409 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const id = new URL(request.url).searchParams.get("id");
+  if (!id) return NextResponse.json({ error: "Job id is required." }, { status: 400 });
+  try {
+    const files = await mutateBridgeQueue((jobs) => {
+      const index = jobs.findIndex((item) => item.id === id);
+      if (index < 0) throw new Error("Bridge job not found.");
+      if (jobs[index].status === "processing") throw new Error("A processing job cannot be removed.");
+      return jobs.splice(index, 1)[0].files;
+    });
+    if (files.length) await del(files.map((file) => file.pathname), { token: blobToken() });
+    return NextResponse.json({ deleted: true });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not remove this bridge job." }, { status: 409 });
   }
 }
