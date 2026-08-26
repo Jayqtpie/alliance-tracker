@@ -17,12 +17,12 @@
 }
 
 * { box-sizing: border-box; }
-html, body { margin: 0; min-height: 100%; overflow-x: hidden; background: radial-gradient(circle at 7% 9%, rgba(255,255,255,.95) 0 3%, transparent 12%), radial-gradient(circle at 88% 15%, rgba(255,255,255,.72) 0 4%, transparent 15%), linear-gradient(160deg, #f6fcff 0%, var(--paper) 48%, #d9f1ff 100%); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+html, body { margin: 0; min-height: 100%; overflow-x: clip; background: radial-gradient(circle at 7% 9%, rgba(255,255,255,.95) 0 3%, transparent 12%), radial-gradient(circle at 88% 15%, rgba(255,255,255,.72) 0 4%, transparent 15%), linear-gradient(160deg, #f6fcff 0%, var(--paper) 48%, #d9f1ff 100%); color: var(--ink); font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 button, input, textarea, select { font: inherit; }
 button { cursor: pointer; }
 
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 248px 1fr; }
-.sidebar { position: sticky; top: 0; height: 100vh; padding: 24px 16px; border-right: 3px solid #139be2; background: linear-gradient(135deg, transparent 0 46%, rgba(255,255,255,.035) 46% 49%, transparent 49%) 0 0 / 44px 44px, linear-gradient(180deg, #073d6a 0%, var(--navy) 62%, #041e38 100%); color: white; display: flex; flex-direction: column; z-index: 5; box-shadow: 12px 0 30px rgba(2,43,79,.12); }
+.sidebar { position: sticky; top: 0; align-self: start; height: 100vh; height: 100dvh; padding: 24px 16px; border-right: 3px solid #139be2; background: linear-gradient(135deg, transparent 0 46%, rgba(255,255,255,.035) 46% 49%, transparent 49%) 0 0 / 44px 44px, linear-gradient(180deg, #073d6a 0%, var(--navy) 62%, #041e38 100%); color: white; display: flex; flex-direction: column; z-index: 5; box-shadow: 12px 0 30px rgba(2,43,79,.12); }
 .brand-lockup { display: flex; gap: 12px; align-items: center; padding: 2px 8px 26px; border-bottom: 1px solid rgba(255,255,255,.09); margin-bottom: 22px; }
 .brand-lockup strong, .brand-lockup span { display: block; }
 .brand-lockup strong { font-size: 14px; font-weight: 900; letter-spacing: -.01em; text-transform: uppercase; }
