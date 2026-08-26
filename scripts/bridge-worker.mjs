@@ -48,21 +48,28 @@ function extensionFor(file) {
   return file.contentType === "image/png" ? ".png" : file.contentType === "image/webp" ? ".webp" : ".jpg";
 }
 
-async function processJob(job) {
-  const folder = mkdtempSync(join(tmpdir(), "alliance-bridge-"));
-  try {
-    console.log(`\nClaimed ${job.id}: downloading ${job.files.length} frame${job.files.length === 1 ? "" : "s"}...`);
-    const images = [];
-    for (let index = 0; index < job.files.length; index += 1) {
-      const file = job.files[index];
+async function downloadFiles(job, folder) {
+  const images = new Array(job.files.length);
+  for (let start = 0; start < job.files.length; start += 5) {
+    await Promise.all(job.files.slice(start, start + 5).map(async (file, batchIndex) => {
+      const index = start + batchIndex;
       const response = await fetch(`${bridgeUrl}/api/bridge/file?jobId=${encodeURIComponent(job.id)}&fileId=${encodeURIComponent(file.id)}`, {
         headers: { authorization: `Bearer ${secret}` },
       });
       if (!response.ok) throw new Error(`Could not download ${file.name} (${response.status}).`);
       const target = join(folder, `${String(index + 1).padStart(2, "0")}${extensionFor(file)}`);
       writeFileSync(target, Buffer.from(await response.arrayBuffer()));
-      images.push(target);
-    }
+      images[index] = target;
+    }));
+  }
+  return images;
+}
+
+async function processJob(job) {
+  const folder = mkdtempSync(join(tmpdir(), "alliance-bridge-"));
+  try {
+    console.log(`\nClaimed ${job.id}: downloading ${job.files.length} frame${job.files.length === 1 ? "" : "s"}...`);
+    const images = await downloadFiles(job, folder);
 
     const output = join(folder, "result.json");
     const extraction = spawnSync(process.execPath, [extractor, "--out", output, ...images], { stdio: "inherit" });
