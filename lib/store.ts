@@ -1,5 +1,5 @@
 import "server-only";
-import { get, put } from "@vercel/blob";
+import { get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
@@ -21,7 +21,7 @@ async function getBlobState() {
   const result = await get(statePath, { access: "private", useCache: false, token: blobToken() });
   if (!result || result.statusCode !== 200) return null;
   const payload = JSON.parse(await new Response(result.stream).text()) as TrackerState;
-  return { payload, etag: result.blob.etag };
+  return { payload };
 }
 
 export function storageMode() {
@@ -65,13 +65,14 @@ export async function setState(state: TrackerState) {
     if (!current || current.payload.version !== state.version) {
       throw new Error("The tracker changed in another officer session. Refresh and try again.");
     }
+    const currentEtag = (await head(statePath, { token: blobToken() })).etag;
     await put(statePath, JSON.stringify(next), {
       access: "private",
       token: blobToken(),
       contentType: "application/json",
       cacheControlMaxAge: 60,
       allowOverwrite: true,
-      ifMatch: current.etag,
+      ifMatch: currentEtag,
     });
     return next;
   }
