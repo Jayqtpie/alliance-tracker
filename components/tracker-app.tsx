@@ -32,7 +32,7 @@ import { useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
-import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, snapshotComparison } from "@/lib/tracker";
+import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
 type View = "overview" | "import" | "reports" | "snapshots" | "members";
 
@@ -251,7 +251,9 @@ export function TrackerApp({
   );
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
+  const [selectedMemberId, setSelectedMemberId] = useState<string>();
   const selected = state.snapshots.find((snapshot) => snapshot.id === selectedSnapshotId) || state.snapshots[0];
+  const selectedMember = state.members.find((member) => member.id === selectedMemberId);
   const comparison = useMemo(
     () => (selected ? snapshotComparison(selected, state.snapshots) : undefined),
     [selected, state.snapshots],
@@ -318,6 +320,7 @@ export function TrackerApp({
             comparison={comparison}
             query={query}
             setQuery={setQuery}
+            onOpenMember={setSelectedMemberId}
           />
         )}
         {view === "import" && (
@@ -345,8 +348,9 @@ export function TrackerApp({
             }}
           />
         )}
-        {view === "members" && <Roster state={state} setState={setState} notify={showNotice} />}
+        {view === "members" && <Roster state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
       </main>
+      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} />}
       {notice && <div className="toast"><Check size={17} /> {notice}</div>}
     </div>
   );
@@ -359,6 +363,7 @@ function Overview({
   comparison,
   query,
   setQuery,
+  onOpenMember,
 }: {
   state: TrackerState;
   selected: Snapshot;
@@ -366,6 +371,7 @@ function Overview({
   comparison: ReturnType<typeof snapshotComparison>;
   query: string;
   setQuery: (query: string) => void;
+  onOpenMember: (id: string) => void;
 }) {
   const total = selected.entries.reduce((sum, entry) => sum + entry.points, 0);
   const average = selected.entries.length ? total / selected.entries.length : 0;
@@ -422,7 +428,7 @@ function Overview({
                 {rows.map((row) => (
                   <tr key={row.id}>
                     <td><span className={row.rank <= 3 ? `rank-badge top-${row.rank}` : "rank-badge"}>{row.rank}</span></td>
-                    <td><div className="commander-cell"><span className="avatar-fallback">{row.displayName.slice(0, 1).toLocaleUpperCase()}</span><span>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</span></div></td>
+                    <td><div className="commander-cell"><span className="avatar-fallback">{row.displayName.slice(0, 1).toLocaleUpperCase()}</span>{row.memberId ? <button className="commander-link" onClick={() => onOpenMember(row.memberId!)}>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</button> : <span>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</span>}</div></td>
                     <td><strong>{full(row.points)}</strong><div className="score-bar"><span style={{ width: `${Math.max(4, row.points / maxPoints * 100)}%` }} /></div></td>
                     <td><Delta value={row.pointChange} format={(value) => compact(Math.abs(value))} /></td>
                     <td><Delta value={row.rankChange} format={(value) => `${Math.abs(value)} place${Math.abs(value) === 1 ? "" : "s"}`} /></td>
@@ -466,6 +472,76 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
   ] as const;
   const max = Math.max(...bands.map(([, test]) => entries.filter((entry) => test(entry.points)).length), 1);
   return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{label}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
+}
+
+function CommanderProfile({ member, state, onClose }: { member: Member; state: TrackerState; onClose: () => void }) {
+  const performance = memberPerformance(member, state.snapshots);
+  const chartWidth = 560;
+  const chartHeight = 150;
+  const chartPadding = 16;
+  const scores = performance.history.map((point) => point.points);
+  const minScore = scores.length ? Math.min(...scores) : 0;
+  const maxScore = scores.length ? Math.max(...scores) : 1;
+  const scoreRange = Math.max(maxScore - minScore, 1);
+  const chartPoints = performance.history.map((point, index) => ({
+    ...point,
+    x: performance.history.length === 1 ? chartWidth / 2 : chartPadding + index / (performance.history.length - 1) * (chartWidth - chartPadding * 2),
+    y: chartPadding + (maxScore - point.points) / scoreRange * (chartHeight - chartPadding * 2),
+  }));
+
+  return (
+    <div className="profile-overlay" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
+      <aside className="commander-profile" role="dialog" aria-modal="true" aria-labelledby="commander-profile-title">
+        <header className="profile-head">
+          <div className="profile-identity">
+            <span className="profile-avatar">{member.canonicalName.slice(0, 1).toLocaleUpperCase()}</span>
+            <div><p className="eyebrow">COMMANDER PROFILE</p><h2 id="commander-profile-title">{member.canonicalName}</h2><span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active roster" : "Departed"}</span></div>
+          </div>
+          <button className="drawer-close" aria-label="Close commander profile" onClick={onClose}><X size={20} /></button>
+        </header>
+
+        <div className="profile-body">
+          <section className="profile-metrics">
+            <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>
+            <div><span>Best rank</span><strong>{performance.bestRank ? `#${performance.bestRank}` : "—"}</strong><small>{performance.appearances} appearance{performance.appearances === 1 ? "" : "s"}</small></div>
+            <div><span>Average score</span><strong>{performance.appearances ? compact(performance.averagePoints) : "—"}</strong><small>Across recorded captures</small></div>
+            <div><span>On-board rate</span><strong>{performance.eligibleCaptures ? `${Math.round(performance.participationRate)}%` : "—"}</strong><small>{performance.appearances}/{performance.eligibleCaptures} eligible captures</small></div>
+          </section>
+
+          <section className="profile-panel profile-chart-panel">
+            <div className="profile-section-head"><div><p className="eyebrow">SCORE HISTORY</p><h3>Recorded performance</h3></div>{performance.history.length > 0 && <strong>{compact(performance.bestPoints)} best</strong>}</div>
+            {chartPoints.length ? <>
+              <svg className="score-history-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={`Score history for ${member.canonicalName}`} preserveAspectRatio="none">
+                <line x1="16" y1="16" x2="544" y2="16" />
+                <line x1="16" y1="75" x2="544" y2="75" />
+                <line x1="16" y1="134" x2="544" y2="134" />
+                <polyline points={chartPoints.map((point) => `${point.x},${point.y}`).join(" ")} />
+                {chartPoints.map((point) => <circle key={point.snapshotId} cx={point.x} cy={point.y} r="5" />)}
+              </svg>
+              <div className="chart-range"><span>{dateLabel(chartPoints[0].capturedAt)}</span><span>{dateLabel(chartPoints.at(-1)!.capturedAt)}</span></div>
+            </> : <p className="empty-copy profile-empty">This commander has no linked ranking history yet.</p>}
+          </section>
+
+          <section className="profile-panel">
+            <div className="profile-section-head"><div><p className="eyebrow">IDENTITY</p><h3>Roster details</h3></div></div>
+            <dl className="profile-details">
+              <div><dt>Known aliases</dt><dd>{member.aliases.length ? member.aliases.join(", ") : "None recorded"}</dd></div>
+              <div><dt>Joined</dt><dd>{member.joinedAt || "Not recorded"}</dd></div>
+              <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
+              <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
+            </dl>
+          </section>
+
+          <section className="profile-panel profile-history-panel">
+            <div className="profile-section-head"><div><p className="eyebrow">CAPTURE LOG</p><h3>Recent results</h3></div></div>
+            <div className="profile-history-head"><span>Capture</span><span>Rank</span><span>Points</span><span>Vs prior</span></div>
+            {[...performance.history].reverse().map((point) => <div className="profile-history-row" key={point.snapshotId}><span><strong>{point.dayLabel}</strong><small>{dateLabel(point.capturedAt)}</small></span><b>#{point.rank}</b><b>{compact(point.points)}</b><Delta value={point.pointChange} format={(value) => compact(Math.abs(value))} /></div>)}
+            {!performance.history.length && <p className="empty-copy">No linked results to show.</p>}
+          </section>
+        </div>
+      </aside>
+    </div>
+  );
 }
 
 function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
@@ -655,7 +731,7 @@ function Snapshots({ snapshots, onOpen, onEdit }: { snapshots: Snapshot[]; onOpe
   return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section><div className="snapshot-list">{[...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt)).map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" onClick={() => exportSnapshot(snapshot)}><Download size={15} /> CSV</button><button className="button ghost" onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button secondary" onClick={() => onOpen(snapshot)}>Open</button></div></article>; })}</div></div>;
 }
 
-function Roster({ state, setState, notify }: { state: TrackerState; setState: (state: TrackerState) => void; notify: (message: string) => void }) {
+function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState; setState: (state: TrackerState) => void; notify: (message: string) => void; onOpenMember: (id: string) => void }) {
   const [members, setMembers] = useState(state.members);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<"all" | "active" | "departed">("all");
@@ -710,7 +786,7 @@ function Roster({ state, setState, notify }: { state: TrackerState; setState: (s
       <div className="roster-list-head" aria-hidden="true"><span>Commander</span><span>Known aliases</span><span>Status</span><span>Joined</span><span>Left</span><span>Officer notes</span></div>
       <div className="roster-list">{filtered.map((member) => (
         <article className="roster-member-row" key={member.id}>
-          <label className="roster-field roster-name"><span>Commander</span><input value={member.canonicalName} onChange={(event) => update(member.id, { canonicalName: event.target.value })} /></label>
+          <div className="roster-field roster-name"><span>Commander</span><div className="roster-name-editor"><input value={member.canonicalName} onChange={(event) => update(member.id, { canonicalName: event.target.value })} /><button className="profile-button" title={`View ${member.canonicalName} profile`} aria-label={`View ${member.canonicalName} profile`} onClick={() => onOpenMember(member.id)}><BarChart3 size={15} /></button></div></div>
           <label className="roster-field roster-aliases"><span>Known aliases</span><input value={member.aliases.join(", ")} placeholder="Previous names, comma separated" onChange={(event) => update(member.id, { aliases: event.target.value.split(",").map((alias) => alias.trim()).filter(Boolean) })} /></label>
           <div className="roster-field roster-status"><span>Status</span><label className="toggle-label"><input type="checkbox" checked={member.active} onChange={(event) => update(member.id, { active: event.target.checked, leftAt: event.target.checked ? undefined : member.leftAt || new Date().toISOString().slice(0, 10) })} /><span>{member.active ? "Active" : "Departed"}</span></label></div>
           <label className="roster-field roster-joined"><span>Joined</span><input type="date" value={member.joinedAt || ""} onChange={(event) => update(member.id, { joinedAt: event.target.value || undefined })} /></label>

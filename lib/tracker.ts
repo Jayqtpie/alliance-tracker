@@ -221,6 +221,43 @@ export function snapshotComparison(current: Snapshot, snapshots: Snapshot[]) {
   };
 }
 
+export function memberPerformance(member: Member, snapshots: Snapshot[]) {
+  const eligibleSnapshots = [...snapshots]
+    .filter((snapshot) => {
+      const capturedDate = snapshot.capturedAt.slice(0, 10);
+      return (!member.joinedAt || capturedDate >= member.joinedAt) && (!member.leftAt || capturedDate <= member.leftAt);
+    })
+    .sort((a, b) => a.capturedAt.localeCompare(b.capturedAt));
+
+  const history = eligibleSnapshots.flatMap((snapshot) => {
+    const entry = snapshot.entries.find((candidate) => candidate.memberId === member.id);
+    if (!entry) return [];
+    const comparison = snapshotComparison(snapshot, snapshots).rows.find((candidate) => candidate.memberId === member.id);
+    return [{
+      snapshotId: snapshot.id,
+      capturedAt: snapshot.capturedAt,
+      dayLabel: snapshot.dayLabel,
+      status: snapshot.status,
+      rank: entry.rank,
+      points: entry.points,
+      displayName: entry.displayName,
+      pointChange: comparison?.pointChange,
+      rankChange: comparison?.rankChange,
+    }];
+  });
+
+  return {
+    history,
+    appearances: history.length,
+    eligibleCaptures: eligibleSnapshots.length,
+    participationRate: eligibleSnapshots.length ? history.length / eligibleSnapshots.length * 100 : 0,
+    averagePoints: history.length ? history.reduce((sum, point) => sum + point.points, 0) / history.length : 0,
+    bestPoints: history.length ? Math.max(...history.map((point) => point.points)) : 0,
+    bestRank: history.length ? Math.min(...history.map((point) => point.rank)) : undefined,
+    latest: history.at(-1),
+  };
+}
+
 export function toRankingEntries(rows: ExtractedRow[], members: Member[]): RankingEntry[] {
   return rows.map((row) => {
     const member = matchMember(row.displayName, members);

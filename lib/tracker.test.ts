@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeImport, analyzeLargeChanges, dedupeRows, mergeMemberIdentities, normalizeName, snapshotComparison, weekStartFor } from "./tracker";
+import { analyzeImport, analyzeLargeChanges, dedupeRows, memberPerformance, mergeMemberIdentities, normalizeName, snapshotComparison, weekStartFor } from "./tracker";
 import type { Snapshot } from "./types";
 
 describe("leaderboard processing", () => {
@@ -90,5 +90,25 @@ describe("leaderboard processing", () => {
     expect(merged.members[0].aliases).toEqual(["Old Jay", "Older Jay"]);
     expect(merged.members[0].joinedAt).toBe("2025-01-01");
     expect(merged.snapshots[0].entries[0].memberId).toBe("keep");
+  });
+
+  it("builds a commander history with matching week-over-week changes", () => {
+    const make = (id: string, capturedAt: string, weekStart: string, dayLabel: string, points?: number, rank = 1): Snapshot => ({
+      id, capturedAt, weekStart, dayLabel, status: "live", sourceType: "manual",
+      entries: points === undefined ? [] : [{ id: `${id}-row`, memberId: "m1", rank, displayName: "Alpha", points, confidence: 1 }],
+    });
+    const snapshots = [
+      make("prior", "2026-08-18T12:00:00Z", "2026-08-17", "Tuesday", 100, 2),
+      make("current", "2026-08-25T12:00:00Z", "2026-08-24", "Tuesday", 120, 1),
+      make("missing", "2026-08-26T12:00:00Z", "2026-08-24", "Wednesday"),
+    ];
+    const result = memberPerformance({ id: "m1", canonicalName: "Alpha", aliases: [], active: true, joinedAt: "2026-08-01" }, snapshots);
+    expect(result.appearances).toBe(2);
+    expect(result.eligibleCaptures).toBe(3);
+    expect(Math.round(result.participationRate)).toBe(67);
+    expect(result.averagePoints).toBe(110);
+    expect(result.bestRank).toBe(1);
+    expect(result.latest?.pointChange).toBe(20);
+    expect(result.latest?.rankChange).toBe(1);
   });
 });
