@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { removeExpiredBridgeJobs } from "@/lib/bridge-store";
 import { getState, setState } from "@/lib/store";
 import { removeUploads } from "@/lib/uploads";
 
@@ -17,5 +18,6 @@ export async function GET(request: Request) {
     ...state,
     uploads: state.uploads.filter((upload) => !expired.some((item) => item.id === upload.id)),
   });
-  return NextResponse.json({ deleted: expired.length, remaining: next.uploads.length });
+  const bridgeJobsDeleted = await removeExpiredBridgeJobs(now);
+  return NextResponse.json({ deleted: expired.length, remaining: next.uploads.length, bridgeJobsDeleted });
 }

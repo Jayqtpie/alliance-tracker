@@ -1,5 +1,6 @@
 "use client";
 
+import { upload } from "@vercel/blob/client";
 import {
   Activity,
   ArrowDownRight,
@@ -29,9 +30,10 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
+import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
@@ -239,10 +241,12 @@ export function TrackerApp({
   initialState,
   storageMode,
   ocrConfigured,
+  bridgeConfigured,
 }: {
   initialState: TrackerState;
   storageMode: string;
   ocrConfigured: boolean;
+  bridgeConfigured: boolean;
 }) {
   const router = useRouter();
   const [state, setState] = useState(initialState);
@@ -330,6 +334,7 @@ export function TrackerApp({
             state={state}
             setState={setState}
             ocrConfigured={ocrConfigured}
+            bridgeConfigured={bridgeConfigured}
             editingSnapshot={editingSnapshot}
             onPublished={(snapshot) => {
               setEditingSnapshot(undefined);
@@ -546,12 +551,15 @@ function CommanderProfile({ member, state, onClose }: { member: Member; state: T
   );
 }
 
-function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
+function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; bridgeConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
   const [files, setFiles] = useState<File[]>([]);
   const [rows, setRows] = useState<Array<ExtractedRow & { memberId?: string; id?: string }>>(() => editingSnapshot?.entries || []);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [manual, setManual] = useState("");
   const [busy, setBusy] = useState(false);
+  const [queueing, setQueueing] = useState(false);
+  const [bridgeProgress, setBridgeProgress] = useState(0);
+  const [bridgeJob, setBridgeJob] = useState<BridgeJobView>();
   const [preparingVideo, setPreparingVideo] = useState(false);
   const [error, setError] = useState("");
   const [date, setDate] = useState(editingSnapshot?.capturedAt.slice(0, 10) || new Date().toISOString().slice(0, 10));
@@ -567,6 +575,29 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
   const linkedMemberIds = new Set(rows.map((row) => row.memberId || matchMember(row.displayName, state.members)?.id).filter(Boolean));
   const missingActive = state.members.filter((member) => member.active && !linkedMemberIds.has(member.id)).length;
   const unmatched = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members)).length;
+
+  useEffect(() => {
+    if (!bridgeConfigured || snapshotId) return;
+    let active = true;
+    fetch("/api/bridge/jobs")
+      .then((response) => response.ok ? response.json() : undefined)
+      .then((body) => { if (active && body?.jobs?.[0]) setBridgeJob(body.jobs[0] as BridgeJobView); })
+      .catch(() => undefined);
+    return () => { active = false; };
+  }, [bridgeConfigured, snapshotId]);
+
+  useEffect(() => {
+    if (!bridgeConfigured || !bridgeJob || !["pending", "processing"].includes(bridgeJob.status)) return;
+    let active = true;
+    const refresh = async () => {
+      const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`);
+      if (!response.ok) return;
+      const body = await response.json();
+      if (active) setBridgeJob(body.job as BridgeJobView);
+    };
+    const timer = window.setInterval(() => void refresh(), 4000);
+    return () => { active = false; window.clearInterval(timer); };
+  }, [bridgeConfigured, bridgeJob]);
 
   async function addFiles(incoming: File[]) {
     setError("");
@@ -610,6 +641,60 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
     setWarnings([...merged.warnings, ...failures]);
     if (!results.length && failures.length) setError(failures[0]);
     setBusy(false);
+  }
+
+  async function queueForLocalCodex() {
+    if (!files.length || !bridgeConfigured) return;
+    setQueueing(true); setError(""); setBridgeProgress(0);
+    try {
+      const jobId = crypto.randomUUID();
+      const totalBytes = files.reduce((total, file) => total + file.size, 0);
+      const uploadedBytes = new Map<number, number>();
+      const uploadedFiles: Array<{ id: string; name: string; pathname: string; contentType: string; size: number }> = [];
+      for (let start = 0; start < files.length; start += 3) {
+        const batch = files.slice(start, start + 3);
+        const results = await Promise.all(batch.map(async (file, batchIndex) => {
+          const index = start + batchIndex;
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+          const id = `frame-${String(index + 1).padStart(2, "0")}`;
+          const pathname = `bridge-uploads/${jobId}/${id}-${safeName}`;
+          const blob = await upload(pathname, file, {
+            access: "private",
+            handleUploadUrl: "/api/bridge/upload",
+            clientPayload: JSON.stringify({ jobId }),
+            onUploadProgress: (progress) => {
+              uploadedBytes.set(index, progress.loaded);
+              const loaded = [...uploadedBytes.values()].reduce((total, value) => total + value, 0);
+              setBridgeProgress(Math.min(99, Math.round((loaded / totalBytes) * 100)));
+            },
+          });
+          return { id, name: file.name, pathname: blob.pathname, contentType: blob.contentType, size: file.size };
+        }));
+        uploadedFiles.push(...results);
+      }
+      const response = await fetch("/api/bridge/jobs", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ id: jobId, files: uploadedFiles }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not create the PC bridge job.");
+      setBridgeProgress(100);
+      setBridgeJob(body.job as BridgeJobView);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not queue this capture for the PC worker.");
+    } finally {
+      setQueueing(false);
+    }
+  }
+
+  function loadBridgeResults() {
+    if (!bridgeJob?.rows?.length) return;
+    const merged = dedupeRows(bridgeJob.rows);
+    setRows(merged.rows);
+    setWarnings(merged.warnings);
+    setSourceType("local-codex");
+    setFiles([]);
   }
 
   function parseManual() {
@@ -675,7 +760,15 @@ function Importer({ state, setState, ocrConfigured, editingSnapshot, onPublished
           <input ref={input} hidden multiple type="file" accept="image/*,video/*" onChange={(event) => void addFiles([...(event.target.files || [])])} />
           <button className="button secondary" disabled={preparingVideo} onClick={() => input.current?.click()}>{preparingVideo ? "Preparing recording…" : "Choose screenshots or video"}</button>
           {files.length > 0 && <div className="file-list"><div>{sourceType === "video" ? <FileVideo size={16} /> : <FileImage size={16} />}<strong>{files.length} frame{files.length === 1 ? "" : "s"} ready</strong></div><button onClick={() => { setFiles([]); setSourceType("screenshots"); }}><X size={15} /> Clear</button></div>}
-          <button className="button primary wide" disabled={!files.length || busy || preparingVideo || !ocrConfigured} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract rankings</>}</button>
+          <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo || !ocrConfigured} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract with cloud API</>}</button>
+          {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? `Uploading frames… ${bridgeProgress}%` : <><Cloud size={16} /> Queue for PC Codex</>}</button>}
+          {queueing && <div className="bridge-progress" aria-label={`Upload ${bridgeProgress}% complete`}><span style={{ width: `${bridgeProgress}%` }} /></div>}
+          {bridgeJob && <div className={`bridge-status ${bridgeJob.status}`}>
+            <strong>{bridgeJob.status === "pending" ? "Waiting for PC worker" : bridgeJob.status === "processing" ? "Codex is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
+            <span>{bridgeJob.status === "pending" ? "Start npm run bridge:worker on the PC." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Load the result into the review table." : bridgeJob.error}</span>
+            {bridgeJob.status === "completed" && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Load extracted rows</button>}
+          </div>}
+          {!bridgeConfigured && <p className="bridge-unavailable">The PC bridge appears after private Blob storage and a worker secret are configured.</p>}
         </div>
         <div className="panel manual-paste">
           <p className="eyebrow">LOCAL CODEX</p><h3>Import an extracted JSON file</h3><p>Generate it on a signed-in computer with <code>npm run extract:local</code>. Screenshots never pass through Vercel.</p>
