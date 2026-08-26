@@ -9,7 +9,7 @@ const schema = z.object({
   snapshotId: z.string().optional(),
   capturedDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   status: z.enum(["live", "final"]),
-  sourceType: z.enum(["screenshots", "video", "manual"]).default("screenshots"),
+  sourceType: z.enum(["screenshots", "video", "local-codex", "manual"]).default("screenshots"),
   notes: z.string().max(600).optional(),
   rows: z.array(z.object({
     id: z.string().optional(),

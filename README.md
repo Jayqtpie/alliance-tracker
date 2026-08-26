@@ -7,6 +7,7 @@ A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers ca
 - Shared officer passcode with a signed, HTTP-only session cookie
 - Tuesday 25 August 2026 seed snapshot for ranks 1–90
 - Multi-image extraction through the OpenAI Responses API
+- Optional local Codex CLI extraction using an officer's ChatGPT sign-in
 - On-device screen-recording frame extraction (the original video is never uploaded)
 - Automatic removal of the repeated green pinned-player card
 - Rank deduplication, gap/order warnings, likely name-change suggestions, large-change checks, confidence flags, and human review
@@ -28,6 +29,33 @@ npm run dev
 ```
 
 Without a connected Vercel Blob store, development data is stored under `.data/` and is deliberately ignored by Git. Without `OPENAI_API_KEY`, the dashboard still supports manual CSV/tab-separated imports.
+
+## Local Codex extraction (no API key)
+
+The original cloud extractor remains available. As an alternative, an officer can process screenshots on a Windows, macOS, or Linux computer using a locally authenticated Codex CLI, then import the generated JSON into the deployed tracker.
+
+1. Install the Codex CLI and sign in once with your ChatGPT account:
+
+   ```powershell
+   codex login
+   codex login status
+   ```
+
+2. From this repository, run the companion with one or more screenshots:
+
+   ```powershell
+   npm run extract:local -- "C:\path\rank-01.png" "C:\path\rank-02.png"
+   ```
+
+   To choose the output filename:
+
+   ```powershell
+   npm run extract:local -- --out "C:\path\tuesday-results.json" "C:\path\rank-01.png"
+   ```
+
+3. Open **New import** in Alliance Manager, choose **Import Codex JSON**, review the rows, and publish the snapshot.
+
+The companion uses the Codex authentication available in the terminal where it is launched and refuses an explicitly detected API-key login. It runs Codex non-interactively with read-only sandboxing, retains no Codex session, and writes only the result JSON. Screenshots are sent from that computer to Codex and are not uploaded to Alliance Manager or retained in Vercel.
 
 ## Vercel Blob setup
 
