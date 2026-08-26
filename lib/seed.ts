@@ -67,5 +67,6 @@ export const INITIAL_STATE: TrackerState = {
     },
   ],
   uploads: [],
+  operations: { stormEvents: [], guardianPool: [], trainAssignments: [] },
   updatedAt: capturedAt,
 };

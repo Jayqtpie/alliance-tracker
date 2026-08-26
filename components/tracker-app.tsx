@@ -24,6 +24,7 @@ import {
   Search,
   Share2,
   Shield,
+  Swords,
   Sparkles,
   Trash2,
   UploadCloud,
@@ -34,12 +35,13 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
+import { Operations } from "@/components/operations";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
-type View = "overview" | "import" | "reports" | "snapshots" | "members";
+type View = "overview" | "import" | "reports" | "operations" | "members";
 const bridgeJobStorageKey = "alliance-manager:active-bridge-job";
 
 function compact(value: number) {
@@ -253,6 +255,7 @@ export function TrackerApp({
   const router = useRouter();
   const [state, setState] = useState(initialState);
   const [view, setView] = useState<View>("overview");
+  const [reportsTab, setReportsTab] = useState<"reports" | "snapshots">("reports");
   const [editingSnapshot, setEditingSnapshot] = useState<Snapshot>();
   const [selectedSnapshotId, setSelectedSnapshotId] = useState(
     [...initialState.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt))[0]?.id || "",
@@ -292,7 +295,7 @@ export function TrackerApp({
     ["overview", "Overview", LayoutDashboard],
     ["import", "New import", UploadCloud],
     ["reports", "Reports", LineChart],
-    ["snapshots", "Snapshots", History],
+    ["operations", "Operations", Swords],
     ["members", "Roster", Users],
   ] as const;
 
@@ -360,18 +363,19 @@ export function TrackerApp({
             }}
           />
         )}
-        {view === "reports" && <Reports state={state} />}
-        {view === "snapshots" && (
-          <Snapshots
+        {view === "reports" && <>
+          <div className="reports-tabs-wrap"><div className="operations-tabs reports-tabs">
+            <button className={reportsTab === "reports" ? "active" : ""} onClick={() => setReportsTab("reports")}><LineChart size={16} />Reports</button>
+            <button className={reportsTab === "snapshots" ? "active" : ""} onClick={() => setReportsTab("snapshots")}><History size={16} />Snapshot history</button>
+          </div></div>
+          {reportsTab === "reports" ? <Reports state={state} /> : <Snapshots
             snapshots={state.snapshots}
             onOpen={(snapshot) => { setSelectedSnapshotId(snapshot.id); setView("overview"); }}
-            onEdit={(snapshot) => {
-              setEditingSnapshot(snapshot);
-              setView("import");
-            }}
+            onEdit={(snapshot) => { setEditingSnapshot(snapshot); setView("import"); }}
             onDelete={deleteSnapshot}
-          />
-        )}
+          />}
+        </>}
+        {view === "operations" && <Operations state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
         {view === "members" && <Roster state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
       </main>
       {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} />}
@@ -500,6 +504,11 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
 
 function CommanderProfile({ member, state, onClose }: { member: Member; state: TrackerState; onClose: () => void }) {
   const performance = memberPerformance(member, state.snapshots);
+  const stormHistory = (state.operations?.stormEvents || []).flatMap((event) => {
+    const participant = event.participants.find((item) => item.memberId === member.id);
+    return participant ? [{ event, participant }] : [];
+  }).sort((a, b) => b.event.battleAt.localeCompare(a.event.battleAt));
+  const trainHistory = (state.operations?.trainAssignments || []).filter((assignment) => assignment.conductorMemberId === member.id || assignment.vipMemberId === member.id).sort((a, b) => b.date.localeCompare(a.date));
   const chartWidth = 560;
   const chartHeight = 150;
   const chartPadding = 16;
@@ -554,6 +563,21 @@ function CommanderProfile({ member, state, onClose }: { member: Member; state: T
               <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
               <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
             </dl>
+          </section>
+
+          <section className="profile-panel profile-operations-panel">
+            <div className="profile-section-head"><div><p className="eyebrow">OPERATIONS</p><h3>Storm and train history</h3></div></div>
+            <div className="profile-operation-metrics">
+              <div><span>Storm selections</span><strong>{stormHistory.filter(({ participant }) => participant.role !== "unassigned").length}</strong></div>
+              <div><span>Storm attendance</span><strong>{stormHistory.filter(({ participant }) => participant.attendance === "attended" || participant.attendance === "substitute-used").length}</strong></div>
+              <div><span>Trains conducted</span><strong>{trainHistory.filter((assignment) => assignment.conductorMemberId === member.id && assignment.status === "completed").length}</strong></div>
+              <div><span>VIP / Guardian</span><strong>{trainHistory.filter((assignment) => assignment.vipMemberId === member.id && assignment.status === "completed").length}</strong></div>
+            </div>
+            <div className="profile-operation-list">
+              {stormHistory.slice(0, 5).map(({ event, participant }) => <div key={`${event.id}-${member.id}`}><span>{event.battleAt.slice(0, 10)}</span><strong>{event.type === "desert" ? "Desert" : "Canyon"} · Team {event.team}</strong><small>{participant.role.replace("-", " ")} · {participant.attendance.replace("-", " ")}{participant.score !== undefined ? ` · ${full(participant.score)} pts` : ""}</small></div>)}
+              {trainHistory.slice(0, 5).map((assignment) => <div key={`${assignment.id}-${member.id}`}><span>{assignment.date}</span><strong>{assignment.conductorMemberId === member.id ? "Train conductor" : assignment.vipType === "guardian-defender" ? "Guardian Defender" : "Special Guest"}</strong><small>{assignment.status}</small></div>)}
+              {!stormHistory.length && !trainHistory.length && <p className="empty-copy">No operations history recorded yet.</p>}
+            </div>
           </section>
 
           <section className="profile-panel profile-history-panel">

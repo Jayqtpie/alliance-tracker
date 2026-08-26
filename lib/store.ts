@@ -5,6 +5,7 @@ import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
 import { INITIAL_STATE } from "@/lib/seed";
 import type { TrackerState } from "@/lib/types";
+import { hydrateOperations } from "@/lib/operations";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
@@ -20,7 +21,8 @@ function assertVercelStorageConfigured() {
 async function getBlobState() {
   const result = await get(statePath, { access: "private", useCache: false, token: blobToken() });
   if (!result || result.statusCode !== 200) return null;
-  const payload = JSON.parse(await new Response(result.stream).text()) as TrackerState;
+  const stored = JSON.parse(await new Response(result.stream).text()) as TrackerState;
+  const payload = { ...stored, operations: hydrateOperations(stored.operations) };
   return { payload };
 }
 
@@ -49,7 +51,8 @@ export async function getState(): Promise<TrackerState> {
   }
 
   try {
-    return JSON.parse(await readFile(stateFile, "utf8")) as TrackerState;
+    const stored = JSON.parse(await readFile(stateFile, "utf8")) as TrackerState;
+    return { ...stored, operations: hydrateOperations(stored.operations) };
   } catch {
     await mkdir(path.dirname(stateFile), { recursive: true });
     await writeFile(stateFile, JSON.stringify(INITIAL_STATE, null, 2), "utf8");
