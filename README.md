@@ -1,11 +1,11 @@
 # Alliance Manager
 
-A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers can upload overlapping Last War leaderboard screenshots or an iPhone screen recording, review extracted rankings, publish live or final snapshots, compare matching weeks, manage commander identities, and export officer-ready reports.
+A mobile-friendly Alliance Duel tracker for alliance leadership. Officers can upload overlapping Last War leaderboard screenshots or an iPhone screen recording, review extracted rankings, publish live or final snapshots, compare matching weeks, manage commander identities, and export officer-ready reports.
 
 ## Included in this MVP
 
 - Shared officer passcode with a signed, HTTP-only session cookie
-- Tuesday 25 August 2026 seed snapshot for ranks 1–90
+- First-time alliance setup, editable name/tag/server, and an empty roster for new installations
 - Multi-image extraction through the OpenAI Responses API
 - Optional local Codex CLI extraction using an officer's ChatGPT sign-in
 - On-device screen-recording frame extraction (the original video is never uploaded)
@@ -19,6 +19,21 @@ A mobile-friendly Alliance Duel tracker for **RSCL · The Rascals**. Officers ca
 - Private Vercel Blob persistence with a local JSON development fallback
 - Responsive officer dashboard, dedicated reports, detailed CSV, and shareable PNG export
 - Commander profiles with score history, rank records, participation rate, aliases, and week-over-week movement
+
+## A private app for each alliance
+
+Use the same codebase for each customer, with a separate deployment and private Blob store for each alliance. Do not connect two customers to the same Blob store: state, uploads and worker queues use shared paths within that store, not tenant partitions.
+
+1. Create a separate Vercel project and private Blob store for the customer.
+2. Set unique `OFFICER_PASSCODE`, `SESSION_SECRET`, `CRON_SECRET` and, if used, `BRIDGE_SECRET` values for that deployment. Configure its extraction API key if cloud OCR is needed.
+3. Deploy without copying `.data`, `.env.local` or `.env.bridge.local` from another installation.
+4. The first officer signs in and enters the alliance name, short tag and server number. The roster and score history start empty.
+5. Import the alliance leaderboard. Use the Settings button in the header to edit alliance details later; renaming preserves member IDs, scores and operations.
+6. For a PC worker, explicitly set `BRIDGE_URL` to the customer deployment and use that deployment's worker secret. There is no default production target.
+
+Login branding, workspace identity, CSV filenames, PNG reports and train schedule exports use the saved alliance details. Every alliance keeps the existing badge as its default emblem, regardless of its name, tag or server. Settings accepts a custom PNG, JPG or WebP (up to 5 MB), resizes it to at most 192 pixels, and stores the resulting PNG with the alliance identity when saved. Use default emblem restores the original badge. The existing RSCL installation keeps its saved data. Historical fixtures remain in the repository for migration and regression tests; they are never seeded into new installations. If handing over source code, remove the RSCL roster fixtures and avatar assets from the customer delivery; retain the shared default emblem.
+
+This supports a private deployment per alliance. Billing, customer provisioning, custom domains and individual officer accounts are not automated. Operations remains paused in the navigation.
 
 ## Local development
 
@@ -64,7 +79,7 @@ The queue bridge lets an officer choose a screen recording directly from the dep
 On the PC, add the worker settings to `.env.bridge.local`:
 
 ```dotenv
-BRIDGE_URL=https://alliance-tracker-nine.vercel.app
+BRIDGE_URL=https://your-alliance-app.vercel.app
 BRIDGE_SECRET=the-same-value-as-vercel
 ```
 
@@ -106,7 +121,7 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 | `BLOB_READ_WRITE_TOKEN` / `BLOB1_READ_WRITE_TOKEN` | Added by Vercel when the private Blob store is connected |
 | `CRON_SECRET` | Protects the scheduled cleanup endpoint |
 | `BRIDGE_SECRET` | Authenticates the local PC queue worker; falls back to `OFFICER_PASSCODE` |
-| `BRIDGE_URL` | Local worker target; defaults to the production tracker URL |
+| `BRIDGE_URL` | Required local worker target: this alliance deployment URL |
 
 After connecting this repository to Vercel, deploy normally. [`vercel.json`](vercel.json) schedules a daily cleanup request. Upload metadata and the original private blob are removed after five days; published ranking data remains.
 
@@ -122,7 +137,7 @@ After connecting this repository to Vercel, deploy normally. [`vercel.json`](ver
 
 ## Verification
 
-The roster includes the signed-in LWServers capture from 5 September 2026: 100 members and avatars, 90 hero-power values (eight marked legacy), and 60 kill counts. Displayed numbers are rounded; unavailable values remain null. This is a saved capture, not a live game integration.
+The existing RSCL deployment includes the signed-in LWServers capture from 5 September 2026: 100 members and avatars, 90 hero-power values (eight marked legacy), and 60 kill counts. Displayed numbers are rounded; unavailable values remain null. This is a saved capture, not a live game integration.
 
 `lib/roster-import.ts` applies this capture once when state is loaded, then saves a `rosterImport` marker in local or Blob storage. It matches game IDs first and unambiguous normalized names/known aliases next. Existing member IDs, scores, notes and operations remain intact; unmatched older identities appear under Previous records rather than being deleted. Fuzzy OCR names are not automatically merged. The marker prevents later officer changes from being overwritten on refresh. Avatars are bundled under `public/avatars/rscl`.
 

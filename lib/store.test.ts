@@ -39,6 +39,24 @@ beforeEach(() => {
 });
 
 describe("private Blob state writes", () => {
+  it("initialises a new store empty and keeps it empty after setup and reload", async () => {
+    vi.mocked(get).mockResolvedValueOnce(null);
+    vi.mocked(put).mockImplementationOnce(async (_path, body) => {
+      stored = JSON.parse(String(body));
+      return {} as Awaited<ReturnType<typeof put>>;
+    });
+    const fresh = await getState();
+    expect(fresh.alliance).toEqual({ name: "", tag: "", server: "" });
+    expect(fresh.members).toEqual([]);
+    expect(fresh.snapshots).toEqual([]);
+    await setState({ ...fresh, alliance: { name: "The Rascals", tag: "RSCL", server: "927" } });
+    const reloaded = await getState();
+    expect(reloaded.alliance.server).toBe("927");
+    expect(reloaded.members).toEqual([]);
+    expect(reloaded.snapshots).toEqual([]);
+    expect(put).toHaveBeenCalledTimes(2);
+  });
+
   it("loads and persists the roster using the metadata ETag, not the delivery ETag", async () => {
     const result = await getState();
     expect(result.members.filter((member) => member.active)).toHaveLength(100);

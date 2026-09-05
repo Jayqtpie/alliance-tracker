@@ -103,7 +103,7 @@ export function Operations({ state, setState, notify, onOpenMember }: { state: T
       {tab === "storm" ? (
         <StormPlanner operations={operations} setOperations={setOperations} members={members} onOpenMember={onOpenMember} />
       ) : (
-        <TrainPlanner operations={operations} setOperations={setOperations} members={members} notify={notify} />
+        <TrainPlanner alliance={state.alliance} operations={operations} setOperations={setOperations} members={members} notify={notify} />
       )}
     </div>
   );
@@ -229,7 +229,7 @@ function StormPlanner({ operations, setOperations, members, onOpenMember }: { op
   </div>;
 }
 
-function TrainPlanner({ operations, setOperations, members, notify }: { operations: OperationsState; setOperations: (operations: OperationsState) => void; members: Member[]; notify: (message: string) => void }) {
+function TrainPlanner({ alliance, operations, setOperations, members, notify }: { alliance: TrackerState["alliance"]; operations: OperationsState; setOperations: (operations: OperationsState) => void; members: Member[]; notify: (message: string) => void }) {
   const [weekStart, setWeekStart] = useState(mondayFor(today()));
   const activeMembers = members.filter((member) => member.active);
   const weekAssignments = assignmentsForWeek(operations.trainAssignments, weekStart);
@@ -259,7 +259,7 @@ function TrainPlanner({ operations, setOperations, members, notify }: { operatio
   }
 
   async function copySchedule() {
-    const lines = [`RSCL TRAIN SCHEDULE · Week of ${weekStart}`];
+    const lines = [`${alliance.tag} TRAIN SCHEDULE · Week of ${weekStart}`];
     Array.from({ length: 7 }, (_, index) => addDays(weekStart, index)).forEach((date) => {
       const assignment = byDate.get(date);
       const day = new Intl.DateTimeFormat("en-GB", { weekday: "short", timeZone: "UTC" }).format(new Date(`${date}T12:00:00Z`));

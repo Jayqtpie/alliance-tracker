@@ -3,7 +3,7 @@ import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from 
 export function normalizeName(value: string) {
   return value
     .normalize("NFKC")
-    .replace(/\[RSCL\]/gi, "")
+    .replace(/^\s*\[[\p{L}\p{N}]{1,8}\]\s*/u, "")
     .toLocaleLowerCase()
     .replace(/[^\p{L}\p{N}]+/gu, "")
     .trim();
