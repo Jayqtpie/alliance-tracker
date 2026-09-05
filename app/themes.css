@@ -144,17 +144,17 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: .85; }
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
 }
 
-/* Military olive and brass give the navigation its own game-inspired identity. */
+/* Muted navy gives navigation a distinct colour without bright accents. */
 .sidebar {
-  --sidebar-bg: #3b4132; --sidebar-hover: #474d3c; --sidebar-active: #53573d;
-  --sidebar-ink: #eeeee5; --sidebar-muted: #c2c5b7; --sidebar-line: #535a46;
-  --sidebar-accent: #dcc992;
+  --sidebar-bg: #2d405b; --sidebar-hover: #374d6a; --sidebar-active: #435e80;
+  --sidebar-ink: #e9eef5; --sidebar-muted: #bdc9da; --sidebar-line: #435773;
+  --sidebar-accent: #a5c4e8;
   background: var(--sidebar-bg); color: var(--sidebar-ink); border-color: var(--sidebar-line);
 }
 :root[data-theme="dark"] .sidebar {
-  --sidebar-bg: #292e25; --sidebar-hover: #343b2d; --sidebar-active: #414733;
-  --sidebar-ink: #e1e3d7; --sidebar-muted: #b6bdab; --sidebar-line: #434c38;
-  --sidebar-accent: #c6b684;
+  --sidebar-bg: #223249; --sidebar-hover: #2c405b; --sidebar-active: #374f70;
+  --sidebar-ink: #dfe7f1; --sidebar-muted: #b0bfd3; --sidebar-line: #364b66;
+  --sidebar-accent: #95b5dc;
 }
 .sidebar .brand-lockup, .sidebar .leadership-access { border-color: var(--sidebar-line); }
 .sidebar .brand-lockup span, .sidebar .brand-lockup .brand-word, .sidebar .nav-caption,
@@ -167,7 +167,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: .85; }
 .sidebar .nav-item:disabled { color: var(--sidebar-muted); }
 .sidebar .nav-count { background: var(--sidebar-hover); color: var(--sidebar-ink); }
 .sidebar .nav-disabled-note { border-color: var(--sidebar-line); }
-.sidebar .system-chip.online svg { color: #b3c394; }
+.sidebar .system-chip.online svg { color: var(--sidebar-accent); }
 .sidebar .system-chip.local svg { color: var(--sidebar-accent); }
 .sidebar button:focus-visible { outline-color: var(--sidebar-accent); }
 .dashboard-heading h1 > span, .coverage-panel .panel-head > svg { color: var(--blue); }
