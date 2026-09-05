@@ -3,19 +3,21 @@
 import { upload } from "@vercel/blob/client";
 import {
   Activity,
+  ArrowRight,
   ArrowDownRight,
   ArrowUpRight,
   BarChart3,
   CalendarDays,
   Check,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   CircleAlert,
   Cloud,
   Download,
   FileImage,
   FileJson,
   FileVideo,
-  GitMerge,
   History,
   LayoutDashboard,
   LineChart,
@@ -24,6 +26,7 @@ import {
   Search,
   Share2,
   Shield,
+  ShieldCheck,
   Swords,
   Sparkles,
   Trash2,
@@ -35,7 +38,7 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
-import { Operations } from "@/components/operations";
+import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
@@ -293,31 +296,36 @@ export function TrackerApp({
 
   const nav = [
     ["overview", "Overview", LayoutDashboard],
-    ["import", "New import", UploadCloud],
-    ["reports", "Reports", LineChart],
     ["operations", "Operations", Swords],
     ["members", "Roster", Users],
+    ["reports", "Reports", LineChart],
+    ["import", "New import", UploadCloud],
   ] as const;
+
+  function navigate(next: View) {
+    if (next === "import") setEditingSnapshot(undefined);
+    setView(next);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#workspace">Skip to content</a>
       <aside className="sidebar">
         <div className="brand-lockup">
           <AllianceMark compact />
-          <div><strong>Alliance Manager</strong><span>RSCL · Server 927</span></div>
+          <div><strong>{state.alliance.tag}<span className="brand-word"> / command</span></strong><span>Server {state.alliance.server}</span></div>
         </div>
-        <nav>
+        <p className="nav-caption">WORKSPACE</p>
+        <nav aria-label="Main navigation">
           {nav.map(([id, label, Icon]) => (
-            <button key={id} className={view === id ? "nav-item active" : "nav-item"} onClick={() => {
-              if (id === "import") setEditingSnapshot(undefined);
-              setView(id);
-              window.scrollTo(0, 0);
-            }}>
-              <Icon size={18} /> {label}
+            <button key={id} disabled={id === "operations"} title={id === "operations" ? "Operations are managed on the alliance’s other website" : undefined} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
+              <Icon size={18} /> <span>{label}</span>{id === "operations" && <span className="nav-disabled-note">Paused</span>}{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
             </button>
           ))}
         </nav>
         <div className="sidebar-foot">
+          <div className="leadership-access"><ShieldCheck size={20} /><div><strong>Leadership workspace</strong><span>R4 & R5 officer access</span></div></div>
           <div className={`system-chip ${storageMode === "vercel-blob" ? "online" : "local"}`}>
             <Cloud size={14} /> {storageMode === "vercel-blob" ? "Shared data online" : "Local preview data"}
           </div>
@@ -325,17 +333,19 @@ export function TrackerApp({
         </div>
       </aside>
 
-      <main className="workspace">
+      <main className="workspace" id="workspace" tabIndex={-1}>
         <header className="topbar">
           <div>
-            <p className="eyebrow">ALLIANCE PERFORMANCE</p>
-            <h1>{view === "overview" ? "Alliance overview" : nav.find(([id]) => id === view)?.[1]}</h1>
+            <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{nav.find(([id]) => id === view)?.[1]}</span></p>
+            {view !== "overview" && view !== "members" && <h1 className="sr-only">{nav.find(([id]) => id === view)?.[1]}</h1>}
           </div>
-          <div className="topbar-meta"><span className="live-dot" /> Transfer period active</div>
+          <div className="topbar-meta"><ShieldCheck size={15} /> Leadership only <span className="officer-avatar">R4/5</span></div>
+          <button className="mobile-signout icon-button" aria-label="Sign out" onClick={logout}><LogOut size={18} /></button>
         </header>
 
         {view === "overview" && selected && comparison && (
           <Overview
+            key={selected.id}
             state={state}
             selected={selected}
             setSelected={setSelectedSnapshotId}
@@ -343,10 +353,12 @@ export function TrackerApp({
             query={query}
             setQuery={setQuery}
             onOpenMember={setSelectedMemberId}
+            onNavigate={navigate}
+            onReview={() => { setEditingSnapshot(selected); setView("import"); window.scrollTo(0, 0); }}
           />
         )}
         {view === "overview" && !selected && (
-          <div className="page-stack"><div className="review-banner warning"><CircleAlert size={18} />No snapshots recorded. Use New import to publish a capture.</div></div>
+          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">YOUR ALLIANCE, AT A GLANCE</p><h1>Command overview</h1><p>Everything you need to keep the alliance moving.</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>Your first capture starts here</h2><p>Import a leaderboard to see alliance scores and commander performance.</p><button className="button primary" onClick={() => navigate("import")}>New import <ArrowRight size={16} /></button></section></div>
         )}
         {view === "import" && (
           <Importer
@@ -375,11 +387,10 @@ export function TrackerApp({
             onDelete={deleteSnapshot}
           />}
         </>}
-        {view === "operations" && <Operations state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
-        {view === "members" && <Roster state={state} setState={setState} notify={showNotice} onOpenMember={setSelectedMemberId} />}
+        {view === "members" && <AllianceRoster state={state} onOpenMember={setSelectedMemberId} />}
       </main>
       {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} />}
-      {notice && <div className="toast"><Check size={17} /> {notice}</div>}
+      {notice && <div className="toast" role="status"><Check size={17} /> {notice}</div>}
     </div>
   );
 }
@@ -392,6 +403,8 @@ function Overview({
   query,
   setQuery,
   onOpenMember,
+  onNavigate,
+  onReview,
 }: {
   state: TrackerState;
   selected: Snapshot;
@@ -400,30 +413,44 @@ function Overview({
   query: string;
   setQuery: (query: string) => void;
   onOpenMember: (id: string) => void;
+  onNavigate: (view: View) => void;
+  onReview: () => void;
 }) {
+  const [filter, setFilter] = useState<"all" | "top" | "review">("all");
+  const [page, setPage] = useState(0);
   const total = selected.entries.reduce((sum, entry) => sum + entry.points, 0);
   const average = selected.entries.length ? total / selected.entries.length : 0;
   const sortedPoints = selected.entries.map((entry) => entry.points).sort((a, b) => a - b);
   const median = sortedPoints.length ? sortedPoints[Math.floor(sortedPoints.length / 2)] : 0;
   const previousTotal = comparison.previous?.entries.reduce((sum, entry) => sum + entry.points, 0);
-  const rows = comparison.rows.filter((row) => row.displayName.toLocaleLowerCase().includes(query.toLocaleLowerCase()));
+  const rows = comparison.rows.filter((row) => row.displayName.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "top" ? row.rank <= 25 : row.needsReview)));
+  const pageCount = Math.max(1, Math.ceil(rows.length / 10));
+  const currentPage = Math.min(page, pageCount - 1);
+  const visibleRows = rows.slice(currentPage * 10, currentPage * 10 + 10);
+  const activeMembers = state.members.filter((member) => member.active);
+  const rankedIds = new Set(selected.entries.map((entry) => entry.memberId));
+  const coveredMembers = activeMembers.filter((member) => rankedIds.has(member.id)).length;
   const maxPoints = Math.max(...selected.entries.map((entry) => entry.points), 1);
   const reviewCount = selected.entries.filter((entry) => entry.needsReview).length;
 
   return (
-    <div className="page-stack">
+    <div className="page-stack dashboard-page">
+      <section className="dashboard-heading">
+        <div><p className="eyebrow">YOUR ALLIANCE, AT A GLANCE</p><h1>Command overview<span>.</span></h1><p>Performance, people, and the next move.</p></div>
+        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />View reports</button><button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />New import</button></div>
+      </section>
       <section className="snapshot-hero">
         <div>
           <div className="snapshot-title-row">
             <span className={`status-pill ${selected.status}`}>{selected.status}</span>
             <span>{selected.dayLabel}, {dateLabel(selected.capturedAt)}</span>
           </div>
-          <h2>{selected.entries.length} commanders on the board</h2>
+          <h2>Alliance Duel <span>/ performance snapshot</span></h2>
           <p>{comparison.previous ? `Compared with ${comparison.previous.dayLabel}, ${dateLabel(comparison.previous.capturedAt)}` : "First recorded snapshot — comparisons begin with the next matching capture."}</p>
         </div>
         <label className="select-wrap">
           <CalendarDays size={17} />
-          <select value={selected.id} onChange={(event) => setSelected(event.target.value)}>
+          <select aria-label="Performance snapshot" value={selected.id} onChange={(event) => setSelected(event.target.value)}>
             {[...state.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt)).map((snapshot) => (
               <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>
             ))}
@@ -432,41 +459,51 @@ function Overview({
         </label>
       </section>
 
-      {reviewCount > 0 && (
-        <div className="review-banner"><CircleAlert size={18} /><span><strong>{reviewCount} seeded names need confirmation.</strong> Scores are saved; decorated characters can be corrected from the roster or snapshot editor.</span></div>
-      )}
-
       <section className="metric-grid">
         <Metric icon={Activity} label="Alliance points" value={compact(total)} detail={previousTotal === undefined ? "Baseline capture" : `${signed(total - previousTotal)} vs prior`} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
-        <Metric icon={Users} label="Ranked members" value={String(selected.entries.length)} detail="Out of 100 roster places" />
+        <Metric icon={Users} label="Ranked members" value={String(selected.entries.length)} detail={`${coveredMembers} of ${activeMembers.length} active members captured`} />
         <Metric icon={BarChart3} label="Average score" value={compact(average)} detail={`Median ${compact(median)}`} />
-        <Metric icon={Shield} label="Top 25 share" value={`${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%`} detail="Of all recorded points" />
+        <Metric icon={Shield} label="Top 25 share" value={total ? `${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%` : "—"} detail="Of all recorded points" />
       </section>
+
+      {reviewCount > 0 && (
+        <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{reviewCount} commander names need a second look.</strong> Confirm names in this capture to keep your records accurate.</span><button onClick={onReview}>Review capture <ArrowRight size={14} /></button></div>
+      )}
 
       <section className="content-grid">
         <div className="panel leaderboard-panel">
           <div className="panel-head">
-            <div><p className="eyebrow">RANKINGS</p><h3>Commander performance</h3></div>
-            <div className="search-box"><Search size={16} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find commander" /></div>
+            <div><p className="eyebrow">THE LEADERBOARD</p><h3>Commander performance <span className="count-chip">{selected.entries.length}</span></h3></div>
+            <div className="search-box"><Search size={16} /><input aria-label="Find commander" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} placeholder="Find commander…" />{query && <button className="search-clear" aria-label="Clear search" onClick={() => { setQuery(""); setPage(0); }}><X size={14} /></button>}</div>
           </div>
+          <div className="leaderboard-filters" aria-label="Filter commanders">{([["all", "All commanders"], ["top", "Top 25"], ["review", `Needs review (${reviewCount})`]] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} className={filter === id ? "active" : ""} onClick={() => { setFilter(id); setPage(0); }}>{label}</button>)}</div>
           <div className="table-scroll">
             <table className="ranking-table">
               <thead><tr><th>Rank</th><th>Commander</th><th>Points</th><th>Score change</th><th>Rank move</th></tr></thead>
               <tbody>
-                {rows.map((row) => (
+                {visibleRows.map((row) => (
                   <tr key={row.id}>
-                    <td><span className={row.rank <= 3 ? `rank-badge top-${row.rank}` : "rank-badge"}>{row.rank}</span></td>
+                    <td><span className={row.rank <= 3 ? `rank-badge top-${row.rank}` : "rank-badge"}>{row.rank}</span>{row.rankChange !== undefined && <span className="mobile-rank-move"><span className="sr-only">Rank change: </span><Delta value={row.rankChange} format={(value) => String(Math.abs(value))} /></span>}</td>
                     <td><div className="commander-cell"><span className="avatar-fallback">{row.displayName.slice(0, 1).toLocaleUpperCase()}</span>{row.memberId ? <button className="commander-link" onClick={() => onOpenMember(row.memberId!)}>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</button> : <span>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</span>}</div></td>
-                    <td><strong>{full(row.points)}</strong><div className="score-bar"><span style={{ width: `${Math.max(4, row.points / maxPoints * 100)}%` }} /></div></td>
+                    <td><strong>{full(row.points)}</strong><div className="score-bar"><span style={{ width: `${Math.max(4, row.points / maxPoints * 100)}%` }} /></div>{row.pointChange !== undefined && <span className="mobile-score-change"><span className="sr-only">Score change: </span><Delta value={row.pointChange} format={(value) => compact(Math.abs(value))} /></span>}</td>
                     <td><Delta value={row.pointChange} format={(value) => compact(Math.abs(value))} /></td>
                     <td><Delta value={row.rankChange} format={(value) => `${Math.abs(value)} place${Math.abs(value) === 1 ? "" : "s"}`} /></td>
                   </tr>
                 ))}
+                {!rows.length && <tr><td colSpan={5}><div className="leaderboard-empty"><Search size={22} /><strong>No commanders found</strong><span>Try another name or choose a different filter.</span></div></td></tr>}
               </tbody>
             </table>
           </div>
+          <div className="table-footer"><span aria-live="polite">{rows.length ? `${currentPage * 10 + 1}–${Math.min((currentPage + 1) * 10, rows.length)} of ${rows.length} commanders` : "0 commanders"}</span><div><button className="icon-button" aria-label="Previous page" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={16} /></button><span>{currentPage + 1} / {pageCount}</span><button className="icon-button" aria-label="Next page" disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}><ChevronRight size={16} /></button></div></div>
         </div>
-        <aside className="panel insight-panel">
+        <aside className="dashboard-insights">
+        <section className="panel coverage-panel">
+          <div className="panel-head"><div><p className="eyebrow">ROSTER HEALTH</p><h3>Capture coverage</h3></div><Users size={18} /></div>
+          <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>active members on this board</p></div></div>
+          <p className="coverage-note">{activeMembers.length === 0 ? "Add active members to track roster coverage." : coveredMembers === activeMembers.length ? "Every active member is accounted for." : `${activeMembers.length - coveredMembers} active members are missing from this capture.`}</p>
+          <button className="text-action" onClick={() => onNavigate("members")}>Manage roster <ArrowRight size={14} /></button>
+        </section>
+        <section className="panel insight-panel">
           <div className="panel-head"><div><p className="eyebrow">DISTRIBUTION</p><h3>Score bands</h3></div></div>
           <ScoreBands entries={selected.entries} />
           <div className="insight-rule" />
@@ -474,6 +511,7 @@ function Overview({
           <p className="capture-note">{selected.notes || "No note added for this snapshot."}</p>
           <button className="button secondary wide" onClick={() => exportDetailedSnapshot(selected, state)}><Download size={16} /> Detailed CSV</button>
           <button className="button secondary wide report-image-button" onClick={() => exportReportImage(selected, state)}><Share2 size={16} /> Shareable image</button>
+        </section>
         </aside>
       </section>
     </div>
@@ -527,13 +565,19 @@ function CommanderProfile({ member, state, onClose }: { member: Member; state: T
       <aside className="commander-profile" role="dialog" aria-modal="true" aria-labelledby="commander-profile-title">
         <header className="profile-head">
           <div className="profile-identity">
-            <span className="profile-avatar">{member.canonicalName.slice(0, 1).toLocaleUpperCase()}</span>
-            <div><p className="eyebrow">COMMANDER PROFILE</p><h2 id="commander-profile-title">{member.canonicalName}</h2><span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active roster" : "Departed"}</span></div>
+            <MemberAvatar member={member} large />
+            <div><p className="eyebrow">COMMANDER PROFILE</p><h2 id="commander-profile-title">{member.canonicalName}</h2><span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active roster" : "Previous record"}</span></div>
           </div>
           <button className="drawer-close" aria-label="Close commander profile" onClick={onClose}><X size={20} /></button>
         </header>
 
         <div className="profile-body">
+          {member.gameProfile && <section className="profile-metrics">
+            <div><span>Hero power</span><strong>{member.gameProfile.heroPowerDisplay}</strong><small>{member.gameProfile.heroPower === null ? "Not available" : member.gameProfile.heroPowerLegacy ? "Legacy · older data" : "Rounded display"}</small></div>
+            <div><span>Kills</span><strong>{member.gameProfile.killsDisplay}</strong><small>{member.gameProfile.kills === null ? "Not available" : "Rounded display"}</small></div>
+            <div><span>Alliance rank</span><strong>{member.gameProfile.rank}</strong><small>LWServers profile</small></div>
+            <div><span>Captured</span><strong className="profile-capture-date">{member.gameProfile.capturedOn}</strong><small>Saved snapshot</small></div>
+          </section>}
           <section className="profile-metrics">
             <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>
             <div><span>Best rank</span><strong>{performance.bestRank ? `#${performance.bestRank}` : "—"}</strong><small>{performance.appearances} appearance{performance.appearances === 1 ? "" : "s"}</small></div>
@@ -948,10 +992,6 @@ function ReportList({ title, rows, empty }: { title: string; rows: Array<{ name:
   return <section className="panel report-list"><div className="panel-head"><h3>{title}</h3></div>{rows.length ? <ol>{rows.map((row, index) => <li key={`${row.name}-${index}`}><span>{row.name}</span><strong>{row.value}</strong></li>)}</ol> : <p className="empty-copy">{empty}</p>}</section>;
 }
 
-function sortMembersByName(members: Member[]) {
-  return [...members].sort((a, b) => a.canonicalName.localeCompare(b.canonicalName, undefined, { sensitivity: "base" }));
-}
-
 function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void> }) {
   const [deletingId, setDeletingId] = useState("");
   const [error, setError] = useState("");
@@ -974,96 +1014,4 @@ function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapsho
 
   const ordered = [...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
   return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot)}><Download size={15} /> CSV</button><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button danger" disabled={Boolean(deletingId)} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {deleting ? "Deleting…" : "Delete"}</button><button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>Open</button></div></article>; }) : <section className="panel"><p className="empty-copy">No snapshots have been published yet.</p></section>}</div></div>;
-}
-
-function Roster({ state, setState, notify, onOpenMember }: { state: TrackerState; setState: (state: TrackerState) => void; notify: (message: string) => void; onOpenMember: (id: string) => void }) {
-  const [members, setMembers] = useState(() => sortMembersByName(state.members));
-  const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState<"all" | "active" | "departed">("all");
-  const [expandedMemberId, setExpandedMemberId] = useState("");
-  const [removingMemberId, setRemovingMemberId] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-  const [primaryId, setPrimaryId] = useState("");
-  const [duplicateId, setDuplicateId] = useState("");
-  const filtered = members.filter((member) =>
-    (filter === "all" || (filter === "active" ? member.active : !member.active)) &&
-    [member.canonicalName, ...member.aliases].join(" ").toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-  );
-
-  function update(id: string, patch: Partial<Member>) { setMembers((current) => current.map((member) => member.id === id ? { ...member, ...patch } : member)); }
-  function addMember() {
-    const member: Member = { id: crypto.randomUUID(), canonicalName: "New member", aliases: [], active: true, joinedAt: new Date().toISOString().slice(0, 10) };
-    setMembers((current) => [member, ...current]);
-    setExpandedMemberId(member.id);
-    setFilter("all");
-    setQuery("");
-  }
-  async function save() {
-    setBusy(true); setError("");
-    try {
-      const response = await fetch("/api/members", { method: "PUT", headers: { "content-type": "application/json" }, body: JSON.stringify({ members }) });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not save roster changes.");
-      setState(body); setMembers(sortMembersByName(body.members)); notify("Roster changes saved.");
-    } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not save roster changes."); }
-    setBusy(false);
-  }
-  async function merge() {
-    if (!primaryId || !duplicateId || primaryId === duplicateId) { setError("Choose two different identities to merge."); return; }
-    const primary = members.find((member) => member.id === primaryId);
-    const duplicate = members.find((member) => member.id === duplicateId);
-    if (!primary || !duplicate || !window.confirm(`Merge ${duplicate.canonicalName} into ${primary.canonicalName}? Historical entries will be reassigned.`)) return;
-    setBusy(true); setError("");
-    try {
-      const response = await fetch("/api/members", { method: "PATCH", headers: { "content-type": "application/json" }, body: JSON.stringify({ primaryId, duplicateId }) });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not merge identities.");
-      setState(body); setMembers(sortMembersByName(body.members)); setPrimaryId(""); setDuplicateId(""); notify("Member identities merged.");
-    } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not merge identities."); }
-    setBusy(false);
-  }
-  async function removeMember(member: Member) {
-    const appearances = state.snapshots.reduce((total, snapshot) => total + Number(snapshot.entries.some((entry) => entry.memberId === member.id)), 0);
-    const historyMessage = appearances ? ` Their ${appearances} historical snapshot appearance${appearances === 1 ? "" : "s"} will remain in reports.` : "";
-    if (!window.confirm(`Remove ${member.canonicalName} from the roster? Use Departed instead for former members.${historyMessage} This cannot be undone.`)) return;
-    setBusy(true); setRemovingMemberId(member.id); setError("");
-    try {
-      const response = await fetch(`/api/members?id=${encodeURIComponent(member.id)}`, { method: "DELETE" });
-      const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not remove member.");
-      setState(body); setMembers(sortMembersByName(body.members)); setExpandedMemberId((current) => current === member.id ? "" : current); notify(`${member.canonicalName} removed from the roster.`);
-    } catch (reason) { setError(reason instanceof Error ? reason.message : "Could not remove member."); }
-    setRemovingMemberId(""); setBusy(false);
-  }
-
-  return <div className="page-stack narrow-page">
-    <section className="section-heading roster-heading"><div><p className="eyebrow">IDENTITY & MEMBERSHIP</p><h2>Alliance roster</h2><p>Permanent identities keep name changes, departures and returns connected to one history.</p></div><div className="report-actions"><button className="button secondary" onClick={addMember}><UserPlus size={15} /> Add member</button><button className="button primary" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save roster"}</button></div></section>
-    <div className="review-banner warning"><CircleAlert size={18} /><span>Transfer period is active. Mark departures and arrivals here after the final roster is supplied; historical scores will remain attached.</span></div>
-    {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
-    <details className="panel roster-admin-tools"><summary><span><GitMerge size={19} /><span><strong>Roster tools</strong><small>Merge duplicate identities</small></span></span><ChevronDown size={18} /></summary><div className="roster-admin-tools-body"><div><strong>Merge duplicate identities</strong><small>Keep the first identity; the second becomes aliases and all historical entries are reassigned.</small></div><select value={primaryId} onChange={(event) => setPrimaryId(event.target.value)}><option value="">Identity to keep</option>{members.map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><select value={duplicateId} onChange={(event) => setDuplicateId(event.target.value)}><option value="">Duplicate identity</option>{members.filter((member) => member.id !== primaryId).map((member) => <option key={member.id} value={member.id}>{member.canonicalName}</option>)}</select><button className="button secondary" disabled={busy || !primaryId || !duplicateId} onClick={merge}>Merge</button></div></details>
-    <section className="panel roster-panel">
-      <div className="panel-head roster-tools"><div><p className="eyebrow">{filtered.length} OF {members.length} MEMBERS</p><h3>Commander identities</h3></div><button className="button primary mobile-roster-save" disabled={busy} onClick={save}>{busy ? "Saving…" : "Save"}</button><select value={filter} onChange={(event) => setFilter(event.target.value as typeof filter)}><option value="all">All members</option><option value="active">Active only</option><option value="departed">Departed only</option></select><div className="search-box"><Search size={16} /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search names or aliases" /></div></div>
-      <div className="roster-list-head" aria-hidden="true"><span>Commander</span><span>Known aliases</span><span>Status</span><span>Joined</span><span>Left</span><span>Officer notes</span></div>
-      <div className="roster-list">{filtered.map((member) => (
-        <article className={`roster-member-row ${expandedMemberId === member.id ? "expanded" : ""}`} key={member.id}>
-          <div className="mobile-roster-summary">
-            <button className="mobile-roster-toggle" aria-expanded={expandedMemberId === member.id} onClick={() => setExpandedMemberId((current) => current === member.id ? "" : member.id)}>
-              <span className="avatar-fallback">{member.canonicalName.trim().charAt(0).toLocaleUpperCase() || "?"}</span>
-              <span className="mobile-roster-identity"><strong>{member.canonicalName}</strong><small>{member.aliases.length ? `Also: ${member.aliases.slice(0, 2).join(", ")}` : "No known aliases"}</small></span>
-              <span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active" : "Departed"}</span>
-              <ChevronDown className="mobile-roster-chevron" size={18} />
-            </button>
-            <button className="profile-button" title={`View ${member.canonicalName} profile`} aria-label={`View ${member.canonicalName} profile`} onClick={() => onOpenMember(member.id)}><BarChart3 size={15} /></button>
-          </div>
-          <div className="roster-field roster-name"><span>Commander</span><div className="roster-name-editor"><input value={member.canonicalName} onChange={(event) => update(member.id, { canonicalName: event.target.value })} /><button className="profile-button" title={`View ${member.canonicalName} profile`} aria-label={`View ${member.canonicalName} profile`} onClick={() => onOpenMember(member.id)}><BarChart3 size={15} /></button></div></div>
-          <label className="roster-field roster-aliases"><span>Known aliases</span><input value={member.aliases.join(", ")} placeholder="Previous names, comma separated" onChange={(event) => update(member.id, { aliases: event.target.value.split(",").map((alias) => alias.trim()).filter(Boolean) })} /></label>
-          <div className="roster-field roster-status"><span>Status</span><label className="toggle-label"><input type="checkbox" checked={member.active} onChange={(event) => update(member.id, { active: event.target.checked, leftAt: event.target.checked ? undefined : member.leftAt || new Date().toISOString().slice(0, 10) })} /><span>{member.active ? "Active" : "Departed"}</span></label></div>
-          <label className="roster-field roster-joined"><span>Joined</span><input type="date" value={member.joinedAt || ""} onChange={(event) => update(member.id, { joinedAt: event.target.value || undefined })} /></label>
-          <label className="roster-field roster-left"><span>Left</span><input type="date" disabled={member.active} value={member.leftAt || ""} onChange={(event) => update(member.id, { leftAt: event.target.value || undefined })} /></label>
-          <div className="roster-field roster-notes"><span>Officer notes</span><div className="roster-notes-editor"><input aria-label={`Officer notes for ${member.canonicalName}`} value={member.notes || ""} placeholder="Transfer, return, officer note…" onChange={(event) => update(member.id, { notes: event.target.value || undefined })} /><button className="roster-remove-button" title={`Remove ${member.canonicalName} from roster`} aria-label={`Remove ${member.canonicalName} from roster`} disabled={busy} onClick={() => removeMember(member)}><Trash2 size={15} /><span>{removingMemberId === member.id ? "Removing…" : "Remove member"}</span></button></div></div>
-        </article>
-      ))}</div>
-    </section>
-  </div>;
 }

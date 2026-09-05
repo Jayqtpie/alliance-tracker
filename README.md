@@ -122,6 +122,10 @@ After connecting this repository to Vercel, deploy normally. [`vercel.json`](ver
 
 ## Verification
 
+The roster includes the signed-in LWServers capture from 5 September 2026: 100 members and avatars, 90 hero-power values (eight marked legacy), and 60 kill counts. Displayed numbers are rounded; unavailable values remain null. This is a saved capture, not a live game integration.
+
+`lib/roster-import.ts` applies this capture once when state is loaded, then saves a `rosterImport` marker in local or Blob storage. It matches game IDs first and unambiguous normalized names/known aliases next. Existing member IDs, scores, notes and operations remain intact; unmatched older identities appear under Previous records rather than being deleted. Fuzzy OCR names are not automatically merged. The marker prevents later officer changes from being overwritten on refresh. Avatars are bundled under `public/avatars/rscl`.
+
 ```powershell
 npm run test
 npm run lint

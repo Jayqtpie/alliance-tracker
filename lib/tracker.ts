@@ -147,6 +147,7 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
   );
   const merged: Member = {
     ...primary,
+    gameProfile: primary.gameProfile ?? duplicate.gameProfile,
     aliases,
     active: primary.active || duplicate.active,
     joinedAt: [primary.joinedAt, duplicate.joinedAt].filter((date): date is string => Boolean(date)).sort()[0],
