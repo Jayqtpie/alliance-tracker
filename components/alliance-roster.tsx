@@ -69,7 +69,7 @@ export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; o
         </button>
       </li>)}</ol>
       {!filtered.length && <div className="leaderboard-empty"><Users size={24} /><strong>No commanders found</strong><span>{query ? "Try another name or choose All ranks." : rankFilter !== "all" ? `No ${selectedRankLabel} members in ${filter === "active" ? "the current roster" : "previous records"}. Choose another rank or All.` : "There are no members in this roster view."}</span></div>}
-      <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span><span>LWServers capture · Rounded values · — unavailable · Legacy = older data</span></footer>
+      <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
     </section>
   </div>;
 }
