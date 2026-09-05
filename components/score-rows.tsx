@@ -12,13 +12,13 @@ export function CommanderIdentity({ member, name, needsReview }: { member?: Memb
   return <span className="score-identity" title={member && name !== member.canonicalName ? `Captured as ${name}` : name}>
     <MemberAvatar member={member ?? { id: "unlinked", canonicalName: name, aliases: [], active: false }} />
     <span className="alliance-member-name">{member?.canonicalName ?? name}</span>
-    {member?.gameProfile && <b className={`alliance-rank${member.gameProfile.rank === "R5" ? " leader" : ""}`}>{member.gameProfile.rank}</b>}
+    {member?.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}
     {needsReview && <span className="score-review-marker" title="Captured name needs review" aria-label="Name needs review">!</span>}
   </span>;
 }
 
 function Movement({ value, rank = false }: { value?: number; rank?: boolean }) {
-  if (value === undefined) return <span className="score-movement unavailable" title="No matching prior score">—</span>;
+  if (value === undefined) return <span className="score-movement unavailable" title="No matching prior score">â€”</span>;
   return <span className={`score-movement ${value > 0 ? "positive" : value < 0 ? "negative" : "unchanged"}`} title={rank ? `${Math.abs(value)} rank places ${value >= 0 ? "up" : "down"}` : `${value > 0 ? "+" : ""}${fullScore(value)} points`}>
     {value > 0 ? "+" : ""}{rank ? value : shortScore(value)}{rank && <span className="score-places"> places</span>}
   </span>;
@@ -28,13 +28,13 @@ export function ScoreRows({ rows, members, onOpenMember, scroll = false }: {
   rows: ScoreRow[]; members: Member[]; onOpenMember: (id: string) => void; scroll?: boolean;
 }) {
   const memberById = new Map(members.map((member) => [member.id, member]));
-  return <div className="score-rows">
+  return <div className={`score-rows${scroll ? " full-capture" : ""}`}>
     <div className="score-columns" aria-hidden="true"><span>Commander</span><span>Points</span><span>Score change</span><span>Rank move</span></div>
     <ol className={`score-list${scroll ? " scroll" : ""}`}>{rows.map((row) => {
       const member = memberById.get(row.memberId ?? "");
       const rowClass = `score-row${row.pointChange === undefined && row.rankChange === undefined ? " no-comparison" : ""}`;
       const content = <>
-        <span className="score-commander"><span className="alliance-position">{row.rank}</span><CommanderIdentity member={member} name={row.displayName} needsReview={row.needsReview} /></span>
+        <span className="score-commander"><span className={`alliance-position${row.rank <= 3 ? ` podium-rank podium-${row.rank}` : ""}`} title={row.rank <= 3 ? ["Gold Â· first place", "Silver Â· second place", "Bronze Â· third place"][row.rank - 1] : undefined}>{row.rank}</span><CommanderIdentity member={member} name={row.displayName} needsReview={row.needsReview} /></span>
         <span className="score-value"><strong>{fullScore(row.points)}</strong>{row.pointChange !== undefined && <span className="score-mobile-change"><span className="sr-only">Score change: </span><Movement value={row.pointChange} /></span>}</span>
         <span className="score-desktop-change"><Movement value={row.pointChange} /></span>
         <span className={`score-rank-change${row.rankChange === undefined ? " no-comparison" : ""}`}><span className="score-mobile-label">Rank </span><Movement value={row.rankChange} rank /></span>

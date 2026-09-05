@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { AllianceMark } from "@/components/alliance-mark";
 
 export default function LoginPage() {
@@ -29,6 +30,7 @@ export default function LoginPage() {
 
   return (
     <main className="login-shell">
+      <div className="login-theme-toggle"><ThemeToggle /></div>
       <section className="login-panel">
         <AllianceMark />
         <p className="eyebrow">RSCL · SERVER 927</p>

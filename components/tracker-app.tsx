@@ -40,6 +40,7 @@ import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
 import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
+import { ThemeToggle } from "@/components/theme-toggle";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
@@ -340,8 +341,7 @@ export function TrackerApp({
             <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{nav.find(([id]) => id === view)?.[1]}</span></p>
             {view !== "overview" && view !== "members" && <h1 className="sr-only">{nav.find(([id]) => id === view)?.[1]}</h1>}
           </div>
-          <div className="topbar-meta"><ShieldCheck size={15} /> Leadership only <span className="officer-avatar">R4/5</span></div>
-          <button className="mobile-signout icon-button" aria-label="Sign out" onClick={logout}><LogOut size={18} /></button>
+          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> Leadership only <span className="officer-avatar">R4/5</span></div><ThemeToggle /><button className="mobile-signout icon-button" aria-label="Sign out" onClick={logout}><LogOut size={18} /></button></div>
         </header>
 
         {view === "overview" && selected && comparison && (
