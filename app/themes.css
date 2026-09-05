@@ -20,15 +20,15 @@
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #232326; --ink: #dedee3; --muted: #a4a4ae;
-  --panel: #29292d; --surface: #303034; --row: #303034; --row-hover: #39393f;
-  --soft: #39393e; --line: #3c3c42; --panel-border: #39393f; --stat: #c5c5ce;
+  --paper: #15181e; --ink: #dce2eb; --muted: #a3adbc;
+  --panel: #1d222a; --surface: #242b35; --row: #242b35; --row-hover: #2e3744;
+  --soft: #2e3743; --line: #313b49; --panel-border: #2b3440; --stat: #c1cbd9;
   --blue: #a6b5cc; --sky: #8e9fba; --green: #a0b6a4; --red: #d2a0a5;
-  --navy: #202023; --navy-2: #303036;
-  --accent-soft: #383e49; --accent-text: #bdc8da; --focus: #8e9fba; --topbar: #232326;
+  --navy: #0e141e; --navy-2: #1d2a3d;
+  --accent-soft: #2c394c; --accent-text: #bdcce0; --focus: #8e9fba; --topbar: #171c24;
   --primary: #566983; --primary-hover: #617692; --primary-text: #f1f2f5;
   --orange: #c0ad8c; --orange-deep: #c0ad8c; --yellow: #b4a488;
-  --shadow: none;
+  --shadow: 0 0 0 transparent;
   --gold-bg: #413c32; --gold-fg: #cbbd9b;
   --silver-bg: #383b40; --silver-fg: #b9c0cb;
   --bronze-bg: #403832; --bronze-fg: #c7ae9b;
@@ -152,8 +152,8 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: .85; }
   background: var(--sidebar-bg); color: var(--sidebar-ink); border-color: var(--sidebar-line);
 }
 :root[data-theme="dark"] .sidebar {
-  --sidebar-bg: #223249; --sidebar-hover: #2c405b; --sidebar-active: #374f70;
-  --sidebar-ink: #dfe7f1; --sidebar-muted: #b0bfd3; --sidebar-line: #364b66;
+  --sidebar-bg: #0e141e; --sidebar-hover: #192638; --sidebar-active: #253952;
+  --sidebar-ink: #dfe7f1; --sidebar-muted: #a7b6ca; --sidebar-line: #28374b;
   --sidebar-accent: #95b5dc;
 }
 .sidebar .brand-lockup, .sidebar .leadership-access { border-color: var(--sidebar-line); }
@@ -198,3 +198,33 @@ input:focus, textarea:focus, select:focus { box-shadow: none; border-color: var(
 .toast { color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
 .score-history-chart line { stroke: var(--line); }
 .form-error { color: var(--red); }
+
+/* Restrained command-centre details: steel edges, amber markers and insignia. */
+:root { --command-accent: #a77d3e; --command-edge: #b3bfcd; --command-sheen: #ffffff50; }
+:root[data-theme="dark"] { --command-accent: #c4a46c; --command-edge: #43536a; --command-sheen: #a9c9f009; }
+.sidebar { background-image: repeating-linear-gradient(135deg, transparent 0 9px, #b9cde803 9px 10px); }
+.sidebar .brand-lockup { padding-bottom: 24px; border-bottom: 1px solid var(--sidebar-line); }
+.sidebar .brand-mark { filter: drop-shadow(0 3px 8px #00000030); }
+.sidebar .brand-lockup strong { letter-spacing: .025em; }
+.sidebar .nav-item { border-radius: 4px 10px 4px 10px; }
+.dashboard-heading > div:first-child { padding-left: 14px; border-left: 3px solid var(--command-accent); }
+.dashboard-heading h1 { font-weight: 750; }
+.dashboard-heading h1 > span { color: var(--command-accent); }
+.dashboard-heading .eyebrow, .section-heading .eyebrow { letter-spacing: .18em; }
+.snapshot-hero, .alliance-roster-card, .roster-score-panel, .report-summary-list {
+  border-top: 2px solid var(--command-edge);
+  box-shadow: inset 0 1px var(--command-sheen), var(--shadow);
+}
+.metric-card { border-radius: 6px 16px 6px 16px; border-top-color: var(--command-edge); box-shadow: inset 0 1px var(--command-sheen); }
+.metric-card:first-child { border-top-color: var(--command-accent); }
+.metric-card strong { font-weight: 750; }
+.metric-card .metric-icon { border: 1px solid var(--panel-border); border-radius: 5px 10px 5px 10px; }
+.alliance-tag { color: var(--ink); background: var(--panel); border: 1px solid var(--command-edge); border-bottom: 2px solid var(--command-accent); border-radius: 4px 10px 4px 10px; letter-spacing: .06em; }
+.alliance-tag span { color: var(--muted); opacity: 1; }
+.alliance-tag::before { content: ""; width: 9px; height: 13px; flex-shrink: 0; background: var(--command-accent); clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); }
+.podium-rank { border-radius: 3px 7px 3px 7px; box-shadow: inset 0 0 0 1px #bda17140; }
+.panel-head .eyebrow::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 7px; vertical-align: 1px; background: var(--command-accent); }
+@media (max-width: 760px) {
+  .dashboard-heading > div:first-child { padding-left: 10px; }
+  .sidebar .nav-item { border-radius: 4px 8px 4px 8px; }
+}
