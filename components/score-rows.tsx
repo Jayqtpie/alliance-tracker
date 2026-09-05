@@ -1,6 +1,7 @@
 "use client";
 
 import { MemberAvatar } from "./alliance-roster";
+import { MemberName } from "./member-name";
 import type { Member } from "@/lib/types";
 import type { snapshotComparison } from "@/lib/tracker";
 
@@ -11,7 +12,7 @@ const shortScore = (value: number) => new Intl.NumberFormat("en-GB", { notation:
 export function CommanderIdentity({ member, name, needsReview }: { member?: Member; name: string; needsReview?: boolean }) {
   return <span className="score-identity" title={member && name !== member.canonicalName ? `Captured as ${name}` : name}>
     <MemberAvatar member={member ?? { id: "unlinked", canonicalName: name, aliases: [], active: false }} />
-    <span className="alliance-member-name">{member?.canonicalName ?? name}</span>
+    <MemberName member={member} name={name} />
     {member?.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}
     {needsReview && <span className="score-review-marker" title="Captured name needs review" aria-label="Name needs review">!</span>}
   </span>;
@@ -40,7 +41,7 @@ export function ScoreRows({ rows, members, onOpenMember, scroll = false }: {
         <span className={`score-rank-change${row.rankChange === undefined ? " no-comparison" : ""}`}><span className="score-mobile-label">Rank </span><Movement value={row.rankChange} rank /></span>
       </>;
       return <li key={row.id}>{member
-        ? <button className={rowClass} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, rank ${row.rank}, ${fullScore(row.points)} points`}>{content}</button>
+        ? <button className={rowClass} data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, rank ${row.rank}, ${fullScore(row.points)} points`}>{content}</button>
         : <div className={`${rowClass} unlinked`}>{content}</div>}
       </li>;
     })}</ol>

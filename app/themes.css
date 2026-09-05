@@ -13,7 +13,9 @@
   --silver-bg: #e5e7e9; --silver-fg: #59616c;
   --bronze-bg: #ebe1d9; --bronze-fg: #7e6250;
   --rank5-bg: #eee7d8; --rank5-fg: #79663f;
-  --rank4-bg: #e1e8e2; --rank4-fg: #526e59;
+  --rank4-bg: #deebe6; --rank4-fg: #35675c;
+  --leader-row: #f1ebdd; --leader-hover: #eae0cc; --leader-edge: #c3a465;
+  --officer-row: #e5eeea; --officer-hover: #d9e8e1; --officer-edge: #86ada0;
   --rank3-bg: #e2e7ee; --rank3-fg: #536780;
   --rank2-bg: #e8e3ec; --rank2-fg: #73627f;
   --rank1-bg: #e5e5e5; --rank1-fg: #666770;
@@ -33,7 +35,9 @@
   --silver-bg: #383b40; --silver-fg: #b9c0cb;
   --bronze-bg: #403832; --bronze-fg: #c7ae9b;
   --rank5-bg: #413c32; --rank5-fg: #cbbd9b;
-  --rank4-bg: #343e37; --rank4-fg: #adbeaf;
+  --rank4-bg: #2c413d; --rank4-fg: #a6cdbf;
+  --leader-row: #332f29; --leader-hover: #40382c; --leader-edge: #897044;
+  --officer-row: #253632; --officer-hover: #2e433c; --officer-edge: #527f70;
   --rank3-bg: #353d49; --rank3-fg: #b0bed2;
   --rank2-bg: #3e3745; --rank2-fg: #beb0cb;
   --rank1-bg: #3a3a3f; --rank1-fg: #b7b7bf;
@@ -75,6 +79,19 @@
 .alliance-roster-row, .score-row, .report-summary-list li button, .report-summary-list .report-unlinked { color: var(--ink); background: var(--row); }
 .alliance-roster-row:hover, .alliance-roster-row:focus-visible, button.score-row:hover, button.score-row:focus-visible, .report-summary-list li button:hover, .report-summary-list li button:focus-visible { background: var(--row-hover); border-color: var(--focus); }
 .alliance-roster-row:hover .alliance-member-name, button.score-row:hover .alliance-member-name, .report-summary-list li button:hover .alliance-member-name { color: var(--accent-text); }
+.member-nameplate { display: inline-flex; align-items: center; gap: 6px; min-width: 0; }
+.member-nameplate .alliance-member-name { min-width: 0; }
+.leader-crown { width: 21px; height: 21px; flex: 0 0 21px; filter: drop-shadow(0 1px 1px #00000018); }
+:is(.alliance-roster-row, .score-row)[data-rank="R5"] { background: var(--leader-row); border-color: color-mix(in srgb, var(--leader-edge) 35%, transparent); box-shadow: inset 3px 0 var(--leader-edge); }
+:is(.alliance-roster-row, .score-row)[data-rank="R4"] { background: var(--officer-row); border-color: color-mix(in srgb, var(--officer-edge) 30%, transparent); box-shadow: inset 3px 0 var(--officer-edge); }
+:is(.alliance-roster-row, .score-row)[data-rank="R5"]:is(:hover, :focus-visible) { background: var(--leader-hover); border-color: var(--leader-edge); }
+:is(.alliance-roster-row, .score-row)[data-rank="R4"]:is(:hover, :focus-visible) { background: var(--officer-hover); border-color: var(--officer-edge); }
+:root .member-nameplate[data-rank="R5"] .alliance-member-name { color: var(--rank5-fg); }
+:root .member-nameplate[data-rank="R4"] .alliance-member-name { color: var(--rank4-fg); }
+@media (max-width: 760px) {
+  .member-nameplate { gap: 4px; }
+  .leader-crown { width: 17px; height: 17px; flex-basis: 17px; }
+}
 .alliance-stat strong, .score-value strong, .report-summary-value { color: var(--stat); }
 .alliance-roster-heading strong { color: var(--ink); }
 .alliance-roster-heading p, .alliance-source-date, .alliance-roster-columns, .score-columns, .alliance-roster-foot, .score-source-note, .alliance-position:not(.podium-rank) { color: var(--muted); }
@@ -224,6 +241,43 @@ input:focus, textarea:focus, select:focus { box-shadow: none; border-color: var(
 .alliance-tag::before { content: ""; width: 9px; height: 13px; flex-shrink: 0; background: var(--command-accent); clip-path: polygon(0 0, 100% 0, 100% 70%, 50% 100%, 0 70%); }
 .podium-rank { border-radius: 3px 7px 3px 7px; box-shadow: inset 0 0 0 1px #bda17140; }
 .panel-head .eyebrow::before { content: ""; display: inline-block; width: 5px; height: 5px; margin-right: 7px; vertical-align: 1px; background: var(--command-accent); }
+/* A more comfortable reading scale on desktop, without enlarging mobile lists. */
+@media (min-width: 1024px) {
+  .nav-item { font-size: 15px; }
+  .brand-lockup span, .nav-caption, .leadership-access span, .system-chip { font-size: 11px; }
+  .nav-count, .nav-disabled-note, .officer-avatar { font-size: 11px; }
+  .leadership-access strong, .workspace-breadcrumb, .topbar-meta, .theme-toggle { font-size: 13px; }
+  .eyebrow { font-size: 11px; }
+  .dashboard-heading p:last-child, .section-heading p, .alliance-settings-form label { font-size: 14px; }
+  .snapshot-hero h2 { font-size: 19px; }
+  .snapshot-title-row, .snapshot-hero p, .snapshot-hero h2 > span, .select-wrap select { font-size: 13px; }
+  .status-pill, .count-chip { font-size: 10px; }
+  .metric-card span { font-size: 13px; }
+  .metric-card small { font-size: 12px; }
+  .metric-card strong { font-size: 32px; }
+  .panel-head h3, .profile-section-head h3 { font-size: 17px; }
+  .button, .insight-panel .button, .search-box input, .alliance-roster-toolbar select, .roster-rank-tabs button { font-size: 14px; }
+  .leaderboard-filters button, .dashboard-review, .dashboard-review button, .table-footer { font-size: 12px; }
+  .coverage-body p, .coverage-note, .text-action, .capture-note, .score-source-note { font-size: 13px; }
+  .alliance-roster-heading h2 { font-size: 19px; }
+  .alliance-header-summary h2 > span, .alliance-roster-heading p { font-size: 14px; }
+  .alliance-source-date, .alliance-roster-foot { font-size: 13px; }
+  .alliance-roster-columns, .score-columns { font-size: 11px; }
+  .alliance-member-name { font-size: 15px; }
+  .alliance-position { font-size: 13px; }
+  .alliance-rank { font-size: 11px; }
+  .alliance-stat strong, .score-value strong, .report-summary-value { font-size: 15px; }
+  .score-movement { font-size: 13px; }
+  .alliance-legacy, .roster-rank-tabs button span { font-size: 10px; }
+  .alliance-roster-row, .score-row { min-height: 58px; }
+  th { font-size: 11px; }
+  td, .review-banner, .form-error-box, .roster-guidance { font-size: 13px; }
+  .profile-metrics span, .profile-metrics small, .profile-details dt, .profile-history-head { font-size: 12px; }
+  .profile-details dd, .profile-history-row, .profile-history-row b, .profile-section-head > strong { font-size: 13px; }
+  .profile-history-row > span:first-child small, .alliance-settings-form small, .alliance-settings-footer p { font-size: 12px; }
+  .score-columns, .score-row { grid-template-columns: minmax(0, 1fr) 122px 96px 88px; }
+  .leaderboard-panel .panel-head { flex-wrap: wrap; }
+}
 @media (max-width: 760px) {
   .dashboard-heading > div:first-child { padding-left: 10px; }
   .sidebar .nav-item { border-radius: 4px 8px 4px 8px; }
