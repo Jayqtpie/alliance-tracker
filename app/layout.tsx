@@ -3,8 +3,8 @@ import "./globals.css";
 import "./themes.css";
 
 export const metadata: Metadata = {
-  title: "Alliance Manager | RSCL",
-  description: "RSCL weekly Alliance Duel performance tracker",
+  title: "Alliance Manager",
+  description: "A private Alliance Duel performance tracker for alliance leadership",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

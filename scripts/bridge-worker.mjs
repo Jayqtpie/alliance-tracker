@@ -15,15 +15,20 @@ function loadEnvironmentFile(filename) {
   }
 }
 
-loadEnvironmentFile(".env.local");
 loadEnvironmentFile(".env.bridge.local");
+loadEnvironmentFile(".env.local");
 
 const once = process.argv.includes("--once");
-const bridgeUrl = (process.env.BRIDGE_URL || "https://alliance-tracker-nine.vercel.app").replace(/\/$/, "");
+const bridgeUrl = (process.env.BRIDGE_URL || "").replace(/\/$/, "");
 const secret = process.env.BRIDGE_SECRET || process.env.OFFICER_PASSCODE;
 const workerId = `${hostname()}-${process.pid}`.slice(0, 100);
 const extractor = resolve("scripts", "extract-local.mjs");
 const headers = { authorization: `Bearer ${secret}`, "content-type": "application/json" };
+
+if (!bridgeUrl) {
+  console.error("Set BRIDGE_URL to this alliance app URL in .env.bridge.local before starting the worker.");
+  process.exit(1);
+}
 
 if (!secret) {
   console.error("Set BRIDGE_SECRET (or OFFICER_PASSCODE) in .env.bridge.local before starting the worker.");

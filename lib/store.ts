@@ -3,7 +3,7 @@ import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
-import { INITIAL_STATE } from "@/lib/seed";
+import { createEmptyState } from "@/lib/alliance";
 import type { TrackerState } from "@/lib/types";
 import { hydrateOperations } from "@/lib/operations";
 import { importCapturedRoster } from "@/lib/roster-import";
@@ -11,7 +11,7 @@ import { importCapturedRoster } from "@/lib/roster-import";
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
 
-class StateConflictError extends Error {
+export class StateConflictError extends Error {
   constructor() {
     super("The tracker changed in another officer session. Refresh and try again.");
   }
@@ -39,17 +39,18 @@ export function storageMode() {
 
 async function getStoredState(): Promise<TrackerState> {
   assertVercelStorageConfigured();
+  const initialState = createEmptyState();
   if (blobEnabled()) {
     const current = await getBlobState();
     if (current) return current.payload;
     try {
-      await put(statePath, JSON.stringify(INITIAL_STATE), {
+      await put(statePath, JSON.stringify(initialState), {
         access: "private",
         token: blobToken(),
         contentType: "application/json",
         cacheControlMaxAge: 60,
       });
-      return structuredClone(INITIAL_STATE);
+      return initialState;
     } catch {
       const createdByAnotherRequest = await getBlobState();
       if (createdByAnotherRequest) return createdByAnotherRequest.payload;
@@ -60,10 +61,13 @@ async function getStoredState(): Promise<TrackerState> {
   try {
     const stored = JSON.parse(await readFile(stateFile, "utf8")) as TrackerState;
     return { ...stored, operations: hydrateOperations(stored.operations) };
-  } catch {
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     await mkdir(path.dirname(stateFile), { recursive: true });
-    await writeFile(stateFile, JSON.stringify(INITIAL_STATE, null, 2), "utf8");
-    return structuredClone(INITIAL_STATE);
+    await writeFile(stateFile, JSON.stringify(initialState, null, 2), { encoding: "utf8", flag: "wx" }).catch((error: NodeJS.ErrnoException) => {
+      if (error.code !== "EEXIST") throw error;
+    });
+    return getStoredState();
   }
 }
 

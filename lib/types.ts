@@ -116,6 +116,7 @@ export interface TrackerState {
     name: string;
     tag: string;
     server: string;
+    emblem?: string | null;
   };
   members: Member[];
   snapshots: Snapshot[];

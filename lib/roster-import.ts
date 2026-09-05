@@ -15,7 +15,7 @@ export function parseDisplayedPower(display: string): number | null {
 
 /** One captured roster, applied once. Unmatched identities remain available to historical reports. */
 export function importCapturedRoster(state: TrackerState): TrackerState {
-  if (state.rosterImport === ROSTER_IMPORT || state.alliance.tag !== "RSCL" || String(state.alliance.server) !== "927") return state;
+  if (state.rosterImport === "custom-alliance" || state.rosterImport === ROSTER_IMPORT || state.alliance.tag !== "RSCL" || String(state.alliance.server) !== "927") return state;
   const used = new Set<string>();
   const members: Member[] = capture.members.map((row) => {
     const previousNames = capture.changes.renamed.filter((change) => change.uid === row.uid).map((change) => change.previous);
