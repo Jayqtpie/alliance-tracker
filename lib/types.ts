@@ -8,6 +8,18 @@ export interface Member {
   joinedAt?: string;
   leftAt?: string;
   notes?: string;
+  gameProfile?: {
+    uid: string;
+    rank: string;
+    avatarPath: string;
+    heroPower: number | null;
+    heroPowerDisplay: string;
+    heroPowerLegacy: boolean;
+    kills: number | null;
+    killsDisplay: string;
+    capturedOn: string;
+    source: string;
+  };
 }
 
 export interface RankingEntry {
@@ -99,6 +111,7 @@ export interface OperationsState {
 
 export interface TrackerState {
   version: number;
+  rosterImport?: string;
   alliance: {
     name: string;
     tag: string;

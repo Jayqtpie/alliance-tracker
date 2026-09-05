@@ -1,0 +1,2348 @@
+{
+  "source": "https://lwservers.com/home",
+  "warzone": 927,
+  "allianceTag": "RSCL",
+  "allianceName": "The Rascals",
+  "capturedOn": "2026-09-05",
+  "exportedAt": "2026-09-05T03:53:22.505Z",
+  "memberCount": 100,
+  "leader": "Queeníe",
+  "officerCount": 10,
+  "estimatedFspCount": 90,
+  "assumedFspCount": 10,
+  "notes": [
+    "Roster and avatar URLs were read from the rendered signed-in LWServers My alliance page on 5 September 2026.",
+    "Current means the roster displayed by LWServers at capture time; membership was not independently checked inside the game.",
+    "FSP values are rounded display estimates, not measured first-squad power. Ten entries use assumed hero power as their basis.",
+    "Membership comparisons use player IDs. Added or absent means a difference between these two sources, not a verified join or departure date.",
+    "Kills, power, hero power and last-seen labels were subsequently read from all 100 signed-in profile dialogs. Numbers are rounded screen values; a dash is stored as unavailable. These profile statistics can still be older than the displayed roster."
+  ],
+  "changes": {
+    "addedToThisExport": [
+      {
+        "uid": "3021584716000844",
+        "name": "art 1"
+      },
+      {
+        "uid": "1305964827000862",
+        "name": "Special KK"
+      },
+      {
+        "uid": "1783634224000918",
+        "name": "fALIENangel"
+      },
+      {
+        "uid": "1164006719000922",
+        "name": "Youmei Qiu"
+      }
+    ],
+    "absentFromCurrentRoster": [
+      {
+        "uid": "1002059140000927",
+        "name": "D3ad x"
+      },
+      {
+        "uid": "1369678315000927",
+        "name": "Tymmers"
+      }
+    ],
+    "renamed": [
+      {
+        "uid": "1205420305000866",
+        "previous": "Uncle M F Irøh",
+        "current": "Uncle Irøh"
+      },
+      {
+        "uid": "1492937533000866",
+        "previous": "RICK M F NASTY",
+        "current": "Rick M F Nasty"
+      },
+      {
+        "uid": "1044133159000908",
+        "previous": "VANTA Visor",
+        "current": "Stoops Visor"
+      },
+      {
+        "uid": "1291563187000927",
+        "previous": "V A N T A   S L E D",
+        "current": "S L E D"
+      },
+      {
+        "uid": "2857110336000836",
+        "previous": "Màŕöűşĥ łR1ł",
+        "current": "Felix Müller"
+      }
+    ],
+    "changedAvatarUrls": [
+      {
+        "uid": "2118929520000856",
+        "name": "Abu Mosaed"
+      },
+      {
+        "uid": "1529582961000843",
+        "name": "War Sgt"
+      },
+      {
+        "uid": "1059777042000927",
+        "name": "LickᴿᵒʸFeetkins"
+      },
+      {
+        "uid": "1553246682000927",
+        "name": "Gilleythakid18"
+      },
+      {
+        "uid": "1174872981000912",
+        "name": "Queeníe"
+      },
+      {
+        "uid": "1492937533000866",
+        "name": "Rick M F Nasty"
+      },
+      {
+        "uid": "1201977595000919",
+        "name": "TOMMB łR1ł"
+      },
+      {
+        "uid": "1044133159000908",
+        "name": "Stoops Visor"
+      },
+      {
+        "uid": "1354432303000927",
+        "name": "IREZEY"
+      },
+      {
+        "uid": "1291563187000927",
+        "name": "S L E D"
+      },
+      {
+        "uid": "1305257078000927",
+        "name": "Lys The Yapper"
+      },
+      {
+        "uid": "1432984853000841",
+        "name": "WAR BLVCK"
+      },
+      {
+        "uid": "1036648524000927",
+        "name": "SᵒᵒᵒᵒʳʳʳY"
+      },
+      {
+        "uid": "2857110336000836",
+        "name": "Felix Müller"
+      },
+      {
+        "uid": "1056579044000915",
+        "name": "NACHÓ"
+      }
+    ]
+  },
+  "members": [
+    {
+      "position": 1,
+      "uid": "1644943893000856",
+      "name": "MJQ8",
+      "rank": "R4",
+      "displayedFspMillions": 102.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/df255b9104093ae160f105281e1ba842.jpg",
+      "avatarFile": "avatars/1644943893000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "93.2M",
+        "killsApproximate": 93200000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "529M",
+        "heroPowerDisplay": "387M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 2,
+      "uid": "1604759675000843",
+      "name": "Zothargirl",
+      "rank": "R4",
+      "displayedFspMillions": 102.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/a26b09da7deee7da75d3f21a1eef0a1f.jpg",
+      "avatarFile": "avatars/1604759675000843.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "60.9M",
+        "killsApproximate": 60900000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "599M",
+        "heroPowerDisplay": "387M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 3,
+      "uid": "1311513210000927",
+      "name": "NotDoom",
+      "rank": "R4",
+      "displayedFspMillions": 97.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/071884a7d5477f20980ee751836d5e77.jpg",
+      "avatarFile": "avatars/1311513210000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "66.2M",
+        "killsApproximate": 66200000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "533M",
+        "heroPowerDisplay": "361M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 4,
+      "uid": "1500145514000927",
+      "name": "Petros888",
+      "rank": "R4",
+      "displayedFspMillions": 85.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/9eab8bdbc27d398c4d77fcb7fbfb92b4.jpg",
+      "avatarFile": "avatars/1500145514000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "59.1M",
+        "killsApproximate": 59100000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "466M",
+        "heroPowerDisplay": "289M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 5,
+      "uid": "1312967191000927",
+      "name": "Super McNasty",
+      "rank": "R3",
+      "displayedFspMillions": 83.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/5d5c2f3ea92fd14acb0078fcd28a285c.jpg",
+      "avatarFile": "avatars/1312967191000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "37.4M",
+        "killsApproximate": 37400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "394M",
+        "heroPowerDisplay": "280M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 6,
+      "uid": "1032469361000927",
+      "name": "InfernoBlaze",
+      "rank": "R4",
+      "displayedFspMillions": 81.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/01b650d7cab6a6478bad953750a66d53.jpg",
+      "avatarFile": "avatars/1032469361000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "71.7M",
+        "killsApproximate": 71700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "435M",
+        "heroPowerDisplay": "265M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 7,
+      "uid": "2118929520000856",
+      "name": "Abu Mosaed",
+      "rank": "R2",
+      "displayedFspMillions": 79.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/9d9455ec1b6b60bcd3ef62f3e0742cfc.jpg",
+      "avatarFile": "avatars/2118929520000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "29.3M",
+        "killsApproximate": 29300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "439M",
+        "heroPowerDisplay": "259M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 8,
+      "uid": "1276396135000866",
+      "name": "Fоg",
+      "rank": "R4",
+      "displayedFspMillions": 79,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/ef9775dd9e240bbf001efd138585b9bc.jpg",
+      "avatarFile": "avatars/1276396135000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "28.7M",
+        "killsApproximate": 28700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "400M",
+        "heroPowerDisplay": "254M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 9,
+      "uid": "1867036308000905",
+      "name": "NotDoc",
+      "rank": "R4",
+      "displayedFspMillions": 78.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000905/43377bcf0b8e2998536afc81028960c4.jpg",
+      "avatarFile": "avatars/1867036308000905.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "70.4M",
+        "killsApproximate": 70400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "411M",
+        "heroPowerDisplay": "251M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 10,
+      "uid": "1601085524000862",
+      "name": "war parrot",
+      "rank": "R3",
+      "displayedFspMillions": 76,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/f55164979ebbc7c3b766b3919aabc689.jpg",
+      "avatarFile": "avatars/1601085524000862.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "34.7M",
+        "killsApproximate": 34700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "402M",
+        "heroPowerDisplay": "240M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 11,
+      "uid": "1529582961000843",
+      "name": "War Sgt",
+      "rank": "R3",
+      "displayedFspMillions": 75.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/7f5250e61313527a0c7146e73e5e98b4.jpg",
+      "avatarFile": "avatars/1529582961000843.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "398M",
+        "heroPowerDisplay": "239M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 12,
+      "uid": "1087497222000923",
+      "name": "Trash010",
+      "rank": "R3",
+      "displayedFspMillions": 75.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000923/d4fd6f352e6e746185df509ee8b99ec1.jpg",
+      "avatarFile": "avatars/1087497222000923.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "36.4M",
+        "killsApproximate": 36400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "379M",
+        "heroPowerDisplay": "235M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 13,
+      "uid": "1398298916000863",
+      "name": "LacKa",
+      "rank": "R2",
+      "displayedFspMillions": 74.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/8209ef47b99a22b72de2271502ba684b.jpg",
+      "avatarFile": "avatars/1398298916000863.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.2M",
+        "killsApproximate": 13200000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "383M",
+        "heroPowerDisplay": "231M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 14,
+      "uid": "1417138315000843",
+      "name": "Abbaqq",
+      "rank": "R3",
+      "displayedFspMillions": 73.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/6bfe2f53257854feae01c0b5213bbc58.jpg",
+      "avatarFile": "avatars/1417138315000843.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "23.8M",
+        "killsApproximate": 23800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "354M",
+        "heroPowerDisplay": "228M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 15,
+      "uid": "1436417874000866",
+      "name": "ღMBღ Gíxxìe",
+      "rank": "R2",
+      "displayedFspMillions": 72.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/3dbf8acc47e1df13894cb8f15c1848f5.jpg",
+      "avatarFile": "avatars/1436417874000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "25.3M",
+        "killsApproximate": 25300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "352M",
+        "heroPowerDisplay": "225M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 16,
+      "uid": "1223276182000862",
+      "name": "WAR6DOG",
+      "rank": "R3",
+      "displayedFspMillions": 72.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/799c5e0ee52f5801bda0c8e7ca091bc6.jpg",
+      "avatarFile": "avatars/1223276182000862.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.1M",
+        "killsApproximate": 13100000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "377M",
+        "heroPowerDisplay": "225M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 17,
+      "uid": "1400285347000866",
+      "name": "Mark Anderr",
+      "rank": "R2",
+      "displayedFspMillions": 71.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/922af7e64f3cbe0611d2a7d7f19bc01d.jpg",
+      "avatarFile": "avatars/1400285347000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "30.0M",
+        "killsApproximate": 30000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "363M",
+        "heroPowerDisplay": "221M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 18,
+      "uid": "1494614657000830",
+      "name": "리니지 Lineage",
+      "rank": "R3",
+      "displayedFspMillions": 71.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000830/5a72f725f32885623b08eafc94ecdb9b.jpg",
+      "avatarFile": "avatars/1494614657000830.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "41.3M",
+        "killsApproximate": 41300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "386M",
+        "heroPowerDisplay": "220M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 19,
+      "uid": "1072311031000905",
+      "name": "Saíyan Prince",
+      "rank": "R3",
+      "displayedFspMillions": 71.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000905/19b0cfaf2189b480f1777a8eb6668b36.jpg",
+      "avatarFile": "avatars/1072311031000905.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "44.4M",
+        "killsApproximate": 44400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "371M",
+        "heroPowerDisplay": "219M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 20,
+      "uid": "1583897883000843",
+      "name": "monsta717",
+      "rank": "R3",
+      "displayedFspMillions": 71.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/9fa89ae32fa1da58f4af622184f96afd.jpg",
+      "avatarFile": "avatars/1583897883000843.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "12.6M",
+        "killsApproximate": 12600000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "395M",
+        "heroPowerDisplay": "218M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 21,
+      "uid": "1257131454000866",
+      "name": "Bąbą Yąga",
+      "rank": "R2",
+      "displayedFspMillions": 70.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/a22e1fea0a5f1fd93f76eea7e13e2164.jpg",
+      "avatarFile": "avatars/1257131454000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "22.4M",
+        "killsApproximate": 22400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "368M",
+        "heroPowerDisplay": "216M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 22,
+      "uid": "1164257150000927",
+      "name": "Retired Goblin",
+      "rank": "R1",
+      "displayedFspMillions": 70.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/afb0aeeb954de37e3a4fdcd002bfea93.jpg",
+      "avatarFile": "avatars/1164257150000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "29.2M",
+        "killsApproximate": 29200000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "344M",
+        "heroPowerDisplay": "215M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 23,
+      "uid": "1433711278000862",
+      "name": "The Grooch",
+      "rank": "R3",
+      "displayedFspMillions": 69.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/b7d246fd9d2537048159ec7cd0521455.jpg",
+      "avatarFile": "avatars/1433711278000862.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "323M",
+        "heroPowerDisplay": "212M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 24,
+      "uid": "1059777042000927",
+      "name": "LickᴿᵒʸFeetkins",
+      "rank": "R1",
+      "displayedFspMillions": 69.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/f399f2d08b88b8c8bf3acbea58adfb46.jpg",
+      "avatarFile": "avatars/1059777042000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "21.0M",
+        "killsApproximate": 21000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "390M",
+        "heroPowerDisplay": "211M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 25,
+      "uid": "1360939579000863",
+      "name": "Cheesy016",
+      "rank": "R2",
+      "displayedFspMillions": 69.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/726f24238017fa34299db2409d8f2419.jpg",
+      "avatarFile": "avatars/1360939579000863.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "392M",
+        "heroPowerDisplay": "211M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 26,
+      "uid": "1415256998000915",
+      "name": "l  Orion  l",
+      "rank": "R3",
+      "displayedFspMillions": 69.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000915/fa8122d06a8872b209b2225d96606f98.jpg",
+      "avatarFile": "avatars/1415256998000915.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "14.8M",
+        "killsApproximate": 14800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "375M",
+        "heroPowerDisplay": "209M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 27,
+      "uid": "1426415525000863",
+      "name": "ABU BADDA",
+      "rank": "R2",
+      "displayedFspMillions": 69.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/642f34f02b5442e5d5a08162cecbd82f.jpg",
+      "avatarFile": "avatars/1426415525000863.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "25.5M",
+        "killsApproximate": 25500000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "364M",
+        "heroPowerDisplay": "209M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 28,
+      "uid": "1553246682000927",
+      "name": "Gilleythakid18",
+      "rank": "R3",
+      "displayedFspMillions": 68.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/2a3035c90672d61d455aeffdef4c67e9.jpg",
+      "avatarFile": "avatars/1553246682000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "23.1M",
+        "killsApproximate": 23100000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "353M",
+        "heroPowerDisplay": "207M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 29,
+      "uid": "1543033399000841",
+      "name": "FRIJOLERO",
+      "rank": "R3",
+      "displayedFspMillions": 68.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000841/6acd90f04a7efa329b764f9fe75560f7.jpg",
+      "avatarFile": "avatars/1543033399000841.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "38.7M",
+        "killsApproximate": 38700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "335M",
+        "heroPowerDisplay": "206M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 30,
+      "uid": "1303662525000863",
+      "name": "Goli90",
+      "rank": "R2",
+      "displayedFspMillions": 68.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/a61e33ccd74a62e1fb7f70025db24d39.jpg",
+      "avatarFile": "avatars/1303662525000863.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "385M",
+        "heroPowerDisplay": "205M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 31,
+      "uid": "1263825980000906",
+      "name": "Lawsishet",
+      "rank": "R3",
+      "displayedFspMillions": 68.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000906/014c2d5d1585b4ec8ee818b033f030e0.jpg",
+      "avatarFile": "avatars/1263825980000906.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "321M",
+        "heroPowerDisplay": "204M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 32,
+      "uid": "1396777732000905",
+      "name": "AsrExpress",
+      "rank": "R3",
+      "displayedFspMillions": 68,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000905/0da82eb4d37477d07e702e0b289ae35e.jpg",
+      "avatarFile": "avatars/1396777732000905.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "16.0M",
+        "killsApproximate": 16000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "329M",
+        "heroPowerDisplay": "204M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 33,
+      "uid": "1174872981000912",
+      "name": "Queeníe",
+      "rank": "R5",
+      "displayedFspMillions": 67.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000912/c79751ab5a658dcb443f1c42f37573a6.jpg",
+      "avatarFile": "avatars/1174872981000912.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "21.0M",
+        "killsApproximate": 21000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "323M",
+        "heroPowerDisplay": "204M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 34,
+      "uid": "1346884246000830",
+      "name": "천사star",
+      "rank": "R3",
+      "displayedFspMillions": 67.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000830/71d304e23602dc89a58210abee816f45.jpg",
+      "avatarFile": "avatars/1346884246000830.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "12.6M",
+        "killsApproximate": 12600000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "367M",
+        "heroPowerDisplay": "203M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 35,
+      "uid": "1451726686000927",
+      "name": "ItBurnsWheniPvp",
+      "rank": "R3",
+      "displayedFspMillions": 67.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/58eb19f9cd3ede7be77d1c9f0170e5c6.jpg",
+      "avatarFile": "avatars/1451726686000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.6M",
+        "killsApproximate": 13600000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "359M",
+        "heroPowerDisplay": "202M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 36,
+      "uid": "1689415806000891",
+      "name": "BananaFade",
+      "rank": "R3",
+      "displayedFspMillions": 67.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000891/19da71c06b6d97fb3efdcb83ae1ca3c8.jpg",
+      "avatarFile": "avatars/1689415806000891.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "31.7M",
+        "killsApproximate": 31700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "375M",
+        "heroPowerDisplay": "201M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 37,
+      "uid": "1320072346000907",
+      "name": "MaveriC",
+      "rank": "R3",
+      "displayedFspMillions": 67.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000907/64765202efa1e7bc4d7227e4c928f98e.jpg",
+      "avatarFile": "avatars/1320072346000907.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "20.8M",
+        "killsApproximate": 20800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "345M",
+        "heroPowerDisplay": "200M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 38,
+      "uid": "2655899837000856",
+      "name": "oMRADY",
+      "rank": "R2",
+      "displayedFspMillions": 66.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/e503ceb521705f0593ee61508a844012.jpg",
+      "avatarFile": "avatars/2655899837000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "25.6M",
+        "killsApproximate": 25600000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "295M",
+        "heroPowerDisplay": "199M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 39,
+      "uid": "1794888799000844",
+      "name": "ᏗᏝᎥ ᏗᏦ47",
+      "rank": "R2",
+      "displayedFspMillions": 66.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/f5c028dbe6aa39b994cb69dd2ee40e42.jpg",
+      "avatarFile": "avatars/1794888799000844.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "18.9M",
+        "killsApproximate": 18900000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "317M",
+        "heroPowerDisplay": "198M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 40,
+      "uid": "1331480819000927",
+      "name": "Zeflash",
+      "rank": "R3",
+      "displayedFspMillions": 66.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/7e6938cb4144e05d4ea5c2491c85b6d8.jpg",
+      "avatarFile": "avatars/1331480819000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "360M",
+        "heroPowerDisplay": "198M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 41,
+      "uid": "1040158253000921",
+      "name": "WayV",
+      "rank": "R3",
+      "displayedFspMillions": 66.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000921/3d25b553a064d50ff61943c432fd82c6.jpg",
+      "avatarFile": "avatars/1040158253000921.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "352M",
+        "heroPowerDisplay": "198M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 42,
+      "uid": "1205420305000866",
+      "name": "Uncle Irøh",
+      "rank": "R2",
+      "displayedFspMillions": 66.4,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/398f817b64cc110d101663bfb167ff0a.jpg",
+      "avatarFile": "avatars/1205420305000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "14.5M",
+        "killsApproximate": 14500000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "329M",
+        "heroPowerDisplay": "197M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 43,
+      "uid": "1136632270000866",
+      "name": "Baby Bee aka FAFO",
+      "rank": "R2",
+      "displayedFspMillions": 66.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/8d73dbcafe28803d7235e69cffc88b68.jpg",
+      "avatarFile": "avatars/1136632270000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.7M",
+        "killsApproximate": 13700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "358M",
+        "heroPowerDisplay": "196M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 44,
+      "uid": "1666146601000931",
+      "name": "JayQT",
+      "rank": "R4",
+      "displayedFspMillions": 65.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000931/52327ec706aaa17894d4f0ef25fa669b.jpg",
+      "avatarFile": "avatars/1666146601000931.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "28.7M",
+        "killsApproximate": 28700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "340M",
+        "heroPowerDisplay": "196M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 45,
+      "uid": "1157942274000844",
+      "name": "ＨＩＳＯＫΛ ss",
+      "rank": "R2",
+      "displayedFspMillions": 65.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/ee6c79d1956a145444177f05534c2a8e.jpg",
+      "avatarFile": "avatars/1157942274000844.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "10.8M",
+        "killsApproximate": 10800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "303M",
+        "heroPowerDisplay": "195M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 46,
+      "uid": "1492937533000866",
+      "name": "Rick M F Nasty",
+      "rank": "R2",
+      "displayedFspMillions": 65.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/3384bd8f62186d34747c8814ccd63ae2.jpg",
+      "avatarFile": "avatars/1492937533000866.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "346M",
+        "heroPowerDisplay": "194M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 47,
+      "uid": "1445438760000927",
+      "name": "Toutounator",
+      "rank": "R3",
+      "displayedFspMillions": 65.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/00cca9dc1cb3d0a0bb3c214c9bb29282.jpg",
+      "avatarFile": "avatars/1445438760000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "18.7M",
+        "killsApproximate": 18700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "336M",
+        "heroPowerDisplay": "194M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 48,
+      "uid": "1855357023000922",
+      "name": "琳蜜露",
+      "rank": "R3",
+      "displayedFspMillions": 65.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/c8c1e5e4036e8c874a3f0d519f2a147d.jpg",
+      "avatarFile": "avatars/1855357023000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "30.6M",
+        "killsApproximate": 30600000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "11M",
+        "heroPowerDisplay": "192M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 49,
+      "uid": "1201977595000919",
+      "name": "TOMMB łR1ł",
+      "rank": "R1",
+      "displayedFspMillions": 65.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/c0e6740140a5898133189c83b9e5dbcf.jpg",
+      "avatarFile": "avatars/1201977595000919.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "29.8M",
+        "killsApproximate": 29800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "314M",
+        "heroPowerDisplay": "192M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 50,
+      "uid": "1044133159000908",
+      "name": "Stoops Visor",
+      "rank": "R1",
+      "displayedFspMillions": 65.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000908/35c5e953b2cb381972faf32ce4ef6a6e.jpg",
+      "avatarFile": "avatars/1044133159000908.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "298M",
+        "heroPowerDisplay": "192M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 51,
+      "uid": "1354432303000927",
+      "name": "IREZEY",
+      "rank": "R1",
+      "displayedFspMillions": 64.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/1b2510750d6f0128f87622ddb242a4d5.jpg",
+      "avatarFile": "avatars/1354432303000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "15.7M",
+        "killsApproximate": 15700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "11M",
+        "heroPowerDisplay": "191M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 52,
+      "uid": "1512437426000927",
+      "name": "Hara  Kiri",
+      "rank": "R3",
+      "displayedFspMillions": 64.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/8092a9dd2e5b35dc191e095e0e49b702.jpg",
+      "avatarFile": "avatars/1512437426000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "11M",
+        "heroPowerDisplay": "191M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 53,
+      "uid": "1803857351000863",
+      "name": "S I M A",
+      "rank": "R2",
+      "displayedFspMillions": 64.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/415aeb2c4d136bb0f540d554df9d629b.jpg",
+      "avatarFile": "avatars/1803857351000863.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "340M",
+        "heroPowerDisplay": "191M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 54,
+      "uid": "1289270503000862",
+      "name": "Viccked",
+      "rank": "R3",
+      "displayedFspMillions": 64.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/9ecc0b5ce8e2b35894f0fe1b1fd8b12a.jpg",
+      "avatarFile": "avatars/1289270503000862.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "336M",
+        "heroPowerDisplay": "191M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 55,
+      "uid": "1055557385000931",
+      "name": "AlvaAlva",
+      "rank": "R4",
+      "displayedFspMillions": 64.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000931/243066052698e3aad3b936457ff14784.jpg",
+      "avatarFile": "avatars/1055557385000931.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "32.0M",
+        "killsApproximate": 32000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "327M",
+        "heroPowerDisplay": "190M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 56,
+      "uid": "1650522690000856",
+      "name": "WuGy",
+      "rank": "R2",
+      "displayedFspMillions": 64.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/ba3ec01c177ad4c38c9195afe60375e1.jpg",
+      "avatarFile": "avatars/1650522690000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.5M",
+        "killsApproximate": 13500000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "346M",
+        "heroPowerDisplay": "189M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 57,
+      "uid": "1157385172000841",
+      "name": "RageAndHatred",
+      "rank": "R3",
+      "displayedFspMillions": 64,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000841/ed08b1f0a0b33e33f8c90a7bde23d770.jpg",
+      "avatarFile": "avatars/1157385172000841.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "324M",
+        "heroPowerDisplay": "188M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 58,
+      "uid": "1345061146000927",
+      "name": "CubeWorld",
+      "rank": "R3",
+      "displayedFspMillions": 63.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/b770226ec847e3181ce3422cbd24dc8a.jpg",
+      "avatarFile": "avatars/1345061146000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "329M",
+        "heroPowerDisplay": "187M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 59,
+      "uid": "1153137664000856",
+      "name": "abood201440",
+      "rank": "R2",
+      "displayedFspMillions": 63.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/5cf0d8c29cd77ace68fbdd6a166baafc.jpg",
+      "avatarFile": "avatars/1153137664000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "12.7M",
+        "killsApproximate": 12700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "339M",
+        "heroPowerDisplay": "186M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 60,
+      "uid": "1201605079000922",
+      "name": "Sugar Lin",
+      "rank": "R3",
+      "displayedFspMillions": 63.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/64b5dbc2eef74fa8b79007b0fa84b0f8.jpg",
+      "avatarFile": "avatars/1201605079000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "15.9M",
+        "killsApproximate": 15900000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "311M",
+        "heroPowerDisplay": "186M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 61,
+      "uid": "1543620585000927",
+      "name": "AlvaAlt",
+      "rank": "R3",
+      "displayedFspMillions": 63.4,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/7b43609b4223da2087c5a0e060882bf9.jpg",
+      "avatarFile": "avatars/1543620585000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "16.2M",
+        "killsApproximate": 16200000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "339M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 62,
+      "uid": "1674633159000926",
+      "name": "Hoax LeBeau",
+      "rank": "R3",
+      "displayedFspMillions": 63.4,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000926/79e84bd8adb6131bdc51cdf94bdd4dc5.jpg",
+      "avatarFile": "avatars/1674633159000926.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "11.0M",
+        "killsApproximate": 11000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "325M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 63,
+      "uid": "1619063466000856",
+      "name": "ĐŘΔǤØŇ",
+      "rank": "R2",
+      "displayedFspMillions": 63.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/b8e2501531383ff9ed3f34114241d14a.jpg",
+      "avatarFile": "avatars/1619063466000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "15.3M",
+        "killsApproximate": 15300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "332M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 64,
+      "uid": "1291563187000927",
+      "name": "S L E D",
+      "rank": "R4",
+      "displayedFspMillions": 63.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/2d13d6a088781220bfe2f5a9f63a5a17.jpg",
+      "avatarFile": "avatars/1291563187000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "16.8M",
+        "killsApproximate": 16800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "308M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 65,
+      "uid": "1305257078000927",
+      "name": "Lys The Yapper",
+      "rank": "R1",
+      "displayedFspMillions": 63.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/41cadfc01519579235239759aa370321.jpg",
+      "avatarFile": "avatars/1305257078000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "342M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 66,
+      "uid": "1327568165000927",
+      "name": "Pauly Provolone",
+      "rank": "R3",
+      "displayedFspMillions": 63.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/09c58676b3d1b04b0bdafb4c9d8bca9d.jpg",
+      "avatarFile": "avatars/1327568165000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "346M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 67,
+      "uid": "1001286443000927",
+      "name": "이힛 IHit",
+      "rank": "R3",
+      "displayedFspMillions": 63.2,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/8d684b969cb2217ab8cd29a76e83a9f7.jpg",
+      "avatarFile": "avatars/1001286443000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "17.8M",
+        "killsApproximate": 17800000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "331M",
+        "heroPowerDisplay": "185M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 68,
+      "uid": "1080182622000927",
+      "name": "notFiiSSSHHHH",
+      "rank": "R3",
+      "displayedFspMillions": 63.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/997667ee8f78a8f5e587e096f400c11e.jpg",
+      "avatarFile": "avatars/1080182622000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "29.5M",
+        "killsApproximate": 29500000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "306M",
+        "heroPowerDisplay": "184M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 69,
+      "uid": "1226135106000922",
+      "name": "PeTeNueng",
+      "rank": "R3",
+      "displayedFspMillions": 61.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/85e91f05e8a2c6c4ceda43e70399d279.jpg",
+      "avatarFile": "avatars/1226135106000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "11.7M",
+        "killsApproximate": 11700000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "318M",
+        "heroPowerDisplay": "179M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 70,
+      "uid": "2655813878000856",
+      "name": "ŁひƑƑɎ",
+      "rank": "R2",
+      "displayedFspMillions": 61.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/f0f61d359069e803b6ec5c2f73d0e8dd.jpg",
+      "avatarFile": "avatars/2655813878000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "11.0M",
+        "killsApproximate": 11000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "315M",
+        "heroPowerDisplay": "179M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 71,
+      "uid": "2480441935000856",
+      "name": "abo hana ammar",
+      "rank": "R2",
+      "displayedFspMillions": 61.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/961d2a903d8debc002ad79c4fa3ec433.jpg",
+      "avatarFile": "avatars/2480441935000856.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "304M",
+        "heroPowerDisplay": "177M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 72,
+      "uid": "1356650581000927",
+      "name": "MMmmmmmmmmmmmmmmm",
+      "rank": "R1",
+      "displayedFspMillions": 60.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/9d8015caec1f0246c9ea3a78f5a39b11.jpg",
+      "avatarFile": "avatars/1356650581000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "323M",
+        "heroPowerDisplay": "176M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 73,
+      "uid": "1432984853000841",
+      "name": "WAR BLVCK",
+      "rank": "R1",
+      "displayedFspMillions": 60.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000841/0f4a341dbb26cbbc3e8f609009f2e11f.jpg",
+      "avatarFile": "avatars/1432984853000841.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "39.0M",
+        "killsApproximate": 39000000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "336M",
+        "heroPowerDisplay": "176M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 74,
+      "uid": "1544524091000927",
+      "name": "Sappy Chappy",
+      "rank": "R3",
+      "displayedFspMillions": 60.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/c26c160dcfbc2a6b8142fd269c9a0621.jpg",
+      "avatarFile": "avatars/1544524091000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "13.5M",
+        "killsApproximate": 13500000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "291M",
+        "heroPowerDisplay": "175M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 75,
+      "uid": "1395039702000922",
+      "name": "ackeng",
+      "rank": "R3",
+      "displayedFspMillions": 60.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/afcb265f679e275c8c3e574aae877ee1.jpg",
+      "avatarFile": "avatars/1395039702000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "313M",
+        "heroPowerDisplay": "174M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 76,
+      "uid": "1036648524000927",
+      "name": "SᵒᵒᵒᵒʳʳʳY",
+      "rank": "R3",
+      "displayedFspMillions": 60.4,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/7df2a18951ee3fe26cdf3721fbf3d0a1.jpg",
+      "avatarFile": "avatars/1036648524000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "281M",
+        "heroPowerDisplay": "174M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 77,
+      "uid": "1199403914000927",
+      "name": "구름DongJa",
+      "rank": "R3",
+      "displayedFspMillions": 60.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/1bd496f59e06cf8ca121db4b9a70085c.jpg",
+      "avatarFile": "avatars/1199403914000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "12.3M",
+        "killsApproximate": 12300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "318M",
+        "heroPowerDisplay": "174M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 78,
+      "uid": "1255883238000927",
+      "name": "Bomahni",
+      "rank": "R3",
+      "displayedFspMillions": 60.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/9720a4eb072ff635aad672faebcee50f.jpg",
+      "avatarFile": "avatars/1255883238000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "301M",
+        "heroPowerDisplay": "173M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 79,
+      "uid": "1045906174000919",
+      "name": "MÖTH",
+      "rank": "R1",
+      "displayedFspMillions": 59.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/58b96b652efbf64f98a7130a95f8752c.jpg",
+      "avatarFile": "avatars/1045906174000919.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "314M",
+        "heroPowerDisplay": "172M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 80,
+      "uid": "2857110336000836",
+      "name": "Felix Müller",
+      "rank": "R1",
+      "displayedFspMillions": 59.8,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000836/822d1da8cad1290d9b1eb67f8e402efe.jpg",
+      "avatarFile": "avatars/2857110336000836.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "—",
+        "heroPowerDisplay": "172M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 81,
+      "uid": "1173790054000919",
+      "name": "JoyDivịsion",
+      "rank": "R1",
+      "displayedFspMillions": 59.4,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/74c90cd9a5592e41889525b1fbbc2d7a.jpg",
+      "avatarFile": "avatars/1173790054000919.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "21.3M",
+        "killsApproximate": 21300000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "302M",
+        "heroPowerDisplay": "170M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 82,
+      "uid": "1290641233000927",
+      "name": "PAYOBER",
+      "rank": "R3",
+      "displayedFspMillions": 59.3,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/32fb379859873ee9cd1d95428730851b.jpg",
+      "avatarFile": "avatars/1290641233000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "28.4M",
+        "killsApproximate": 28400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "289M",
+        "heroPowerDisplay": "170M",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 83,
+      "uid": "1056579044000915",
+      "name": "NACHÓ",
+      "rank": "R3",
+      "displayedFspMillions": 58.9,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000915/3162b49c3b4052df796d6643df92cdbc.jpg",
+      "avatarFile": "avatars/1056579044000915.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "306M",
+        "heroPowerDisplay": "168MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 84,
+      "uid": "1662308667000830",
+      "name": "클래식 classic",
+      "rank": "R3",
+      "displayedFspMillions": 58.6,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000830/39453723be034d6fb4e1db0a6e9f48a8.jpg",
+      "avatarFile": "avatars/1662308667000830.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "300M",
+        "heroPowerDisplay": "167MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 85,
+      "uid": "1290070340000927",
+      "name": "Obsius",
+      "rank": "R3",
+      "displayedFspMillions": 58.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/51c06c8b1c9a042ebcbbb82e26dac8dc.jpg",
+      "avatarFile": "avatars/1290070340000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "314M",
+        "heroPowerDisplay": "167MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 86,
+      "uid": "1476079594000927",
+      "name": "ApacheJohn",
+      "rank": "R3",
+      "displayedFspMillions": 58.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/6e0ea6e035550a2a24d5a560f08dae9f.jpg",
+      "avatarFile": "avatars/1476079594000927.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "311M",
+        "heroPowerDisplay": "166MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 87,
+      "uid": "1553467250000927",
+      "name": "iaReChachi",
+      "rank": "R3",
+      "displayedFspMillions": 57.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/dfc722768c2fdef132ea2a0b759856c2.jpg",
+      "avatarFile": "avatars/1553467250000927.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "286M",
+        "heroPowerDisplay": "164MLEGACY",
+        "lastSeenDisplay": "1w ago"
+      }
+    },
+    {
+      "position": 88,
+      "uid": "1563350938000922",
+      "name": "PRINCESSss",
+      "rank": "R3",
+      "displayedFspMillions": 57.7,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/8f39f7950add94e5e0c9cd13163bb239.jpg",
+      "avatarFile": "avatars/1563350938000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "294M",
+        "heroPowerDisplay": "164MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 89,
+      "uid": "3021584716000844",
+      "name": "art 1",
+      "rank": "R2",
+      "displayedFspMillions": 57.5,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/0b92f254d8cb820dba0db3cf8e4aa6e3.jpg",
+      "avatarFile": "avatars/3021584716000844.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "279M",
+        "heroPowerDisplay": "164MLEGACY",
+        "lastSeenDisplay": "1w ago"
+      }
+    },
+    {
+      "position": 90,
+      "uid": "1520178614000919",
+      "name": "Gino the chaos",
+      "rank": "R3",
+      "displayedFspMillions": 57.1,
+      "fspBasis": "estimated",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/0cf7de2c025259d85448ed29ed440d38.jpg",
+      "avatarFile": "avatars/1520178614000919.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "12.4M",
+        "killsApproximate": 12400000,
+        "killsStatus": "rounded display",
+        "powerDisplay": "295M",
+        "heroPowerDisplay": "162MLEGACY",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 91,
+      "uid": "1058234761000927",
+      "name": "Newsshooter",
+      "rank": "R3",
+      "displayedFspMillions": 56.2,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/514377ae17dd0f763932a0f27cc5c5bb.jpg",
+      "avatarFile": "avatars/1058234761000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "291M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "3d ago"
+      }
+    },
+    {
+      "position": 92,
+      "uid": "1212993895000900",
+      "name": "Shan Baratheon",
+      "rank": "R3",
+      "displayedFspMillions": 56.2,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000900/96191c0ae8e47ba78a74cc35c2cab512.jpg",
+      "avatarFile": "avatars/1212993895000900.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "291M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "1d ago"
+      }
+    },
+    {
+      "position": 93,
+      "uid": "1531744654000927",
+      "name": "KrlZ",
+      "rank": "R3",
+      "displayedFspMillions": 56.2,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/2c30d8a50956be96062534e979e4a9f9.jpg",
+      "avatarFile": "avatars/1531744654000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "291M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "1w ago"
+      }
+    },
+    {
+      "position": 94,
+      "uid": "1074726330000927",
+      "name": "derpynoob",
+      "rank": "R3",
+      "displayedFspMillions": 56.1,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/301fec17d28c06699df954c3b536eeb1.jpg",
+      "avatarFile": "avatars/1074726330000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "271M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "2w ago"
+      }
+    },
+    {
+      "position": 95,
+      "uid": "1445201149000927",
+      "name": "I  Mystery  l",
+      "rank": "R3",
+      "displayedFspMillions": 55.8,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/5ef4e8052952fd5390c687f5ba79eafc.jpg",
+      "avatarFile": "avatars/1445201149000927.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "295M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "4w ago"
+      }
+    },
+    {
+      "position": 96,
+      "uid": "1269262662000927",
+      "name": "BadLui",
+      "rank": "R3",
+      "displayedFspMillions": 55.5,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/f7d99fde12350a160c06850943edf280.jpg",
+      "avatarFile": "avatars/1269262662000927.jpg",
+      "avatarWidth": 128,
+      "avatarHeight": 128,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "285M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "2w ago"
+      }
+    },
+    {
+      "position": 97,
+      "uid": "1305964827000862",
+      "name": "Special KK",
+      "rank": "R2",
+      "displayedFspMillions": 52.4,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/df47ad9526c9c093983770270477b6e1.jpg",
+      "avatarFile": "avatars/1305964827000862.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "—",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "—"
+      }
+    },
+    {
+      "position": 98,
+      "uid": "1783634224000918",
+      "name": "fALIENangel",
+      "rank": "R3",
+      "displayedFspMillions": 51,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000918/affe9bdfc32cab1bc49d75453968aba2.jpg",
+      "avatarFile": "avatars/1783634224000918.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "—",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "—"
+      }
+    },
+    {
+      "position": 99,
+      "uid": "1241567354000872",
+      "name": "Leandro Pinto",
+      "rank": "R3",
+      "displayedFspMillions": 50.6,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000872/1427323aed4878604560635dedf1fb3b.jpg",
+      "avatarFile": "avatars/1241567354000872.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "283M",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "4w ago"
+      }
+    },
+    {
+      "position": 100,
+      "uid": "1164006719000922",
+      "name": "Youmei Qiu",
+      "rank": "R3",
+      "displayedFspMillions": 42.9,
+      "fspBasis": "assumed",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/cf72a6630b39a28167e79736d46dde1a.jpg",
+      "avatarFile": "avatars/1164006719000922.jpg",
+      "avatarWidth": 200,
+      "avatarHeight": 200,
+      "profile": {
+        "source": "LWServers signed-in player profile dialog",
+        "capturedOn": "2026-09-05",
+        "killsDisplay": "—",
+        "killsApproximate": null,
+        "killsStatus": "unavailable",
+        "powerDisplay": "—",
+        "heroPowerDisplay": "—",
+        "lastSeenDisplay": "—"
+      }
+    }
+  ],
+  "profileCapture": {
+    "capturedOn": "2026-09-05",
+    "profilesInspected": 100,
+    "killsAvailable": 60,
+    "killsUnavailable": 40,
+    "precision": "Rounded values exactly as displayed by LWServers. A dash is unavailable, not zero."
+  }
+}

@@ -22,7 +22,11 @@ export async function PUT(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
     const state = await getState();
-    return NextResponse.json(await setState({ ...state, members: parsed.data.members }));
+    const members = parsed.data.members.map((member) => ({
+      ...member,
+      gameProfile: state.members.find((existing) => existing.id === member.id)?.gameProfile,
+    }));
+    return NextResponse.json(await setState({ ...state, members }));
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Could not save roster changes." }, { status: 409 });
   }

@@ -1,11 +1,12 @@
 import "server-only";
-import { get, head, put } from "@vercel/blob";
+import { get, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
 import { INITIAL_STATE } from "@/lib/seed";
 import type { TrackerState } from "@/lib/types";
 import { hydrateOperations } from "@/lib/operations";
+import { importCapturedRoster } from "@/lib/roster-import";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
@@ -23,14 +24,14 @@ async function getBlobState() {
   if (!result || result.statusCode !== 200) return null;
   const stored = JSON.parse(await new Response(result.stream).text()) as TrackerState;
   const payload = { ...stored, operations: hydrateOperations(stored.operations) };
-  return { payload };
+  return { payload, etag: result.blob.etag };
 }
 
 export function storageMode() {
   return blobEnabled() ? "vercel-blob" : "local";
 }
 
-export async function getState(): Promise<TrackerState> {
+async function getStoredState(): Promise<TrackerState> {
   assertVercelStorageConfigured();
   if (blobEnabled()) {
     const current = await getBlobState();
@@ -60,6 +61,20 @@ export async function getState(): Promise<TrackerState> {
   }
 }
 
+export async function getState(): Promise<TrackerState> {
+  const stored = await getStoredState();
+  const imported = importCapturedRoster(stored);
+  if (imported === stored) return stored;
+  try {
+    return await setState(imported);
+  } catch (error) {
+    // Another request may have finished the same migration first.
+    const latest = await getStoredState();
+    if (latest.rosterImport === imported.rosterImport) return latest;
+    throw error;
+  }
+}
+
 export async function setState(state: TrackerState) {
   assertVercelStorageConfigured();
   const next = { ...state, version: state.version + 1, updatedAt: new Date().toISOString() };
@@ -68,14 +83,13 @@ export async function setState(state: TrackerState) {
     if (!current || current.payload.version !== state.version) {
       throw new Error("The tracker changed in another officer session. Refresh and try again.");
     }
-    const currentEtag = (await head(statePath, { token: blobToken() })).etag;
     await put(statePath, JSON.stringify(next), {
       access: "private",
       token: blobToken(),
       contentType: "application/json",
       cacheControlMaxAge: 60,
       allowOverwrite: true,
-      ifMatch: currentEtag,
+      ifMatch: current.etag,
     });
     return next;
   }
