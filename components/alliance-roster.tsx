@@ -5,6 +5,7 @@ import { Search, Users, X } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import "./roster-rank-tabs.css";
+import { MemberName } from "./member-name";
 
 const ROSTER_RANK_FILTERS = [
   { value: "all", label: "All" },
@@ -48,7 +49,7 @@ export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; o
   return <div className="page-stack alliance-roster-page">
     <section className="dashboard-heading"><div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1><p>Your commanders, at a glance.</p></div><span className="alliance-tag">{state.alliance.tag} <span>#{state.alliance.server}</span></span></section>
     <section className="alliance-roster-card" aria-label="Alliance members">
-      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <strong>{leader.canonicalName}</strong><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? `Captured ${new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${capturedOn}T00:00:00Z`))}` : "No profile capture"}</span></header>
+      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? `Captured ${new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${capturedOn}T00:00:00Z`))}` : "No profile capture"}</span></header>
       <div className="roster-rank-tabs" role="group" aria-label="Filter roster by rank">
         {ROSTER_RANK_FILTERS.map(({ value, label }) => <button key={value} type="button" aria-pressed={rankFilter === value} aria-controls={rosterListId} onClick={() => setRankFilter(value)}>
           {label}<span>{value === "all" ? membership.length : membership.filter((member) => member.gameProfile?.rank === value).length}</span>
@@ -61,8 +62,8 @@ export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; o
       </div>
       <div className="alliance-roster-scroll"><div className="alliance-roster-columns" aria-hidden="true"><span>Commander</span><span>Hero power</span><span>Kills</span></div>
       <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id}>
-        <button className="alliance-roster-row" onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, hero power ${member.gameProfile?.heroPowerDisplay ?? "unavailable"}, kills ${member.gameProfile?.killsDisplay ?? "unavailable"}`}>
-          <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><span className="alliance-member-name">{member.canonicalName}</span>{member.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
+        <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, hero power ${member.gameProfile?.heroPowerDisplay ?? "unavailable"}, kills ${member.gameProfile?.killsDisplay ?? "unavailable"}`}>
+          <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><MemberName member={member} />{member.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
           <span className="alliance-stat"><strong>{member.gameProfile?.heroPowerDisplay ?? "—"}</strong>{member.gameProfile?.heroPowerLegacy && <small className="alliance-legacy" title="LWServers marks this hero power as legacy data">Legacy</small>}</span>
           <span className="alliance-stat"><strong>{member.gameProfile?.killsDisplay ?? "—"}</strong></span>
         </button>
