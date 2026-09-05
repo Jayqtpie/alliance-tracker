@@ -1,5 +1,5 @@
 import "server-only";
-import { get, put } from "@vercel/blob";
+import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
@@ -10,6 +10,12 @@ import { importCapturedRoster } from "@/lib/roster-import";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
+
+class StateConflictError extends Error {
+  constructor() {
+    super("The tracker changed in another officer session. Refresh and try again.");
+  }
+}
 
 function assertVercelStorageConfigured() {
   if (process.env.VERCEL && !blobEnabled()) {
@@ -24,7 +30,7 @@ async function getBlobState() {
   if (!result || result.statusCode !== 200) return null;
   const stored = JSON.parse(await new Response(result.stream).text()) as TrackerState;
   const payload = { ...stored, operations: hydrateOperations(stored.operations) };
-  return { payload, etag: result.blob.etag };
+  return { payload };
 }
 
 export function storageMode() {
@@ -62,35 +68,47 @@ async function getStoredState(): Promise<TrackerState> {
 }
 
 export async function getState(): Promise<TrackerState> {
-  const stored = await getStoredState();
-  const imported = importCapturedRoster(stored);
-  if (imported === stored) return stored;
-  try {
-    return await setState(imported);
-  } catch (error) {
-    // Another request may have finished the same migration first.
-    const latest = await getStoredState();
-    if (latest.rosterImport === imported.rosterImport) return latest;
-    throw error;
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    const stored = await getStoredState();
+    const imported = importCapturedRoster(stored);
+    if (imported === stored) return stored;
+    try {
+      return await setState(imported);
+    } catch (error) {
+      if (!(error instanceof StateConflictError)) throw error;
+      // Reapply the import to fresh state, preserving a concurrent officer edit.
+    }
   }
+  const latest = await getStoredState();
+  if (importCapturedRoster(latest) === latest) return latest;
+  throw new StateConflictError();
 }
 
 export async function setState(state: TrackerState) {
   assertVercelStorageConfigured();
   const next = { ...state, version: state.version + 1, updatedAt: new Date().toISOString() };
   if (blobEnabled()) {
+    // The delivery response's ETag is not the control-plane write token.
+    // Read metadata BEFORE content so a write during/after the read cannot
+    // attach a newer ETag to an older state and silently overwrite an edit.
+    const currentEtag = (await head(statePath, { token: blobToken() })).etag;
     const current = await getBlobState();
     if (!current || current.payload.version !== state.version) {
-      throw new Error("The tracker changed in another officer session. Refresh and try again.");
+      throw new StateConflictError();
     }
-    await put(statePath, JSON.stringify(next), {
-      access: "private",
-      token: blobToken(),
-      contentType: "application/json",
-      cacheControlMaxAge: 60,
-      allowOverwrite: true,
-      ifMatch: current.etag,
-    });
+    try {
+      await put(statePath, JSON.stringify(next), {
+        access: "private",
+        token: blobToken(),
+        contentType: "application/json",
+        cacheControlMaxAge: 60,
+        allowOverwrite: true,
+        ifMatch: currentEtag,
+      });
+    } catch (error) {
+      if (error instanceof BlobPreconditionFailedError) throw new StateConflictError();
+      throw error;
+    }
     return next;
   }
   await mkdir(path.dirname(stateFile), { recursive: true });
