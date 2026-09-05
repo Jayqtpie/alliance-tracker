@@ -18,7 +18,7 @@ export function CommanderIdentity({ member, name, needsReview }: { member?: Memb
 }
 
 function Movement({ value, rank = false }: { value?: number; rank?: boolean }) {
-  if (value === undefined) return <span className="score-movement unavailable" title="No matching prior score">â€”</span>;
+  if (value === undefined) return <span className="score-movement unavailable" title="No matching prior score">—</span>;
   return <span className={`score-movement ${value > 0 ? "positive" : value < 0 ? "negative" : "unchanged"}`} title={rank ? `${Math.abs(value)} rank places ${value >= 0 ? "up" : "down"}` : `${value > 0 ? "+" : ""}${fullScore(value)} points`}>
     {value > 0 ? "+" : ""}{rank ? value : shortScore(value)}{rank && <span className="score-places"> places</span>}
   </span>;
@@ -34,7 +34,7 @@ export function ScoreRows({ rows, members, onOpenMember, scroll = false }: {
       const member = memberById.get(row.memberId ?? "");
       const rowClass = `score-row${row.pointChange === undefined && row.rankChange === undefined ? " no-comparison" : ""}`;
       const content = <>
-        <span className="score-commander"><span className={`alliance-position${row.rank <= 3 ? ` podium-rank podium-${row.rank}` : ""}`} title={row.rank <= 3 ? ["Gold Â· first place", "Silver Â· second place", "Bronze Â· third place"][row.rank - 1] : undefined}>{row.rank}</span><CommanderIdentity member={member} name={row.displayName} needsReview={row.needsReview} /></span>
+        <span className="score-commander"><span className={`alliance-position${row.rank <= 3 ? ` podium-rank podium-${row.rank}` : ""}`} title={row.rank <= 3 ? ["Gold · first place", "Silver · second place", "Bronze · third place"][row.rank - 1] : undefined}>{row.rank}</span><CommanderIdentity member={member} name={row.displayName} needsReview={row.needsReview} /></span>
         <span className="score-value"><strong>{fullScore(row.points)}</strong>{row.pointChange !== undefined && <span className="score-mobile-change"><span className="sr-only">Score change: </span><Movement value={row.pointChange} /></span>}</span>
         <span className="score-desktop-change"><Movement value={row.pointChange} /></span>
         <span className={`score-rank-change${row.rankChange === undefined ? " no-comparison" : ""}`}><span className="score-mobile-label">Rank </span><Movement value={row.rankChange} rank /></span>
