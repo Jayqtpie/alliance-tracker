@@ -1,0 +1,61 @@
+.roster-rank-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 22px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e3e8f2;
+}
+
+.roster-rank-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 14px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: #53617e;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.roster-rank-tabs button span {
+  min-width: 19px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: #e8edf7;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.roster-rank-tabs button:hover {
+  background: #edf1fc;
+}
+
+.roster-rank-tabs button[aria-pressed="true"] {
+  border-color: #aad6c9;
+  background: #e2f0eb;
+  color: #08735f;
+}
+
+.roster-rank-tabs button[aria-pressed="true"] span {
+  background: #cde7dd;
+}
+
+.roster-rank-tabs button:focus-visible {
+  outline: 2px solid #087f68;
+  outline-offset: 2px;
+}
+
+.roster-rank-tabs + .alliance-roster-toolbar {
+  margin-top: 16px;
+}
+
+@media (max-width: 600px) {
+  .roster-rank-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; margin-top: 18px; }
+  .roster-rank-tabs button { flex: 1 0 auto; gap: 5px; padding: 8px 9px; font-size: 11px; }
+}

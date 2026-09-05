@@ -39,6 +39,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
 import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
+import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
@@ -380,7 +381,7 @@ export function TrackerApp({
             <button className={reportsTab === "reports" ? "active" : ""} onClick={() => setReportsTab("reports")}><LineChart size={16} />Reports</button>
             <button className={reportsTab === "snapshots" ? "active" : ""} onClick={() => setReportsTab("snapshots")}><History size={16} />Snapshot history</button>
           </div></div>
-          {reportsTab === "reports" ? <Reports state={state} /> : <Snapshots
+          {reportsTab === "reports" ? <Reports state={state} onOpenMember={setSelectedMemberId} /> : <Snapshots
             snapshots={state.snapshots}
             onOpen={(snapshot) => { setSelectedSnapshotId(snapshot.id); setView("overview"); }}
             onEdit={(snapshot) => { setEditingSnapshot(snapshot); setView("import"); }}
@@ -423,14 +424,17 @@ function Overview({
   const sortedPoints = selected.entries.map((entry) => entry.points).sort((a, b) => a - b);
   const median = sortedPoints.length ? sortedPoints[Math.floor(sortedPoints.length / 2)] : 0;
   const previousTotal = comparison.previous?.entries.reduce((sum, entry) => sum + entry.points, 0);
-  const rows = comparison.rows.filter((row) => row.displayName.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "top" ? row.rank <= 25 : row.needsReview)));
+  const rows = comparison.rows.filter((row) => {
+    const member = state.members.find((member) => member.id === row.memberId);
+    const names = [row.displayName, member?.canonicalName ?? "", ...(member?.aliases ?? [])].join(" ");
+    return names.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "top" ? row.rank <= 25 : row.needsReview));
+  });
   const pageCount = Math.max(1, Math.ceil(rows.length / 10));
   const currentPage = Math.min(page, pageCount - 1);
   const visibleRows = rows.slice(currentPage * 10, currentPage * 10 + 10);
   const activeMembers = state.members.filter((member) => member.active);
   const rankedIds = new Set(selected.entries.map((entry) => entry.memberId));
   const coveredMembers = activeMembers.filter((member) => rankedIds.has(member.id)).length;
-  const maxPoints = Math.max(...selected.entries.map((entry) => entry.points), 1);
   const reviewCount = selected.entries.filter((entry) => entry.needsReview).length;
 
   return (
@@ -471,29 +475,13 @@ function Overview({
       )}
 
       <section className="content-grid">
-        <div className="panel leaderboard-panel">
+        <div className="panel leaderboard-panel roster-score-panel">
           <div className="panel-head">
             <div><p className="eyebrow">THE LEADERBOARD</p><h3>Commander performance <span className="count-chip">{selected.entries.length}</span></h3></div>
             <div className="search-box"><Search size={16} /><input aria-label="Find commander" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} placeholder="Find commander…" />{query && <button className="search-clear" aria-label="Clear search" onClick={() => { setQuery(""); setPage(0); }}><X size={14} /></button>}</div>
           </div>
           <div className="leaderboard-filters" aria-label="Filter commanders">{([["all", "All commanders"], ["top", "Top 25"], ["review", `Needs review (${reviewCount})`]] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} className={filter === id ? "active" : ""} onClick={() => { setFilter(id); setPage(0); }}>{label}</button>)}</div>
-          <div className="table-scroll">
-            <table className="ranking-table">
-              <thead><tr><th>Rank</th><th>Commander</th><th>Points</th><th>Score change</th><th>Rank move</th></tr></thead>
-              <tbody>
-                {visibleRows.map((row) => (
-                  <tr key={row.id}>
-                    <td><span className={row.rank <= 3 ? `rank-badge top-${row.rank}` : "rank-badge"}>{row.rank}</span>{row.rankChange !== undefined && <span className="mobile-rank-move"><span className="sr-only">Rank change: </span><Delta value={row.rankChange} format={(value) => String(Math.abs(value))} /></span>}</td>
-                    <td><div className="commander-cell"><span className="avatar-fallback">{row.displayName.slice(0, 1).toLocaleUpperCase()}</span>{row.memberId ? <button className="commander-link" onClick={() => onOpenMember(row.memberId!)}>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</button> : <span>{row.displayName}{row.needsReview && <i title="Name needs review">!</i>}</span>}</div></td>
-                    <td><strong>{full(row.points)}</strong><div className="score-bar"><span style={{ width: `${Math.max(4, row.points / maxPoints * 100)}%` }} /></div>{row.pointChange !== undefined && <span className="mobile-score-change"><span className="sr-only">Score change: </span><Delta value={row.pointChange} format={(value) => compact(Math.abs(value))} /></span>}</td>
-                    <td><Delta value={row.pointChange} format={(value) => compact(Math.abs(value))} /></td>
-                    <td><Delta value={row.rankChange} format={(value) => `${Math.abs(value)} place${Math.abs(value) === 1 ? "" : "s"}`} /></td>
-                  </tr>
-                ))}
-                {!rows.length && <tr><td colSpan={5}><div className="leaderboard-empty"><Search size={22} /><strong>No commanders found</strong><span>Try another name or choose a different filter.</span></div></td></tr>}
-              </tbody>
-            </table>
-          </div>
+          <ScoreRows rows={visibleRows} members={state.members} onOpenMember={onOpenMember} />
           <div className="table-footer"><span aria-live="polite">{rows.length ? `${currentPage * 10 + 1}–${Math.min((currentPage + 1) * 10, rows.length)} of ${rows.length} commanders` : "0 commanders"}</span><div><button className="icon-button" aria-label="Previous page" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={16} /></button><span>{currentPage + 1} / {pageCount}</span><button className="icon-button" aria-label="Next page" disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}><ChevronRight size={16} /></button></div></div>
         </div>
         <aside className="dashboard-insights">
@@ -935,10 +923,11 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   );
 }
 
-function Reports({ state }: { state: TrackerState }) {
+function Reports({ state, onOpenMember }: { state: TrackerState; onOpenMember: (id: string) => void }) {
   const ordered = [...state.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
   const [selectedId, setSelectedId] = useState(ordered[0]?.id || "");
   const [threshold, setThreshold] = useState(15_000_000);
+  const [query, setQuery] = useState("");
   const selected = state.snapshots.find((snapshot) => snapshot.id === selectedId) || ordered[0];
   if (!selected) return <div className="page-stack"><div className="review-banner warning">Publish a snapshot to create reports.</div></div>;
   const comparison = snapshotComparison(selected, state.snapshots);
@@ -965,7 +954,7 @@ function Reports({ state }: { state: TrackerState }) {
         </div>
       </section>
       <section className="panel report-controls">
-        <label className="select-wrap"><CalendarDays size={17} /><select value={selected.id} onChange={(event) => setSelectedId(event.target.value)}>{ordered.map((snapshot) => <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>)}</select><ChevronDown size={15} /></label>
+        <label className="select-wrap"><CalendarDays size={17} /><select aria-label="Report snapshot" value={selected.id} onChange={(event) => setSelectedId(event.target.value)}>{ordered.map((snapshot) => <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>)}</select><ChevronDown size={15} /></label>
         <label><span>Participation target</span><input type="number" min="0" step="1000000" value={threshold} onChange={(event) => setThreshold(Math.max(0, Number(event.target.value)))} /></label>
       </section>
       <section className="metric-grid">
@@ -974,22 +963,34 @@ function Reports({ state }: { state: TrackerState }) {
         <Metric icon={Users} label="Not on board" value={String(missing.length)} detail="Active roster members" tone={missing.length ? "negative" : "positive"} />
         <Metric icon={UserPlus} label="New on board" value={String(newOnBoard.length)} detail={comparison.previous ? "Not present in comparison" : "Baseline capture"} />
       </section>
+      <section className="panel roster-score-panel report-score-panel">
+        <div className="panel-head"><div><p className="eyebrow">SELECTED CAPTURE</p><h3>Commander scores <span className="count-chip">{selected.entries.length}</span></h3></div><div className="search-box"><Search size={16} /><input aria-label="Search report commanders" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear report search" onClick={() => setQuery("")}><X size={14} /></button>}</div></div>
+        <ScoreRows rows={comparison.rows.filter((row) => {
+          const member = state.members.find((member) => member.id === row.memberId);
+          return [row.displayName, member?.canonicalName ?? "", ...(member?.aliases ?? [])].join(" ").toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
+        })} members={state.members} onOpenMember={onOpenMember} scroll />
+        <div className="score-source-note">{selected.dayLabel} · {dateLabel(selected.capturedAt)} · {comparison.previous ? `Compared with ${dateLabel(comparison.previous.capturedAt)}` : "No matching prior capture"}</div>
+      </section>
       <section className="panel progression-panel">
         <div className="panel-head"><div><p className="eyebrow">MONDAY–SATURDAY</p><h3>Week progression</h3></div><span className="retention-note">Week of {selected.weekStart}</span></div>
         <div className="progression-grid">{week.map((snapshot) => { const dayTotal = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); return <div className="progression-day" key={snapshot.id}><div><strong>{snapshot.dayLabel.slice(0, 3)}</strong><span>{snapshot.entries.length} ranked</span></div><b>{compact(dayTotal)}</b><div className="progression-track"><span style={{ width: `${dayTotal / maxWeeklyTotal * 100}%` }} /></div></div>; })}</div>
       </section>
       <section className="report-grid">
-        <ReportList title="Biggest point gains" empty="A matching prior capture is needed." rows={improvers.slice(0, 8).map((row) => ({ name: row.displayName, value: signed(row.pointChange) }))} />
-        <ReportList title="Biggest rank climbs" empty="A matching prior capture is needed." rows={rankMovers.filter((row) => (row.rankChange || 0) > 0).slice(0, 8).map((row) => ({ name: row.displayName, value: `+${row.rankChange} places` }))} />
-        <ReportList title="New or returning" empty="No newly ranked members detected." rows={newOnBoard.slice(0, 12).map((row) => ({ name: row.displayName, value: `Rank ${row.rank}` }))} />
-        <ReportList title="Active members not ranked" empty="Every active member appears on the board." rows={missing.slice(0, 20).map((member) => ({ name: member.canonicalName, value: member.joinedAt ? `Joined ${member.joinedAt}` : "No score recorded" }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title="Biggest point gains" empty="A matching prior capture is needed." rows={improvers.slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: signed(row.pointChange) }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title="Biggest rank climbs" empty="A matching prior capture is needed." rows={rankMovers.filter((row) => (row.rankChange || 0) > 0).slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: `+${row.rankChange} places` }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title="New or returning" empty="No newly ranked members detected." rows={newOnBoard.slice(0, 12).map((row) => ({ memberId: row.memberId, name: row.displayName, value: `Rank ${row.rank}` }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title="Active members not ranked" empty="Every active member appears on the board." rows={missing.map((member) => ({ memberId: member.id, name: member.canonicalName, value: "Not ranked" }))} />
       </section>
     </div>
   );
 }
 
-function ReportList({ title, rows, empty }: { title: string; rows: Array<{ name: string; value: string }>; empty: string }) {
-  return <section className="panel report-list"><div className="panel-head"><h3>{title}</h3></div>{rows.length ? <ol>{rows.map((row, index) => <li key={`${row.name}-${index}`}><span>{row.name}</span><strong>{row.value}</strong></li>)}</ol> : <p className="empty-copy">{empty}</p>}</section>;
+function ReportList({ title, rows, empty, members, onOpenMember }: { title: string; rows: Array<{ memberId?: string; name: string; value: string }>; empty: string; members: Member[]; onOpenMember: (id: string) => void }) {
+  return <section className="panel report-summary-list"><div className="panel-head"><h3>{title} <span className="count-chip">{rows.length}</span></h3></div>{rows.length ? <ol>{rows.map((row, index) => {
+    const member = members.find((member) => member.id === row.memberId);
+    const content = <><CommanderIdentity member={member} name={row.name} /><strong className="report-summary-value">{row.value}</strong></>;
+    return <li key={`${row.memberId ?? row.name}-${index}`}>{member ? <button onClick={() => onOpenMember(member.id)}>{content}</button> : <div className="report-unlinked">{content}</div>}</li>;
+  })}</ol> : <p className="empty-copy">{empty}</p>}</section>;
 }
 
 function Snapshots({ snapshots, onOpen, onEdit, onDelete }: { snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void> }) {
