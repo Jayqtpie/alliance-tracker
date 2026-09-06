@@ -171,6 +171,7 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
     ...primary,
     ...((primary.previousNames || duplicate.previousNames) ? { previousNames: [...new Set([...(primary.previousNames ?? []), ...(duplicate.previousNames ?? [])])].filter((name) => name !== primary.canonicalName) } : {}),
     gameProfile: primary.gameProfile ?? duplicate.gameProfile,
+    ...((primary.manualStats || duplicate.manualStats) ? { manualStats: { ...duplicate.manualStats, ...primary.manualStats, updatedAt: primary.manualStats?.updatedAt ?? duplicate.manualStats!.updatedAt } } : {}),
     aliases,
     active: primary.active || duplicate.active,
     // An unknown join date on the retained profile must stay unknown. A new OCR

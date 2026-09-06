@@ -44,6 +44,8 @@ import { allianceNeedsSetup, allianceFilePrefix } from "@/lib/alliance";
 import { AllianceMark } from "@/components/alliance-mark";
 import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
 import { MergeMemberDialog } from "@/components/merge-member-dialog";
+import { DeleteMemberDialog } from "./delete-member-dialog";
+import { memberStats } from "@/lib/member-stats";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { BridgeJobView } from "@/lib/bridge-types";
@@ -420,6 +422,8 @@ export function TrackerApp({
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState<string>();
+  const [deleteMemberId, setDeleteMemberId] = useState<string>();
+  const deletingMember = state.members.find((member) => member.id === deleteMemberId);
   const [mergeMemberId, setMergeMemberId] = useState<string>();
   const mergeMember = state.members.find((member) => member.id === mergeMemberId);
   const selected = state.snapshots.find((snapshot) => snapshot.id === selectedSnapshotId) || state.snapshots[0];
@@ -548,9 +552,14 @@ export function TrackerApp({
           />}
         </>}
         {view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <AllianceRoster onSaved={(next) => { setState(next); showNotice("Player name saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} />}
+        {view === "members" && <AllianceRoster onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
       </main>
-      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} />}
+      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
+      {deletingMember && <DeleteMemberDialog key={deletingMember.id} member={deletingMember} state={state} onClose={() => setDeleteMemberId(undefined)} onDeleted={(next) => {
+        setState(next); setDeleteMemberId(undefined);
+        if (selectedMemberId === deletingMember.id) setSelectedMemberId(undefined);
+        showNotice("Player deleted. Saved rankings kept."); router.refresh();
+      }} />}
       {mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
         const name = next.members.find((member) => member.id === primaryId)?.canonicalName;
         setState(next);
@@ -695,7 +704,8 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
   return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{label}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
 }
 
-function CommanderProfile({ member, state, onClose, onMerge }: { member: Member; state: TrackerState; onClose: () => void; onMerge: () => void }) {
+function CommanderProfile({ member, state, onClose, onMerge, onDelete }: { member: Member; state: TrackerState; onClose: () => void; onMerge: () => void; onDelete: () => void }) {
+  const stats = memberStats(member);
   const performance = memberPerformance(member, state.snapshots);
   const stormHistory = (state.operations?.stormEvents || []).flatMap((event) => {
     const participant = event.participants.find((item) => item.memberId === member.id);
@@ -728,11 +738,11 @@ function CommanderProfile({ member, state, onClose, onMerge }: { member: Member;
 
         <div className="profile-body">
           {Boolean(member.previousNames?.length) && <div className="profile-previous-names" aria-label="Previous player names">{member.previousNames!.map((name) => <span key={name}><small>Previous name</small><strong>{name}</strong></span>)}</div>}
-          {member.gameProfile && <section className="profile-metrics">
-            <div><span>Hero power</span><strong>{member.gameProfile.heroPowerDisplay}</strong><small>{member.gameProfile.heroPower === null ? "Not available" : member.gameProfile.heroPowerLegacy ? "Legacy · older data" : "Rounded display"}</small></div>
-            <div><span>Kills</span><strong>{member.gameProfile.killsDisplay}</strong><small>{member.gameProfile.kills === null ? "Not available" : "Rounded display"}</small></div>
-            <div><span>Alliance rank</span><strong>{member.gameProfile.rank}</strong><small>LWServers profile</small></div>
-            <div><span>Profile accuracy</span><strong className="profile-capture-date">{accurateAsOf(member.gameProfile.capturedOn)}</strong><small>{member.gameProfile.sourceActivityDate ? `LWServers activity: ${dateLabel(member.gameProfile.sourceActivityDate)}` : "Saved profile data"}</small></div>
+          {(member.gameProfile || member.manualStats) && <section className="profile-metrics">
+            <div><span>Hero power</span><strong>{stats.heroPowerDisplay}</strong><small>{stats.heroPower === null ? "Not available" : member.manualStats?.heroPower !== undefined ? "Manually updated" : "Rounded display"}</small></div>
+            <div><span>Kills</span><strong>{stats.killsDisplay}</strong><small>{stats.kills === null ? "Not available" : member.manualStats?.kills !== undefined ? "Manually updated" : "Rounded display"}</small></div>
+            <div><span>Alliance rank</span><strong>{member.gameProfile?.rank ?? "—"}</strong><small>Player profile</small></div>
+            <div><span>Profile accuracy</span><strong className="profile-capture-date">{member.gameProfile ? accurateAsOf(member.gameProfile.capturedOn) : "No profile capture"}</strong><small>{member.manualStats ? `Stats edited: ${dateLabel(member.manualStats.updatedAt)}` : member.gameProfile?.sourceActivityDate ? `Last activity: ${dateLabel(member.gameProfile.sourceActivityDate)}` : "Saved profile data"}</small></div>
           </section>}
           <section className="profile-metrics">
             <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>
@@ -764,6 +774,7 @@ function CommanderProfile({ member, state, onClose, onMerge }: { member: Member;
               <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
             </dl>
             <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>
+            <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> Delete player</button>
           </section>
 
           <section className="profile-panel profile-operations-panel">
