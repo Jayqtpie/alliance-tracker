@@ -4,6 +4,7 @@ export interface Member {
   id: string;
   canonicalName: string;
   aliases: string[];
+  previousNames?: string[];
   active: boolean;
   joinedAt?: string;
   leftAt?: string;
@@ -18,6 +19,7 @@ export interface Member {
     kills: number | null;
     killsDisplay: string;
     capturedOn: string;
+    sourceActivityDate?: string;
     source: string;
   };
 }

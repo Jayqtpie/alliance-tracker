@@ -584,11 +584,12 @@ function CommanderProfile({ member, state, onClose, onMerge }: { member: Member;
         </header>
 
         <div className="profile-body">
+          {Boolean(member.previousNames?.length) && <div className="profile-previous-names" aria-label="Previous player names">{member.previousNames!.map((name) => <span key={name}><small>Previous name</small><strong>{name}</strong></span>)}</div>}
           {member.gameProfile && <section className="profile-metrics">
             <div><span>Hero power</span><strong>{member.gameProfile.heroPowerDisplay}</strong><small>{member.gameProfile.heroPower === null ? "Not available" : member.gameProfile.heroPowerLegacy ? "Legacy · older data" : "Rounded display"}</small></div>
             <div><span>Kills</span><strong>{member.gameProfile.killsDisplay}</strong><small>{member.gameProfile.kills === null ? "Not available" : "Rounded display"}</small></div>
             <div><span>Alliance rank</span><strong>{member.gameProfile.rank}</strong><small>LWServers profile</small></div>
-            <div><span>Profile accuracy</span><strong className="profile-capture-date">{accurateAsOf(member.gameProfile.capturedOn)}</strong><small>Saved profile data</small></div>
+            <div><span>Profile accuracy</span><strong className="profile-capture-date">{accurateAsOf(member.gameProfile.capturedOn)}</strong><small>{member.gameProfile.sourceActivityDate ? `LWServers activity: ${dateLabel(member.gameProfile.sourceActivityDate)}` : "Saved profile data"}</small></div>
           </section>}
           <section className="profile-metrics">
             <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>

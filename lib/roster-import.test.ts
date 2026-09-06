@@ -2,10 +2,39 @@ import { describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { INITIAL_STATE } from "./seed";
-import { importCapturedRoster, parseDisplayedPower } from "./roster-import";
+import { importCapturedRoster, parseDisplayedPower, ROSTER_IMPORT } from "./roster-import";
 import { mergeMemberIdentities } from "./tracker";
 
 describe("captured RSCL roster", () => {
+  it("refreshes an older capture by UID while preserving corrections, history and previous names", () => {
+    const before = importCapturedRoster(structuredClone(INITIAL_STATE));
+    before.rosterImport = "lwservers-rscl-927-2026-09-05-v1";
+    const parrot = before.members.find((member) => member.gameProfile?.uid === "1601085524000862")!;
+    parrot.id = "officer-retained-identity";
+    parrot.canonicalName = "war parrot";
+    parrot.aliases = ["An OCR alias"];
+    parrot.previousNames = ["A verified earlier name"];
+    parrot.notes = "Preserve this note";
+    before.snapshots[0].entries[0] = { ...before.snapshots[0].entries[0], memberId: parrot.id, reviewed: true, needsReview: false };
+    const after = importCapturedRoster(before);
+    const refreshed = after.members.find((member) => member.id === parrot.id)!;
+    expect(refreshed.canonicalName).toBe("dr parrot");
+    expect(refreshed.aliases).toContain("war parrot");
+    expect(refreshed.previousNames).toEqual(expect.arrayContaining(["war parrot", "A verified earlier name"]));
+    expect(refreshed.previousNames).not.toContain("An OCR alias");
+    expect(refreshed.notes).toBe(parrot.notes);
+    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-06", sourceActivityDate: "2026-09-04" });
+    expect(after.snapshots).toEqual(before.snapshots);
+    expect(after.operations).toEqual(before.operations);
+    expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
+    expect(after.members.filter((member) => member.active)).toHaveLength(100);
+    expect(after.rosterImport).toBe(ROSTER_IMPORT);
+    expect(importCapturedRoster(after)).toBe(after);
+  });
+  it("does not downgrade a newer roster capture", () => {
+    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-07-v1" };
+    expect(importCapturedRoster(state)).toBe(state);
+  });
   it("imports 100 members and local avatars without treating missing stats as zero", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     const active = state.members.filter((member) => member.active);

@@ -25,6 +25,7 @@ export async function PUT(request: Request) {
     const members = parsed.data.members.map((member) => ({
       ...member,
       gameProfile: state.members.find((existing) => existing.id === member.id)?.gameProfile,
+      previousNames: state.members.find((existing) => existing.id === member.id)?.previousNames,
     }));
     return NextResponse.json(await setState({ ...state, members }));
   } catch (error) {
@@ -57,7 +58,8 @@ export async function PATCH(request: Request) {
       const member = state.members.find((item) => item.id === memberId);
       if (!member) return NextResponse.json({ error: "This player no longer exists. Refresh the roster." }, { status: 404 });
       const aliases = [...new Set([...member.aliases, member.canonicalName])].filter((name) => name !== canonicalName);
-      return NextResponse.json(await setState({ ...state, members: state.members.map((item) => item.id === memberId ? { ...item, canonicalName, aliases } : item) }));
+      const previousNames = [...new Set([...(member.previousNames ?? []), member.canonicalName])].filter((name) => name !== canonicalName);
+      return NextResponse.json(await setState({ ...state, members: state.members.map((item) => item.id === memberId ? { ...item, canonicalName, aliases, previousNames } : item) }));
     }
     const merged = mergeMemberIdentities(state, parsed.data.primaryId, parsed.data.duplicateId, parsed.data.keepEntries);
     return NextResponse.json(await setState(merged));

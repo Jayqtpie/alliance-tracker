@@ -24,6 +24,9 @@
 .roster-merge-button:hover { color: var(--green); border-color: var(--green); }
 .alliance-roster-page .alliance-roster-columns { margin-right: 78px; }
 .profile-merge-action { margin-top: 18px; }
+.profile-previous-names { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+.profile-previous-names > span { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); font-size: 12px; overflow-wrap: anywhere; }
+.profile-previous-names small { color: var(--muted); font-size: 10px; }
 @media (max-width: 600px) {
   .merge-member-dialog { padding: 18px; }
   .merge-dialog-footer { flex-direction: column-reverse; }
