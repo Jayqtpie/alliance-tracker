@@ -1091,7 +1091,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   }
 
   return (
-    <div className="page-stack narrow-page">
+    <div className="page-stack snapshot-editor">
       <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload screenshots for cloud extraction, import a local Codex result, or paste rows manually.</p></div></section>
       {!ocrConfigured && <div className="review-banner warning"><CircleAlert size={18} /><span><strong>Cloud extraction is not configured.</strong> You can still import Codex JSON generated on an officer&apos;s computer or paste rows manually.</span></div>}
       <section className="panel import-meta">

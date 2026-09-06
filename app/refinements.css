@@ -134,6 +134,9 @@
 /* The directory sits directly on the workspace, with shared column alignment. */
 html { scrollbar-gutter: stable; }
 .page-stack.alliance-roster-page { max-width: 1600px; }
+:root .snapshot-editor .review-table tr.needs-review { background: var(--panel); color: var(--ink); border-color: var(--panel-border); }
+:root .snapshot-editor .review-table tr.needs-review:hover { background: var(--row-hover); }
+.snapshot-editor .review-table td { border-color: var(--panel-border); }
 .alliance-roster-directory { min-width: 0; }
 .alliance-roster-directory .alliance-roster-heading { padding-block: 5px 0; }
 .alliance-roster-directory .alliance-roster-scroll, .alliance-roster-directory .alliance-roster-list { max-height: none; overflow: visible; }
