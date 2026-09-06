@@ -75,6 +75,10 @@
 .score-rows { max-height: 540px; overflow: auto; scrollbar-width: thin; scrollbar-color: var(--panel-border) transparent; padding-top: 0; }
 .score-rows.full-capture { max-height: 630px; }
 .score-rows .score-list.scroll { max-height: none; overflow: visible; }
+@media (min-width: 1051px) {
+  .content-grid > .roster-score-panel { align-self: stretch; display: flex; flex-direction: column; }
+  .content-grid > .roster-score-panel .score-rows { flex: 1; max-height: none; overflow: visible; }
+}
 .alliance-roster-columns, .score-columns { position: sticky; top: 0; z-index: 2; background: var(--panel); padding-top: 10px; box-shadow: 0 1px var(--panel-border); margin-bottom: 5px; }
 .alliance-roster-row, .score-row, .report-summary-list li button, .report-summary-list .report-unlinked { color: var(--ink); background: var(--row); }
 .alliance-roster-row:hover, .alliance-roster-row:focus-visible, button.score-row:hover, button.score-row:focus-visible, .report-summary-list li button:hover, .report-summary-list li button:focus-visible { background: var(--row-hover); border-color: var(--focus); }
