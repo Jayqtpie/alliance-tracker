@@ -21,6 +21,30 @@ beforeEach(() => {
 });
 
 describe("snapshot identity review", () => {
+  it("allows fixing a different player's link in a legacy capture with existing duplicates", async () => {
+    const state = await getState();
+    state.members.push({ id: "legacy", canonicalName: "Old name", active: false, aliases: [] }, { id: "other", canonicalName: "Other player", active: true, aliases: [] });
+    const entries = [
+      { ...row, id: "old-row", memberId: "legacy" },
+      { ...row, id: "other-row-1", memberId: "other", displayName: "Other player", rank: 2 },
+      { ...row, id: "other-row-2", memberId: "other", displayName: "Other player", rank: 3 },
+    ];
+    state.snapshots.push({ id: "existing", capturedAt: "2026-09-06T12:00:00.000Z", weekStart: "2026-08-31", dayLabel: "Sunday", status: "final", sourceType: "manual", entries });
+    const corrected = entries.map((entry) => entry.id === "old-row" ? { ...entry, memberId: "keep" } : entry);
+    const edit = (rows: unknown[], snapshotId = "existing") => new Request("http://localhost/api/snapshots", { method: "POST", body: JSON.stringify({ snapshotId, capturedDate: "2026-09-06", status: "final", sourceType: "manual", rows }) });
+    const response = await POST(edit(corrected));
+    expect(response.status).toBe(200);
+    const saved = await response.json();
+    expect(saved.snapshot.entries).toEqual(corrected);
+    expect(saved.state.snapshots).toHaveLength(1);
+    expect(saved.state.members).toHaveLength(3);
+    vi.mocked(setState).mockClear();
+    expect((await POST(edit(entries.map((entry) => ({ ...entry, memberId: "other" }))))).status).toBe(400);
+    expect((await POST(edit([...corrected, { ...corrected[1], rank: 4 }]))).status).toBe(400);
+    expect((await POST(edit(corrected, "deleted-snapshot"))).status).toBe(404);
+    expect(setState).not.toHaveBeenCalled();
+  });
+
   it("requires explicit confirmation before creating an unmatched member", async () => {
     expect((await POST(request())).status).toBe(409);
     expect(setState).not.toHaveBeenCalled();
