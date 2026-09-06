@@ -206,6 +206,7 @@ async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
   const context = canvas.getContext("2d");
   if (!context) return;
   const entries = snapshot.entries.slice(0, 10);
+  const weeklyTotal = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0);
   const memberById = new Map(state.members.map((member) => [member.id, member]));
   const allianceLabel = `[${state.alliance.tag}] ${state.alliance.name}`;
   const avatarImages = await Promise.all(entries.map((entry) => loadCanvasImage(entry.memberId ? memberById.get(entry.memberId)?.gameProfile?.avatarPath : undefined)));
@@ -230,28 +231,36 @@ async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
   drawOutlinedCanvasText(context, "RANKING", 0, 0, "#ffffff", "#151820", 12);
   context.restore();
 
-  roundedCanvasRect(context, 28, 206, 326, 92, 8);
+  roundedCanvasRect(context, 668, 39, 384, 100, 8);
   context.fillStyle = "#343d54";
   context.fill();
-  context.strokeStyle = "#161b2b";
+  context.strokeStyle = "#71809b";
   context.lineWidth = 4;
   context.stroke();
-  roundedCanvasRect(context, 365, 198, 390, 100, 8);
+  context.textAlign = "center";
+  context.fillStyle = "#bac4d5";
+  context.font = "800 19px Arial, sans-serif";
+  context.fillText("WEEKLY TOTAL", 860, 74);
+  const totalSize = fitCanvasText(context, full(weeklyTotal), 338, 900, 36, 26);
+  context.fillStyle = "#ffffff";
+  context.font = `900 ${totalSize}px Arial, sans-serif`;
+  context.fillText(full(weeklyTotal), 860, 119, 338);
+
+  roundedCanvasRect(context, 28, 198, 520, 100, 8);
   context.fillStyle = "#ff8b08";
   context.fill();
   context.strokeStyle = "#d96800";
   context.stroke();
   context.fillStyle = "#ff8b08";
   context.beginPath();
-  context.moveTo(536, 296);
-  context.lineTo(584, 296);
-  context.lineTo(560, 322);
+  context.moveTo(264, 296);
+  context.lineTo(312, 296);
+  context.lineTo(288, 322);
   context.closePath();
   context.fill();
   context.textAlign = "center";
   context.font = "900 38px Arial, sans-serif";
-  drawOutlinedCanvasText(context, "Daily Rank", 191, 264, "#d7d9df", "#151820", 7);
-  drawOutlinedCanvasText(context, "Weekly Rank", 560, 264, "#ffffff", "#151820", 7);
+  drawOutlinedCanvasText(context, "Weekly Rank", 288, 264, "#ffffff", "#151820", 7);
 
   roundedCanvasRect(context, 16, 306, 1048, 1434, 8);
   context.fillStyle = "#f4eee9";
@@ -338,24 +347,6 @@ async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
   context.fillStyle = "#ffffff";
   context.font = "900 31px Arial, sans-serif";
   context.fillText(state.alliance.name, 148, 1848, 500);
-  context.textAlign = "right";
-  context.font = "900 38px Arial, sans-serif";
-  drawOutlinedCanvasText(context, "Your Alliance", 956, 1828, "#ffffff", "#11151d", 8);
-  roundedCanvasRect(context, 974, 1850, 56, 48, 7);
-  context.fillStyle = "#323a50";
-  context.fill();
-  context.strokeStyle = "#4b5870";
-  context.lineWidth = 4;
-  context.stroke();
-  context.strokeStyle = "#8ee637";
-  context.lineWidth = 10;
-  context.lineCap = "round";
-  context.beginPath();
-  context.moveTo(987, 1874);
-  context.lineTo(999, 1886);
-  context.lineTo(1019, 1863);
-  context.stroke();
-  context.lineCap = "butt";
 
   const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
   if (blob) downloadBlob(blob, `${allianceFilePrefix(state.alliance)}-weekly-rank-${snapshot.capturedAt.slice(0, 10)}.png`);
