@@ -21,7 +21,7 @@ describe("uploaded scores in roster-style overview and reports", () => {
     const response = await POST(new Request("http://localhost/api/snapshots", {
       method: "POST", body: JSON.stringify({ capturedDate: "2026-09-01", status: "live", sourceType: "manual", rows: [
         { memberId: jay.id, rank: 1, displayName: "Jay new name", points: 23_987_654 },
-        { rank: 2, displayName: "New arrival", points: 12_345_678 },
+        { rank: 2, displayName: "New arrival", points: 12_345_678, createMember: true },
       ] }),
     }));
     expect(response.status).toBe(200);

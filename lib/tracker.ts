@@ -5,7 +5,7 @@ export function normalizeName(value: string) {
     .normalize("NFKC")
     .replace(/^\s*\[[\p{L}\p{N}]{1,8}\]\s*/u, "")
     .toLocaleLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, "")
+    .replace(/[^\p{L}\p{M}\p{N}]+/gu, "")
     .trim();
 }
 
@@ -52,9 +52,11 @@ export function dedupeRows(rows: ExtractedRow[]) {
 
 export function matchMember(name: string, members: Member[]) {
   const normalized = normalizeName(name);
-  return members.find((member) =>
+  if (!normalized) return undefined;
+  const matches = members.filter((member) =>
     [member.canonicalName, ...member.aliases].some((alias) => normalizeName(alias) === normalized),
   );
+  return matches.length === 1 ? matches[0] : undefined;
 }
 
 function editDistance(left: string, right: string) {
@@ -86,7 +88,7 @@ export function suggestMember(name: string, members: Member[]) {
     .sort((a, b) => b.score - a.score)[0];
 }
 
-export function analyzeImport(rows: ExtractedRow[], members: Member[]) {
+export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; createMember?: boolean }>, members: Member[]) {
   const warnings: string[] = [];
   const normalizedNames = new Map<string, number[]>();
   const rankCounts = new Map<number, number>();
@@ -96,15 +98,15 @@ export function analyzeImport(rows: ExtractedRow[], members: Member[]) {
     rankCounts.set(row.rank, (rankCounts.get(row.rank) || 0) + 1);
     const normalized = normalizeName(row.displayName);
     normalizedNames.set(normalized, [...(normalizedNames.get(normalized) || []), row.rank]);
-    const member = matchMember(row.displayName, members);
-    if (!member) {
+    const member = row.memberId ? members.find((candidate) => candidate.id === row.memberId) : matchMember(row.displayName, members);
+    if (!member && !row.createMember) {
       const suggestion = suggestMember(row.displayName, members);
       warnings.push(
         suggestion
           ? `Rank ${row.rank} (${row.displayName}) is unmatched. Possible name change: ${suggestion.member.canonicalName}.`
           : `Rank ${row.rank} (${row.displayName}) is not linked to a known member.`,
       );
-    } else if (!member.active) {
+    } else if (member && !member.active) {
       warnings.push(`Rank ${row.rank} matches departed member ${member.canonicalName}; confirm they returned.`);
     }
   }
@@ -135,13 +137,32 @@ export function analyzeImport(rows: ExtractedRow[], members: Member[]) {
   return [...new Set(warnings)];
 }
 
-export function mergeMemberIdentities(state: TrackerState, primaryId: string, duplicateId: string): TrackerState {
+export function memberMergeConflicts(state: TrackerState, primaryId: string, duplicateId: string) {
+  return state.snapshots.flatMap((snapshot) => {
+    const entries = snapshot.entries.filter((entry) => entry.memberId === primaryId || entry.memberId === duplicateId);
+    return entries.length > 1 ? [{ snapshot, entries }] : [];
+  });
+}
+
+export function mergeMemberIdentities(state: TrackerState, primaryId: string, duplicateId: string, keepEntries: Record<string, string> = {}): TrackerState {
   if (primaryId === duplicateId) throw new Error("Choose two different members to merge.");
   const primary = state.members.find((member) => member.id === primaryId);
   const duplicate = state.members.find((member) => member.id === duplicateId);
   if (!primary || !duplicate) throw new Error("One of the selected members no longer exists.");
 
-  const aliases = [...primary.aliases, duplicate.canonicalName, ...duplicate.aliases].filter((alias, index, all) =>
+  const conflicts = memberMergeConflicts(state, primaryId, duplicateId);
+  for (const { snapshot, entries } of conflicts) {
+    if (!entries.some((entry) => entry.id === keepEntries[snapshot.id])) {
+      throw new Error(`Choose which ranking result to keep for ${snapshot.capturedAt.slice(0, 10)} (${snapshot.status}). Scores are not added together.`);
+    }
+  }
+  const conflictIds = new Set(conflicts.map(({ snapshot }) => snapshot.id));
+  const recordedNames = state.snapshots.flatMap((snapshot) => snapshot.entries
+    .filter((entry) => entry.memberId === duplicateId).map((entry) => entry.displayName));
+  const historyDates = state.snapshots.filter((snapshot) => snapshot.entries.some((entry) =>
+    entry.memberId === primaryId || entry.memberId === duplicateId)).map((snapshot) => snapshot.capturedAt.slice(0, 10));
+
+  const aliases = [...primary.aliases, duplicate.canonicalName, ...duplicate.aliases, ...recordedNames].filter((alias, index, all) =>
     normalizeName(alias) !== normalizeName(primary.canonicalName) &&
     all.findIndex((candidate) => normalizeName(candidate) === normalizeName(alias)) === index,
   );
@@ -150,7 +171,11 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
     gameProfile: primary.gameProfile ?? duplicate.gameProfile,
     aliases,
     active: primary.active || duplicate.active,
-    joinedAt: [primary.joinedAt, duplicate.joinedAt].filter((date): date is string => Boolean(date)).sort()[0],
+    // An unknown join date on the retained profile must stay unknown. A new OCR
+    // identity's import date must not hide that profile's older appearances.
+    joinedAt: primary.joinedAt
+      ? [primary.joinedAt, duplicate.joinedAt, ...historyDates].filter((date): date is string => Boolean(date)).sort()[0]
+      : undefined,
     leftAt: primary.active || duplicate.active ? undefined : primary.leftAt || duplicate.leftAt,
     notes: [primary.notes, duplicate.notes].filter(Boolean).join(" · ") || undefined,
   };
@@ -160,7 +185,10 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
     members: state.members.filter((member) => member.id !== duplicateId).map((member) => member.id === primaryId ? merged : member),
     snapshots: state.snapshots.map((snapshot) => ({
       ...snapshot,
-      entries: snapshot.entries.map((entry) => entry.memberId === duplicateId ? { ...entry, memberId: primaryId } : entry),
+      entries: snapshot.entries
+        .filter((entry) => !conflictIds.has(snapshot.id) ||
+          (entry.memberId !== primaryId && entry.memberId !== duplicateId) || entry.id === keepEntries[snapshot.id])
+        .map((entry) => entry.memberId === duplicateId ? { ...entry, memberId: primaryId } : entry),
     })),
     operations: state.operations ? {
       ...state.operations,

@@ -1,0 +1,34 @@
+.merge-member-dialog { width: min(580px, calc(100vw - 28px)); max-height: calc(100dvh - 32px); padding: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--panel); color: var(--ink); box-shadow: 0 24px 80px #0004; }
+.merge-member-dialog::backdrop { background: #02182ba8; backdrop-filter: blur(3px); }
+.merge-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.merge-dialog-heading h2 { margin: 6px 0; font-size: 23px; }
+.merge-member-dialog fieldset { display: grid; gap: 16px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.merge-copy, .merge-preview p, .merge-conflicts p { margin: 8px 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.merge-member-dialog label { display: grid; gap: 8px; min-width: 0; font-size: 12px; font-weight: 600; }
+.merge-member-dialog input, .merge-member-dialog select { width: 100%; min-width: 0; min-height: 44px; padding: 10px; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); background: var(--paper); }
+.merge-identity { display: flex; align-items: center; gap: 12px; padding: 15px; border: 1px solid var(--line); border-radius: 8px; }
+.merge-identity div { min-width: 0; display: grid; gap: 5px; overflow-wrap: anywhere; }
+.merge-identity small { font-size: 9px; letter-spacing: .09em; color: var(--muted); }
+.merge-identity span { font-size: 11px; color: var(--muted); }
+.merge-identity .alliance-avatar { flex-shrink: 0; font-size: 16px; }
+.merge-keep { border-color: var(--green); }
+.merge-preview { display: flex; align-items: flex-start; gap: 10px; }
+.merge-preview svg { flex-shrink: 0; margin-top: 11px; color: var(--green); }
+.merge-conflicts { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--orange); border-radius: 8px; }
+.merge-conflicts h3, .merge-conflicts p { margin: 0; }
+.merge-conflicts h3 { font-size: 14px; }
+.merge-dialog-footer { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
+.alliance-roster-list > li.roster-with-merge { display: flex; align-items: stretch; gap: 4px; }
+.roster-with-merge .alliance-roster-row { flex: 1; min-width: 0; }
+.roster-merge-button { display: flex; align-items: center; justify-content: center; gap: 5px; width: 74px; flex-shrink: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); font-size: 11px; }
+.roster-merge-button:hover { color: var(--green); border-color: var(--green); }
+.alliance-roster-page .alliance-roster-columns { margin-right: 78px; }
+.profile-merge-action { margin-top: 18px; }
+@media (max-width: 600px) {
+  .merge-member-dialog { padding: 18px; }
+  .merge-dialog-footer { flex-direction: column-reverse; }
+  .merge-dialog-footer .button { width: 100%; }
+  .roster-merge-button { width: 34px; }
+  .roster-merge-button span { display: none; }
+  .alliance-roster-page .alliance-roster-columns { margin-right: 38px; }
+}

@@ -14,6 +14,7 @@ const schema = z.object({
   rows: z.array(z.object({
     id: z.string().optional(),
     memberId: z.string().optional(),
+    createMember: z.boolean().optional(),
     rank: z.number().int().positive(),
     displayName: z.string().min(1).max(100),
     points: z.number().int().nonnegative(),
@@ -36,12 +37,14 @@ export async function POST(request: Request) {
 
   try {
     const state = await getState();
-    const members = [...state.members];
+    const members = state.members.map((member) => ({ ...member, aliases: [...member.aliases] }));
     const entries: RankingEntry[] = parsed.data.rows
       .sort((a, b) => a.rank - b.rank)
       .map((row) => {
         let member = row.memberId ? members.find((item) => item.id === row.memberId) : matchMember(row.displayName, members);
+        if (row.memberId && !member) throw new Error(`Rank ${row.rank}: the selected member no longer exists. Refresh and choose their roster identity again.`);
         if (!member) {
+          if (!row.createMember) throw new Error(`Rank ${row.rank} (${row.displayName}): choose an existing roster member or explicitly confirm a new member.`);
           member = {
             id: crypto.randomUUID(),
             canonicalName: row.displayName,
@@ -67,6 +70,10 @@ export async function POST(request: Request) {
           needsReview: row.needsReview,
         };
       });
+
+    if (new Set(entries.map((entry) => entry.memberId)).size !== entries.length) {
+      return NextResponse.json({ error: "The same member is linked to more than one rank. Correct or remove the duplicate row before publishing." }, { status: 400 });
+    }
 
     const existing = parsed.data.snapshotId
       ? state.snapshots.find((snapshot) => snapshot.id === parsed.data.snapshotId)

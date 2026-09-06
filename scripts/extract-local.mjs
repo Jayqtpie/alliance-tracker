@@ -15,9 +15,10 @@ Usage:
 Options:
   --out <path>       Output JSON path (defaults to local-extractions/)
   --profile <name>   Optional Codex CLI configuration profile
-  --model <name>     Optional Codex model override
+  --model <name>     Codex model override (default: gpt-5.6-luna)
   --help             Show this help
 
+Extraction uses low reasoning, including retries.
 The Codex CLI must be signed in with ChatGPT. Run "codex login" once if needed.
 `;
 
@@ -92,6 +93,7 @@ function validateRows(value, batchLabel) {
 }
 
 const options = parseArguments(process.argv.slice(2));
+const extractionModel = options.model || "gpt-5.6-luna";
 if (options.help) {
   console.log(usage.trim());
   process.exit(0);
@@ -139,6 +141,8 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
     "Read the attached Last War Alliance Duel Weekly Rank screenshots as OCR only. " +
     retryInstruction +
     "Extract every readable complete player row from every image. Preserve each commander display name exactly, including Unicode, spacing, punctuation, and case. " +
+    "Transcribe Korean Hangul, Chinese characters, Japanese kana/kanji, Cyrillic, Arabic, Thai and accented letters in their original script. Never translate, romanize, substitute Latin lookalikes, or drop combining marks. Recheck small or mixed-script names character by character and compare clearer observations in overlapping images. " +
+    "Judge name confidence separately from readable ranks and scores. If any name character remains uncertain, use the best visible transcription, set needsReview=true and confidence below 0.86; never invent missing characters. " +
     "Return points as integers without commas. The green player card fixed at the bottom is the viewer's pinned rank: include it only with isPinned=true. " +
     "Set isPinned=false for ordinary leaderboard rows. Ignore headers, alliance text, chat banners, and rows where rank, name, or points are not readable. " +
     "Set needsReview=true when any character or number is uncertain and lower confidence accordingly. Keep overlapping duplicate observations; the tracker will reconcile them. " +
@@ -147,7 +151,8 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
     "exec",
     "--ephemeral",
     "--ignore-rules",
-    "--config", `model_reasoning_effort="${focusedRetry ? "medium" : "low"}"`,
+    "--model", extractionModel,
+    "--config", 'model_reasoning_effort="low"',
     "--config", 'model_reasoning_summary="none"',
     "--sandbox", "read-only",
     "--skip-git-repo-check",
@@ -155,7 +160,6 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
     "--output-last-message", temporaryOutput,
   ];
   if (options.profile) args.push("--profile", options.profile);
-  if (options.model) args.push("--model", options.model);
   batch.forEach((image) => args.push("--image", image));
   args.push("--", prompt);
 
@@ -174,7 +178,7 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
   }
 }
 
-console.log(`Using Codex with ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
+console.log(`Using ${extractionModel} with low reasoning and ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
 for (let index = 0; index < batches.length; index += 1) {
   const batch = batches[index];
   console.log(`\nReading batch ${index + 1}/${batches.length}...`);

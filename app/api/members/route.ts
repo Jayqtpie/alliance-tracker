@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAuthenticated } from "@/lib/auth";
-import { getState, setState } from "@/lib/store";
+import { getState, setState, StateConflictError } from "@/lib/store";
 import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
 
 const schema = z.object({
@@ -35,6 +35,8 @@ export async function PUT(request: Request) {
 const mergeSchema = z.object({
   primaryId: z.string().min(1),
   duplicateId: z.string().min(1),
+  version: z.number().int().positive(),
+  keepEntries: z.record(z.string(), z.string()).optional(),
 });
 
 export async function PATCH(request: Request) {
@@ -43,10 +45,11 @@ export async function PATCH(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
     const state = await getState();
-    const merged = mergeMemberIdentities(state, parsed.data.primaryId, parsed.data.duplicateId);
+    if (parsed.data.version !== state.version) throw new StateConflictError();
+    const merged = mergeMemberIdentities(state, parsed.data.primaryId, parsed.data.duplicateId, parsed.data.keepEntries);
     return NextResponse.json(await setState(merged));
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not merge members." }, { status: 400 });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not merge members." }, { status: error instanceof StateConflictError ? 409 : 400 });
   }
 }
 
