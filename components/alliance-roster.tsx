@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { GitMerge, Search, Users, X } from "lucide-react";
+import { GitMerge, PencilLine, Search, Users, X } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import "./roster-rank-tabs.css";
 import { MemberName } from "./member-name";
+
+import { RenameMemberDialog } from "./rename-member-dialog";
+import { accurateAsOf } from "@/lib/display-date";
 
 const ROSTER_RANK_FILTERS = [
   { value: "all", label: "All" },
@@ -26,7 +29,9 @@ export function MemberAvatar({ member, large = false }: { member: Member; large?
   </span>;
 }
 
-export function AllianceRoster({ state, onOpenMember, onMergeMember }: { state: TrackerState; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void }) {
+export function AllianceRoster({ state, onOpenMember, onMergeMember, onSaved }: { state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void }) {
+  const [editingId, setEditingId] = useState<string>();
+  const editingMember = state.members.find((member) => member.id === editingId);
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("active");
   const [sort, setSort] = useState("heroPower");
@@ -49,7 +54,7 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember }: { state: 
   return <div className="page-stack alliance-roster-page">
     <section className="dashboard-heading"><div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1><p>Your commanders, at a glance.</p></div><span className="alliance-tag">{state.alliance.tag} <span>#{state.alliance.server}</span></span></section>
     <section className="alliance-roster-card" aria-label="Alliance members">
-      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? `Captured ${new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(`${capturedOn}T00:00:00Z`))}` : "No profile capture"}</span></header>
+      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? accurateAsOf(capturedOn) : "No profile capture"}</span></header>
       <div className="roster-rank-tabs" role="group" aria-label="Filter roster by rank">
         {ROSTER_RANK_FILTERS.map(({ value, label }) => <button key={value} type="button" aria-pressed={rankFilter === value} aria-controls={rosterListId} onClick={() => setRankFilter(value)}>
           {label}<span>{value === "all" ? membership.length : membership.filter((member) => member.gameProfile?.rank === value).length}</span>
@@ -67,10 +72,12 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember }: { state: 
           <span className="alliance-stat"><strong>{member.gameProfile?.heroPowerDisplay ?? "—"}</strong>{member.gameProfile?.heroPowerLegacy && <small className="alliance-legacy" title="LWServers marks this hero power as legacy data">Legacy</small>}</span>
           <span className="alliance-stat"><strong>{member.gameProfile?.killsDisplay ?? "—"}</strong></span>
         </button>
-        <button className="roster-merge-button" aria-label={`Merge ${member.canonicalName} into another player`} title="Merge this duplicate into the correct player" disabled={state.members.length < 2} onClick={() => onMergeMember(member.id)}><GitMerge size={16} /><span>Merge</span></button>
+        <div className="roster-member-actions"><button className="roster-merge-button" aria-label={`Edit name for ${member.canonicalName}`} title="Edit player name" onClick={() => setEditingId(member.id)}><PencilLine size={16} /><span>Edit name</span></button>
+        <button className="roster-merge-button" aria-label={`Merge ${member.canonicalName} into another player`} title="Merge this duplicate into the correct player" disabled={state.members.length < 2} onClick={() => onMergeMember(member.id)}><GitMerge size={16} /><span>Merge</span></button></div>
       </li>)}</ol></div>
       {!filtered.length && <div className="leaderboard-empty"><Users size={24} /><strong>No commanders found</strong><span>{query ? "Try another name or choose All ranks." : rankFilter !== "all" ? `No ${selectedRankLabel} members in ${filter === "active" ? "the current roster" : "previous records"}. Choose another rank or All.` : "There are no members in this roster view."}</span></div>}
       <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "missing-profile" ? "members without profiles" : filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
     </section>
+    {editingMember && <RenameMemberDialog key={editingMember.id} member={editingMember} version={state.version} onClose={() => setEditingId(undefined)} onSaved={(next) => { onSaved(next); setEditingId(undefined); }} />}
   </div>;
 }

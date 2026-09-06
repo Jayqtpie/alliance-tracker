@@ -31,6 +31,7 @@ export interface RankingEntry {
   confidence: number;
   sourceFile?: string;
   needsReview?: boolean;
+  reviewed?: boolean;
 }
 
 export interface Snapshot {
@@ -133,4 +134,5 @@ export interface ExtractedRow {
   isPinned?: boolean;
   sourceFile?: string;
   needsReview?: boolean;
+  reviewed?: boolean;
 }

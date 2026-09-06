@@ -4,6 +4,7 @@ import { isAuthenticated } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
 import { dayLabelFor, matchMember, normalizeName, weekStartFor } from "@/lib/tracker";
 import type { Member, RankingEntry, Snapshot } from "@/lib/types";
+import { verificationBlocker } from "@/lib/review";
 
 const schema = z.object({
   snapshotId: z.string().optional(),
@@ -21,6 +22,8 @@ const schema = z.object({
     confidence: z.number().min(0).max(1).default(1),
     sourceFile: z.string().optional(),
     needsReview: z.boolean().optional(),
+    reviewed: z.boolean().optional(),
+    confirmReturned: z.boolean().optional(),
   })).min(1).max(150),
 });
 
@@ -44,10 +47,16 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "This snapshot no longer exists. Refresh before making corrections." }, { status: 404 });
     }
     const members = state.members.map((member) => ({ ...member, aliases: [...member.aliases] }));
+    for (const row of parsed.data.rows) {
+      if (row.reviewed) {
+        const blocker = verificationBlocker(row, parsed.data.rows, members);
+        if (blocker) throw new Error(`Rank ${row.rank}: ${blocker}`);
+      }
+    }
     const entries: RankingEntry[] = parsed.data.rows
       .sort((a, b) => a.rank - b.rank)
       .map((row) => {
-        let member = row.memberId ? members.find((item) => item.id === row.memberId) : matchMember(row.displayName, members);
+        let member = row.memberId ? members.find((item) => item.id === row.memberId) : row.createMember ? undefined : matchMember(row.displayName, members);
         if (row.memberId && !member) throw new Error(`Rank ${row.rank}: the selected member no longer exists. Refresh and choose their roster identity again.`);
         if (!member) {
           if (!row.createMember) throw new Error(`Rank ${row.rank} (${row.displayName}): choose an existing roster member or explicitly confirm a new member.`);
@@ -65,6 +74,10 @@ export async function POST(request: Request) {
         ) {
           member.aliases.push(row.displayName);
         }
+        if (row.confirmReturned) {
+          member.active = true;
+          delete member.leftAt;
+        }
         return {
           id: row.id || crypto.randomUUID(),
           memberId: member.id,
@@ -73,7 +86,8 @@ export async function POST(request: Request) {
           points: row.points,
           confidence: row.confidence,
           sourceFile: row.sourceFile,
-          needsReview: row.needsReview,
+          needsReview: row.reviewed ? false : row.needsReview,
+          ...(row.reviewed !== undefined ? { reviewed: row.reviewed } : {}),
         };
       });
 

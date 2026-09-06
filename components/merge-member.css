@@ -32,3 +32,11 @@
   .roster-merge-button span { display: none; }
   .alliance-roster-page .alliance-roster-columns { margin-right: 38px; }
 }
+
+.roster-member-actions { display: flex; flex-direction: column; justify-content: center; gap: 3px; flex-shrink: 0; }
+.roster-member-actions .roster-merge-button { flex: 1; min-height: 28px; }
+.roster-member-actions .roster-merge-button span { white-space: nowrap; }
+@media (min-width: 601px) {
+  .roster-member-actions .roster-merge-button { width: 88px; }
+  .alliance-roster-page .alliance-roster-columns { margin-right: 92px; }
+}

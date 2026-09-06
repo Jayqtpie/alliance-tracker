@@ -1,0 +1,12 @@
+.review-controls { display: grid; gap: 10px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.review-controls p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.review-controls > div { display: flex; gap: 8px; flex-wrap: wrap; }
+.review-controls small, .review-row-note { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.review-row-note { display: block; margin-top: 6px; }
+.review-table .review-check { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: 11px; line-height: 1.4; }
+.review-table .review-check input { width: 17px; min-width: 17px; height: 17px; min-height: 17px; margin: 0; accent-color: var(--green); }
+.review-table td:nth-child(4) { min-width: 240px; }
+@media (max-width: 760px) {
+  .review-controls { padding: 14px; }
+  .review-table td:nth-child(4) { min-width: 0; }
+}

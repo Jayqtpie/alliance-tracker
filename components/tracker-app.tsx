@@ -51,6 +51,10 @@ import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, dedupeRows, matchMember, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
+import { missingRanks, requiresHumanReview, reviewIdentity, verificationBlocker, type ReviewRow } from "@/lib/review";
+import "./review-controls.css";
+import { accurateAsOf } from "@/lib/display-date";
+
 type View = "overview" | "import" | "reports" | "operations" | "members" | "settings";
 const bridgeJobStorageKey = "alliance-manager:active-bridge-job";
 
@@ -401,7 +405,7 @@ export function TrackerApp({
           />}
         </>}
         {view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <AllianceRoster state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} />}
+        {view === "members" && <AllianceRoster onSaved={(next) => { setState(next); showNotice("Player name saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} />}
       </main>
       {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} />}
       {mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
@@ -447,7 +451,7 @@ function Overview({
   const rows = comparison.rows.filter((row) => {
     const member = state.members.find((member) => member.id === row.memberId);
     const names = [row.displayName, member?.canonicalName ?? "", ...(member?.aliases ?? [])].join(" ");
-    return names.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "top" ? row.rank <= 25 : row.needsReview));
+    return names.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (filter === "all" || (filter === "top" ? row.rank <= 25 : requiresHumanReview(row)));
   });
   const pageCount = Math.max(1, Math.ceil(rows.length / 10));
   const currentPage = Math.min(page, pageCount - 1);
@@ -455,7 +459,7 @@ function Overview({
   const activeMembers = state.members.filter((member) => member.active);
   const rankedIds = new Set(selected.entries.map((entry) => entry.memberId));
   const coveredMembers = activeMembers.filter((member) => rankedIds.has(member.id)).length;
-  const reviewCount = selected.entries.filter((entry) => entry.needsReview).length;
+  const reviewCount = selected.entries.filter(requiresHumanReview).length;
 
   return (
     <div className="page-stack dashboard-page">
@@ -491,7 +495,7 @@ function Overview({
       </section>
 
       {reviewCount > 0 && (
-        <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{reviewCount} commander names need a second look.</strong> Confirm names in this capture to keep your records accurate.</span><button onClick={onReview}>Review capture <ArrowRight size={14} /></button></div>
+        <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{reviewCount} ranking rows need a second look.</strong> Verify the names, ranks and points in this capture to clear review flags.</span><button onClick={onReview}>Review capture <ArrowRight size={14} /></button></div>
       )}
 
       <section className="content-grid">
@@ -584,7 +588,7 @@ function CommanderProfile({ member, state, onClose, onMerge }: { member: Member;
             <div><span>Hero power</span><strong>{member.gameProfile.heroPowerDisplay}</strong><small>{member.gameProfile.heroPower === null ? "Not available" : member.gameProfile.heroPowerLegacy ? "Legacy · older data" : "Rounded display"}</small></div>
             <div><span>Kills</span><strong>{member.gameProfile.killsDisplay}</strong><small>{member.gameProfile.kills === null ? "Not available" : "Rounded display"}</small></div>
             <div><span>Alliance rank</span><strong>{member.gameProfile.rank}</strong><small>LWServers profile</small></div>
-            <div><span>Captured</span><strong className="profile-capture-date">{member.gameProfile.capturedOn}</strong><small>Saved snapshot</small></div>
+            <div><span>Profile accuracy</span><strong className="profile-capture-date">{accurateAsOf(member.gameProfile.capturedOn)}</strong><small>Saved profile data</small></div>
           </section>}
           <section className="profile-metrics">
             <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>
@@ -647,7 +651,7 @@ function CommanderProfile({ member, state, onClose, onMerge }: { member: Member;
 
 function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; bridgeConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
   const [files, setFiles] = useState<File[]>([]);
-  const [rows, setRows] = useState<Array<ExtractedRow & { memberId?: string; id?: string; createMember?: boolean }>>(() => editingSnapshot?.entries || []);
+  const [rows, setRows] = useState<ReviewRow[]>(() => editingSnapshot?.entries || []);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [manual, setManual] = useState("");
   const [busy, setBusy] = useState(false);
@@ -670,11 +674,14 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const scrollToReviewAfterLoad = useRef(false);
   const diagnosticWarnings = useMemo(() => rows.length ? analyzeImport(rows, state.members) : [], [rows, state.members]);
   const changeWarnings = useMemo(() => rows.length && date ? analyzeLargeChanges(rows, state.members, state.snapshots, date, status) : [], [rows, state.members, state.snapshots, date, status]);
-  const allWarnings = [...new Set([...warnings, ...diagnosticWarnings, ...changeWarnings])];
+  const allWarnings = [...new Set([...warnings.filter((warning) => !/^Rank \d+ (is missing|has conflicting readings)/.test(warning)), ...diagnosticWarnings, ...changeWarnings])];
   const linkedMemberIds = new Set(rows.map((row) => row.memberId || matchMember(row.displayName, state.members)?.id).filter(Boolean));
   const missingActive = state.members.filter((member) => member.active && !linkedMemberIds.has(member.id)).length;
   const unmatched = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members)).length;
   const unresolved = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members) && !row.createMember).length;
+
+  const gaps = missingRanks(rows);
+  const verifiable = rows.filter((row) => !row.reviewed && !verificationBlocker(row, rows, state.members));
 
   const loadRowsFromBridge = useCallback((job: BridgeJobView) => {
     if (!job.rows?.length || loadedBridgeJobId.current === job.id) return;
@@ -682,7 +689,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       const merged = dedupeRows(job.rows);
       loadedBridgeJobId.current = job.id;
       scrollToReviewAfterLoad.current = window.matchMedia("(max-width: 760px)").matches;
-      setRows(merged.rows);
+      setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
       setWarnings(merged.warnings);
       setSourceType("local-codex");
       setFiles([]);
@@ -771,7 +778,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       }
     }
     const merged = dedupeRows(results);
-    setRows(merged.rows);
+    setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
     setWarnings([...merged.warnings, ...failures]);
     if (!results.length && failures.length) setError(failures[0]);
     setBusy(false);
@@ -857,7 +864,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       if (!match) { failed.push(index + 1); return; }
       parsed.push({ rank: Number(match[1]), displayName: match[2], points: Number(match[3].replaceAll(",", "")), confidence: 1 });
     });
-    setRows(parsed.sort((a, b) => a.rank - b.rank));
+    setRows(parsed.sort((a, b) => a.rank - b.rank).map((row) => ({ ...row, id: crypto.randomUUID() })));
     setSourceType("manual");
     setWarnings(failed.length ? [`Could not read pasted line${failed.length === 1 ? "" : "s"}: ${failed.join(", ")}`] : []);
   }
@@ -869,7 +876,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       if (file.size > 2_000_000) throw new Error("The Codex JSON file is unexpectedly large.");
       const parsed = parseLocalExtractionText(await file.text());
       const merged = dedupeRows(parsed);
-      setRows(merged.rows);
+      setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
       setWarnings(merged.warnings);
       setSourceType("local-codex");
     } catch (reason) {
@@ -879,12 +886,16 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     }
   }
 
-  function updateRow(index: number, patch: Partial<(typeof rows)[number]>) {
+  function updateRow(index: number, patch: Partial<ReviewRow>) {
     setRows((current) => current.map((row, rowIndex) => rowIndex === index ? {
-      ...row, ...patch,
-      ...(patch.displayName !== undefined ? { memberId: undefined, createMember: false } : {}),
-      needsReview: false,
+      ...row, ...patch, reviewed: false, needsReview: true,
+      ...(patch.displayName !== undefined ? { memberId: undefined, createMember: false, confirmReturned: false } : {}),
+      ...(patch.memberId !== undefined || patch.createMember !== undefined ? { confirmReturned: false } : {}),
     } : row));
+  }
+
+  function addRow(rank = gaps[0] ?? Math.max(0, ...rows.map((row) => row.rank)) + 1) {
+    setRows((current) => [...current, { id: crypto.randomUUID(), rank, displayName: "", points: 0, confidence: 1, needsReview: true }].sort((a, b) => a.rank - b.rank));
   }
 
   async function publish() {
@@ -946,11 +957,30 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       </section>}
       {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
       {allWarnings.length > 0 && <div className="warning-list">{allWarnings.slice(0, 12).map((warning) => <span key={warning}><CircleAlert size={14} />{warning}</span>)}</div>}
-      {rows.length > 0 && <section ref={reviewPanel} className="panel review-panel">
-        <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} extracted rows</h3></div><span className="retention-note">{unmatched} unmatched · {missingActive} active members not on board · originals expire after 5 days</span></div>
-        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity</th><th /></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.rank}-${index}`} className={row.needsReview || row.confidence < .86 || (!row.memberId && !matchMember(row.displayName, state.members)) ? "needs-review" : ""}><td data-label="Rank"><input className="tiny" type="number" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td><td data-label="Commander"><input value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td><td data-label="Points"><input className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td><td data-label="Matched identity"><select aria-label={`Identity for rank ${row.rank}`} value={row.memberId || matchMember(row.displayName, state.members)?.id || (row.createMember ? "__new__" : "")} onChange={(event) => updateRow(index, { memberId: event.target.value && event.target.value !== "__new__" ? event.target.value : undefined, createMember: event.target.value === "__new__" })}><option value="">Choose an identity…</option><option value="__new__">Confirm as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select></td><td><button className="icon-button" title="Remove row" onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td></tr>)}</tbody></table></div>
+      <section ref={reviewPanel} className="panel review-panel">
+        <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} ranking rows</h3></div><span className="retention-note">{rows.filter((row) => row.reviewed).length} verified · {unmatched} unmatched · {missingActive} active members not on board</span></div>
+        <div className="review-controls">
+          <p>Check each name, rank and score, then mark the row verified. Verification clears OCR warnings when you save; editing a row requires verification again.</p>
+          <div><button className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow()}>Add row</button>{gaps.slice(0, 12).map((rank) => <button key={rank} className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow(rank)}>Add rank {rank}</button>)}<button className="button secondary" disabled={busy || !verifiable.length} onClick={() => setRows((current) => current.map((row) => verificationBlocker(row, current, state.members) ? row : { ...row, reviewed: true }))}>Mark eligible rows verified ({verifiable.length})</button></div>
+          <small>Bulk verification confirms you have checked every eligible row. Resolve duplicate ranks and identities separately.</small>
+        </div>
+        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity &amp; review</th><th /></tr></thead><tbody>{rows.map((row, index) => {
+          const member = reviewIdentity(row, state.members);
+          const blocker = verificationBlocker(row, rows, state.members);
+          return <tr key={row.id ?? index} className={requiresHumanReview(row) || blocker ? "needs-review" : ""}>
+            <td data-label="Rank"><input aria-label={`Rank for row ${index + 1}`} className="tiny" type="number" min="1" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td>
+            <td data-label="Commander"><input aria-label={`Commander for rank ${row.rank}`} maxLength={100} value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td>
+            <td data-label="Points"><input aria-label={`Points for rank ${row.rank}`} className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td>
+            <td data-label="Identity & review"><select aria-label={`Identity for rank ${row.rank}`} value={row.createMember ? "__new__" : member?.id || ""} onChange={(event) => updateRow(index, { memberId: event.target.value && event.target.value !== "__new__" ? event.target.value : undefined, createMember: event.target.value === "__new__" })}><option value="">Choose an identity…</option><option value="__new__">Confirm as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select>
+              {member && !member.active && <label className="review-check"><input type="checkbox" aria-label={`Confirm returned for rank ${row.rank}`} checked={Boolean(row.confirmReturned)} onChange={(event) => updateRow(index, { confirmReturned: event.target.checked })} />Confirm returned to the roster</label>}
+              <label className="review-check"><input type="checkbox" aria-label={`Verified rank ${row.rank}`} checked={Boolean(row.reviewed)} disabled={busy || Boolean(blocker)} onChange={(event) => setRows((current) => current.map((item, rowIndex) => rowIndex === index ? { ...item, reviewed: event.target.checked } : item))} />{row.reviewed ? "Verified by officer" : "I checked this name, rank and score"}</label>
+              {blocker ? <small className="review-row-note">{blocker}</small> : requiresHumanReview(row) && <small className="review-row-note">{row.confidence < .86 ? `Low OCR confidence (${Math.round(row.confidence * 100)}%) — verify after checking.` : "This reading needs human verification."}</small>}
+            </td>
+            <td><button className="icon-button" aria-label={`Remove rank ${row.rank}`} title="Remove row" disabled={busy} onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td>
+          </tr>;
+        })}</tbody></table></div>
         <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><button className="button primary" disabled={busy || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
-      </section>}
+      </section>
     </div>
   );
 }
