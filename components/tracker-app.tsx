@@ -48,6 +48,8 @@ import { DeleteMemberDialog } from "./delete-member-dialog";
 import { memberStats } from "@/lib/member-stats";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSelector, useLanguage } from "@/components/language-selector";
+import { WeeklyPerformance } from "@/components/weekly-performance";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
@@ -412,6 +414,7 @@ export function TrackerApp({
   bridgeConfigured: boolean;
 }) {
   const router = useRouter();
+  const { language, t } = useLanguage();
   const [state, setState] = useState(initialState);
   const [view, setView] = useState<View>("overview");
   const [reportsTab, setReportsTab] = useState<"reports" | "snapshots">("reports");
@@ -456,10 +459,10 @@ export function TrackerApp({
 
   const nav = [
     ["overview", "Overview", LayoutDashboard],
+    ["members", "Members", Users],
+    ["reports", "Progression report", LineChart],
+    ["import", "New Import", UploadCloud],
     ["operations", "Operations", Swords],
-    ["members", "Roster", Users],
-    ["reports", "Reports", LineChart],
-    ["import", "New import", UploadCloud],
   ] as const;
 
   function navigate(next: View) {
@@ -474,38 +477,42 @@ export function TrackerApp({
 
   return (
     <div className="app-shell">
-      <a className="skip-link" href="#workspace">Skip to content</a>
+      <a className="skip-link" href="#workspace">{t("Skip to content")}</a>
       <aside className="sidebar">
         <div className="brand-lockup">
           <AllianceMark compact alliance={state.alliance} />
-          <div><strong>{state.alliance.tag}<span className="brand-word"> / command</span></strong><span>Server {state.alliance.server}</span></div>
+          <div><strong>{state.alliance.tag}<span className="brand-word"> / alliance</span></strong><span>{t("Server")} {state.alliance.server}</span></div>
         </div>
-        <p className="nav-caption">WORKSPACE</p>
-        <nav aria-label="Main navigation">
+        <div className="sidebar-alliance"><span className="alliance-online-dot" /><span>{state.alliance.name}</span><ShieldCheck size={15} /></div>
+        <p className="nav-caption">{t("Workspace")}</p>
+        <nav aria-label={t("Main navigation")}>
           {nav.map(([id, label, Icon]) => (
-            <button key={id} disabled={id === "operations"} title={id === "operations" ? "Operations are managed on the alliance’s other website" : undefined} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
-              <Icon size={18} /> <span>{label}</span>{id === "operations" && <span className="nav-disabled-note">Paused</span>}{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
+            <button key={id} disabled={id === "operations"} title={id === "operations" ? t("Operations are managed on the alliance’s other website") : undefined} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
+              <Icon size={18} /> <span>{t(label)}</span>{id === "operations" && <span className="nav-disabled-note">{t("Paused")}</span>}{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
             </button>
           ))}
         </nav>
         <div className="sidebar-foot">
-          <div className="leadership-access"><ShieldCheck size={20} /><div><strong>Leadership workspace</strong><span>R4 & R5 officer access</span></div></div>
+          <div className="leadership-access"><ShieldCheck size={20} /><div><strong>{t("Leadership workspace")}</strong><span>{t("R4 & R5 officer access")}</span></div></div>
           <div className={`system-chip ${storageMode === "vercel-blob" ? "online" : "local"}`}>
-            <Cloud size={14} /> {storageMode === "vercel-blob" ? "Shared data online" : "Local preview data"}
+            <Cloud size={14} /> {t(storageMode === "vercel-blob" ? "Shared data online" : "Local preview data")}
           </div>
-          <button className="nav-item" onClick={logout}><LogOut size={18} /> Sign out</button>
+          <button className="nav-item" onClick={logout}><LogOut size={18} /> {t("Sign out")}</button>
+          <LanguageSelector />
         </div>
       </aside>
 
       <main className="workspace" id="workspace" tabIndex={-1}>
         <header className="topbar">
           <div>
-            <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1]}</span></p>
+            <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span></p>
             {view !== "overview" && view !== "members" && <h1 className="sr-only">{view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1]}</h1>}
           </div>
-          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> Leadership only <span className="officer-avatar">R4/5</span></div><button className="button ghost settings-button" aria-label="Alliance settings" title="Alliance settings" aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>Settings</span></button><ThemeToggle /><button className="mobile-signout icon-button" aria-label="Sign out" onClick={logout}><LogOut size={18} /></button></div>
+          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {t("Leadership only")} <span className="officer-avatar">R4/5</span></div><button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button><ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
         </header>
 
+        {language !== "en" && view !== "overview" && <p className="translation-note">{t("Detailed tools are currently in English.")}</p>}
+        <div lang={view === "overview" ? language : "en"} dir={view === "overview" && language === "ar" ? "rtl" : "ltr"}>
         {view === "overview" && selected && comparison && (
           <Overview
             key={selected.id}
@@ -521,7 +528,7 @@ export function TrackerApp({
           />
         )}
         {view === "overview" && !selected && (
-          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">YOUR ALLIANCE, AT A GLANCE</p><h1>Command overview</h1><p>Everything you need to keep the alliance moving.</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>Your first capture starts here</h2><p>Import a leaderboard to see alliance scores and commander performance.</p><button className="button primary" onClick={() => navigate("import")}>New import <ArrowRight size={16} /></button></section></div>
+          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">{t("RSCL, at a glance")}</p><h1>{t("Rascals overview")}</h1><p>{t("Everything you need to keep the alliance moving.")}</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>{t("Your first capture starts here")}</h2><p>{t("Import a leaderboard to see alliance scores and commander performance.")}</p><button className="button primary" onClick={() => navigate("import")}>{t("New Import")} <ArrowRight size={16} /></button></section></div>
         )}
         {view === "import" && (
           <Importer
@@ -553,6 +560,7 @@ export function TrackerApp({
         </>}
         {view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
         {view === "members" && <AllianceRoster onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        </div>
       </main>
       {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
       {deletingMember && <DeleteMemberDialog key={deletingMember.id} member={deletingMember} state={state} onClose={() => setDeleteMemberId(undefined)} onDeleted={(next) => {
@@ -593,6 +601,8 @@ function Overview({
   onNavigate: (view: View) => void;
   onReview: () => void;
 }) {
+  const { language, t } = useLanguage();
+  const captureDate = (value: string) => new Intl.DateTimeFormat(language === "en" ? "en-GB" : language, { weekday: "long", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(value));
   const [filter, setFilter] = useState<"all" | "top" | "review">("all");
   const [page, setPage] = useState(0);
   const total = selected.entries.reduce((sum, entry) => sum + entry.points, 0);
@@ -616,23 +626,23 @@ function Overview({
   return (
     <div className="page-stack dashboard-page">
       <section className="dashboard-heading">
-        <div><p className="eyebrow">YOUR ALLIANCE, AT A GLANCE</p><h1>Command overview<span>.</span></h1><p>Performance, people, and the next move.</p></div>
-        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />View reports</button><button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />New import</button></div>
+        <div><p className="eyebrow">{t("RSCL, at a glance")}</p><h1>{t("Rascals overview")}</h1><p>{t("Performance, people, and the next move.")}</p></div>
+        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />{t("View reports")}</button><button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />{t("New Import")}</button></div>
       </section>
       <section className="snapshot-hero">
         <div>
           <div className="snapshot-title-row">
-            <span className={`status-pill ${selected.status}`}>{selected.status}</span>
-            <span>{selected.dayLabel}, {dateLabel(selected.capturedAt)}</span>
+            <span className={`status-pill ${selected.status}`}>{t(selected.status)}</span>
+            <span>{captureDate(selected.capturedAt)}</span>
           </div>
-          <h2>Alliance Duel <span>/ performance snapshot</span></h2>
-          <p>{comparison.previous ? `Compared with ${comparison.previous.dayLabel}, ${dateLabel(comparison.previous.capturedAt)}` : "First recorded snapshot — comparisons begin with the next matching capture."}</p>
+          <h2>{t("Alliance Duel")} <span>/ {t("performance snapshot")}</span></h2>
+          <p>{comparison.previous ? t("Compared with {day}, {date}", { day: t(comparison.previous.dayLabel), date: dateLabel(comparison.previous.capturedAt) }) : t("First recorded snapshot — comparisons begin with the next matching capture.")}</p>
         </div>
         <label className="select-wrap">
           <CalendarDays size={17} />
-          <select aria-label="Performance snapshot" value={selected.id} onChange={(event) => setSelected(event.target.value)}>
+          <select aria-label={t("Performance snapshot")} value={selected.id} onChange={(event) => setSelected(event.target.value)}>
             {[...state.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt)).map((snapshot) => (
-              <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>
+              <option key={snapshot.id} value={snapshot.id}>{captureDate(snapshot.capturedAt)} · {t(snapshot.status)}</option>
             ))}
           </select>
           <ChevronDown size={15} />
@@ -640,44 +650,47 @@ function Overview({
       </section>
 
       <section className="metric-grid">
-        <Metric icon={Activity} label="Alliance points" value={compact(total)} detail={previousTotal === undefined ? "Baseline capture" : `${signed(total - previousTotal)} vs prior`} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
-        <Metric icon={Users} label="Ranked members" value={String(selected.entries.length)} detail={`${coveredMembers} of ${activeMembers.length} active members captured`} />
-        <Metric icon={BarChart3} label="Average score" value={compact(average)} detail={`Median ${compact(median)}`} />
-        <Metric icon={Shield} label="Top 25 share" value={total ? `${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%` : "—"} detail="Of all recorded points" />
+        <Metric icon={Activity} label={t("Alliance points")} value={compact(total)} detail={previousTotal === undefined ? t("Baseline capture") : t("{value} vs prior", { value: signed(total - previousTotal) })} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
+        <Metric icon={Users} label={t("Ranked members")} value={String(selected.entries.length)} detail={t("{count} of {total} active members captured", { count: coveredMembers, total: activeMembers.length })} />
+        <Metric icon={BarChart3} label={t("Average score")} value={compact(average)} detail={t("Median {value}", { value: compact(median) })} />
+        <Metric icon={Shield} label={t("Top 25 share")} value={total ? `${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%` : "—"} detail={t("Of all recorded points")} />
       </section>
 
+      <WeeklyPerformance section="spotlight" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} />
+
       {reviewCount > 0 && (
-        <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{reviewCount} ranking rows need a second look.</strong> Verify the names, ranks and points in this capture to clear review flags.</span><button onClick={onReview}>Review capture <ArrowRight size={14} /></button></div>
+        <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{t("{count} ranking rows need a second look.", { count: reviewCount })}</strong> {t("Verify the names, ranks and points in this capture to clear review flags.")}</span><button onClick={onReview}>{t("Review capture")} <ArrowRight size={14} /></button></div>
       )}
 
       <section className="content-grid">
         <div className="panel leaderboard-panel roster-score-panel">
           <div className="panel-head">
-            <div><p className="eyebrow">THE LEADERBOARD</p><h3>Commander performance <span className="count-chip">{selected.entries.length}</span></h3></div>
-            <div className="search-box"><Search size={16} /><input aria-label="Find commander" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} placeholder="Find commander…" />{query && <button className="search-clear" aria-label="Clear search" onClick={() => { setQuery(""); setPage(0); }}><X size={14} /></button>}</div>
+            <div><p className="eyebrow">{t("The leaderboard")}</p><h3>{t("Commander performance")} <span className="count-chip">{selected.entries.length}</span></h3></div>
+            <div className="search-box"><Search size={16} /><input aria-label={t("Find commander")} value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} placeholder={t("Find commander…")} />{query && <button className="search-clear" aria-label={t("Clear search")} onClick={() => { setQuery(""); setPage(0); }}><X size={14} /></button>}</div>
           </div>
-          <div className="leaderboard-filters" aria-label="Filter commanders">{([["all", "All commanders"], ["top", "Top 25"], ["review", `Needs review (${reviewCount})`]] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} className={filter === id ? "active" : ""} onClick={() => { setFilter(id); setPage(0); }}>{label}</button>)}</div>
+          <div className="leaderboard-filters" aria-label={t("Filter commanders")}>{([["all", "All commanders"], ["top", "Top 25"], ["review", t("Needs review ({count})", { count: reviewCount })]] as const).map(([id, label]) => <button key={id} aria-pressed={filter === id} className={filter === id ? "active" : ""} onClick={() => { setFilter(id); setPage(0); }}>{t(label)}</button>)}</div>
           <ScoreRows rows={visibleRows} members={state.members} onOpenMember={onOpenMember} />
-          <div className="table-footer"><span aria-live="polite">{rows.length ? `${currentPage * 10 + 1}–${Math.min((currentPage + 1) * 10, rows.length)} of ${rows.length} commanders` : "0 commanders"}</span><div><button className="icon-button" aria-label="Previous page" disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={16} /></button><span>{currentPage + 1} / {pageCount}</span><button className="icon-button" aria-label="Next page" disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}><ChevronRight size={16} /></button></div></div>
+          <div className="table-footer"><span aria-live="polite">{rows.length ? t("{start}–{end} of {count} commanders", { start: currentPage * 10 + 1, end: Math.min((currentPage + 1) * 10, rows.length), count: rows.length }) : t("0 commanders")}</span><div><button className="icon-button" aria-label={t("Previous page")} disabled={currentPage === 0} onClick={() => setPage(currentPage - 1)}><ChevronLeft size={16} /></button><span>{currentPage + 1} / {pageCount}</span><button className="icon-button" aria-label={t("Next page")} disabled={currentPage + 1 >= pageCount} onClick={() => setPage(currentPage + 1)}><ChevronRight size={16} /></button></div></div>
         </div>
         <aside className="dashboard-insights">
         <section className="panel coverage-panel">
-          <div className="panel-head"><div><p className="eyebrow">ROSTER HEALTH</p><h3>Capture coverage</h3></div><Users size={18} /></div>
-          <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>active members on this board</p></div></div>
-          <p className="coverage-note">{activeMembers.length === 0 ? "Add active members to track roster coverage." : coveredMembers === activeMembers.length ? "Every active member is accounted for." : `${activeMembers.length - coveredMembers} active members are missing from this capture.`}</p>
-          <button className="text-action" onClick={() => onNavigate("members")}>Manage roster <ArrowRight size={14} /></button>
+          <div className="panel-head"><div><p className="eyebrow">{t("Roster health")}</p><h3>{t("Capture coverage")}</h3></div><Users size={18} /></div>
+          <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>{t("active members on this board")}</p></div></div>
+          <p className="coverage-note">{activeMembers.length === 0 ? t("Add active members to track roster coverage.") : coveredMembers === activeMembers.length ? t("Every active member is accounted for.") : t("{count} active members are missing from this capture.", { count: activeMembers.length - coveredMembers })}</p>
+          <button className="text-action" onClick={() => onNavigate("members")}>{t("Manage roster")} <ArrowRight size={14} /></button>
         </section>
         <section className="panel insight-panel">
-          <div className="panel-head"><div><p className="eyebrow">DISTRIBUTION</p><h3>Score bands</h3></div></div>
+          <div className="panel-head"><div><p className="eyebrow">{t("Distribution")}</p><h3>{t("Score bands")}</h3></div></div>
           <ScoreBands entries={selected.entries} />
           <div className="insight-rule" />
-          <p className="eyebrow">CAPTURE NOTE</p>
-          <p className="capture-note">{selected.notes || "No note added for this snapshot."}</p>
-          <button className="button secondary wide" onClick={() => exportDetailedSnapshot(selected, state)}><Download size={16} /> Detailed CSV</button>
-          <button className="button secondary wide report-image-button" onClick={() => exportReportImage(selected, state)}><Share2 size={16} /> Shareable image</button>
+          <p className="eyebrow">{t("Capture note")}</p>
+          <p className="capture-note">{selected.notes || t("No note added for this snapshot.")}</p>
+          <button className="button secondary wide" onClick={() => exportDetailedSnapshot(selected, state)}><Download size={16} /> {t("Detailed CSV")}</button>
+          <button className="button secondary wide report-image-button" onClick={() => exportReportImage(selected, state)}><Share2 size={16} /> {t("Shareable image")}</button>
         </section>
         </aside>
       </section>
+      <WeeklyPerformance section="cards" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} />
     </div>
   );
 }
@@ -694,6 +707,7 @@ function Delta({ value, format }: { value?: number; format: (value: number) => s
 }
 
 function ScoreBands({ entries }: { entries: RankingEntry[] }) {
+  const { t } = useLanguage();
   const bands = [
     ["30m+", (points: number) => points >= 30_000_000],
     ["20–30m", (points: number) => points >= 20_000_000 && points < 30_000_000],
@@ -701,7 +715,7 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
     ["Under 15m", (points: number) => points < 15_000_000],
   ] as const;
   const max = Math.max(...bands.map(([, test]) => entries.filter((entry) => test(entry.points)).length), 1);
-  return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{label}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
+  return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{t(label)}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
 }
 
 function CommanderProfile({ member, state, onClose, onMerge, onDelete }: { member: Member; state: TrackerState; onClose: () => void; onMerge: () => void; onDelete: () => void }) {
