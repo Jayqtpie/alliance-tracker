@@ -2,6 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
+import { useLanguage } from "./language-selector";
 
 const key = "rscl-theme";
 const eventName = "rscl-theme-change";
@@ -11,7 +12,7 @@ function subscribe(onChange: () => void) {
   const sync = () => {
     let saved: string | null = null;
     try { saved = localStorage.getItem(key); } catch { /* Storage can be disabled. */ }
-    document.documentElement.dataset.theme = saved === "dark" || saved === "light" ? saved : media.matches ? "dark" : "light";
+    document.documentElement.dataset.theme = saved === "dark" || saved === "light" ? saved : "dark";
     onChange();
   };
   window.addEventListener(eventName, onChange);
@@ -25,14 +26,15 @@ function subscribe(onChange: () => void) {
 }
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribe, () => document.documentElement.dataset.theme === "dark" ? "dark" : "light", () => "light");
+  const { t } = useLanguage();
+  const theme = useSyncExternalStore(subscribe, () => document.documentElement.dataset.theme === "dark" ? "dark" : "light", () => "dark");
   function toggle() {
     const next = theme === "dark" ? "light" : "dark";
     document.documentElement.dataset.theme = next;
     try { localStorage.setItem(key, next); } catch { /* The toggle still works without persistence. */ }
     window.dispatchEvent(new Event(eventName));
   }
-  return <button className="theme-toggle" type="button" onClick={toggle} aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"} title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
-    {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{theme === "dark" ? "Light mode" : "Dark mode"}</span>
+  return <button className="theme-toggle" type="button" onClick={toggle} aria-label={t(theme === "dark" ? "Switch to light mode" : "Switch to dark mode")} title={t(theme === "dark" ? "Switch to light mode" : "Switch to dark mode")}>
+    {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{t(theme === "dark" ? "Light mode" : "Dark mode")}</span>
   </button>;
 }
