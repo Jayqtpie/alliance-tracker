@@ -37,6 +37,12 @@ export async function POST(request: Request) {
 
   try {
     const state = await getState();
+    const existing = parsed.data.snapshotId
+      ? state.snapshots.find((snapshot) => snapshot.id === parsed.data.snapshotId)
+      : undefined;
+    if (parsed.data.snapshotId && !existing) {
+      return NextResponse.json({ error: "This snapshot no longer exists. Refresh before making corrections." }, { status: 404 });
+    }
     const members = state.members.map((member) => ({ ...member, aliases: [...member.aliases] }));
     const entries: RankingEntry[] = parsed.data.rows
       .sort((a, b) => a.rank - b.rank)
@@ -71,13 +77,16 @@ export async function POST(request: Request) {
         };
       });
 
-    if (new Set(entries.map((entry) => entry.memberId)).size !== entries.length) {
+    if (new Set(entries.map((entry) => entry.id)).size !== entries.length) {
+      return NextResponse.json({ error: "Every row must have a unique entry ID." }, { status: 400 });
+    }
+    const duplicateEntries = entries.filter((entry) => entries.some((other) => other !== entry && other.memberId === entry.memberId));
+    // Legacy captures may already contain duplicated identities. Permit a
+    // correction elsewhere, but never introduce a new row into such a group.
+    if (duplicateEntries.some((entry) => !existing?.entries.some((prior) => prior.id === entry.id && prior.memberId === entry.memberId))) {
       return NextResponse.json({ error: "The same member is linked to more than one rank. Correct or remove the duplicate row before publishing." }, { status: 400 });
     }
 
-    const existing = parsed.data.snapshotId
-      ? state.snapshots.find((snapshot) => snapshot.id === parsed.data.snapshotId)
-      : undefined;
     const snapshot: Snapshot = {
       id: existing?.id || crypto.randomUUID(),
       capturedAt: `${parsed.data.capturedDate}T12:00:00.000Z`,
