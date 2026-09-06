@@ -34,6 +34,8 @@ export async function extractLeaderboard(file: File): Promise<ExtractedRow[]> {
             text:
               "Extract only complete player rows from this Last War Alliance Duel Weekly Rank screenshot. " +
               "For each row return rank, commander display name exactly as shown (preserve Unicode, spacing and case), and integer points without commas. " +
+              "Transcribe Korean Hangul, Chinese characters, Japanese kana/kanji, Cyrillic, Arabic, Thai and accented letters in their original script. Never translate, romanize, replace them with Latin lookalikes, or drop combining marks. Inspect each name separately from its score; a readable score does not make the name certain. " +
+              "Recheck small or mixed-script names character by character. If any name character remains uncertain, use the best visible transcription, set needsReview=true and confidence below 0.86; do not invent missing characters. " +
               "The green card fixed at the bottom is the viewer's pinned rank: mark it isPinned=true so it can be discarded. " +
               "Do not include headers, alliance text, chat banners, or partially obscured rows. Mark needsReview for ambiguous characters. " +
               "Return JSON only as {rows:[{rank,displayName,points,confidence,isPinned,needsReview}]}",

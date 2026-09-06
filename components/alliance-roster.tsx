@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Search, Users, X } from "lucide-react";
+import { GitMerge, Search, Users, X } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import "./roster-rank-tabs.css";
@@ -26,7 +26,7 @@ export function MemberAvatar({ member, large = false }: { member: Member; large?
   </span>;
 }
 
-export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; onOpenMember: (id: string) => void }) {
+export function AllianceRoster({ state, onOpenMember, onMergeMember }: { state: TrackerState; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState("active");
   const [sort, setSort] = useState("heroPower");
@@ -35,7 +35,7 @@ export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; o
   const active = state.members.filter((member) => member.active);
   const leader = active.find((member) => member.gameProfile?.rank === "R5");
   const capturedOn = active.find((member) => member.gameProfile)?.gameProfile?.capturedOn;
-  const membership = state.members.filter((member) => filter === "active" ? member.active : !member.active);
+  const membership = state.members.filter((member) => filter === "missing-profile" ? !member.gameProfile : filter === "active" ? member.active : !member.active);
   const ordered = [...membership].sort((a, b) => {
     if (sort === "name") return a.canonicalName.localeCompare(b.canonicalName);
     const key = sort as "heroPower" | "kills";
@@ -57,19 +57,20 @@ export function AllianceRoster({ state, onOpenMember }: { state: TrackerState; o
       </div>
       <div className="alliance-roster-toolbar">
         <div className="search-box"><Search size={16} /><input aria-label="Search roster" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear roster search" onClick={() => setQuery("")}><X size={14} /></button>}</div>
-        <select aria-label="Roster membership" value={filter} onChange={(event) => { setFilter(event.target.value); setRankFilter("all"); }}><option value="active">Current roster</option><option value="previous">Previous records</option></select>
+        <select aria-label="Roster membership" value={filter} onChange={(event) => { setFilter(event.target.value); setRankFilter("all"); }}><option value="active">Current roster</option><option value="previous">Previous records</option><option value="missing-profile">Missing profiles ({state.members.filter((member) => !member.gameProfile).length})</option></select>
         <select aria-label="Sort roster" value={sort} onChange={(event) => setSort(event.target.value)}><option value="heroPower">Hero power ↓</option><option value="kills">Kills ↓</option><option value="name">Name A–Z</option></select>
       </div>
       <div className="alliance-roster-scroll"><div className="alliance-roster-columns" aria-hidden="true"><span>Commander</span><span>Hero power</span><span>Kills</span></div>
-      <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id}>
+      <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id} className="roster-with-merge">
         <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, hero power ${member.gameProfile?.heroPowerDisplay ?? "unavailable"}, kills ${member.gameProfile?.killsDisplay ?? "unavailable"}`}>
           <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><MemberName member={member} />{member.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
           <span className="alliance-stat"><strong>{member.gameProfile?.heroPowerDisplay ?? "—"}</strong>{member.gameProfile?.heroPowerLegacy && <small className="alliance-legacy" title="LWServers marks this hero power as legacy data">Legacy</small>}</span>
           <span className="alliance-stat"><strong>{member.gameProfile?.killsDisplay ?? "—"}</strong></span>
         </button>
+        <button className="roster-merge-button" aria-label={`Merge ${member.canonicalName} into another player`} title="Merge this duplicate into the correct player" disabled={state.members.length < 2} onClick={() => onMergeMember(member.id)}><GitMerge size={16} /><span>Merge</span></button>
       </li>)}</ol></div>
       {!filtered.length && <div className="leaderboard-empty"><Users size={24} /><strong>No commanders found</strong><span>{query ? "Try another name or choose All ranks." : rankFilter !== "all" ? `No ${selectedRankLabel} members in ${filter === "active" ? "the current roster" : "previous records"}. Choose another rank or All.` : "There are no members in this roster view."}</span></div>}
-      <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
+      <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "missing-profile" ? "members without profiles" : filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
     </section>
   </div>;
 }

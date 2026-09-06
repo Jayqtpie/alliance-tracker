@@ -18,6 +18,7 @@ import {
   FileImage,
   FileJson,
   FileVideo,
+  GitMerge,
   History,
   LayoutDashboard,
   LineChart,
@@ -42,6 +43,7 @@ import { AllianceSettings } from "@/components/alliance-settings";
 import { allianceNeedsSetup, allianceFilePrefix } from "@/lib/alliance";
 import { AllianceMark } from "@/components/alliance-mark";
 import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
+import { MergeMemberDialog } from "@/components/merge-member-dialog";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { BridgeJobView } from "@/lib/bridge-types";
@@ -271,6 +273,8 @@ export function TrackerApp({
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
   const [selectedMemberId, setSelectedMemberId] = useState<string>();
+  const [mergeMemberId, setMergeMemberId] = useState<string>();
+  const mergeMember = state.members.find((member) => member.id === mergeMemberId);
   const selected = state.snapshots.find((snapshot) => snapshot.id === selectedSnapshotId) || state.snapshots[0];
   const selectedMember = state.members.find((member) => member.id === selectedMemberId);
   const comparison = useMemo(
@@ -397,9 +401,16 @@ export function TrackerApp({
           />}
         </>}
         {view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <AllianceRoster state={state} onOpenMember={setSelectedMemberId} />}
+        {view === "members" && <AllianceRoster state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} />}
       </main>
-      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} />}
+      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} />}
+      {mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
+        const name = next.members.find((member) => member.id === primaryId)?.canonicalName;
+        setState(next);
+        setMergeMemberId(undefined);
+        setSelectedMemberId(primaryId);
+        showNotice(`Merged ${mergeMember.canonicalName} into ${name}. Duplicate removed and history linked.`);
+      }} />}
       {notice && <div className="toast" role="status"><Check size={17} /> {notice}</div>}
     </div>
   );
@@ -537,7 +548,7 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
   return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{label}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
 }
 
-function CommanderProfile({ member, state, onClose }: { member: Member; state: TrackerState; onClose: () => void }) {
+function CommanderProfile({ member, state, onClose, onMerge }: { member: Member; state: TrackerState; onClose: () => void; onMerge: () => void }) {
   const performance = memberPerformance(member, state.snapshots);
   const stormHistory = (state.operations?.stormEvents || []).flatMap((event) => {
     const participant = event.participants.find((item) => item.memberId === member.id);
@@ -604,6 +615,7 @@ function CommanderProfile({ member, state, onClose }: { member: Member; state: T
               <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
               <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
             </dl>
+            <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>
           </section>
 
           <section className="profile-panel profile-operations-panel">
@@ -635,7 +647,7 @@ function CommanderProfile({ member, state, onClose }: { member: Member; state: T
 
 function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; bridgeConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
   const [files, setFiles] = useState<File[]>([]);
-  const [rows, setRows] = useState<Array<ExtractedRow & { memberId?: string; id?: string }>>(() => editingSnapshot?.entries || []);
+  const [rows, setRows] = useState<Array<ExtractedRow & { memberId?: string; id?: string; createMember?: boolean }>>(() => editingSnapshot?.entries || []);
   const [warnings, setWarnings] = useState<string[]>([]);
   const [manual, setManual] = useState("");
   const [busy, setBusy] = useState(false);
@@ -662,6 +674,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const linkedMemberIds = new Set(rows.map((row) => row.memberId || matchMember(row.displayName, state.members)?.id).filter(Boolean));
   const missingActive = state.members.filter((member) => member.active && !linkedMemberIds.has(member.id)).length;
   const unmatched = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members)).length;
+  const unresolved = rows.filter((row) => !row.memberId && !matchMember(row.displayName, state.members) && !row.createMember).length;
 
   const loadRowsFromBridge = useCallback((job: BridgeJobView) => {
     if (!job.rows?.length || loadedBridgeJobId.current === job.id) return;
@@ -867,24 +880,34 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   }
 
   function updateRow(index: number, patch: Partial<(typeof rows)[number]>) {
-    setRows((current) => current.map((row, rowIndex) => rowIndex === index ? { ...row, ...patch, needsReview: false } : row));
+    setRows((current) => current.map((row, rowIndex) => rowIndex === index ? {
+      ...row, ...patch,
+      ...(patch.displayName !== undefined ? { memberId: undefined, createMember: false } : {}),
+      needsReview: false,
+    } : row));
   }
 
   async function publish() {
+    if (unresolved) { setError("Choose a roster identity or confirm a new member for every unmatched name."); return; }
     setBusy(true); setError("");
-    const response = await fetch("/api/snapshots", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ snapshotId, capturedDate: date, status, sourceType, notes, rows }),
-    });
-    const body = await response.json();
-    if (!response.ok) setError(body.error || "Could not publish snapshot");
-    else {
-      if (bridgeJob?.id) window.localStorage.removeItem(bridgeJobStorageKey);
-      setState(body.state);
-      onPublished(body.snapshot);
+    try {
+      const response = await fetch("/api/snapshots", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ snapshotId, capturedDate: date, status, sourceType, notes, rows }),
+      });
+      const body = await response.json();
+      if (!response.ok) setError(body.error || "Could not publish snapshot");
+      else {
+        if (bridgeJob?.id) window.localStorage.removeItem(bridgeJobStorageKey);
+        setState(body.state);
+        onPublished(body.snapshot);
+      }
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not publish this snapshot. Please try again.");
+    } finally {
+      setBusy(false);
     }
-    setBusy(false);
   }
 
   return (
@@ -925,8 +948,8 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       {allWarnings.length > 0 && <div className="warning-list">{allWarnings.slice(0, 12).map((warning) => <span key={warning}><CircleAlert size={14} />{warning}</span>)}</div>}
       {rows.length > 0 && <section ref={reviewPanel} className="panel review-panel">
         <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} extracted rows</h3></div><span className="retention-note">{unmatched} unmatched · {missingActive} active members not on board · originals expire after 5 days</span></div>
-        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity</th><th /></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.rank}-${index}`} className={row.needsReview || row.confidence < .86 || (!row.memberId && !matchMember(row.displayName, state.members)) ? "needs-review" : ""}><td data-label="Rank"><input className="tiny" type="number" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td><td data-label="Commander"><input value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td><td data-label="Points"><input className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td><td data-label="Matched identity"><select value={row.memberId || matchMember(row.displayName, state.members)?.id || ""} onChange={(event) => updateRow(index, { memberId: event.target.value || undefined })}><option value="">Create as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select></td><td><button className="icon-button" title="Remove row" onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td></tr>)}</tbody></table></div>
-        <div className="publish-row"><div><strong>Ready to publish?</strong><span>Unmatched names become new members; selected identities record the displayed name as an alias.</span></div><button className="button primary" disabled={busy || !date || !rows.length} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
+        <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Commander as shown</th><th>Points</th><th>Identity</th><th /></tr></thead><tbody>{rows.map((row, index) => <tr key={`${row.rank}-${index}`} className={row.needsReview || row.confidence < .86 || (!row.memberId && !matchMember(row.displayName, state.members)) ? "needs-review" : ""}><td data-label="Rank"><input className="tiny" type="number" value={row.rank} onChange={(event) => updateRow(index, { rank: Number(event.target.value) })} /></td><td data-label="Commander"><input value={row.displayName} onChange={(event) => updateRow(index, { displayName: event.target.value })} /></td><td data-label="Points"><input className="points-input" inputMode="numeric" value={row.points} onChange={(event) => updateRow(index, { points: Number(event.target.value.replace(/\D/g, "")) })} /></td><td data-label="Matched identity"><select aria-label={`Identity for rank ${row.rank}`} value={row.memberId || matchMember(row.displayName, state.members)?.id || (row.createMember ? "__new__" : "")} onChange={(event) => updateRow(index, { memberId: event.target.value && event.target.value !== "__new__" ? event.target.value : undefined, createMember: event.target.value === "__new__" })}><option value="">Choose an identity…</option><option value="__new__">Confirm as a new member</option>{[...state.members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)).map((member) => <option key={member.id} value={member.id}>{member.active ? "" : "[Departed] "}{member.canonicalName}</option>)}</select></td><td><button className="icon-button" title="Remove row" onClick={() => setRows((current) => current.filter((_, rowIndex) => rowIndex !== index))}><X size={15} /></button></td></tr>)}</tbody></table></div>
+        <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><button className="button primary" disabled={busy || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
       </section>}
     </div>
   );
