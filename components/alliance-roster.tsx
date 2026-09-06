@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { GitMerge, PencilLine, Search, Users, X } from "lucide-react";
+import { GitMerge, PencilLine, Search, Trash2, Users, X } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import { MemberName } from "./member-name";
 
-import { RenameMemberDialog } from "./rename-member-dialog";
+import { EditMemberDialog } from "./edit-member-dialog";
+import { memberStats } from "@/lib/member-stats";
 import { accurateAsOf } from "@/lib/display-date";
 
 const ROSTER_RANK_FILTERS = [
@@ -28,7 +29,7 @@ export function MemberAvatar({ member, large = false }: { member: Member; large?
   </span>;
 }
 
-export function AllianceRoster({ state, onOpenMember, onMergeMember, onSaved }: { state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void }) {
+export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMember, onSaved }: { state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void }) {
   const [editingId, setEditingId] = useState<string>();
   const editingMember = state.members.find((member) => member.id === editingId);
   const [query, setQuery] = useState("");
@@ -43,7 +44,7 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onSaved }: 
   const ordered = [...membership].sort((a, b) => {
     if (sort === "name") return a.canonicalName.localeCompare(b.canonicalName);
     const key = sort as "heroPower" | "kills";
-    return (b.gameProfile?.[key] ?? -1) - (a.gameProfile?.[key] ?? -1);
+    return (memberStats(b)[key] ?? -1) - (memberStats(a)[key] ?? -1);
   });
   const filtered = ordered.map((member, index) => ({ member, position: index + 1 })).filter(({ member }) =>
     (rankFilter === "all" || member.gameProfile?.rank === rankFilter) &&
@@ -63,18 +64,18 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onSaved }: 
         {ROSTER_RANK_FILTERS.map(({ value }) => <option key={value} value={value}>{value === "all" ? "Rank" : value}</option>)}
       </select><span>Hero power</span><span>Kills</span></div>
       <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id} className="roster-with-merge">
-        <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, hero power ${member.gameProfile?.heroPowerDisplay ?? "unavailable"}, kills ${member.gameProfile?.killsDisplay ?? "unavailable"}`}>
+        <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, hero power ${memberStats(member).heroPowerDisplay}, kills ${memberStats(member).killsDisplay}`}>
           <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><MemberName member={member} /></span>
           <span className="member-rank-cell">{member.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
-          <span className="alliance-stat"><strong>{member.gameProfile?.heroPowerDisplay ?? "—"}</strong>{member.gameProfile?.heroPowerLegacy && <small className="alliance-legacy" title="LWServers marks this hero power as legacy data">Legacy</small>}</span>
-          <span className="alliance-stat"><strong>{member.gameProfile?.killsDisplay ?? "—"}</strong></span>
+          <span className="alliance-stat"><strong>{memberStats(member).heroPowerDisplay}</strong></span>
+          <span className="alliance-stat"><strong>{memberStats(member).killsDisplay}</strong></span>
         </button>
-        <div className="roster-member-actions"><button className="roster-merge-button" aria-label={`Edit name for ${member.canonicalName}`} title="Edit player name" onClick={() => setEditingId(member.id)}><PencilLine size={16} /><span>Edit name</span></button>
-        <button className="roster-merge-button" aria-label={`Merge ${member.canonicalName} into another player`} title="Merge this duplicate into the correct player" disabled={state.members.length < 2} onClick={() => onMergeMember(member.id)}><GitMerge size={16} /><span>Merge</span></button></div>
+        <div className="roster-member-actions"><button className="roster-merge-button" aria-label={`Edit ${member.canonicalName}`} title="Edit player" onClick={() => setEditingId(member.id)}><PencilLine size={16} /><span>Edit</span></button>
+        <div className="roster-secondary-actions"><button className="roster-merge-button" aria-label={`Merge ${member.canonicalName} into another player`} title="Merge this duplicate into the correct player" disabled={state.members.length < 2} onClick={() => onMergeMember(member.id)}><GitMerge size={16} /></button><button className="roster-merge-button roster-delete-button" aria-label={`Delete ${member.canonicalName}`} title="Delete player" onClick={() => onDeleteMember(member.id)}><Trash2 size={16} /></button></div></div>
       </li>)}</ol></div>
       {!filtered.length && <div className="leaderboard-empty"><Users size={24} /><strong>No commanders found</strong><span>{query ? "Try another name or choose All ranks." : rankFilter !== "all" ? `No ${selectedRankLabel} members in ${filter === "active" ? "the current roster" : "previous records"}. Choose another rank or All.` : "There are no members in this roster view."}</span></div>}
       <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "missing-profile" ? "members without profiles" : filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
     </section>
-    {editingMember && <RenameMemberDialog key={editingMember.id} member={editingMember} version={state.version} onClose={() => setEditingId(undefined)} onSaved={(next) => { onSaved(next); setEditingId(undefined); }} />}
+    {editingMember && <EditMemberDialog key={editingMember.id} member={editingMember} version={state.version} onClose={() => setEditingId(undefined)} onSaved={(next) => { onSaved(next); setEditingId(undefined); }} />}
   </div>;
 }

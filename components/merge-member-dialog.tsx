@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { ArrowRight, GitMerge, X } from "lucide-react";
 import { MemberAvatar } from "./alliance-roster";
+import { memberStats } from "@/lib/member-stats";
 import { memberMergeConflicts } from "@/lib/tracker";
 import type { Member, TrackerState } from "@/lib/types";
 import "./merge-member.css";
@@ -67,7 +68,7 @@ export function MergeMemberDialog({ duplicate, state, onClose, onMerged }: {
         </select></label>
         {!candidates.length && <p className="merge-copy">No players match that search.</p>}
         {primary && <>
-          <div className="merge-identity merge-keep"><MemberAvatar key={primary.id} member={primary} /><div><small>PLAYER TO KEEP</small><strong>{primary.canonicalName}</strong><span>{primary.gameProfile ? `${primary.gameProfile.rank} · Hero power ${primary.gameProfile.heroPowerDisplay} · Kills ${primary.gameProfile.killsDisplay}` : "No saved game profile"}</span></div></div>
+          <div className="merge-identity merge-keep"><MemberAvatar key={primary.id} member={primary} /><div><small>PLAYER TO KEEP</small><strong>{primary.canonicalName}</strong><span>{primary.gameProfile ? `${primary.gameProfile.rank} · Hero power ${memberStats(primary).heroPowerDisplay} · Kills ${memberStats(primary).killsDisplay}` : "No saved game profile"}</span></div></div>
           <div className="merge-preview"><ArrowRight size={18} /><p><strong>{duplicate.canonicalName}</strong> becomes an alias of <strong>{primary.canonicalName}</strong>. Future matching imports use this player. Their name, avatar and game profile stay; history, aliases and notes are combined.</p></div>
           {conflicts.length > 0 && <div className="merge-conflicts"><h3>Choose one result per capture</h3><p>These players both have results in the same capture. Keep the correct row; the other row is removed. Points are never added together.</p>
             {conflicts.map(({ snapshot, entries }) => <label key={snapshot.id}>{snapshot.capturedAt.slice(0, 10)} · {snapshot.dayLabel} · {snapshot.status}
