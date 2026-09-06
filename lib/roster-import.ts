@@ -1,7 +1,7 @@
-import capture from "./data/rscl-roster-2026-09-05.json";
+import capture from "./data/rscl-roster-2026-09-06.json";
 import type { Member, TrackerState } from "./types";
 
-export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-05-v1";
+export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-06-v1";
 
 function nameKey(name: string) {
   return name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -16,6 +16,8 @@ export function parseDisplayedPower(display: string): number | null {
 /** One captured roster, applied once. Unmatched identities remain available to historical reports. */
 export function importCapturedRoster(state: TrackerState): TrackerState {
   if (state.rosterImport === "custom-alliance" || state.rosterImport === ROSTER_IMPORT || state.alliance.tag !== "RSCL" || String(state.alliance.server) !== "927") return state;
+  // An older deployment must never replace a more recent roster capture.
+  if (state.rosterImport?.startsWith("lwservers-rscl-927-") && state.rosterImport > ROSTER_IMPORT) return state;
   const used = new Set<string>();
   const members: Member[] = capture.members.map((row) => {
     const previousNames = capture.changes.renamed.filter((change) => change.uid === row.uid).map((change) => change.previous);
@@ -32,6 +34,7 @@ export function importCapturedRoster(state: TrackerState): TrackerState {
       id,
       canonicalName: row.name,
       aliases: [...new Set([...(existing?.aliases ?? []), ...(existing && existing.canonicalName !== row.name ? [existing.canonicalName] : []), ...previousNames])].filter((name) => name !== row.name),
+      previousNames: [...new Set([...(existing?.previousNames ?? []), ...(existing && existing.canonicalName.replace(/\s+/g, " ") !== row.name.replace(/\s+/g, " ") ? [existing.canonicalName] : []), ...previousNames])].filter((name) => name !== row.name),
       active: true,
       leftAt: undefined,
       gameProfile: {
@@ -44,6 +47,7 @@ export function importCapturedRoster(state: TrackerState): TrackerState {
         kills: row.profile.killsApproximate,
         killsDisplay: row.profile.killsDisplay,
         capturedOn: capture.capturedOn,
+        sourceActivityDate: row.profile.activityDate ?? undefined,
         source: capture.source,
       },
     };

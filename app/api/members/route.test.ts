@@ -30,7 +30,7 @@ describe("member merge API", () => {
     const response = await PATCH(request({ action: "rename", memberId: "keep", canonicalName: "  雨の女王  ", version: state.version }));
     expect(response.status).toBe(200);
     const saved = await response.json();
-    expect(saved.members[0]).toEqual({ ...before.members[0], canonicalName: "雨の女王", aliases: ["Alpha"] });
+    expect(saved.members[0]).toEqual({ ...before.members[0], canonicalName: "雨の女王", aliases: ["Alpha"], previousNames: ["Alpha"] });
     expect(saved.members[1]).toEqual(before.members[1]);
     expect(saved.snapshots).toEqual(before.snapshots);
     expect(state).toEqual(before);

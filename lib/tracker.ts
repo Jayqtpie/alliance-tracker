@@ -169,6 +169,7 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
   );
   const merged: Member = {
     ...primary,
+    ...((primary.previousNames || duplicate.previousNames) ? { previousNames: [...new Set([...(primary.previousNames ?? []), ...(duplicate.previousNames ?? [])])].filter((name) => name !== primary.canonicalName) } : {}),
     gameProfile: primary.gameProfile ?? duplicate.gameProfile,
     aliases,
     active: primary.active || duplicate.active,
