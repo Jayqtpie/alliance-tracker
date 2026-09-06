@@ -1,0 +1,4 @@
+interface:
+  display_name: "LWServers roster refresh"
+  short_description: "Refresh RSCL profiles and preserve roster history"
+  default_prompt: "Use $lwservers-roster-refresh to update the RSCL roster from LWServers, preserve previous names and rankings, then verify, commit and push."

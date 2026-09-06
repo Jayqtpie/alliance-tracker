@@ -129,6 +129,16 @@ After connecting this repository to Vercel, deploy normally. [`vercel.json`](ver
 
 ## Capture guidance
 
+### Weekly LWServers roster refresh
+
+In Codex, run: **Use $lwservers-roster-refresh to update the roster.**
+
+The saved workflow reads the current signed-in LWServers roster and every player profile, updates names/statistics/avatars by UID, preserves previous-name tags and ranking history, then verifies, commits, pushes and checks the live deployment. Keep your LWServers sign-in available for the source read.
+
+The versioned skill is in [`docs/codex-skills/lwservers-roster-refresh`](docs/codex-skills/lwservers-roster-refresh/SKILL.md), with an installed copy under `~/.codex/skills/lwservers-roster-refresh`. On another PC, copy that skill folder into its Codex skills directory. After changing the versioned workflow, update the installed copy too. If the skill is not listed in an already-open task, start a new task or ask Codex to read the linked `SKILL.md` directly.
+
+### Ranking screenshots
+
 - Take overlapping screenshots while scrolling slowly.
 - Alternatively, upload one slow iPhone screen recording. Frames are extracted in the browser before OCR, so the original recording stays on the officer's device.
 - Ensure every rank appears fully in at least one screenshot.
