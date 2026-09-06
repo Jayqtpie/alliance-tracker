@@ -22,6 +22,25 @@ beforeEach(() => {
 });
 
 describe("member merge API", () => {
+  it("renames a player without replacing their identity, profile or historical scores", async () => {
+    const state = await getState();
+    state.members[0].gameProfile = { uid: "qa", rank: "R5", avatarPath: "/qa.svg", heroPower: 100, heroPowerDisplay: "100", heroPowerLegacy: false, kills: 10, killsDisplay: "10", capturedOn: "2026-09-05", source: "test" };
+    state.snapshots.push({ id: "qa", capturedAt: "2026-09-06T12:00:00Z", weekStart: "2026-08-31", dayLabel: "Sunday", status: "final", sourceType: "manual", entries: [{ id: "row", memberId: "keep", displayName: "Alpha", rank: 1, points: 123, confidence: 1 }] });
+    const before = structuredClone(state);
+    const response = await PATCH(request({ action: "rename", memberId: "keep", canonicalName: "  雨の女王  ", version: state.version }));
+    expect(response.status).toBe(200);
+    const saved = await response.json();
+    expect(saved.members[0]).toEqual({ ...before.members[0], canonicalName: "雨の女王", aliases: ["Alpha"] });
+    expect(saved.members[1]).toEqual(before.members[1]);
+    expect(saved.snapshots).toEqual(before.snapshots);
+    expect(state).toEqual(before);
+  });
+  it("rejects blank names, missing players and stale rename requests", async () => {
+    expect((await PATCH(request({ action: "rename", memberId: "keep", canonicalName: "  ", version: 1 }))).status).toBe(400);
+    expect((await PATCH(request({ action: "rename", memberId: "missing", canonicalName: "Name", version: 1 }))).status).toBe(404);
+    expect((await PATCH(request({ action: "rename", memberId: "keep", canonicalName: "Name", version: 2 }))).status).toBe(409);
+    expect(setState).not.toHaveBeenCalled();
+  });
   it("requires officer access before any state access", async () => {
     vi.mocked(isAuthenticated).mockResolvedValue(false);
     expect((await PATCH(request())).status).toBe(401);

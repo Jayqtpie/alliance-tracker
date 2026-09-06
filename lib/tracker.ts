@@ -37,7 +37,8 @@ export function dedupeRows(rows: ExtractedRow[]) {
       normalizeName(existing.displayName) === normalizeName(row.displayName) &&
       existing.points === row.points;
     if (!same) warnings.push(`Rank ${row.rank} has conflicting readings and needs review.`);
-    if (row.confidence > existing.confidence) byRank.set(row.rank, row);
+    const chosen = row.confidence > existing.confidence ? row : existing;
+    byRank.set(row.rank, !same || existing.needsReview ? { ...chosen, needsReview: true, reviewed: false } : chosen);
   }
 
   const deduped = [...byRank.values()].sort((a, b) => a.rank - b.rank);
@@ -88,7 +89,7 @@ export function suggestMember(name: string, members: Member[]) {
     .sort((a, b) => b.score - a.score)[0];
 }
 
-export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; createMember?: boolean }>, members: Member[]) {
+export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; createMember?: boolean; confirmReturned?: boolean }>, members: Member[]) {
   const warnings: string[] = [];
   const normalizedNames = new Map<string, number[]>();
   const rankCounts = new Map<number, number>();
@@ -96,9 +97,9 @@ export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; cr
 
   for (const row of sorted) {
     rankCounts.set(row.rank, (rankCounts.get(row.rank) || 0) + 1);
-    const normalized = normalizeName(row.displayName);
-    normalizedNames.set(normalized, [...(normalizedNames.get(normalized) || []), row.rank]);
-    const member = row.memberId ? members.find((candidate) => candidate.id === row.memberId) : matchMember(row.displayName, members);
+    const member = row.memberId ? members.find((candidate) => candidate.id === row.memberId) : row.createMember ? undefined : matchMember(row.displayName, members);
+    const identity = member ? `member:${member.id}` : `name:${normalizeName(row.displayName)}`;
+    normalizedNames.set(identity, [...(normalizedNames.get(identity) || []), row.rank]);
     if (!member && !row.createMember) {
       const suggestion = suggestMember(row.displayName, members);
       warnings.push(
@@ -106,7 +107,7 @@ export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; cr
           ? `Rank ${row.rank} (${row.displayName}) is unmatched. Possible name change: ${suggestion.member.canonicalName}.`
           : `Rank ${row.rank} (${row.displayName}) is not linked to a known member.`,
       );
-    } else if (member && !member.active) {
+    } else if (member && !member.active && !row.confirmReturned) {
       warnings.push(`Rank ${row.rank} matches departed member ${member.canonicalName}; confirm they returned.`);
     }
   }
@@ -127,12 +128,12 @@ export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; cr
   for (let index = 1; index < sorted.length; index += 1) {
     const previous = sorted[index - 1];
     const current = sorted[index];
-    if (current.rank > previous.rank && current.points > previous.points) {
+    if (current.rank > previous.rank && current.points > previous.points && !(current.reviewed && previous.reviewed)) {
       warnings.push(`Points increase between ranks ${previous.rank} and ${current.rank}; check both readings.`);
     }
   }
 
-  const lowConfidence = rows.filter((row) => row.confidence < 0.86).length;
+  const lowConfidence = rows.filter((row) => row.confidence < 0.86 && !row.reviewed).length;
   if (lowConfidence) warnings.push(`${lowConfidence} row${lowConfidence === 1 ? " has" : "s have"} low OCR confidence.`);
   return [...new Set(warnings)];
 }
@@ -238,11 +239,12 @@ export function analyzeLargeChanges(
       displayName: row.displayName,
       points: row.points,
       confidence: row.confidence,
+      reviewed: row.reviewed,
     })),
   };
   const comparison = snapshotComparison(draft, snapshots);
   return comparison.rows
-    .filter((row) => row.percentChange !== undefined && Math.abs(row.percentChange) >= 75 && Math.abs(row.pointChange || 0) >= 5_000_000)
+    .filter((row) => !row.reviewed && row.percentChange !== undefined && Math.abs(row.percentChange) >= 75 && Math.abs(row.pointChange || 0) >= 5_000_000)
     .map((row) => `${row.displayName} differs by ${Math.round(row.percentChange || 0)}% from the matching prior capture.`);
 }
 

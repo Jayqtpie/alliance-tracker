@@ -21,6 +21,24 @@ beforeEach(() => {
 });
 
 describe("snapshot identity review", () => {
+  it("persists human verification separately from OCR confidence and confirms a return", async () => {
+    const state = await getState();
+    state.members[0].active = false;
+    state.members[0].leftAt = "2026-09-01";
+    const response = await POST(request([{ ...row, memberId: "keep", reviewed: true, needsReview: true, confirmReturned: true }]));
+    expect(response.status).toBe(200);
+    const saved = await response.json();
+    expect(saved.snapshot.entries[0]).toMatchObject({ reviewed: true, needsReview: false, confidence: .7 });
+    expect(saved.state.members[0].active).toBe(true);
+    expect(saved.state.members[0].leftAt).toBeUndefined();
+  });
+  it("does not let verification dismiss duplicate or unconfirmed departed identities", async () => {
+    expect((await POST(request([{ ...row, memberId: "keep", reviewed: true }, { ...row, rank: 2, memberId: "keep", reviewed: true }]))).status).toBe(409);
+    const state = await getState();
+    state.members[0].active = false;
+    expect((await POST(request([{ ...row, memberId: "keep", reviewed: true }]))).status).toBe(409);
+    expect(setState).not.toHaveBeenCalled();
+  });
   it("allows fixing a different player's link in a legacy capture with existing duplicates", async () => {
     const state = await getState();
     state.members.push({ id: "legacy", canonicalName: "Old name", active: false, aliases: [] }, { id: "other", canonicalName: "Other player", active: true, aliases: [] });

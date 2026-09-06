@@ -38,14 +38,27 @@ const mergeSchema = z.object({
   version: z.number().int().positive(),
   keepEntries: z.record(z.string(), z.string()).optional(),
 });
+const renameSchema = z.object({
+  action: z.literal("rename"),
+  memberId: z.string().min(1),
+  canonicalName: z.string().trim().min(1).max(100),
+  version: z.number().int().positive(),
+});
 
 export async function PATCH(request: Request) {
   if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
-  const parsed = mergeSchema.safeParse(await request.json().catch(() => null));
+  const parsed = z.union([renameSchema, mergeSchema]).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
     const state = await getState();
     if (parsed.data.version !== state.version) throw new StateConflictError();
+    if ("action" in parsed.data) {
+      const { memberId, canonicalName } = parsed.data;
+      const member = state.members.find((item) => item.id === memberId);
+      if (!member) return NextResponse.json({ error: "This player no longer exists. Refresh the roster." }, { status: 404 });
+      const aliases = [...new Set([...member.aliases, member.canonicalName])].filter((name) => name !== canonicalName);
+      return NextResponse.json(await setState({ ...state, members: state.members.map((item) => item.id === memberId ? { ...item, canonicalName, aliases } : item) }));
+    }
     const merged = mergeMemberIdentities(state, parsed.data.primaryId, parsed.data.duplicateId, parsed.data.keepEntries);
     return NextResponse.json(await setState(merged));
   } catch (error) {
