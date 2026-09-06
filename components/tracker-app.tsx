@@ -133,80 +133,232 @@ function exportDetailedSnapshot(snapshot: Snapshot, state: TrackerState) {
   downloadBlob(new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" }), `${allianceFilePrefix(state.alliance)}-report-${snapshot.capturedAt.slice(0, 10)}.csv`);
 }
 
-function exportReportImage(snapshot: Snapshot, state: TrackerState) {
+function roundedCanvasRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
+  const corner = Math.min(radius, width / 2, height / 2);
+  context.beginPath();
+  context.moveTo(x + corner, y);
+  context.arcTo(x + width, y, x + width, y + height, corner);
+  context.arcTo(x + width, y + height, x, y + height, corner);
+  context.arcTo(x, y + height, x, y, corner);
+  context.arcTo(x, y, x + width, y, corner);
+  context.closePath();
+}
+
+function fitCanvasText(context: CanvasRenderingContext2D, text: string, maxWidth: number, weight: number, startingSize: number, minimumSize: number) {
+  let size = startingSize;
+  while (size > minimumSize) {
+    context.font = `${weight} ${size}px Arial, sans-serif`;
+    if (context.measureText(text).width <= maxWidth) break;
+    size -= 1;
+  }
+  return size;
+}
+
+function loadCanvasImage(source?: string | null) {
+  return new Promise<HTMLImageElement | undefined>((resolve) => {
+    if (!source) return resolve(undefined);
+    const image = new Image();
+    image.decoding = "async";
+    image.onload = () => resolve(image);
+    image.onerror = () => resolve(undefined);
+    image.src = source;
+  });
+}
+
+function drawCanvasAvatar(context: CanvasRenderingContext2D, image: HTMLImageElement | undefined, name: string, x: number, y: number, size: number, edge: string) {
+  context.save();
+  roundedCanvasRect(context, x, y, size, size, 13);
+  context.clip();
+  if (image) {
+    const scale = Math.max(size / image.naturalWidth, size / image.naturalHeight);
+    const width = image.naturalWidth * scale;
+    const height = image.naturalHeight * scale;
+    context.drawImage(image, x + (size - width) / 2, y + (size - height) / 2, width, height);
+  } else {
+    context.fillStyle = "#39445a";
+    context.fillRect(x, y, size, size);
+    context.fillStyle = "#ffffff";
+    context.font = "900 38px Arial, sans-serif";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(name.trim().charAt(0).toLocaleUpperCase() || "?", x + size / 2, y + size / 2 + 2);
+  }
+  context.restore();
+  roundedCanvasRect(context, x, y, size, size, 13);
+  context.lineWidth = 6;
+  context.strokeStyle = edge;
+  context.stroke();
+}
+
+function drawOutlinedCanvasText(context: CanvasRenderingContext2D, text: string, x: number, y: number, fill: string, stroke = "#151820", lineWidth = 8) {
+  context.lineJoin = "round";
+  context.lineWidth = lineWidth;
+  context.strokeStyle = stroke;
+  context.strokeText(text, x, y);
+  context.fillStyle = fill;
+  context.fillText(text, x, y);
+}
+
+async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
   const canvas = document.createElement("canvas");
-  canvas.width = 1200;
-  canvas.height = 1500;
+  canvas.width = 1080;
+  canvas.height = 1920;
   const context = canvas.getContext("2d");
   if (!context) return;
-  const comparison = snapshotComparison(snapshot, state.snapshots);
-  const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0);
-  const activeIds = new Set(snapshot.entries.map((entry) => entry.memberId));
-  const missing = state.members.filter((member) => member.active && !activeIds.has(member.id)).length;
-  const improvers = comparison.rows.filter((row) => row.pointChange !== undefined).sort((a, b) => (b.pointChange || 0) - (a.pointChange || 0)).slice(0, 5);
+  const entries = snapshot.entries.slice(0, 10);
+  const memberById = new Map(state.members.map((member) => [member.id, member]));
+  const allianceLabel = `[${state.alliance.tag}] ${state.alliance.name}`;
+  const avatarImages = await Promise.all(entries.map((entry) => loadCanvasImage(entry.memberId ? memberById.get(entry.memberId)?.gameProfile?.avatarPath : undefined)));
+  const emblem = await loadCanvasImage(state.alliance.emblem || "/rscl-alliance-emblem.png");
 
-  context.fillStyle = "#101b28";
+  context.fillStyle = "#2b3047";
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = "#f08b2d";
-  context.fillRect(0, 0, 20, canvas.height);
+
+  context.fillStyle = "#4b556a";
+  context.fillRect(0, 0, canvas.width, 172);
+  context.fillStyle = "#22283c";
+  context.beginPath();
+  context.moveTo(18, 70);
+  context.lineTo(235, 70);
+  context.lineTo(132, 172);
+  context.closePath();
+  context.fill();
+  context.save();
+  context.translate(34, 126);
+  context.transform(1, 0, -.08, 1, 0, 0);
+  context.font = "900 58px Arial Black, Arial, sans-serif";
+  drawOutlinedCanvasText(context, "RANKING", 0, 0, "#ffffff", "#151820", 12);
+  context.restore();
+
+  roundedCanvasRect(context, 28, 206, 326, 92, 8);
+  context.fillStyle = "#343d54";
+  context.fill();
+  context.strokeStyle = "#161b2b";
+  context.lineWidth = 4;
+  context.stroke();
+  roundedCanvasRect(context, 365, 198, 390, 100, 8);
+  context.fillStyle = "#ff8b08";
+  context.fill();
+  context.strokeStyle = "#d96800";
+  context.stroke();
+  context.fillStyle = "#ff8b08";
+  context.beginPath();
+  context.moveTo(536, 296);
+  context.lineTo(584, 296);
+  context.lineTo(560, 322);
+  context.closePath();
+  context.fill();
+  context.textAlign = "center";
+  context.font = "900 38px Arial, sans-serif";
+  drawOutlinedCanvasText(context, "Daily Rank", 191, 264, "#d7d9df", "#151820", 7);
+  drawOutlinedCanvasText(context, "Weekly Rank", 560, 264, "#ffffff", "#151820", 7);
+
+  roundedCanvasRect(context, 16, 306, 1048, 1434, 8);
+  context.fillStyle = "#f4eee9";
+  context.fill();
+  context.strokeStyle = "#d9cec6";
+  context.lineWidth = 3;
+  context.stroke();
+  context.fillStyle = "#e8ddd4";
+  context.fillRect(18, 324, 1044, 78);
+  context.fillStyle = "#6f6965";
+  context.font = "800 31px Arial, sans-serif";
+  context.textAlign = "center";
+  context.fillText("Ranking", 112, 373);
+  context.fillText("Commander", 520, 373);
+  context.textAlign = "right";
+  context.fillText("Points", 1000, 373);
+
+  const rowFills = ["#ffe25a", "#c9d3ff", "#f3c8b3"];
+  const rowEdges = ["#d2a729", "#8fa1dc", "#cb8f71"];
+  const avatarEdges = ["#e6b63b", "#c0c9df", "#b87858"];
+  entries.forEach((entry, index) => {
+    const y = 414 + index * 128;
+    const isPodium = index < 3;
+    roundedCanvasRect(context, 40, y, 1000, 116, 6);
+    context.fillStyle = rowFills[index] || "#cbd4e5";
+    context.fill();
+    context.lineWidth = 3;
+    context.strokeStyle = rowEdges[index] || "#a1adbf";
+    context.stroke();
+    context.shadowColor = "#00000042";
+    context.shadowBlur = 5;
+    context.shadowOffsetY = 4;
+    context.stroke();
+    context.shadowColor = "transparent";
+
+    if (isPodium) {
+      context.fillStyle = avatarEdges[index];
+      context.fillRect(88, y + 18, 48, 22);
+      context.beginPath();
+      context.moveTo(88, y + 39);
+      context.lineTo(112, y + 57);
+      context.lineTo(136, y + 39);
+      context.closePath();
+      context.fill();
+      context.beginPath();
+      context.arc(112, y + 62, 33, 0, Math.PI * 2);
+      context.fillStyle = index === 0 ? "#f8c733" : index === 1 ? "#cbd4e4" : "#d59070";
+      context.fill();
+      context.lineWidth = 5;
+      context.strokeStyle = index === 0 ? "#a8780e" : index === 1 ? "#77869d" : "#95563f";
+      context.stroke();
+    }
+
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.font = `900 ${isPodium ? 40 : 44}px Arial Black, Arial, sans-serif`;
+    drawOutlinedCanvasText(context, String(entry.rank), 112, y + 64, "#ffffff", "#11151d", isPodium ? 7 : 9);
+    drawCanvasAvatar(context, avatarImages[index], entry.displayName, 164, y + 16, 84, avatarEdges[index] || "#596779");
+
+    context.textAlign = "left";
+    context.textBaseline = "alphabetic";
+    const nameSize = fitCanvasText(context, entry.displayName, 450, 900, 34, 23);
+    context.font = `900 ${nameSize}px Arial, sans-serif`;
+    context.fillStyle = isPodium ? rowEdges[index] : "#11151d";
+    context.fillText(entry.displayName, 270, y + 51, 450);
+    const allianceSize = fitCanvasText(context, allianceLabel, 470, 800, 29, 20);
+    context.font = `800 ${allianceSize}px Arial, sans-serif`;
+    context.fillText(allianceLabel, 270, y + 91, 470);
+
+    context.textAlign = "right";
+    const points = full(entry.points);
+    const pointSize = fitCanvasText(context, points, 258, 900, 34, 24);
+    context.font = `900 ${pointSize}px Arial, sans-serif`;
+    context.fillText(points, 1010, y + 71, 258);
+  });
+
+  context.fillStyle = "#22283c";
+  context.fillRect(0, 1740, 1080, 180);
+  if (emblem) drawCanvasAvatar(context, emblem, state.alliance.tag, 34, 1774, 94, "#71819c");
+  context.textAlign = "left";
+  context.fillStyle = "#aab5c8";
+  context.font = "700 23px Arial, sans-serif";
+  context.fillText(`${snapshot.dayLabel} · ${dateLabel(snapshot.capturedAt)} · Server ${state.alliance.server}`, 148, 1807, 500);
   context.fillStyle = "#ffffff";
-  context.font = "800 62px Arial";
-  context.fillText(`${state.alliance.tag} WEEKLY REPORT`, 80, 105, 1040);
-  context.fillStyle = "#9fb0c1";
-  context.font = "28px Arial";
-  context.fillText(`${snapshot.dayLabel}, ${dateLabel(snapshot.capturedAt)} · ${snapshot.status.toUpperCase()}`, 82, 155);
+  context.font = "900 31px Arial, sans-serif";
+  context.fillText(state.alliance.name, 148, 1848, 500);
+  context.textAlign = "right";
+  context.font = "900 38px Arial, sans-serif";
+  drawOutlinedCanvasText(context, "Your Alliance", 956, 1828, "#ffffff", "#11151d", 8);
+  roundedCanvasRect(context, 974, 1850, 56, 48, 7);
+  context.fillStyle = "#323a50";
+  context.fill();
+  context.strokeStyle = "#4b5870";
+  context.lineWidth = 4;
+  context.stroke();
+  context.strokeStyle = "#8ee637";
+  context.lineWidth = 10;
+  context.lineCap = "round";
+  context.beginPath();
+  context.moveTo(987, 1874);
+  context.lineTo(999, 1886);
+  context.lineTo(1019, 1863);
+  context.stroke();
+  context.lineCap = "butt";
 
-  const cards = [
-    ["ALLIANCE POINTS", full(total)],
-    ["RANKED", String(snapshot.entries.length)],
-    ["NOT ON BOARD", String(missing)],
-  ];
-  cards.forEach(([label, value], index) => {
-    const x = 80 + index * 355;
-    context.fillStyle = "#1d2c3d";
-    context.fillRect(x, 210, 320, 155);
-    context.fillStyle = "#91a4b7";
-    context.font = "700 20px Arial";
-    context.fillText(label, x + 24, 255);
-    context.fillStyle = "#ffffff";
-    context.font = "800 35px Arial";
-    context.fillText(value, x + 24, 320);
-  });
-
-  context.fillStyle = "#f08b2d";
-  context.font = "800 28px Arial";
-  context.fillText("TOP 10 COMMANDERS", 80, 440);
-  snapshot.entries.slice(0, 10).forEach((entry, index) => {
-    const y = 500 + index * 62;
-    context.fillStyle = index % 2 ? "#172638" : "#1b2b3d";
-    context.fillRect(80, y - 38, 1040, 52);
-    context.fillStyle = "#f4a75f";
-    context.font = "800 23px Arial";
-    context.fillText(String(entry.rank), 105, y - 3);
-    context.fillStyle = "#ffffff";
-    context.fillText(entry.displayName.slice(0, 34), 170, y - 3);
-    context.textAlign = "right";
-    context.fillText(full(entry.points), 1090, y - 3);
-    context.textAlign = "left";
-  });
-
-  context.fillStyle = "#f08b2d";
-  context.font = "800 28px Arial";
-  context.fillText(comparison.previous ? "BIGGEST POINT GAINS" : "COMPARISONS BEGIN NEXT MATCHING CAPTURE", 80, 1165);
-  improvers.forEach((entry, index) => {
-    const y = 1220 + index * 48;
-    context.fillStyle = "#ffffff";
-    context.font = "700 22px Arial";
-    context.fillText(entry.displayName.slice(0, 30), 95, y);
-    context.fillStyle = "#64d39a";
-    context.textAlign = "right";
-    context.fillText(`+${full(entry.pointChange || 0)}`, 1090, y);
-    context.textAlign = "left";
-  });
-  context.fillStyle = "#70869b";
-  context.font = "18px Arial";
-  context.fillText(`Generated by Alliance Manager · ${state.alliance.tag} Server ${state.alliance.server}`, 80, 1450, 1040);
-  canvas.toBlob((blob) => blob && downloadBlob(blob, `${allianceFilePrefix(state.alliance)}-report-${snapshot.capturedAt.slice(0, 10)}.png`), "image/png");
+  const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, "image/png"));
+  if (blob) downloadBlob(blob, `${allianceFilePrefix(state.alliance)}-weekly-rank-${snapshot.capturedAt.slice(0, 10)}.png`);
 }
 
 function waitForVideoEvent(video: HTMLVideoElement, event: "loadedmetadata" | "seeked") {
