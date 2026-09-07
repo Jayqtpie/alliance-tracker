@@ -28,3 +28,14 @@ export function memberStats(member: Member) {
     killsDisplay: member.manualStats?.kills !== undefined ? statDisplay(kills) : member.gameProfile?.killsDisplay ?? "—",
   };
 }
+
+export function allianceStatTotals(members: Member[]) {
+  const active = members.filter((member) => member.active);
+  const stats = active.map(memberStats);
+  const total = (key: "heroPower" | "kills") => {
+    const recorded = stats.filter((stat) => stat[key] !== null);
+    const value = recorded.length ? recorded.reduce((sum, stat) => sum + (stat[key] ?? 0), 0) : null;
+    return { value, display: statDisplay(value), recorded: recorded.length };
+  };
+  return { activeCount: active.length, heroPower: total("heroPower"), kills: total("kills") };
+}

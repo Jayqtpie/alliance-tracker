@@ -25,6 +25,19 @@
   --leader-row: #292a28; --leader-hover: #36342b; --leader-edge: #be984a;
   --officer-row: #142c29; --officer-hover: #1c3b34; --officer-edge: #4b9d87;
 }
+.alliance-totals { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; margin: 0; }
+.alliance-total { --total-colour: var(--cyan); min-width: 0; }
+.alliance-total[data-stat="kills"] { --total-colour: var(--violet); padding-inline-start: 28px; border-inline-start: 1px solid var(--line); }
+.alliance-total dt { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; }
+.alliance-total dt svg { color: var(--total-colour); flex-shrink: 0; }
+.alliance-total dd { display: grid; gap: 3px; margin: 6px 0 0; }
+.alliance-total strong { color: var(--total-colour); font-size: 27px; font-weight: 650; line-height: 1.2; font-variant-numeric: tabular-nums; letter-spacing: -.7px; }
+.alliance-total dd span { color: var(--muted); font-size: 11px; line-height: 1.5; }
+@media (max-width: 760px) {
+  .alliance-totals { width: 100%; gap: 16px; margin-top: 4px; }
+  .alliance-total[data-stat="kills"] { padding-inline-start: 16px; }
+  .alliance-total strong { font-size: 24px; }
+}
 .app-shell { grid-template-columns: 264px minmax(0, 1fr); }
 .sidebar, :root[data-theme="dark"] .sidebar {
   --sidebar-bg: #111c2f; --sidebar-hover: #1b2b42; --sidebar-active: #22364e;
