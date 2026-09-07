@@ -45,6 +45,14 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
   const membership = state.members.filter((member) => filter === "missing-profile" ? !member.gameProfile : filter === "active" ? member.active : !member.active);
   const ordered = [...membership].sort((a, b) => {
     if (sort === "name") return a.canonicalName.localeCompare(b.canonicalName);
+    if (sort === "rank") {
+      const rankPosition = (member: Member) => ROSTER_RANK_FILTERS.findIndex((rank) => rank.value === member.gameProfile?.rank);
+      const aRank = rankPosition(a);
+      const bRank = rankPosition(b);
+      return (aRank < 0 ? Infinity : aRank) - (bRank < 0 ? Infinity : bRank)
+        || (memberStats(b).heroPower ?? -1) - (memberStats(a).heroPower ?? -1)
+        || a.canonicalName.localeCompare(b.canonicalName);
+    }
     const key = sort as "heroPower" | "kills";
     return (memberStats(b)[key] ?? -1) - (memberStats(a)[key] ?? -1);
   });
@@ -71,7 +79,7 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
       <div className="alliance-roster-toolbar">
         <div className="search-box"><Search size={16} /><input aria-label="Search roster" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear roster search" onClick={() => setQuery("")}><X size={14} /></button>}</div>
         <select aria-label="Roster membership" value={filter} onChange={(event) => { setFilter(event.target.value); setRankFilter("all"); }}><option value="active">Current roster</option><option value="previous">Previous records</option><option value="missing-profile">Missing profiles ({state.members.filter((member) => !member.gameProfile).length})</option></select>
-        <select aria-label="Sort roster" value={sort} onChange={(event) => setSort(event.target.value)}><option value="heroPower">Hero power ↓</option><option value="kills">Kills ↓</option><option value="name">Name A–Z</option></select>
+        <select aria-label="Sort roster" value={sort} onChange={(event) => setSort(event.target.value)}><option value="heroPower">Hero power ↓</option><option value="kills">Kills ↓</option><option value="rank">Alliance rank · R5–R1</option><option value="name">Name A–Z</option></select>
       </div>
       <div className="alliance-roster-scroll"><div className="alliance-roster-columns"><span>Commander</span><select className="roster-rank-filter" aria-label="Filter roster by rank" aria-controls={rosterListId} value={rankFilter} onChange={(event) => setRankFilter(event.target.value as RosterRankFilter)}>
         {ROSTER_RANK_FILTERS.map(({ value }) => <option key={value} value={value}>{value === "all" ? "Rank" : value}</option>)}
