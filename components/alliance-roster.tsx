@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Search, Users, X } from "lucide-react";
+import { Search, Swords, Users, X, Zap } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import { MemberName } from "./member-name";
 import { MemberActions } from "./member-actions";
 
 import { EditMemberDialog } from "./edit-member-dialog";
-import { memberStats } from "@/lib/member-stats";
+import { allianceStatTotals, memberStats } from "@/lib/member-stats";
 import { accurateAsOf } from "@/lib/display-date";
 
 const ROSTER_RANK_FILTERS = [
@@ -39,6 +39,7 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
   const [rankFilter, setRankFilter] = useState<RosterRankFilter>("all");
   const rosterListId = useId();
   const active = state.members.filter((member) => member.active);
+  const totals = allianceStatTotals(state.members);
   const leader = active.find((member) => member.gameProfile?.rank === "R5");
   const capturedOn = active.find((member) => member.gameProfile)?.gameProfile?.capturedOn;
   const membership = state.members.filter((member) => filter === "missing-profile" ? !member.gameProfile : filter === "active" ? member.active : !member.active);
@@ -53,7 +54,18 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
   const selectedRankLabel = ROSTER_RANK_FILTERS.find((item) => item.value === rankFilter)?.label;
 
   return <div className="page-stack alliance-roster-page">
-    <section className="dashboard-heading"><div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1><p>Your commanders, at a glance.</p></div><span className="alliance-tag">{state.alliance.tag} <span>#{state.alliance.server}</span></span></section>
+    <section className="dashboard-heading">
+      <div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1><p>Your commanders, at a glance.</p></div>
+      <dl className="alliance-totals" aria-label="Active alliance totals">
+        {([
+          { key: "heroPower", label: "Total hero power", Icon: Zap },
+          { key: "kills", label: "Total kills", Icon: Swords },
+        ] as const).map(({ key, label, Icon }) => <div className="alliance-total" data-stat={key} key={key}>
+          <dt><Icon size={14} aria-hidden="true" />{label}</dt>
+          <dd><strong>{totals[key].display}</strong><span>{totals[key].recorded} / {totals.activeCount} active members recorded</span></dd>
+        </div>)}
+      </dl>
+    </section>
     <section className="alliance-roster-directory" aria-label="Alliance members">
       <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? accurateAsOf(capturedOn) : "No profile capture"}</span></header>
       <div className="alliance-roster-toolbar">
