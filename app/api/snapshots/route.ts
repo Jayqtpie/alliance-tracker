@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
 import { dayLabelFor, matchMember, normalizeName, weekStartFor } from "@/lib/tracker";
 import type { Member, RankingEntry, Snapshot } from "@/lib/types";
@@ -30,7 +30,7 @@ const schema = z.object({
 const snapshotIdSchema = z.string().min(1).max(100);
 
 export async function POST(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   const ranks = parsed.data.rows.map((row) => row.rank);
@@ -103,6 +103,7 @@ export async function POST(request: Request) {
 
     const snapshot: Snapshot = {
       id: existing?.id || crypto.randomUUID(),
+      deletionLocked: existing?.deletionLocked ?? true,
       capturedAt: `${parsed.data.capturedDate}T12:00:00.000Z`,
       weekStart: weekStartFor(parsed.data.capturedDate),
       dayLabel: dayLabelFor(parsed.data.capturedDate),
@@ -121,8 +122,31 @@ export async function POST(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  const parsed = z.object({
+    id: snapshotIdSchema,
+    deletionLocked: z.boolean(),
+    version: z.number().int().nonnegative(),
+  }).safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ error: "A snapshot ID, lock setting and state version are required." }, { status: 400 });
+
+  try {
+    const state = await getState();
+    if (state.version !== parsed.data.version) return NextResponse.json({ error: "The tracker changed. Refresh before changing the report lock." }, { status: 409 });
+    if (!state.snapshots.some((snapshot) => snapshot.id === parsed.data.id)) return NextResponse.json({ error: "This snapshot no longer exists." }, { status: 404 });
+    const next = await setState({
+      ...state,
+      snapshots: state.snapshots.map((snapshot) => snapshot.id === parsed.data.id ? { ...snapshot, deletionLocked: parsed.data.deletionLocked } : snapshot),
+    });
+    return NextResponse.json({ state: next });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not change this report lock." }, { status: 409 });
+  }
+}
+
 export async function DELETE(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsedId = snapshotIdSchema.safeParse(new URL(request.url).searchParams.get("id"));
   if (!parsedId.success) return NextResponse.json({ error: "A valid snapshot ID is required." }, { status: 400 });
 
@@ -130,6 +154,7 @@ export async function DELETE(request: Request) {
     const state = await getState();
     const snapshot = state.snapshots.find((item) => item.id === parsedId.data);
     if (!snapshot) return NextResponse.json({ error: "This snapshot no longer exists." }, { status: 404 });
+    if (snapshot.deletionLocked !== false) return NextResponse.json({ error: "This report is locked. Unlock it before deleting." }, { status: 409 });
 
     const next = await setState({
       ...state,

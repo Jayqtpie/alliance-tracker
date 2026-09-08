@@ -7,7 +7,7 @@ import { importCapturedRoster } from "@/lib/roster-import";
 import { snapshotComparison } from "@/lib/tracker";
 import type { Snapshot, TrackerState } from "@/lib/types";
 
-vi.mock("@/lib/auth", () => ({ isAuthenticated: async () => true }));
+vi.mock("@/lib/auth", () => ({ isAdmin: async () => true }));
 vi.mock("@/lib/store", () => ({
   getState: async () => structuredClone(stored),
   setState: async (next: TrackerState) => { stored = next; return next; },

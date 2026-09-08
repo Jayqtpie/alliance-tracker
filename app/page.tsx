@@ -1,14 +1,15 @@
 import { redirect } from "next/navigation";
 import { AllianceMark } from "@/components/alliance-mark";
 import { TrackerApp } from "@/components/tracker-app";
-import { isAuthenticated } from "@/lib/auth";
+import { getAccessRole } from "@/lib/auth";
 import { bridgeConfigured } from "@/lib/bridge-auth";
 import { getState, storageMode } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  if (!(await isAuthenticated())) redirect("/login");
+  const role = await getAccessRole();
+  if (!role) redirect("/login");
   let state;
   try {
     state = await getState();
@@ -34,6 +35,7 @@ export default async function Home() {
   }
   return (
     <TrackerApp
+      canManage={role === "admin"}
       initialState={state}
       storageMode={storageMode()}
       ocrConfigured={Boolean(process.env.OPENAI_API_KEY)}

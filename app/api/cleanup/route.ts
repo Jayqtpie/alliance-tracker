@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { isAdmin } from "@/lib/auth";
 import { removeExpiredBridgeJobs } from "@/lib/bridge-store";
 import { getState, setState } from "@/lib/store";
 import { removeUploads } from "@/lib/uploads";
@@ -7,7 +8,8 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET;
-  if (secret && request.headers.get("authorization") !== `Bearer ${secret}`) {
+  const authorised = secret ? request.headers.get("authorization") === `Bearer ${secret}` : await isAdmin();
+  if (!authorised) {
     return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   }
   const state = await getState();

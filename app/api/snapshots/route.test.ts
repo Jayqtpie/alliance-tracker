@@ -2,11 +2,11 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createEmptyState } from "@/lib/alliance";
 import { mergeMemberIdentities } from "@/lib/tracker";
 
-vi.mock("@/lib/auth", () => ({ isAuthenticated: vi.fn() }));
+vi.mock("@/lib/auth", () => ({ isAdmin: vi.fn() }));
 vi.mock("@/lib/store", () => ({ getState: vi.fn(), setState: vi.fn() }));
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
-import { POST } from "./route";
+import { DELETE, PATCH, POST } from "./route";
 
 const row = { rank: 1, displayName: "구름빚", points: 250, confidence: .7 };
 function request(rows: unknown[] = [row]) {
@@ -15,7 +15,7 @@ function request(rows: unknown[] = [row]) {
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(isAuthenticated).mockResolvedValue(true);
+  vi.mocked(isAdmin).mockResolvedValue(true);
   vi.mocked(getState).mockResolvedValue({ ...createEmptyState(), members: [{ id: "keep", canonicalName: "구름빛", active: true, aliases: [] }] });
   vi.mocked(setState).mockImplementation(async (state) => ({ ...state, version: state.version + 1 }));
 });
@@ -95,8 +95,67 @@ describe("snapshot identity review", () => {
     expect(state).toEqual(before);
   });
   it("requires officer access", async () => {
-    vi.mocked(isAuthenticated).mockResolvedValue(false);
+    vi.mocked(isAdmin).mockResolvedValue(false);
     expect((await POST(request())).status).toBe(401);
     expect(getState).not.toHaveBeenCalled();
+  });
+});
+
+
+describe("report deletion locks", () => {
+  async function capture(deletionLocked?: boolean) {
+    const state = await getState();
+    state.snapshots.push({ id: "report", deletionLocked, capturedAt: "2026-09-06T12:00:00Z", weekStart: "2026-08-31", dayLabel: "Sunday", status: "final", sourceType: "manual", entries: [{ ...row, id: "entry", memberId: "keep" }] });
+    return state;
+  }
+  const remove = () => DELETE(new Request("http://localhost/api/snapshots?id=report", { method: "DELETE" }));
+  const lock = (deletionLocked: boolean, version = 1, id = "report") => PATCH(new Request("http://localhost/api/snapshots", { method: "PATCH", body: JSON.stringify({ id, deletionLocked, version }) }));
+
+  it.each([undefined, true])("blocks deletion of protected captures (%s)", async (setting) => {
+    await capture(setting);
+    expect((await remove()).status).toBe(409);
+    expect(setState).not.toHaveBeenCalled();
+  });
+  it("persists an explicit unlock and permits deletion without changing members", async () => {
+    const original = structuredClone(await capture());
+    const unlocked = await lock(false);
+    expect(unlocked.status).toBe(200);
+    const { state } = await unlocked.json();
+    expect(state.snapshots[0]).toEqual({ ...original.snapshots[0], deletionLocked: false });
+    vi.mocked(getState).mockResolvedValue(state);
+    const deleted = await remove();
+    expect(deleted.status).toBe(200);
+    const body = await deleted.json();
+    expect(body.state.snapshots).toEqual([]);
+    expect(body.state.members).toEqual(original.members);
+  });
+  it("relocking prevents later deletion", async () => {
+    await capture(false);
+    const response = await lock(true);
+    const { state } = await response.json();
+    vi.mocked(getState).mockResolvedValue(state);
+    vi.mocked(setState).mockClear();
+    expect((await remove()).status).toBe(409);
+    expect(setState).not.toHaveBeenCalled();
+  });
+  it("rejects stale lock changes, missing reports, invalid bodies and non-admins", async () => {
+    await capture();
+    expect((await lock(false, 999)).status).toBe(409);
+    expect((await lock(false, 1, "missing")).status).toBe(404);
+    expect((await PATCH(new Request("http://localhost/api/snapshots", { method: "PATCH", body: "{}" }))).status).toBe(400);
+    vi.mocked(isAdmin).mockResolvedValue(false);
+    expect((await lock(false)).status).toBe(401);
+    expect((await remove()).status).toBe(401);
+    expect(setState).not.toHaveBeenCalled();
+  });
+  it.each([undefined, true, false])("keeps the lock setting when correcting a capture (%s)", async (setting) => {
+    await capture(setting);
+    const response = await POST(new Request("http://localhost/api/snapshots", { method: "POST", body: JSON.stringify({ snapshotId: "report", capturedDate: "2026-09-06", status: "final", rows: [{ ...row, id: "entry", memberId: "keep", points: 300 }] }) }));
+    expect(response.status).toBe(200);
+    expect((await response.json()).snapshot.deletionLocked).toBe(setting ?? true);
+  });
+  it("protects newly published captures", async () => {
+    const response = await POST(request([{ ...row, memberId: "keep" }]));
+    expect((await response.json()).snapshot.deletionLocked).toBe(true);
   });
 });

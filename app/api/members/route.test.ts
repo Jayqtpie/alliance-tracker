@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createEmptyState } from "@/lib/alliance";
 
-vi.mock("@/lib/auth", () => ({ isAuthenticated: vi.fn() }));
+vi.mock("@/lib/auth", () => ({ isAdmin: vi.fn() }));
 vi.mock("@/lib/store", () => ({ getState: vi.fn(), setState: vi.fn(), StateConflictError: class extends Error {} }));
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { DELETE, PATCH } from "./route";
 
@@ -13,7 +13,7 @@ function request(body: unknown = { primaryId: "keep", duplicateId: "duplicate", 
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(isAuthenticated).mockResolvedValue(true);
+  vi.mocked(isAdmin).mockResolvedValue(true);
   vi.mocked(getState).mockResolvedValue({ ...createEmptyState(), members: [
     { id: "keep", canonicalName: "Alpha", active: true, aliases: [] },
     { id: "duplicate", canonicalName: "A1pha", active: true, aliases: [] },
@@ -66,10 +66,10 @@ describe("player edits and deletion", () => {
   });
 
   it("requires officer access for deletion and handles a concurrent save", async () => {
-    vi.mocked(isAuthenticated).mockResolvedValue(false);
+    vi.mocked(isAdmin).mockResolvedValue(false);
     expect((await DELETE(deleteRequest())).status).toBe(401);
     expect(getState).not.toHaveBeenCalled();
-    vi.mocked(isAuthenticated).mockResolvedValue(true);
+    vi.mocked(isAdmin).mockResolvedValue(true);
     vi.mocked(setState).mockRejectedValue(new StateConflictError());
     expect((await DELETE(deleteRequest())).status).toBe(409);
   });
@@ -96,7 +96,7 @@ describe("member merge API", () => {
     expect(setState).not.toHaveBeenCalled();
   });
   it("requires officer access before any state access", async () => {
-    vi.mocked(isAuthenticated).mockResolvedValue(false);
+    vi.mocked(isAdmin).mockResolvedValue(false);
     expect((await PATCH(request())).status).toBe(401);
     expect(getState).not.toHaveBeenCalled();
     expect(setState).not.toHaveBeenCalled();

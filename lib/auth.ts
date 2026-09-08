@@ -13,30 +13,46 @@ function signature(payload: string) {
   return createHmac("sha256", secret()).update(payload).digest("base64url");
 }
 
-export function createSessionValue() {
-  const payload = Buffer.from(JSON.stringify({ exp: Date.now() + MAX_AGE_SECONDS * 1000 })).toString("base64url");
+export type AccessRole = "admin" | "viewer";
+
+export function createSessionValue(role: AccessRole = "admin") {
+  const payload = Buffer.from(JSON.stringify({ exp: Date.now() + MAX_AGE_SECONDS * 1000, role })).toString("base64url");
   return `${payload}.${signature(payload)}`;
 }
 
 export function verifySessionValue(value?: string) {
-  if (!value) return false;
+  return sessionRole(value) !== null;
+}
+
+export function sessionRole(value?: string): AccessRole | null {
+  if (!value) return null;
   const [payload, supplied] = value.split(".");
-  if (!payload || !supplied) return false;
+  if (!payload || !supplied) return null;
   const expected = signature(payload);
-  if (expected.length !== supplied.length) return false;
-  if (!timingSafeEqual(Buffer.from(expected), Buffer.from(supplied))) return false;
+  if (Buffer.byteLength(expected) !== Buffer.byteLength(supplied)) return null;
+  if (!timingSafeEqual(Buffer.from(expected), Buffer.from(supplied))) return null;
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    return typeof parsed.exp === "number" && parsed.exp > Date.now();
+    if (typeof parsed.exp !== "number" || parsed.exp <= Date.now()) return null;
+    // Existing signed officer sessions retain admin access.
+    if (parsed.role === undefined || parsed.role === "admin") return "admin";
+    return parsed.role === "viewer" ? "viewer" : null;
   } catch {
-    return false;
+    return null;
   }
 }
 
-export async function isAuthenticated() {
-  if (process.env.NODE_ENV !== "production" && !process.env.OFFICER_PASSCODE) return true;
+export async function getAccessRole() {
   const jar = await cookies();
-  return verifySessionValue(jar.get(COOKIE_NAME)?.value);
+  return sessionRole(jar.get(COOKIE_NAME)?.value);
+}
+
+export async function isAuthenticated() {
+  return (await getAccessRole()) !== null;
+}
+
+export async function isAdmin() {
+  return (await getAccessRole()) === "admin";
 }
 
 export const sessionCookie = {

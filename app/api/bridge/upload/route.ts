@@ -1,6 +1,6 @@
 import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
 
 export const runtime = "nodejs";
@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       request,
       token: blobToken(),
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        if (!(await isAuthenticated())) throw new Error("Unauthorised");
+        if (!(await isAdmin())) throw new Error("Unauthorised");
         const payload = JSON.parse(clientPayload || "null") as { jobId?: string } | null;
         if (!payload?.jobId || !/^[0-9a-f-]{36}$/i.test(payload.jobId)) throw new Error("Invalid bridge job.");
         if (!pathname.startsWith(`bridge-uploads/${payload.jobId}/`)) throw new Error("Invalid upload path.");

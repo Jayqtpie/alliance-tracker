@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { dedupeRows } from "@/lib/tracker";
 import { extractLeaderboard } from "@/lib/extract";
 import { getState, setState } from "@/lib/store";
@@ -18,7 +18,7 @@ async function inBatches<T, R>(items: T[], size: number, work: (item: T) => Prom
 }
 
 export async function POST(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
       { error: "Screenshot extraction needs OPENAI_API_KEY. Manual paste is available without it." },

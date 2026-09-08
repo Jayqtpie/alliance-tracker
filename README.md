@@ -4,7 +4,8 @@ A mobile-friendly Alliance Duel tracker for alliance leadership. Officers can up
 
 ## Included in this MVP
 
-- Shared officer passcode with a signed, HTTP-only session cookie
+- Separate admin and read-only viewer passcodes with signed, HTTP-only role sessions
+- Reports protected from deletion by default, with persistent admin-controlled padlocks
 - First-time alliance setup, editable name/tag/server, and an empty roster for new installations
 - Multi-image extraction through the OpenAI Responses API
 - Optional local Codex CLI extraction using an officer's ChatGPT sign-in
@@ -25,7 +26,7 @@ A mobile-friendly Alliance Duel tracker for alliance leadership. Officers can up
 Use the same codebase for each customer, with a separate deployment and private Blob store for each alliance. Do not connect two customers to the same Blob store: state, uploads and worker queues use shared paths within that store, not tenant partitions.
 
 1. Create a separate Vercel project and private Blob store for the customer.
-2. Set unique `OFFICER_PASSCODE`, `SESSION_SECRET`, `CRON_SECRET` and, if used, `BRIDGE_SECRET` values for that deployment. Configure its extraction API key if cloud OCR is needed.
+2. Set unique `OFFICER_PASSCODE`, `VIEWER_PASSCODE`, `SESSION_SECRET`, `CRON_SECRET` and, if used, `BRIDGE_SECRET` values for that deployment. Configure its extraction API key if cloud OCR is needed.
 3. Deploy without copying `.data`, `.env.local` or `.env.bridge.local` from another installation.
 4. The first officer signs in and enters the alliance name, short tag and server number. The roster and score history start empty.
 5. Import the alliance leaderboard. Use the Settings button in the header to edit alliance details later; renaming preserves member IDs, scores and operations.
@@ -116,7 +117,8 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 
 | Variable | Purpose |
 | --- | --- |
-| `OFFICER_PASSCODE` | Shared passcode used by alliance officers |
+| `OFFICER_PASSCODE` | Admin passcode; local development defaults to `test1` when unset |
+| `VIEWER_PASSCODE` | Read-only viewer passcode; defaults to `rscl1` |
 | `SESSION_SECRET` | Long random value used to sign sessions |
 | `OPENAI_API_KEY` | Reads uploaded leaderboard screenshots |
 | `OPENAI_VISION_MODEL` | Optional; defaults to `gpt-5-mini` |

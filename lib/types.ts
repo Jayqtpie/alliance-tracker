@@ -39,6 +39,8 @@ export interface RankingEntry {
 
 export interface Snapshot {
   id: string;
+  /** Older captures are protected unless explicitly unlocked. */
+  deletionLocked?: boolean;
   capturedAt: string;
   weekStart: string;
   dayLabel: string;
