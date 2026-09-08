@@ -1,6 +1,7 @@
 "use client";
 
 import { upload } from "@vercel/blob/client";
+import NextImage from "next/image";
 import {
   Activity,
   ArrowRight,
@@ -555,7 +556,7 @@ export function TrackerApp({
           />
         )}
         {view === "overview" && !selected && (
-          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">{t("RSCL")}</p><h1>{t("Rascals overview")}</h1><p>{t("Everything you need to keep the alliance moving.")}</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>{t("Your first capture starts here")}</h2><p>{t("Import a leaderboard to see alliance scores and commander performance.")}</p>{canManage && <button className="button primary" onClick={() => navigate("import")}>{t("New Import")} <ArrowRight size={16} /></button>}</section></div>
+          <div className="page-stack"><OverviewHeader canManage={canManage} onNavigate={navigate} /><section className="panel operations-empty"><UploadCloud size={32} /><h2>{t("Your first capture starts here")}</h2><p>{t("Import a leaderboard to see alliance scores and commander performance.")}</p>{canManage && <button className="button primary" onClick={() => navigate("import")}>{t("New Import")} <ArrowRight size={16} /></button>}</section></div>
         )}
         {canManage && view === "import" && (
           <Importer
@@ -610,6 +611,18 @@ export function TrackerApp({
   );
 }
 
+function OverviewHeader({ canManage, onNavigate }: { canManage: boolean; onNavigate: (view: View) => void }) {
+  const { t } = useLanguage();
+  return <section className="overview-banner" aria-labelledby="overview-title">
+    <h1 className="sr-only" id="overview-title">{t("Rascals overview")}</h1>
+    <NextImage className="overview-banner-image" src="/rscl-overview-banner.png" width={2508} height={627} alt="RSCL" sizes="(max-width: 760px) 100vw, calc(100vw - 320px)" preload />
+    <div className="overview-banner-actions dashboard-actions">
+      <button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />{t("View reports")}</button>
+      {canManage && <button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />{t("New Import")}</button>}
+    </div>
+  </section>;
+}
+
 function Overview({
   state,
   selected,
@@ -657,10 +670,7 @@ function Overview({
 
   return (
     <div className="page-stack dashboard-page">
-      <section className="dashboard-heading">
-        <div><p className="eyebrow">{t("RSCL")}</p><h1>{t("Rascals overview")}</h1><p>{t("Performance, people, and the next move.")}</p></div>
-        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />{t("View reports")}</button>{canManage && <button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />{t("New Import")}</button>}</div>
-      </section>
+      <OverviewHeader canManage={canManage} onNavigate={onNavigate} />
       <section className="snapshot-hero">
         <div>
           <div className="snapshot-title-row">
