@@ -1,7 +1,7 @@
 import { del, head } from "@vercel/blob";
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
 import { bridgeJobView, retryBridgeJob } from "@/lib/bridge";
 import { getBridgeQueue, mutateBridgeQueue } from "@/lib/bridge-store";
@@ -23,7 +23,7 @@ const createSchema = z.object({
 const retrySchema = z.object({ id: z.string().uuid() });
 
 export async function GET(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const queue = await getBridgeQueue();
   const id = new URL(request.url).searchParams.get("id");
   if (id) {
@@ -38,7 +38,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = createSchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   if (parsed.data.files.some((file) => !file.pathname.startsWith(`bridge-uploads/${parsed.data.id}/`))) {
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = retrySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
@@ -83,7 +83,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const id = new URL(request.url).searchParams.get("id");
   if (!id) return NextResponse.json({ error: "Job id is required." }, { status: 400 });
   try {

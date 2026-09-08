@@ -1,12 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { INITIAL_STATE } from "@/lib/seed";
 
-vi.mock("@/lib/auth", () => ({ isAuthenticated: vi.fn() }));
+vi.mock("@/lib/auth", () => ({ isAdmin: vi.fn() }));
 vi.mock("@/lib/store", () => ({
   getState: vi.fn(), setState: vi.fn(),
   StateConflictError: class extends Error {},
 }));
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
 import { PUT } from "./route";
 
@@ -17,7 +17,7 @@ function request(body: unknown = { alliance, version: 1 }) {
 
 beforeEach(() => {
   vi.resetAllMocks();
-  vi.mocked(isAuthenticated).mockResolvedValue(true);
+  vi.mocked(isAdmin).mockResolvedValue(true);
   vi.mocked(getState).mockResolvedValue(structuredClone(INITIAL_STATE));
   vi.mocked(setState).mockImplementation(async (state) => ({ ...state, version: state.version + 1 }));
 });
@@ -41,7 +41,7 @@ describe("alliance settings access and preservation", () => {
   });
 
   it("requires officer access before reading or writing state", async () => {
-    vi.mocked(isAuthenticated).mockResolvedValue(false);
+    vi.mocked(isAdmin).mockResolvedValue(false);
     expect((await PUT(request())).status).toBe(401);
     expect(getState).not.toHaveBeenCalled();
     expect(setState).not.toHaveBeenCalled();

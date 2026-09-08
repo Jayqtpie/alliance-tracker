@@ -30,7 +30,7 @@ export function MemberAvatar({ member, large = false }: { member: Member; large?
   </span>;
 }
 
-export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMember, onSaved }: { state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void }) {
+export function AllianceRoster({ canManage = false, state, onOpenMember, onMergeMember, onDeleteMember, onSaved }: { canManage?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void }) {
   const [editingId, setEditingId] = useState<string>();
   const editingMember = state.members.find((member) => member.id === editingId);
   const [query, setQuery] = useState("");
@@ -63,7 +63,7 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
 
   return <div className="page-stack alliance-roster-page">
     <section className="dashboard-heading">
-      <div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1><p>Your commanders, at a glance.</p></div>
+      <div><p className="eyebrow">THE PEOPLE BEHIND THE ALLIANCE</p><h1>Alliance roster<span>.</span></h1></div>
       <dl className="alliance-totals" aria-label="Active alliance totals">
         {([
           { key: "heroPower", label: "Total hero power", Icon: Zap },
@@ -91,11 +91,11 @@ export function AllianceRoster({ state, onOpenMember, onMergeMember, onDeleteMem
           <span className="alliance-stat"><strong>{memberStats(member).heroPowerDisplay}</strong></span>
           <span className="alliance-stat"><strong>{memberStats(member).killsDisplay}</strong></span>
         </button>
-        <MemberActions name={member.canonicalName} canMerge={state.members.length > 1} onEdit={() => setEditingId(member.id)} onMerge={() => onMergeMember(member.id)} onDelete={() => onDeleteMember(member.id)} />
+        {canManage && <MemberActions name={member.canonicalName} canMerge={state.members.length > 1} onEdit={() => setEditingId(member.id)} onMerge={() => onMergeMember(member.id)} onDelete={() => onDeleteMember(member.id)} />}
       </li>)}</ol></div>
       {!filtered.length && <div className="leaderboard-empty"><Users size={24} /><strong>No commanders found</strong><span>{query ? "Try another name or choose All ranks." : rankFilter !== "all" ? `No ${selectedRankLabel} members in ${filter === "active" ? "the current roster" : "previous records"}. Choose another rank or All.` : "There are no members in this roster view."}</span></div>}
       <footer className="alliance-roster-foot"><span aria-live="polite">{filtered.length} {filter === "missing-profile" ? "members without profiles" : filter === "active" ? "members" : "previous records"}{rankFilter !== "all" ? ` · ${selectedRankLabel}` : ""}{query ? " found" : ""}</span></footer>
     </section>
-    {editingMember && <EditMemberDialog key={editingMember.id} member={editingMember} version={state.version} onClose={() => setEditingId(undefined)} onSaved={(next) => { onSaved(next); setEditingId(undefined); }} />}
+    {canManage && editingMember && <EditMemberDialog key={editingMember.id} member={editingMember} version={state.version} onClose={() => setEditingId(undefined)} onSaved={(next) => { onSaved(next); setEditingId(undefined); }} />}
   </div>;
 }

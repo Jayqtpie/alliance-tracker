@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState } from "@/lib/store";
 
 const participantSchema = z.object({
@@ -50,7 +50,7 @@ const schema = z.object({
 });
 
 export async function PUT(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message || "Invalid operations data." }, { status: 400 });
   if (new Set(parsed.data.guardianPool).size !== parsed.data.guardianPool.length) {

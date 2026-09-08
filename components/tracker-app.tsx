@@ -22,6 +22,8 @@ import {
   History,
   LayoutDashboard,
   LineChart,
+  LockKeyhole,
+  LockKeyholeOpen,
   LogOut,
   PencilLine,
   Search,
@@ -404,11 +406,13 @@ async function extractVideoFrames(file: File) {
 
 export function TrackerApp({
   initialState,
+  canManage = false,
   storageMode,
   ocrConfigured,
   bridgeConfigured,
 }: {
   initialState: TrackerState;
+  canManage?: boolean;
   storageMode: string;
   ocrConfigured: boolean;
   bridgeConfigured: boolean;
@@ -424,6 +428,7 @@ export function TrackerApp({
   );
   const [query, setQuery] = useState("");
   const [notice, setNotice] = useState("");
+  const [changingReportLock, setChangingReportLock] = useState(false);
   const [selectedMemberId, setSelectedMemberId] = useState<string>();
   const [deleteMemberId, setDeleteMemberId] = useState<string>();
   const deletingMember = state.members.find((member) => member.id === deleteMemberId);
@@ -457,6 +462,26 @@ export function TrackerApp({
     showNotice("Snapshot deleted.");
   }
 
+  async function toggleReportLock(snapshot: Snapshot) {
+    setChangingReportLock(true);
+    try {
+      const deletionLocked = snapshot.deletionLocked === false;
+      const response = await fetch("/api/snapshots", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: snapshot.id, deletionLocked, version: state.version }),
+      });
+      const body = await response.json();
+      if (!response.ok) throw new Error(body.error || "Could not change this report lock.");
+      setState(body.state as TrackerState);
+      showNotice(deletionLocked ? "Report locked against deletion." : "Report unlocked. It can now be deleted from Snapshot history.");
+    } catch (error) {
+      showNotice(error instanceof Error ? error.message : "Could not change this report lock.");
+    } finally {
+      setChangingReportLock(false);
+    }
+  }
+
   const nav = [
     ["overview", "Overview", LayoutDashboard],
     ["members", "Members", Users],
@@ -466,17 +491,19 @@ export function TrackerApp({
   ] as const;
 
   function navigate(next: View) {
+    if (!canManage && (next === "import" || next === "settings" || next === "operations")) return;
     if (next === "import") setEditingSnapshot(undefined);
     setView(next);
     window.scrollTo({ top: 0, behavior: "instant" });
   }
 
   if (allianceNeedsSetup(state.alliance)) {
+    if (!canManage) return <main className="login-shell"><p>The alliance is waiting for an admin to finish setup.</p><button className="button secondary" onClick={logout}>Sign out</button></main>;
     return <main className="alliance-setup-shell"><AllianceSettings state={state} onSaved={(next) => { setState(next); setView("overview"); router.refresh(); }} /></main>;
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${canManage ? "" : " viewer"}`}>
       <a className="skip-link" href="#workspace">{t("Skip to content")}</a>
       <aside className="sidebar">
         <div className="brand-lockup">
@@ -486,14 +513,13 @@ export function TrackerApp({
         <div className="sidebar-alliance"><span className="alliance-online-dot" /><span>{state.alliance.name}</span><ShieldCheck size={15} /></div>
         <p className="nav-caption">{t("Workspace")}</p>
         <nav aria-label={t("Main navigation")}>
-          {nav.map(([id, label, Icon]) => (
+          {nav.filter(([id]) => canManage || id === "overview" || id === "members" || id === "reports").map(([id, label, Icon]) => (
             <button key={id} disabled={id === "operations"} title={id === "operations" ? t("Operations are managed on the alliance’s other website") : undefined} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
               <Icon size={18} /> <span>{t(label)}</span>{id === "operations" && <span className="nav-disabled-note">{t("Paused")}</span>}{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
             </button>
           ))}
         </nav>
         <div className="sidebar-foot">
-          <div className="leadership-access"><ShieldCheck size={20} /><div><strong>{t("Leadership workspace")}</strong><span>{t("R4 & R5 officer access")}</span></div></div>
           <div className={`system-chip ${storageMode === "vercel-blob" ? "online" : "local"}`}>
             <Cloud size={14} /> {t(storageMode === "vercel-blob" ? "Shared data online" : "Local preview data")}
           </div>
@@ -508,7 +534,7 @@ export function TrackerApp({
             <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span></p>
             {view !== "overview" && view !== "members" && <h1 className="sr-only">{view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1]}</h1>}
           </div>
-          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {t("Leadership only")} <span className="officer-avatar">R4/5</span></div><button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button><ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
+          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {canManage ? t("Admin") : t("Viewer")} <span className="officer-avatar">{canManage ? "R4/5" : <Users size={15} />}</span></div>{canManage && <button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button>}<ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
         </header>
 
         {language !== "en" && view !== "overview" && <p className="translation-note">{t("Detailed tools are currently in English.")}</p>}
@@ -516,6 +542,7 @@ export function TrackerApp({
         {view === "overview" && selected && comparison && (
           <Overview
             key={selected.id}
+            canManage={canManage}
             state={state}
             selected={selected}
             setSelected={setSelectedSnapshotId}
@@ -528,9 +555,9 @@ export function TrackerApp({
           />
         )}
         {view === "overview" && !selected && (
-          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">{t("RSCL, at a glance")}</p><h1>{t("Rascals overview")}</h1><p>{t("Everything you need to keep the alliance moving.")}</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>{t("Your first capture starts here")}</h2><p>{t("Import a leaderboard to see alliance scores and commander performance.")}</p><button className="button primary" onClick={() => navigate("import")}>{t("New Import")} <ArrowRight size={16} /></button></section></div>
+          <div className="page-stack"><section className="dashboard-heading"><div><p className="eyebrow">{t("RSCL")}</p><h1>{t("Rascals overview")}</h1><p>{t("Everything you need to keep the alliance moving.")}</p></div></section><section className="panel operations-empty"><UploadCloud size={32} /><h2>{t("Your first capture starts here")}</h2><p>{t("Import a leaderboard to see alliance scores and commander performance.")}</p>{canManage && <button className="button primary" onClick={() => navigate("import")}>{t("New Import")} <ArrowRight size={16} /></button>}</section></div>
         )}
-        {view === "import" && (
+        {canManage && view === "import" && (
           <Importer
             state={state}
             setState={setState}
@@ -550,25 +577,28 @@ export function TrackerApp({
             <button className={reportsTab === "reports" ? "active" : ""} onClick={() => setReportsTab("reports")}><LineChart size={16} />Reports</button>
             <button className={reportsTab === "snapshots" ? "active" : ""} onClick={() => setReportsTab("snapshots")}><History size={16} />Snapshot history</button>
           </div></div>
-          {reportsTab === "reports" ? <Reports state={state} onOpenMember={setSelectedMemberId} /> : <Snapshots
+          {reportsTab === "reports" ? <Reports canManage={canManage} state={state} onOpenMember={setSelectedMemberId} onToggleLock={toggleReportLock} changingLock={changingReportLock} /> : <Snapshots
+            canManage={canManage}
             alliance={state.alliance}
             snapshots={state.snapshots}
             onOpen={(snapshot) => { setSelectedSnapshotId(snapshot.id); setView("overview"); }}
             onEdit={(snapshot) => { setEditingSnapshot(snapshot); setView("import"); }}
             onDelete={deleteSnapshot}
+            onToggleLock={toggleReportLock}
+            changingLock={changingReportLock}
           />}
         </>}
-        {view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <AllianceRoster onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
+        {view === "members" && <AllianceRoster canManage={canManage} onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>
-      {selectedMember && <CommanderProfile member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
-      {deletingMember && <DeleteMemberDialog key={deletingMember.id} member={deletingMember} state={state} onClose={() => setDeleteMemberId(undefined)} onDeleted={(next) => {
+      {selectedMember && <CommanderProfile canManage={canManage} member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
+      {canManage && deletingMember && <DeleteMemberDialog key={deletingMember.id} member={deletingMember} state={state} onClose={() => setDeleteMemberId(undefined)} onDeleted={(next) => {
         setState(next); setDeleteMemberId(undefined);
         if (selectedMemberId === deletingMember.id) setSelectedMemberId(undefined);
         showNotice("Player deleted. Saved rankings kept."); router.refresh();
       }} />}
-      {mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
+      {canManage && mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
         const name = next.members.find((member) => member.id === primaryId)?.canonicalName;
         setState(next);
         setMergeMemberId(undefined);
@@ -590,6 +620,7 @@ function Overview({
   onOpenMember,
   onNavigate,
   onReview,
+  canManage,
 }: {
   state: TrackerState;
   selected: Snapshot;
@@ -600,6 +631,7 @@ function Overview({
   onOpenMember: (id: string) => void;
   onNavigate: (view: View) => void;
   onReview: () => void;
+  canManage: boolean;
 }) {
   const { language, t } = useLanguage();
   const captureDate = (value: string) => new Intl.DateTimeFormat(language === "en" ? "en-GB" : language, { weekday: "long", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(value));
@@ -626,8 +658,8 @@ function Overview({
   return (
     <div className="page-stack dashboard-page">
       <section className="dashboard-heading">
-        <div><p className="eyebrow">{t("RSCL, at a glance")}</p><h1>{t("Rascals overview")}</h1><p>{t("Performance, people, and the next move.")}</p></div>
-        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />{t("View reports")}</button><button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />{t("New Import")}</button></div>
+        <div><p className="eyebrow">{t("RSCL")}</p><h1>{t("Rascals overview")}</h1><p>{t("Performance, people, and the next move.")}</p></div>
+        <div className="dashboard-actions"><button className="button secondary" onClick={() => onNavigate("reports")}><LineChart size={16} />{t("View reports")}</button>{canManage && <button className="button primary" onClick={() => onNavigate("import")}><UploadCloud size={16} />{t("New Import")}</button>}</div>
       </section>
       <section className="snapshot-hero">
         <div>
@@ -658,7 +690,7 @@ function Overview({
 
       <WeeklyPerformance section="spotlight" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} />
 
-      {reviewCount > 0 && (
+      {canManage && reviewCount > 0 && (
         <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{t("{count} ranking rows need a second look.", { count: reviewCount })}</strong> {t("Verify the names, ranks and points in this capture to clear review flags.")}</span><button onClick={onReview}>{t("Review capture")} <ArrowRight size={14} /></button></div>
       )}
 
@@ -677,7 +709,7 @@ function Overview({
           <div className="panel-head"><div><p className="eyebrow">{t("Roster health")}</p><h3>{t("Capture coverage")}</h3></div><Users size={18} /></div>
           <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>{t("active members on this board")}</p></div></div>
           <p className="coverage-note">{activeMembers.length === 0 ? t("Add active members to track roster coverage.") : coveredMembers === activeMembers.length ? t("Every active member is accounted for.") : t("{count} active members are missing from this capture.", { count: activeMembers.length - coveredMembers })}</p>
-          <button className="text-action" onClick={() => onNavigate("members")}>{t("Manage roster")} <ArrowRight size={14} /></button>
+          <button className="text-action" onClick={() => onNavigate("members")}>{t(canManage ? "Manage roster" : "View roster")} <ArrowRight size={14} /></button>
         </section>
         <section className="panel insight-panel">
           <div className="panel-head"><div><p className="eyebrow">{t("Distribution")}</p><h3>{t("Score bands")}</h3></div></div>
@@ -718,7 +750,7 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
   return <div className="bands">{bands.map(([label, test]) => { const count = entries.filter((entry) => test(entry.points)).length; return <div className="band" key={label}><div><span>{t(label)}</span><strong>{count}</strong></div><div className="band-track"><span style={{ width: `${count / max * 100}%` }} /></div></div>; })}</div>;
 }
 
-function CommanderProfile({ member, state, onClose, onMerge, onDelete }: { member: Member; state: TrackerState; onClose: () => void; onMerge: () => void; onDelete: () => void }) {
+function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete }: { canManage: boolean; member: Member; state: TrackerState; onClose: () => void; onMerge: () => void; onDelete: () => void }) {
   const stats = memberStats(member);
   const performance = memberPerformance(member, state.snapshots);
   const stormHistory = (state.operations?.stormEvents || []).flatMap((event) => {
@@ -787,8 +819,8 @@ function CommanderProfile({ member, state, onClose, onMerge, onDelete }: { membe
               <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
               <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
             </dl>
-            <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>
-            <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> Delete player</button>
+            {canManage && <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>}
+            {canManage && <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> Delete player</button>}
           </section>
 
           <section className="profile-panel profile-operations-panel">
@@ -1154,7 +1186,12 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   );
 }
 
-function Reports({ state, onOpenMember }: { state: TrackerState; onOpenMember: (id: string) => void }) {
+function ReportLock({ snapshot, disabled, onToggle }: { snapshot: Snapshot; disabled: boolean; onToggle: (snapshot: Snapshot) => Promise<void> }) {
+  const locked = snapshot.deletionLocked !== false;
+  return <button className="button secondary" disabled={disabled} aria-pressed={locked} aria-label={locked ? "Unlock report for deletion" : "Lock report against deletion"} title={locked ? "Protected from deletion. Click to unlock." : "Unprotected. Click to prevent deletion."} onClick={() => onToggle(snapshot)}>{locked ? <LockKeyhole size={15} /> : <LockKeyholeOpen size={15} />}{locked ? "Locked" : "Unlocked"}</button>;
+}
+
+function Reports({ canManage, state, onOpenMember, onToggleLock, changingLock }: { canManage: boolean; state: TrackerState; onOpenMember: (id: string) => void; onToggleLock: (snapshot: Snapshot) => Promise<void>; changingLock: boolean }) {
   const ordered = [...state.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
   const [selectedId, setSelectedId] = useState(ordered[0]?.id || "");
   const [threshold, setThreshold] = useState(15_000_000);
@@ -1185,6 +1222,7 @@ function Reports({ state, onOpenMember }: { state: TrackerState; onOpenMember: (
         </div>
       </section>
       <section className="panel report-controls">
+        {canManage && <ReportLock snapshot={selected} disabled={changingLock} onToggle={onToggleLock} />}
         <label className="select-wrap"><CalendarDays size={17} /><select aria-label="Report snapshot" value={selected.id} onChange={(event) => setSelectedId(event.target.value)}>{ordered.map((snapshot) => <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>)}</select><ChevronDown size={15} /></label>
         <label><span>Participation target</span><input type="number" min="0" step="1000000" value={threshold} onChange={(event) => setThreshold(Math.max(0, Number(event.target.value)))} /></label>
       </section>
@@ -1224,11 +1262,12 @@ function ReportList({ title, rows, empty, members, onOpenMember }: { title: stri
   })}</ol> : <p className="empty-copy">{empty}</p>}</section>;
 }
 
-function Snapshots({ alliance, snapshots, onOpen, onEdit, onDelete }: { alliance: TrackerState["alliance"]; snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void> }) {
+function Snapshots({ canManage, alliance, snapshots, onOpen, onEdit, onDelete, onToggleLock, changingLock }: { canManage: boolean; alliance: TrackerState["alliance"]; snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void>; onToggleLock: (snapshot: Snapshot) => Promise<void>; changingLock: boolean }) {
   const [deletingId, setDeletingId] = useState("");
   const [error, setError] = useState("");
 
   async function removeSnapshot(snapshot: Snapshot) {
+    if (snapshot.deletionLocked !== false || changingLock) return;
     const confirmed = window.confirm(
       `Delete the ${snapshot.dayLabel} capture from ${dateLabel(snapshot.capturedAt)}?\n\nThis removes its ranking results and comparisons. Roster members will not be deleted.`,
     );
@@ -1245,5 +1284,5 @@ function Snapshots({ alliance, snapshots, onOpen, onEdit, onDelete }: { alliance
   }
 
   const ordered = [...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
-  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot, alliance)}><Download size={15} /> CSV</button><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button danger" disabled={Boolean(deletingId)} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {deleting ? "Deleting…" : "Delete"}</button><button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>Open</button></div></article>; }) : <section className="panel"><p className="empty-copy">No snapshots have been published yet.</p></section>}</div></div>;
+  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot, alliance)}><Download size={15} /> CSV</button>{canManage && <><ReportLock snapshot={snapshot} disabled={changingLock || Boolean(deletingId)} onToggle={onToggleLock} /><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button danger" disabled={Boolean(deletingId) || changingLock || snapshot.deletionLocked !== false} title={snapshot.deletionLocked !== false ? "Unlock this report before deleting" : undefined} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {deleting ? "Deleting…" : "Delete"}</button></>}<button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>Open</button></div></article>; }) : <section className="panel"><p className="empty-copy">No snapshots have been published yet.</p></section>}</div></div>;
 }

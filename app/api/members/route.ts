@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { isAuthenticated } from "@/lib/auth";
+import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
 import { memberStats, parseMemberStat } from "@/lib/member-stats";
@@ -18,7 +18,7 @@ const schema = z.object({
 });
 
 export async function PUT(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = schema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
@@ -54,7 +54,7 @@ const editSchema = renameSchema.extend({
 });
 
 export async function PATCH(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const parsed = z.union([editSchema, renameSchema, mergeSchema]).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
@@ -90,7 +90,7 @@ export async function PATCH(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  if (!(await isAuthenticated())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const memberId = new URL(request.url).searchParams.get("id");
   if (!memberId) return NextResponse.json({ error: "Choose a member to remove." }, { status: 400 });
   const parsed = z.object({ version: z.number().int().positive() }).safeParse(await request.json().catch(() => null));

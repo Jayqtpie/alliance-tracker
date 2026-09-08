@@ -263,3 +263,9 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
   .spotlight-summary span { font-size: 9px; }
   .toast { bottom: calc(125px + env(safe-area-inset-bottom)); }
 }
+
+/* Report history actions wrap on narrow screens. */
+.snapshot-actions { flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 760px) {
+  .app-shell.viewer .sidebar nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}

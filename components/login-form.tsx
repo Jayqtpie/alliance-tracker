@@ -34,11 +34,11 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
       <div className="login-theme-toggle"><ThemeToggle /></div>
       <section className="login-panel">
         <AllianceMark alliance={alliance} />
-        <p className="eyebrow">{alliance?.name ? `${alliance.tag} · SERVER ${alliance.server}` : "YOUR PRIVATE LEADERSHIP WORKSPACE"}</p>
+        <p className="eyebrow">{alliance?.name ? `${alliance.tag} · SERVER ${alliance.server}` : "ALLIANCE ACCESS"}</p>
         <h1>Alliance Manager</h1>
         <p className="muted">A clear view of who is moving the alliance forward.</p>
         <form onSubmit={submit} className="login-form">
-          <label htmlFor="passcode">Officer passcode</label>
+          <label htmlFor="passcode">Passcode</label>
           <input
             id="passcode"
             type="password"
@@ -52,7 +52,7 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
             {busy ? "Checking…" : "Open alliance manager"} <ArrowRight size={17} />
           </button>
         </form>
-        <div className="login-note"><ShieldCheck size={15} /> Lightweight officer access</div>
+        <div className="login-note"><ShieldCheck size={15} /> Admin and viewer access</div>
       </section>
     </main>
   );
