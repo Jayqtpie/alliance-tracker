@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { themeInitializationScript } from "@/lib/theme";
 import "./globals.css";
 import "./themes.css";
 import "./refinements.css";
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: `(function(){var t;try{t=localStorage.getItem('rscl-theme')}catch(e){}document.documentElement.dataset.theme=t==='light'||t==='dark'?t:'dark'})()` }} /></head>
+      <head><script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} /></head>
       <body>{children}</body>
     </html>
   );
