@@ -1,8 +1,9 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
 import { useLanguage } from "./language-selector";
+import { resolvedTheme, themePreference, type ThemePreference } from "@/lib/theme";
 
 const key = "rscl-theme";
 const eventName = "rscl-theme-change";
@@ -10,31 +11,41 @@ const eventName = "rscl-theme-change";
 function subscribe(onChange: () => void) {
   const media = window.matchMedia("(prefers-color-scheme: dark)");
   const sync = () => {
-    let saved: string | null = null;
-    try { saved = localStorage.getItem(key); } catch { /* Storage can be disabled. */ }
-    document.documentElement.dataset.theme = saved === "dark" || saved === "light" ? saved : "dark";
+    const root = document.documentElement;
+    root.dataset.theme = resolvedTheme(themePreference(root.dataset.themePreference), media.matches);
     onChange();
   };
-  window.addEventListener(eventName, onChange);
-  window.addEventListener("storage", sync);
+  const syncStorage = (event: StorageEvent) => {
+    if (event.key !== key && event.key !== null) return;
+    document.documentElement.dataset.themePreference = themePreference(event.newValue);
+    sync();
+  };
+  window.addEventListener(eventName, sync);
+  window.addEventListener("storage", syncStorage);
   media.addEventListener("change", sync);
+  sync();
   return () => {
-    window.removeEventListener(eventName, onChange);
-    window.removeEventListener("storage", sync);
+    window.removeEventListener(eventName, sync);
+    window.removeEventListener("storage", syncStorage);
     media.removeEventListener("change", sync);
   };
 }
 
 export function ThemeToggle() {
   const { t } = useLanguage();
-  const theme = useSyncExternalStore(subscribe, () => document.documentElement.dataset.theme === "dark" ? "dark" : "light", () => "dark");
-  function toggle() {
-    const next = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = next;
-    try { localStorage.setItem(key, next); } catch { /* The toggle still works without persistence. */ }
+  const preference = useSyncExternalStore(subscribe, () => themePreference(document.documentElement.dataset.themePreference), () => "system");
+  function selectTheme(next: ThemePreference) {
+    document.documentElement.dataset.themePreference = next;
+    document.documentElement.dataset.theme = resolvedTheme(next, window.matchMedia("(prefers-color-scheme: dark)").matches);
+    try { localStorage.setItem(key, next); } catch { /* The selection still works without persistence. */ }
     window.dispatchEvent(new Event(eventName));
   }
-  return <button className="theme-toggle" type="button" onClick={toggle} aria-label={t(theme === "dark" ? "Switch to light mode" : "Switch to dark mode")} title={t(theme === "dark" ? "Switch to light mode" : "Switch to dark mode")}>
-    {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}<span>{t(theme === "dark" ? "Light mode" : "Dark mode")}</span>
-  </button>;
+  return <label className="theme-toggle theme-selector" title={t("Theme")}>
+    {preference === "system" ? <Monitor size={17} /> : preference === "dark" ? <Moon size={17} /> : <Sun size={17} />}
+    <select aria-label={t("Theme")} value={preference} onChange={(event) => selectTheme(themePreference(event.target.value))}>
+      <option value="system">{t("System")}</option>
+      <option value="light">{t("Light mode")}</option>
+      <option value="dark">{t("Dark mode")}</option>
+    </select>
+  </label>;
 }

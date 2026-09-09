@@ -525,6 +525,7 @@ export function TrackerApp({
             <Cloud size={14} /> {t(storageMode === "vercel-blob" ? "Shared data online" : "Local preview data")}
           </div>
           <button className="nav-item" onClick={logout}><LogOut size={18} /> {t("Sign out")}</button>
+          <p className="creator-credit">Made by JayQT</p>
           <LanguageSelector />
         </div>
       </aside>
@@ -535,7 +536,7 @@ export function TrackerApp({
             <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span></p>
             {view !== "overview" && view !== "members" && <h1 className="sr-only">{view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1]}</h1>}
           </div>
-          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {canManage ? t("Admin") : t("Viewer")} <span className="officer-avatar">{canManage ? "R4/5" : <Users size={15} />}</span></div>{canManage && <button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button>}<ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
+          <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {canManage ? t("Admin") : t("Viewer")} <span className="officer-avatar">{canManage ? "R4/5" : <Users size={15} />}</span></div>{canManage && <button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button>}<ThemeToggle /><div className="mobile-signout-wrap"><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button><span className="creator-credit">Made by JayQT</span></div></div>
         </header>
 
         {language !== "en" && view !== "overview" && <p className="translation-note">{t("Detailed tools are currently in English.")}</p>}
