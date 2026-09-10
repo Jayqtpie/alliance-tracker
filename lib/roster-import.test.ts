@@ -23,7 +23,7 @@ describe("captured RSCL roster", () => {
     expect(refreshed.previousNames).toEqual(expect.arrayContaining(["war parrot", "A verified earlier name"]));
     expect(refreshed.previousNames).not.toContain("An OCR alias");
     expect(refreshed.notes).toBe(parrot.notes);
-    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-06", sourceActivityDate: "2026-09-04" });
+    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-10", sourceActivityDate: "2026-09-09" });
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
@@ -32,7 +32,7 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(after)).toBe(after);
   });
   it("does not downgrade a newer roster capture", () => {
-    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-07-v1" };
+    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-11-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
   it("imports 100 members and local avatars without treating missing stats as zero", () => {
@@ -42,7 +42,7 @@ describe("captured RSCL roster", () => {
     expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(100);
     expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(90);
     expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(60);
-    expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(8);
+    expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(7);
     for (const member of active) expect(existsSync(path.join(process.cwd(), "public", member.gameProfile!.avatarPath))).toBe(true);
     expect(active.find((member) => member.canonicalName === "Newsshooter")?.gameProfile?.heroPower).toBeNull();
     expect(parseDisplayedPower("168MLEGACY")).toBe(168_000_000);
