@@ -1,7 +1,10 @@
-import capture from "./data/rscl-roster-2026-09-06.json";
+import capture from "./data/rscl-roster-2026-09-10.json";
 import type { Member, TrackerState } from "./types";
 
-export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-06-v1";
+export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-10-v1";
+
+// JSON infers an empty rename list as never[] in captures without name changes.
+const capturedRenames: { uid: string; previous: string; current: string }[] = capture.changes.renamed;
 
 function nameKey(name: string) {
   return name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -20,7 +23,7 @@ export function importCapturedRoster(state: TrackerState): TrackerState {
   if (state.rosterImport?.startsWith("lwservers-rscl-927-") && state.rosterImport > ROSTER_IMPORT) return state;
   const used = new Set<string>();
   const members: Member[] = capture.members.map((row) => {
-    const previousNames = capture.changes.renamed.filter((change) => change.uid === row.uid).map((change) => change.previous);
+    const previousNames = capturedRenames.filter((change) => change.uid === row.uid).map((change) => change.previous);
     const names = new Set([row.name, ...previousNames].map(nameKey));
     const byUid = state.members.find((member) => member.gameProfile?.uid === row.uid);
     const candidates = state.members.filter((member) => !member.gameProfile && !used.has(member.id) &&
