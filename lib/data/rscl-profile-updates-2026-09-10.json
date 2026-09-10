@@ -1,0 +1,23 @@
+{
+  "id": "lastrank-rscl-profiles-2026-09-10-v1",
+  "capturedOn": "2026-09-10",
+  "identityBasis": "User explicitly mapped each LastRank public ID to the existing tracker member. LastRank does not expose game UIDs for these profiles.",
+  "members": [
+    {
+      "uid": "1312967191000927",
+      "previousName": "Super McNasty",
+      "name": "Motion Lotion",
+      "source": "https://lastrank.fun/p/1186904",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/4da11284e6d8f7326ef6ca2c01380de3.jpg",
+      "avatarPath": "/avatars/rscl/1312967191000927-lastrank-2026-09-10.jpg"
+    },
+    {
+      "uid": "1543620585000927",
+      "previousName": "AlvaAlt",
+      "name": "The Joccening",
+      "source": "https://lastrank.fun/p/1186949",
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/760b6ce495863bc7084e553d4837abe3.jpg",
+      "avatarPath": "/avatars/rscl/1543620585000927-lastrank-2026-09-10.jpg"
+    }
+  ]
+}

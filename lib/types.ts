@@ -118,6 +118,7 @@ export interface OperationsState {
 export interface TrackerState {
   version: number;
   rosterImport?: string;
+  memberProfileUpdates?: string[];
   alliance: {
     name: string;
     tag: string;
