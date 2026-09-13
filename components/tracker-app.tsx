@@ -1,5 +1,6 @@
 "use client";
 
+import { csvCell } from "@/lib/csv";
 import { upload } from "@vercel/blob/client";
 import NextImage from "next/image";
 import {
@@ -98,7 +99,7 @@ function statusTone(value?: number) {
 function exportSnapshot(snapshot: Snapshot, alliance: TrackerState["alliance"]) {
   const lines = ["rank,commander,points"];
   snapshot.entries.forEach((entry) => {
-    const safe = `"${entry.displayName.replaceAll('"', '""')}"`;
+    const safe = csvCell(entry.displayName);
     lines.push(`${entry.rank},${safe},${entry.points}`);
   });
   const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
@@ -136,7 +137,7 @@ function exportDetailedSnapshot(snapshot: Snapshot, state: TrackerState) {
       entry.rankChange ?? "",
       member?.active === false ? "departed" : "active",
     ];
-    lines.push(values.map((value) => typeof value === "string" ? `"${value.replaceAll('"', '""')}"` : value).join(","));
+    lines.push(values.map(csvCell).join(","));
   });
   downloadBlob(new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" }), `${allianceFilePrefix(state.alliance)}-report-${snapshot.capturedAt.slice(0, 10)}.csv`);
 }
@@ -825,13 +826,13 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
               <div><dt>Known aliases</dt><dd>{member.aliases.length ? member.aliases.join(", ") : "None recorded"}</dd></div>
               <div><dt>Joined</dt><dd>{member.joinedAt || "Not recorded"}</dd></div>
               <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
-              <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>
+              {canManage && <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>}
             </dl>
             {canManage && <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>}
             {canManage && <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> Delete player</button>}
           </section>
 
-          <section className="profile-panel profile-operations-panel">
+          {canManage && <section className="profile-panel profile-operations-panel">
             <div className="profile-section-head"><div><p className="eyebrow">OPERATIONS</p><h3>Storm and train history</h3></div></div>
             <div className="profile-operation-metrics">
               <div><span>Storm selections</span><strong>{stormHistory.filter(({ participant }) => participant.role !== "unassigned").length}</strong></div>
@@ -844,7 +845,7 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
               {trainHistory.slice(0, 5).map((assignment) => <div key={`${assignment.id}-${member.id}`}><span>{assignment.date}</span><strong>{assignment.conductorMemberId === member.id ? "Train conductor" : assignment.vipType === "guardian-defender" ? "Guardian Defender" : "Special Guest"}</strong><small>{assignment.status}</small></div>)}
               {!stormHistory.length && !trainHistory.length && <p className="empty-copy">No operations history recorded yet.</p>}
             </div>
-          </section>
+          </section>}
 
           <section className="profile-panel profile-history-panel">
             <div className="profile-section-head"><div><p className="eyebrow">CAPTURE LOG</p><h3>Recent results</h3></div></div>

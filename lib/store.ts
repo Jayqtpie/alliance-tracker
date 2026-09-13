@@ -73,7 +73,7 @@ async function getStoredState(): Promise<TrackerState> {
   }
 }
 
-export async function getState(): Promise<TrackerState> {
+async function loadState(): Promise<TrackerState> {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const stored = await getStoredState();
     const imported = applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored)));
@@ -90,7 +90,7 @@ export async function getState(): Promise<TrackerState> {
   throw new StateConflictError();
 }
 
-export async function setState(state: TrackerState) {
+async function saveState(state: TrackerState) {
   assertVercelStorageConfigured();
   const next = { ...state, version: state.version + 1, updatedAt: new Date().toISOString() };
   if (blobEnabled()) {
@@ -120,4 +120,20 @@ export async function setState(state: TrackerState) {
   await mkdir(path.dirname(stateFile), { recursive: true });
   await writeFile(stateFile, JSON.stringify(next, null, 2), "utf8");
   return next;
+}
+
+export async function getState(): Promise<TrackerState> {
+  try { return await loadState(); }
+  catch (error) {
+    if (error instanceof StateConflictError) throw error;
+    throw new Error("Could not load shared tracker data. Please try again.");
+  }
+}
+
+export async function setState(state: TrackerState) {
+  try { return await saveState(state); }
+  catch (error) {
+    if (error instanceof StateConflictError) throw error;
+    throw new Error("Could not save shared tracker data. Please try again.");
+  }
 }

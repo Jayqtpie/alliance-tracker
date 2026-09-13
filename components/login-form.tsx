@@ -17,14 +17,17 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
     event.preventDefault();
     setBusy(true);
     setError("");
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ passcode }),
-    });
-    if (response.ok) router.push("/");
-    else {
-      setError("That passcode was not recognised.");
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST", headers: { "content-type": "application/json" },
+        body: JSON.stringify({ passcode }),
+      });
+      if (response.ok) router.push("/");
+      else setError(response.status === 429 ? "Too many sign-in attempts. Please wait five minutes." :
+        response.status === 503 ? "Sign-in is unavailable. Contact your administrator." : "That passcode was not recognised.");
+    } catch {
+      setError("Could not connect. Please try again.");
+    } finally {
       setBusy(false);
     }
   }
@@ -42,6 +45,8 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
           <input
             id="passcode"
             type="password"
+            autoComplete="current-password"
+            maxLength={256}
             value={passcode}
             onChange={(event) => setPasscode(event.target.value)}
             placeholder="Enter shared passcode"

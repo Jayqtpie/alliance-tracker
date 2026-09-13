@@ -1,3 +1,4 @@
+import { headers } from "next/headers";
 import type { Metadata } from "next";
 import { themeInitializationScript } from "@/lib/theme";
 import "./globals.css";
@@ -9,10 +10,11 @@ export const metadata: Metadata = {
   description: "A private Alliance Duel performance tracker for alliance leadership",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><script dangerouslySetInnerHTML={{ __html: themeInitializationScript }} /></head>
+      <head><script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeInitializationScript }} /></head>
       <body>{children}</body>
     </html>
   );

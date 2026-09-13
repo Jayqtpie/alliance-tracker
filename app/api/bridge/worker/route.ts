@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isBridgeWorker } from "@/lib/bridge-auth";
-import { claimNextBridgeJob } from "@/lib/bridge";
+import { claimNextBridgeJob, BridgeValidationError } from "@/lib/bridge";
 import { mutateBridgeQueue } from "@/lib/bridge-store";
 import { dedupeRows } from "@/lib/tracker";
 
@@ -35,16 +35,15 @@ export async function POST(request: Request) {
     }
 
     if (action.action === "complete") {
-      const rows = dedupeRows(action.rows).rows;
       const job = await mutateBridgeQueue((jobs) => {
         const current = jobs.find((item) => item.id === action.jobId);
-        if (!current) throw new Error("Bridge job not found.");
-        if (current.status !== "processing" || current.workerId !== action.workerId) throw new Error("This worker no longer owns the job.");
+        if (!current) throw new BridgeValidationError("Bridge job not found.");
+        if (current.status !== "processing" || current.workerId !== action.workerId) throw new BridgeValidationError("This worker no longer owns the job.");
         current.status = "completed";
         current.updatedAt = new Date().toISOString();
         current.leaseExpiresAt = undefined;
         current.completedAt = current.updatedAt;
-        current.rows = rows;
+        current.rows = dedupeRows(action.rows).rows;
         current.error = undefined;
         return current;
       });
@@ -53,8 +52,8 @@ export async function POST(request: Request) {
 
     const job = await mutateBridgeQueue((jobs) => {
       const current = jobs.find((item) => item.id === action.jobId);
-      if (!current) throw new Error("Bridge job not found.");
-      if (current.status !== "processing" || current.workerId !== action.workerId) throw new Error("This worker no longer owns the job.");
+      if (!current) throw new BridgeValidationError("Bridge job not found.");
+      if (current.status !== "processing" || current.workerId !== action.workerId) throw new BridgeValidationError("This worker no longer owns the job.");
       current.status = "failed";
       current.updatedAt = new Date().toISOString();
       current.leaseExpiresAt = undefined;
@@ -63,6 +62,6 @@ export async function POST(request: Request) {
     });
     return NextResponse.json({ job });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not update the bridge job." }, { status: 409 });
+    return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not update the bridge job." }, { status: 409 });
   }
 }

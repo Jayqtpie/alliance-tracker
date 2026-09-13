@@ -41,8 +41,7 @@ export async function POST(request: Request) {
     await setState({ ...state, uploads: [...state.uploads, ...uploads] });
     const result = dedupeRows(extracted.flat());
     return NextResponse.json({ ...result, uploads, rawCount: extracted.flat().length });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Extraction failed";
-    return NextResponse.json({ error: message }, { status: 500 });
+  } catch {
+    return NextResponse.json({ error: "Extraction failed. Please try again or use manual import." }, { status: 500 });
   }
 }

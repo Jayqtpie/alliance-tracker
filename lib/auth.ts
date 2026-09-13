@@ -6,11 +6,18 @@ const COOKIE_NAME = "rscl_officer";
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 30;
 
 function secret() {
-  return process.env.SESSION_SECRET || "local-development-only-secret";
+  const value = process.env.SESSION_SECRET;
+  return value && value.length >= 32 && value !== "replace-with-a-long-random-string" ? value : null;
 }
 
 function signature(payload: string) {
-  return createHmac("sha256", secret()).update(payload).digest("base64url");
+  const key = secret();
+  if (!key) throw new Error("Sign-in is not configured.");
+  return createHmac("sha256", key).update(payload).digest("base64url");
+}
+
+export function authenticationConfigured() {
+  return secret() !== null;
 }
 
 export type AccessRole = "admin" | "viewer";
@@ -25,7 +32,7 @@ export function verifySessionValue(value?: string) {
 }
 
 export function sessionRole(value?: string): AccessRole | null {
-  if (!value) return null;
+  if (!value || value.length > 1024 || !secret() || !/^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]{43}$/.test(value)) return null;
   const [payload, supplied] = value.split(".");
   if (!payload || !supplied) return null;
   const expected = signature(payload);
@@ -33,9 +40,8 @@ export function sessionRole(value?: string): AccessRole | null {
   if (!timingSafeEqual(Buffer.from(expected), Buffer.from(supplied))) return null;
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    if (typeof parsed.exp !== "number" || parsed.exp <= Date.now()) return null;
-    // Existing signed officer sessions retain admin access.
-    if (parsed.role === undefined || parsed.role === "admin") return "admin";
+    if (!parsed || typeof parsed !== "object" || !Number.isSafeInteger(parsed.exp) || parsed.exp <= Date.now()) return null;
+    if (parsed.role === "admin") return "admin";
     return parsed.role === "viewer" ? "viewer" : null;
   } catch {
     return null;

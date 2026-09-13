@@ -101,7 +101,7 @@ describe("private Blob state writes", () => {
 
   it("does not retry unrelated storage failures or report a failed import as saved", async () => {
     vi.mocked(put).mockRejectedValue(new Error("Blob access denied"));
-    await expect(getState()).rejects.toThrow("Blob access denied");
+    await expect(getState()).rejects.toThrow("Could not load shared tracker data.");
     expect(put).toHaveBeenCalledTimes(1);
     expect(stored.rosterImport).toBeUndefined();
   });
