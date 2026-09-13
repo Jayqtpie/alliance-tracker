@@ -215,7 +215,6 @@ async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
   const entries = snapshot.entries.slice(0, 10);
   const weeklyTotal = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0);
   const memberById = new Map(state.members.map((member) => [member.id, member]));
-  const allianceLabel = `[${state.alliance.tag}] ${state.alliance.name}`;
   const avatarImages = await Promise.all(entries.map((entry) => loadCanvasImage(entry.memberId ? memberById.get(entry.memberId)?.gameProfile?.avatarPath : undefined)));
   const emblem = await loadCanvasImage(state.alliance.emblem || "/rscl-alliance-emblem.png");
 
@@ -332,10 +331,7 @@ async function exportReportImage(snapshot: Snapshot, state: TrackerState) {
     const nameSize = fitCanvasText(context, entry.displayName, 450, 900, 34, 23);
     context.font = `900 ${nameSize}px Arial, sans-serif`;
     context.fillStyle = isPodium ? rowEdges[index] : "#11151d";
-    context.fillText(entry.displayName, 270, y + 51, 450);
-    const allianceSize = fitCanvasText(context, allianceLabel, 470, 800, 29, 20);
-    context.font = `800 ${allianceSize}px Arial, sans-serif`;
-    context.fillText(allianceLabel, 270, y + 91, 470);
+    context.fillText(entry.displayName, 270, y + 71, 450);
 
     context.textAlign = "right";
     const points = full(entry.points);
