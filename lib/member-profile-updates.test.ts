@@ -7,9 +7,11 @@ import update from "./data/rscl-profile-updates-2026-09-10.json";
 describe("targeted LastRank identity updates", () => {
   it("retains merged identities, manual stats and history and applies only once", () => {
     const before = importCapturedRoster(structuredClone(INITIAL_STATE));
+    before.memberProfileUpdates = undefined;
     for (const row of update.members) {
       const member = before.members.find((member) => member.gameProfile?.uid === row.uid)!;
       member.id = `merged-${row.uid}`;
+      member.canonicalName = row.previousName;
       member.notes = "Officer correction";
       member.manualStats = { kills: 123, updatedAt: "2026-09-10" };
       member.previousNames = ["Earlier name"];
@@ -32,6 +34,7 @@ describe("targeted LastRank identity updates", () => {
   });
   it("does not guess missing or duplicate UIDs or touch other installations", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
+    state.memberProfileUpdates = undefined;
     expect(applyMemberProfileUpdates({ ...state, alliance: { ...state.alliance, tag: "OTHER" } }).memberProfileUpdates).toBeUndefined();
     const custom = { ...state, rosterImport: "custom-alliance" };
     expect(applyMemberProfileUpdates(custom)).toBe(custom);
@@ -41,4 +44,10 @@ describe("targeted LastRank identity updates", () => {
     const duplicate = { ...state, members: [...state.members, { ...target, id: "duplicate" }] };
     expect(applyMemberProfileUpdates(duplicate)).toBe(duplicate);
   });
+  it("does not replay the older names or avatars after a newer roster capture", () => {
+    const state = importCapturedRoster(structuredClone(INITIAL_STATE));
+    expect(applyMemberProfileUpdates(state)).toBe(state);
+    expect(state.members.find((member) => member.gameProfile?.uid === "1543620585000927")?.canonicalName).toBe("The Legend of Jocco");
+  });
+
 });
