@@ -890,7 +890,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const unmatched = review.identities.filter((member) => !member).length;
   const unresolved = rows.filter((row, index) => !review.identities[index] && (!row.createMember || row.memberId)).length;
   const gaps = missingRanks(rows);
-  const verifiable = rows.filter((row, index) => !row.reviewed && !review.blockers[index]);
+  const verifiable = rows.filter((row, index) => requiresHumanReview(row) && !review.blockers[index]);
 
   const loadRowsFromBridge = useCallback((job: BridgeJobView) => {
     if (!job.rows?.length || loadedBridgeJobId.current === job.id) return;
@@ -1176,9 +1176,9 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       <section ref={reviewPanel} className="panel review-panel">
         <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} ranking rows</h3></div><span className="retention-note">{rows.filter((row) => row.reviewed).length} verified · {unmatched} unmatched · {missingActive} active members not on board</span></div>
         <div className="review-controls">
-          <p>Check each name, rank and score, then mark the row verified. Verification clears OCR warnings when you save; editing a row requires verification again.</p>
-          <div><button className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow()}>Add row</button>{gaps.slice(0, 12).map((rank) => <button key={rank} className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow(rank)}>Add rank {rank}</button>)}<button className="button secondary" disabled={busy || !verifiable.length} onClick={() => setRows((current) => current.map((row, index) => review.blockers[index] ? row : { ...row, reviewed: true }))}>Mark eligible rows verified ({verifiable.length})</button></div>
-          <small>Bulk verification confirms you have checked every eligible row. Resolve duplicate ranks and identities separately.</small>
+          <p>Review low-confidence or flagged readings. Confident roster matches do not need manual verification. Use All to inspect any player.</p>
+          <div><button className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow()}>Add row</button>{gaps.slice(0, 12).map((rank) => <button key={rank} className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow(rank)}>Add rank {rank}</button>)}<button className="button secondary" disabled={busy || !verifiable.length} onClick={() => setRows((current) => current.map((row, index) => !requiresHumanReview(row) || review.blockers[index] ? row : { ...row, reviewed: true }))}>Verify eligible flagged rows ({verifiable.length})</button></div>
+          <small>Bulk verification applies only to flagged rows you have checked. Resolve duplicate ranks and identities separately.</small>
         </div>
         <RankingReview rows={rows} members={state.members} identities={review.identities} blockers={review.blockers} busy={busy} onUpdate={updateRow} onVerify={verifyRow} onRemove={removeRow} />
         <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><button className="button primary" disabled={busy || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
