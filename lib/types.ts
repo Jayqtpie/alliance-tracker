@@ -21,6 +21,11 @@ export interface Member {
     killsDisplay: string;
     capturedOn: string;
     sourceActivityDate?: string;
+    lastRankPublicId?: string;
+    sourceUpdatedAt?: string;
+    heroPowerMeasuredAt?: string;
+    refreshStatus?: "fresh" | "retained";
+    refreshAttemptedOn?: string;
     source: string;
   };
 }

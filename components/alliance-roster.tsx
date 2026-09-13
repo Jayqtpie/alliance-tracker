@@ -41,7 +41,9 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
   const active = state.members.filter((member) => member.active);
   const totals = allianceStatTotals(state.members);
   const leader = active.find((member) => member.gameProfile?.rank === "R5");
-  const capturedOn = active.find((member) => member.gameProfile)?.gameProfile?.capturedOn;
+  const capturedOn = active.map((member) => member.gameProfile?.capturedOn).filter((date): date is string => Boolean(date)).sort().at(-1);
+  const retainedProfiles = active.filter((member) => member.gameProfile?.refreshStatus === "retained").length;
+  const latestProfiles = active.filter((member) => member.gameProfile?.capturedOn === capturedOn && member.gameProfile?.refreshStatus !== "retained").length;
   const membership = state.members.filter((member) => filter === "missing-profile" ? !member.gameProfile : filter === "active" ? member.active : !member.active);
   const ordered = [...membership].sort((a, b) => {
     if (sort === "name") return a.canonicalName.localeCompare(b.canonicalName);
@@ -75,7 +77,7 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
       </dl>
     </section>
     <section className="alliance-roster-directory" aria-label="Alliance members">
-      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? accurateAsOf(capturedOn) : "No profile capture"}</span></header>
+      <header className="alliance-roster-heading"><div className="alliance-header-summary"><h2>My alliance <span>· {active.length} members</span></h2>{leader && <p>Leader: <MemberName member={leader} /><b className="alliance-rank" data-rank="R5">R5</b></p>}</div><span className="alliance-source-date">{capturedOn ? retainedProfiles ? `${latestProfiles}/${active.length} profiles refreshed · ${retainedProfiles} retain earlier stats` : accurateAsOf(capturedOn) : "No profile capture"}</span></header>
       <div className="alliance-roster-toolbar">
         <div className="search-box"><Search size={16} /><input aria-label="Search roster" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear roster search" onClick={() => setQuery("")}><X size={14} /></button>}</div>
         <select aria-label="Roster membership" value={filter} onChange={(event) => { setFilter(event.target.value); setRankFilter("all"); }}><option value="active">Current roster</option><option value="previous">Previous records</option><option value="missing-profile">Missing profiles ({state.members.filter((member) => !member.gameProfile).length})</option></select>
