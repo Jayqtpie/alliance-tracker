@@ -15,10 +15,10 @@ Usage:
 Options:
   --out <path>       Output JSON path (defaults to local-extractions/)
   --profile <name>   Optional Codex CLI configuration profile
-  --model <name>     Codex model override (default: gpt-5.6-luna)
+  --model <name>     Codex model override (default: gpt-5.6-sol)
   --help             Show this help
 
-Extraction uses low reasoning, including retries.
+Extraction uses high reasoning, including retries.
 The Codex CLI must be signed in with ChatGPT. Run "codex login" once if needed.
 `;
 
@@ -93,7 +93,7 @@ function validateRows(value, batchLabel) {
 }
 
 const options = parseArguments(process.argv.slice(2));
-const extractionModel = options.model || "gpt-5.6-luna";
+const extractionModel = options.model || "gpt-5.6-sol";
 if (options.help) {
   console.log(usage.trim());
   process.exit(0);
@@ -127,7 +127,7 @@ const outputPath = options.out
 mkdirSync(dirname(outputPath), { recursive: true });
 
 const batches = [];
-for (let index = 0; index < images.length; index += 18) batches.push(images.slice(index, index + 18));
+for (let index = 0; index < images.length; index += 6) batches.push(images.slice(index, index + 6));
 const allRows = [];
 
 function readBatch(batch, batchIndex, focusedRetry = false) {
@@ -145,14 +145,14 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
     "Judge name confidence separately from readable ranks and scores. If any name character remains uncertain, use the best visible transcription, set needsReview=true and confidence below 0.86; never invent missing characters. " +
     "Return points as integers without commas. The green player card fixed at the bottom is the viewer's pinned rank: include it only with isPinned=true. " +
     "Set isPinned=false for ordinary leaderboard rows. Ignore headers, alliance text, chat banners, and rows where rank, name, or points are not readable. " +
-    "Set needsReview=true when any character or number is uncertain and lower confidence accordingly. Keep overlapping duplicate observations; the tracker will reconcile them. " +
+    "Set needsReview=true when any character or number is uncertain and lower confidence accordingly. Keep overlapping duplicate observations; the tracker will reconcile them. Before returning, revisit every image and check that each visible rank is represented, each score belongs to the same horizontal row as its name, and no alliance subtitle was copied into a name. " +
     "Do not use tools, edit files, or add commentary. Return only the JSON required by the provided schema.\n\n" + fileList;
   const args = [
     "exec",
     "--ephemeral",
     "--ignore-rules",
     "--model", extractionModel,
-    "--config", 'model_reasoning_effort="low"',
+    "--config", 'model_reasoning_effort="high"',
     "--config", 'model_reasoning_summary="none"',
     "--sandbox", "read-only",
     "--skip-git-repo-check",
@@ -178,7 +178,7 @@ function readBatch(batch, batchIndex, focusedRetry = false) {
   }
 }
 
-console.log(`Using ${extractionModel} with low reasoning and ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
+console.log(`Using ${extractionModel} with high reasoning and ChatGPT sign-in to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
 for (let index = 0; index < batches.length; index += 1) {
   const batch = batches[index];
   console.log(`\nReading batch ${index + 1}/${batches.length}...`);
