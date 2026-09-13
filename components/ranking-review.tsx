@@ -56,13 +56,13 @@ export function RankingReview(props: Props) {
   const mobile = useSyncExternalStore(subscribeToViewport, () => window.matchMedia(mobileQuery).matches, () => false);
   const pageSize = mobile ? 1 : 8;
   const [query, setQuery] = useState("");
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("pending");
   const [page, setPage] = useState(0);
   const top = useRef<HTMLDivElement>(null);
   const options = useMemo(() => [...members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName)), [members]);
-  const pending = rows.filter((row, index) => !row.reviewed || blockers[index]).length;
+  const pending = rows.filter((row, index) => requiresHumanReview(row) || blockers[index]).length;
   const filtered = rows.map((row, index) => ({ row, index })).filter(({ row, index }) => {
-    if (filter === "pending" && row.reviewed && !blockers[index]) return false;
+    if (filter === "pending" && !requiresHumanReview(row) && !blockers[index]) return false;
     if (filter === "unmatched" && identities[index]) return false;
     const text = `${row.rank} ${row.displayName} ${identities[index]?.canonicalName || ""}`.toLocaleLowerCase();
     return text.includes(query.trim().toLocaleLowerCase());
@@ -81,13 +81,13 @@ export function RankingReview(props: Props) {
   return <div ref={top} className="ranking-review">
     <div className="review-toolbar">
       <label className="review-search"><Search size={17} /><input aria-label="Search review rows" type="search" placeholder="Find a name or rank" value={query} onChange={(event) => { setQuery(event.target.value); setPage(0); }} /></label>
-      <div className="review-filters" aria-label="Filter review rows">{[["all", `All ${rows.length}`], ["pending", `To verify ${pending}`], ["unmatched", `Unmatched ${identities.filter((member) => !member).length}`]].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => { setFilter(value); setPage(0); }}>{label}</button>)}</div>
+      <div className="review-filters" aria-label="Filter review rows">{[["all", `All ${rows.length}`], ["pending", `Needs review ${pending}`], ["unmatched", `Unmatched ${identities.filter((member) => !member).length}`]].map(([value, label]) => <button key={value} aria-pressed={filter === value} onClick={() => { setFilter(value); setPage(0); }}>{label}</button>)}</div>
     </div>
     {navigation}
     <div className="table-scroll"><table className="review-table"><thead><tr><th>Rank</th><th>Captured name</th><th>Points</th><th>Roster player &amp; verification</th><th /></tr></thead><tbody>
       {visible.map(({ row, index }) => <RankingReviewRow key={row.id ?? index} row={row} index={index} member={identities[index]} blocker={blockers[index]} options={options} busy={props.busy} onUpdate={props.onUpdate} onVerify={props.onVerify} onRemove={props.onRemove} onVerifyNext={mobile ? () => { props.onVerify(index, true); goToPage(filter === "pending" ? currentPage : Math.min(currentPage + 1, pages - 1)); } : undefined} />)}
     </tbody></table></div>
-    {!visible.length && <p className="review-empty">{rows.length ? "No rows match this view." : "Upload a capture to start reviewing."}</p>}
+    {!visible.length && <p className="review-empty">{rows.length ? filter === "pending" && !query.trim() ? "No rows need review. Confident matches are ready to publish." : "No rows match this view." : "Upload a capture to start reviewing."}</p>}
     {navigation}
   </div>;
 }
