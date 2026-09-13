@@ -73,7 +73,7 @@ The original cloud extractor remains available. As an alternative, an officer ca
 
 The companion uses the Codex authentication available in the terminal where it is launched and refuses an explicitly detected API-key login. It runs Codex non-interactively with read-only sandboxing, retains no Codex session, and writes only the result JSON. Screenshots are sent from that computer to Codex and are not uploaded to Alliance Manager or retained in Vercel.
 
-Local screenshot extraction defaults to **GPT-5.6 Luna** (`gpt-5.6-luna`) with **low reasoning**, including the retry when no rows are found. This also applies to **Queue for PC Codex**, which launches the same extraction script for each job. It does not change your general Codex model setting. Manual runs can select a different model with `--model <name>`.
+Local screenshot extraction defaults to **GPT-5.6 Sol** (`gpt-5.6-sol`) with **high reasoning**, reading at most six screenshots per batch, including the retry when no rows are found. This also applies to **Queue for PC Codex**, which launches the same extraction script for each job. It does not change your general Codex model setting. Manual runs can select a different model with `--model <name>`.
 
 ## Phone-to-PC Codex bridge
 

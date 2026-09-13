@@ -10,3 +10,34 @@
   .review-controls { padding: 14px; }
   .review-table td:nth-child(4) { min-width: 0; }
 }
+.ranking-review { scroll-margin-top: 90px; }
+.review-toolbar { display: grid; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--line); }
+.review-search { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.review-search input { width: 100%; min-width: 0; }
+.review-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.review-filters button { border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--muted); padding: 9px 12px; font-size: 12px; min-height: 40px; }
+.review-filters button[aria-pressed="true"] { color: var(--ink); border-color: var(--green); box-shadow: inset 0 -2px var(--green); }
+.review-pagination { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+.review-pagination > span { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.review-pagination > div { display: flex; gap: 6px; }
+.review-pagination .button { min-height: 42px; padding: 8px 10px; }
+.review-identity-picker { display: grid; gap: 6px; }
+.review-table .review-verify { min-height: 44px; width: fit-content; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; cursor: pointer; font-size: 13px; }
+.review-table .review-verify.is-verified { color: var(--green); border-color: var(--green); }
+.review-empty { padding: 24px 20px; color: var(--muted); font-size: 14px; }
+@media (max-width: 760px) {
+  .review-toolbar, .review-pagination { padding: 12px 14px; }
+  .snapshot-editor .review-table tbody { display: grid; gap: 12px; padding: 0 12px 12px; }
+  .snapshot-editor .review-table tr { grid-template-columns: 58px minmax(0, 1fr) 36px; gap: 12px 8px; border: 1px solid var(--line); border-radius: 12px; padding: 12px; }
+  .snapshot-editor .review-table tr:last-child { border-bottom: 1px solid var(--line); }
+  .snapshot-editor .review-table td::before { font-size: 10px; color: var(--muted); letter-spacing: .04em; }
+  .snapshot-editor .review-table input, .snapshot-editor .review-table select { min-height: 44px; font-size: 16px; }
+  .snapshot-editor .review-table .review-check input { width: 20px; min-width: 20px; min-height: 20px; height: 20px; }
+  .snapshot-editor .review-table .review-verify { width: 100%; justify-content: center; }
+  .review-controls > div { gap: 6px; }
+  .review-controls .button { min-height: 44px; }
+  .review-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .review-filters button { padding: 8px 5px; font-size: 11px; }
+  .review-pagination { flex-wrap: wrap; }
+}
+.review-table .review-next { width: 100%; margin-top: 8px; min-height: 44px; }
