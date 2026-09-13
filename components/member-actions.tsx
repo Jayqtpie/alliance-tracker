@@ -1,13 +1,15 @@
 "use client";
 
-import { GitMerge, MoreHorizontal, PencilLine, Trash2 } from "lucide-react";
+import { GitMerge, MoreHorizontal, PencilLine, Trash2, UserCheck, UserMinus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 
-export function MemberActions({ name, canMerge, onEdit, onMerge, onDelete }: {
+export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggleActive, onDelete }: {
   name: string;
   canMerge: boolean;
+  active: boolean;
   onEdit: () => void;
   onMerge: () => void;
+  onToggleActive: () => void;
   onDelete: () => void;
 }) {
   const id = useId();
@@ -68,6 +70,7 @@ export function MemberActions({ name, canMerge, onEdit, onMerge, onDelete }: {
       <p className="member-actions-name">{name}</p>
       <button type="button" role="menuitem" onClick={() => run(onEdit)}><PencilLine size={16} aria-hidden="true" /><span>Edit member</span></button>
       <button type="button" role="menuitem" disabled={!canMerge} onClick={() => run(onMerge)}><GitMerge size={16} aria-hidden="true" /><span>Merge duplicate</span></button>
+      <button type="button" role="menuitem" onClick={() => run(onToggleActive)}>{active ? <UserMinus size={16} aria-hidden="true" /> : <UserCheck size={16} aria-hidden="true" />}<span>{active ? "Move to previous records" : "Restore to roster"}</span></button>
       <div className="member-actions-divider" role="separator" />
       <button type="button" role="menuitem" className="member-actions-delete" onClick={() => run(onDelete)}><Trash2 size={16} aria-hidden="true" /><span>Delete member</span></button>
     </div>

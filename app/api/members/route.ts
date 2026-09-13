@@ -52,14 +52,25 @@ const editSchema = renameSchema.extend({
   heroPower: z.string().max(40),
   kills: z.string().max(40),
 });
+const setActiveSchema = z.object({
+  action: z.literal("set-active"),
+  memberId: z.string().min(1),
+  active: z.boolean(),
+  version: z.number().int().positive(),
+});
 
 export async function PATCH(request: Request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
-  const parsed = z.union([editSchema, renameSchema, mergeSchema]).safeParse(await request.json().catch(() => null));
+  const parsed = z.union([setActiveSchema, editSchema, renameSchema, mergeSchema]).safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
     const state = await getState();
     if (parsed.data.version !== state.version) throw new StateConflictError();
+    if ("action" in parsed.data && parsed.data.action === "set-active") {
+      const { memberId, active } = parsed.data;
+      if (!state.members.some((item) => item.id === memberId)) return NextResponse.json({ error: "This player no longer exists. Refresh the roster." }, { status: 404 });
+      return NextResponse.json(await setState({ ...state, members: state.members.map((item) => item.id === memberId ? { ...item, active, leftAt: active ? undefined : item.leftAt } : item) }));
+    }
     if ("action" in parsed.data) {
       const { memberId, canonicalName } = parsed.data;
       const member = state.members.find((item) => item.id === memberId);

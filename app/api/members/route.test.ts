@@ -41,6 +41,26 @@ describe("player edits and deletion", () => {
     expect(setState).not.toHaveBeenCalled();
   });
 
+  it("restores a previous record to the roster and can move it back", async () => {
+    const state = await getState();
+    state.members[1] = { ...state.members[1], active: false, leftAt: "2026-09-10" };
+    const original = structuredClone(state);
+    const restored = await PATCH(request({ action: "set-active", memberId: "duplicate", active: true, version: 1 }));
+    expect(restored.status).toBe(200);
+    const saved = await restored.json();
+    expect(saved.members[1]).toEqual({ id: "duplicate", canonicalName: "A1pha", active: true, aliases: [] });
+    expect(saved.members[0]).toEqual(original.members[0]);
+    expect(state).toEqual(original);
+    const moved = await PATCH(request({ action: "set-active", memberId: "keep", active: false, version: 1 }));
+    expect((await moved.json()).members[0]).toMatchObject({ id: "keep", active: false });
+  });
+
+  it("rejects missing players and stale roster membership changes", async () => {
+    expect((await PATCH(request({ action: "set-active", memberId: "missing", active: true, version: 1 }))).status).toBe(404);
+    expect((await PATCH(request({ action: "set-active", memberId: "keep", active: true, version: 2 }))).status).toBe(409);
+    expect(setState).not.toHaveBeenCalled();
+  });
+
   function deleteRequest(id = "keep", version = 1) {
     return new Request(`http://localhost/api/members?id=${id}`, { method: "DELETE", body: JSON.stringify({ version }) });
   }
