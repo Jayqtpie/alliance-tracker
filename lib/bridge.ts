@@ -1,5 +1,7 @@
 import type { BridgeJob, BridgeJobView } from "@/lib/bridge-types";
 
+export class BridgeValidationError extends Error {}
+
 const LEASE_MS = 30 * 60 * 1000;
 
 export function bridgeJobView(job: BridgeJob): BridgeJobView {
@@ -12,7 +14,7 @@ export function bridgeJobView(job: BridgeJob): BridgeJobView {
     updatedAt: job.updatedAt,
     expiresAt: job.expiresAt,
     attempts: job.attempts,
-    error: job.error,
+    error: job.error ? "The PC extraction failed. Check the worker terminal and retry." : undefined,
     rows: job.status === "completed" ? job.rows : undefined,
   };
 }
@@ -39,8 +41,8 @@ export function claimNextBridgeJob(jobs: BridgeJob[], workerId: string, now = ne
 
 export function retryBridgeJob(jobs: BridgeJob[], jobId: string, now = new Date()) {
   const job = jobs.find((item) => item.id === jobId);
-  if (!job) throw new Error("Bridge job not found.");
-  if (job.status !== "failed") throw new Error("Only a failed extraction can be retried.");
+  if (!job) throw new BridgeValidationError("Bridge job not found.");
+  if (job.status !== "failed") throw new BridgeValidationError("Only a failed extraction can be retried.");
   job.status = "pending";
   job.updatedAt = now.toISOString();
   job.workerId = undefined;

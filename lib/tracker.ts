@@ -1,5 +1,7 @@
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 
+import { rankGaps } from "./rank-gaps";
+
 export function normalizeName(value: string) {
   return value
     .normalize("NFKC")
@@ -27,7 +29,9 @@ export function dedupeRows(rows: ExtractedRow[]) {
   const byRank = new Map<number, ExtractedRow>();
 
   for (const row of rows) {
-    if (row.isPinned || !Number.isInteger(row.rank) || row.rank < 1 || row.points < 0) continue;
+    if (row.isPinned) continue;
+    if (!Number.isSafeInteger(row.rank) || row.rank < 1) throw new Error("Enter a valid rank.");
+    if (row.points < 0) continue;
     const existing = byRank.get(row.rank);
     if (!existing) {
       byRank.set(row.rank, row);
@@ -43,10 +47,9 @@ export function dedupeRows(rows: ExtractedRow[]) {
 
   const deduped = [...byRank.values()].sort((a, b) => a.rank - b.rank);
   if (deduped.length) {
-    const ranks = new Set(deduped.map((row) => row.rank));
-    for (let rank = 1; rank <= Math.max(...ranks); rank += 1) {
-      if (!ranks.has(rank)) warnings.push(`Rank ${rank} is missing from this import.`);
-    }
+    const gaps = rankGaps(deduped.map((row) => row.rank), 150);
+    for (const rank of gaps.missing) warnings.push(`Rank ${rank} is missing from this import.`);
+    if (gaps.total > gaps.missing.length) warnings.push(`${gaps.total - gaps.missing.length} additional ranks are missing from this import.`);
   }
   return { rows: deduped, warnings: [...new Set(warnings)] };
 }
@@ -120,9 +123,8 @@ export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; cr
     if (count > 1) warnings.push(`Rank ${rank} appears ${count} times.`);
   }
   if (sorted.length) {
-    const maxRank = Math.max(...sorted.map((row) => row.rank));
-    const missing = Array.from({ length: maxRank }, (_, index) => index + 1).filter((rank) => !rankCounts.has(rank));
-    if (missing.length) warnings.push(`Missing rank${missing.length === 1 ? "" : "s"}: ${missing.slice(0, 12).join(", ")}${missing.length > 12 ? "…" : ""}.`);
+    const { missing, total } = rankGaps(rankCounts.keys(), 12);
+    if (total) warnings.push(`Missing rank${total === 1 ? "" : "s"}: ${missing.join(", ")}${total > 12 ? "…" : ""}.`);
   }
 
   for (let index = 1; index < sorted.length; index += 1) {

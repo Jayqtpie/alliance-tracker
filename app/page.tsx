@@ -5,6 +5,8 @@ import { getAccessRole } from "@/lib/auth";
 import { bridgeConfigured } from "@/lib/bridge-auth";
 import { getState, storageMode } from "@/lib/store";
 
+import { stateForRole } from "@/lib/state-view";
+
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
@@ -13,21 +15,18 @@ export default async function Home() {
   let state;
   try {
     state = await getState();
-  } catch (error) {
-    const detail = error instanceof Error ? error.message : "An unknown storage error occurred.";
+  } catch {
     return (
       <main className="login-shell">
         <section className="login-panel storage-error-panel">
           <AllianceMark />
-          <p className="eyebrow">STORAGE DIAGNOSTIC</p>
+          <p className="eyebrow">TEMPORARILY UNAVAILABLE</p>
           <h1>Shared storage could not load</h1>
           <p className="muted">
-            Your officer login succeeded, but the tracker could not open its private Vercel Blob store.
+            Your login succeeded, but the tracker could not load its data. Please try again shortly.
           </p>
-          <pre className="storage-error-detail">{detail}</pre>
           <p className="login-note">
-            Check that the Blob store is connected to this exact Vercel project and that the token applies to Production,
-            then redeploy.
+            Contact the alliance administrator if the problem continues.
           </p>
         </section>
       </main>
@@ -36,7 +35,7 @@ export default async function Home() {
   return (
     <TrackerApp
       canManage={role === "admin"}
-      initialState={state}
+      initialState={stateForRole(state, role)}
       storageMode={storageMode()}
       ocrConfigured={Boolean(process.env.OPENAI_API_KEY)}
       bridgeConfigured={bridgeConfigured()}

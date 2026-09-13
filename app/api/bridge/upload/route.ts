@@ -3,6 +3,8 @@ import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
 
+class UploadValidationError extends Error {}
+
 export const runtime = "nodejs";
 
 export async function POST(request: Request) {
@@ -13,10 +15,10 @@ export async function POST(request: Request) {
       request,
       token: blobToken(),
       onBeforeGenerateToken: async (pathname, clientPayload) => {
-        if (!(await isAdmin())) throw new Error("Unauthorised");
+        if (!(await isAdmin())) throw new UploadValidationError("Unauthorised");
         const payload = JSON.parse(clientPayload || "null") as { jobId?: string } | null;
-        if (!payload?.jobId || !/^[0-9a-f-]{36}$/i.test(payload.jobId)) throw new Error("Invalid bridge job.");
-        if (!pathname.startsWith(`bridge-uploads/${payload.jobId}/`)) throw new Error("Invalid upload path.");
+        if (!payload?.jobId || !/^[0-9a-f-]{36}$/i.test(payload.jobId)) throw new UploadValidationError("Invalid bridge job.");
+        if (!pathname.startsWith(`bridge-uploads/${payload.jobId}/`)) throw new UploadValidationError("Invalid upload path.");
         return {
           allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
           maximumSizeInBytes: 4 * 1024 * 1024,
@@ -29,7 +31,7 @@ export async function POST(request: Request) {
     });
     return NextResponse.json(response);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Could not authorise the bridge upload.";
+    const message = error instanceof UploadValidationError ? error.message : "Could not authorise the bridge upload.";
     return NextResponse.json({ error: message }, { status: /Unauthorised/.test(message) ? 401 : 400 });
   }
 }

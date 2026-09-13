@@ -48,3 +48,8 @@ describe("bridge queue", () => {
     expect(retried.leaseExpiresAt).toBeUndefined();
   });
 });
+
+it("does not expose worker filesystem diagnostics to the browser", () => {
+  const job = { id: "test", status: "failed", files: [], error: "EACCES C:/Users/PRIVATE-USER/TEMP-FILE", attempts: 1 } as unknown as Parameters<typeof bridgeJobView>[0];
+  expect(JSON.stringify(bridgeJobView(job))).not.toContain("PRIVATE-USER");
+});

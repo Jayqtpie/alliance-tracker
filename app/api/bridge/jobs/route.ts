@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
-import { bridgeJobView, retryBridgeJob } from "@/lib/bridge";
+import { bridgeJobView, retryBridgeJob, BridgeValidationError } from "@/lib/bridge";
 import { getBridgeQueue, mutateBridgeQueue } from "@/lib/bridge-store";
 import type { BridgeJob } from "@/lib/bridge-types";
 
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
   try {
     await Promise.all(parsed.data.files.map(async (file) => {
       const metadata = await head(file.pathname, { token: blobToken() });
-      if (metadata.size !== file.size || metadata.contentType !== file.contentType) throw new Error(`Uploaded file verification failed for ${file.name}.`);
+      if (metadata.size !== file.size || metadata.contentType !== file.contentType) throw new BridgeValidationError(`Uploaded file verification failed for ${file.name}.`);
     }));
     const now = new Date();
     const job: BridgeJob = {
@@ -61,12 +61,12 @@ export async function POST(request: Request) {
       attempts: 0,
     };
     await mutateBridgeQueue((jobs) => {
-      if (jobs.some((item) => item.id === job.id)) throw new Error("This bridge job already exists.");
+      if (jobs.some((item) => item.id === job.id)) throw new BridgeValidationError("This bridge job already exists.");
       jobs.push(job);
     });
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not queue this capture." }, { status: 409 });
+    return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not queue this capture." }, { status: 409 });
   }
 }
 
@@ -78,7 +78,7 @@ export async function PATCH(request: Request) {
     const job = await mutateBridgeQueue((jobs) => retryBridgeJob(jobs, parsed.data.id));
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not retry this bridge job." }, { status: 409 });
+    return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not retry this bridge job." }, { status: 409 });
   }
 }
 
@@ -89,13 +89,13 @@ export async function DELETE(request: Request) {
   try {
     const files = await mutateBridgeQueue((jobs) => {
       const index = jobs.findIndex((item) => item.id === id);
-      if (index < 0) throw new Error("Bridge job not found.");
-      if (jobs[index].status === "processing") throw new Error("A processing job cannot be removed.");
+      if (index < 0) throw new BridgeValidationError("Bridge job not found.");
+      if (jobs[index].status === "processing") throw new BridgeValidationError("A processing job cannot be removed.");
       return jobs.splice(index, 1)[0].files;
     });
     if (files.length) await del(files.map((file) => file.pathname), { token: blobToken() });
     return NextResponse.json({ deleted: true });
   } catch (error) {
-    return NextResponse.json({ error: error instanceof Error ? error.message : "Could not remove this bridge job." }, { status: 409 });
+    return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not remove this bridge job." }, { status: 409 });
   }
 }

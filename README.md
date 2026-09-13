@@ -117,9 +117,9 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 
 | Variable | Purpose |
 | --- | --- |
-| `OFFICER_PASSCODE` | Admin passcode; local development defaults to `test1` when unset |
-| `VIEWER_PASSCODE` | Read-only viewer passcode; defaults to `rscl1` |
-| `SESSION_SECRET` | Long random value used to sign sessions |
+| `OFFICER_PASSCODE` | Configured admin passcode, 1–256 characters; no default |
+| `VIEWER_PASSCODE` | Optional viewer passcode, 1–256 characters; unset disables viewers |
+| `SESSION_SECRET` | Required random signing secret, at least 32 characters; no default |
 | `OPENAI_API_KEY` | Reads uploaded leaderboard screenshots |
 | `OPENAI_VISION_MODEL` | Optional; defaults to `gpt-5-mini` |
 | `BLOB_READ_WRITE_TOKEN` / `BLOB1_READ_WRITE_TOKEN` | Added by Vercel when the private Blob store is connected |
@@ -160,3 +160,15 @@ npm run test
 npm run lint
 npm run build
 ```
+
+## Security configuration
+
+Set credentials before starting locally or deploying; the example environment intentionally contains no usable password. Generate SESSION_SECRET with `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` and store it only in the private environment configuration. Admin/viewer passphrases must differ. Missing credentials disable that role; missing/weak session configuration blocks sign-in. Role-less legacy sessions require a fresh login. Rotate SESSION_SECRET to invalidate every existing session after a suspected leak or passcode compromise.
+
+Viewer responses exclude officer notes, operations, source filenames and upload paths before HTML/JSON serialization. Stored history is unchanged. Public branding and bundled avatar images remain public; API paths used by a browser can be discovered, so server-side authorization protects the data.
+
+Login attempts are limited to ten per five minutes per trusted Vercel IP and server process. Outside Vercel a shared local bucket avoids trusting spoofed forwarding headers. This limiter resets on restart and does not coordinate separate instances. Configure a Vercel WAF rate-limit rule for POST /api/auth/login (ten requests per five minutes per IP) for shared edge enforcement: https://vercel.com/kb/guide/limit-abuse-with-rate-limiting . Also apply appropriate upload/extraction limits at the edge. The code does not create external firewall rules.
+
+Browser requests receive a nonce-based script CSP, frame blocking, no-sniff, no-referrer, restricted browser permissions and private no-store responses. API requests from other browser origins are rejected; authenticated worker/cron requests without Origin remain supported. Inline styles are allowed for existing charts and layout; scripts are nonce-gated. The Blob upload SDK requires its Vercel hosts in connect-src.
+
+This application uses JSON files/private Blob objects and has no SQL query execution. Future database integrations must use parameterized queries and preserve server-only credentials. Never add secrets to NEXT_PUBLIC variables, client modules, public files, source maps, logs or error responses. Current-source review cannot establish whether historical commits or external deployments have exposed credentials; audit those separately before claiming a historical leak is absent.
