@@ -524,7 +524,7 @@ export function TrackerApp({
           </div>
           <button className="nav-item" onClick={logout}><LogOut size={18} /> {t("Sign out")}</button>
           <LanguageSelector />
-          <p className="creator-credit">Made by JayQT</p>
+          <p className="creator-credit">by JayQT</p>
         </div>
       </aside>
 
