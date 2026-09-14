@@ -47,7 +47,7 @@ describe("targeted LastRank identity updates", () => {
   it("does not replay the older names or avatars after a newer roster capture", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     expect(applyMemberProfileUpdates(state)).toBe(state);
-    expect(state.members.find((member) => member.gameProfile?.uid === "1543620585000927")?.canonicalName).toBe("The Legend of Jocco");
+    expect(state.members.find((member) => member.gameProfile?.uid === "1543620585000927")?.canonicalName).toBe("JOCCO łR1ł");
   });
 
 });

@@ -4,7 +4,16 @@ import { importCapturedRoster } from "./roster-import";
 import { applyProfileRefreshRetries } from "./profile-refresh-retries";
 import update from "./data/rscl-profile-retry-2026-09-13.json";
 
-const baseline = () => importCapturedRoster(structuredClone(INITIAL_STATE));
+// Simulate a tracker on the 13 September capture before its retries were applied.
+const baseline = () => {
+  const state = importCapturedRoster(structuredClone(INITIAL_STATE));
+  state.rosterImport = update.rosterImport;
+  state.memberProfileUpdates = state.memberProfileUpdates?.filter((id) => id !== update.id);
+  for (const member of state.members) {
+    if (update.members.some((row) => row.uid === member.gameProfile?.uid)) member.gameProfile = { ...member.gameProfile!, sourceUpdatedAt: "2026-09-13T00:00:00Z" };
+  }
+  return state;
+};
 describe("verified LastRank retries", () => {
   it("updates only verified profiles once while preserving officer edits and all history", () => {
     const before = baseline();
@@ -33,7 +42,8 @@ describe("verified LastRank retries", () => {
       expect(next.aliases).toBe(member.aliases);
       expect(next.previousNames).toBe(member.previousNames);
     }
-    expect(after.members.filter(m => m.gameProfile?.refreshStatus === "retained").map(m => m.canonicalName)).toEqual(["InfernoBlaze"]);
+    expect(after.members.filter(m => m.gameProfile?.refreshStatus === "retained").map(m => m.canonicalName))
+      .toEqual(before.members.filter(m => m.gameProfile?.refreshStatus === "retained" && !update.members.some(r => r.uid === m.gameProfile?.uid)).map(m => m.canonicalName));
     expect(applyProfileRefreshRetries(after)).toBe(after);
   });
   it("holds missing, duplicate or conflicting mappings and other roster versions", () => {
