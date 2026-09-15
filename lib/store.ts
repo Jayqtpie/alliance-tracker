@@ -9,6 +9,7 @@ import { hydrateOperations } from "@/lib/operations";
 import { importCapturedRoster } from "@/lib/roster-import";
 import { applyMemberProfileUpdates } from "@/lib/member-profile-updates";
 import { applyProfileRefreshRetries } from "@/lib/profile-refresh-retries";
+import { applyProfileStats } from "@/lib/profile-stats";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
@@ -76,7 +77,7 @@ async function getStoredState(): Promise<TrackerState> {
 async function loadState(): Promise<TrackerState> {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const stored = await getStoredState();
-    const imported = applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored)));
+    const imported = applyProfileStats(applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored))));
     if (imported === stored) return stored;
     try {
       return await setState(imported);
@@ -86,7 +87,7 @@ async function loadState(): Promise<TrackerState> {
     }
   }
   const latest = await getStoredState();
-  if (applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(latest))) === latest) return latest;
+  if (applyProfileStats(applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(latest)))) === latest) return latest;
   throw new StateConflictError();
 }
 

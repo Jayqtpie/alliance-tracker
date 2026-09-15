@@ -19,6 +19,9 @@ export interface Member {
     heroPowerLegacy: boolean;
     kills: number | null;
     killsDisplay: string;
+    power?: number | null;
+    powerDisplay?: string;
+    profession?: string | null;
     capturedOn: string;
     sourceActivityDate?: string;
     lastRankPublicId?: string;

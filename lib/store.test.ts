@@ -14,6 +14,7 @@ import { getState, setState } from "./store";
 import { importCapturedRoster } from "./roster-import";
 import { applyMemberProfileUpdates } from "./member-profile-updates";
 import { applyProfileRefreshRetries } from "./profile-refresh-retries";
+import { applyProfileStats } from "./profile-stats";
 
 let stored: TrackerState;
 let revision: number;
@@ -90,7 +91,7 @@ describe("private Blob state writes", () => {
 
   it("returns a migration completed by another request without rewriting it", async () => {
     vi.mocked(put).mockImplementationOnce(async () => {
-      stored = applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored)));
+      stored = applyProfileStats(applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored))));
       stored.version += 1;
       revision += 1;
       throw new BlobPreconditionFailedError();
