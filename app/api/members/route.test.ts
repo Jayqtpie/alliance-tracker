@@ -35,6 +35,22 @@ describe("player edits and deletion", () => {
     expect(state).toEqual(original);
   });
 
+  it("saves power and profession corrections and clears them to unavailable", async () => {
+    const saved = await (await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", power: "450.5M", heroPower: "", kills: "", profession: "War Leader", version: 1 }))).json();
+    expect(saved.members[0].manualStats).toMatchObject({ power: 450500000, profession: "War Leader" });
+    expect(saved.members[0].manualStats).not.toHaveProperty("heroPower");
+    const profiled = { id: "keep", canonicalName: "Alpha", active: true, aliases: [], gameProfile: { uid: "1", rank: "R3", avatarPath: "", heroPower: 5, heroPowerDisplay: "5", heroPowerLegacy: false, kills: 6, killsDisplay: "6", power: 7, powerDisplay: "7", profession: "Engineer", capturedOn: "2026-09-14", source: "test" } };
+    vi.mocked(getState).mockResolvedValueOnce({ ...createEmptyState(), members: [profiled] });
+    const cleared = await (await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", power: "", heroPower: "5", kills: "6", profession: "", version: 1 }))).json();
+    expect(cleared.members[0].manualStats).toEqual({ power: null, profession: null, updatedAt: expect.any(String) });
+    expect(cleared.members[0].gameProfile).toEqual(profiled.gameProfile);
+    // An editor opened before these fields existed leaves them unchanged.
+    const legacy = await (await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Renamed", heroPower: "", kills: "", version: 1 }))).json();
+    expect(legacy.members[0].manualStats).toBeUndefined();
+    expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", power: "lots", heroPower: "", kills: "", version: 1 }))).status).toBe(400);
+    expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "", kills: "", profession: "Wizard", version: 1 }))).status).toBe(400);
+  });
+
   it("rejects invalid stats and stale edits without partially saving the name", async () => {
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Changed", heroPower: "-12", kills: "2M", version: 1 }))).status).toBe(400);
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Changed", heroPower: "12M", kills: "2M", version: 2 }))).status).toBe(409);

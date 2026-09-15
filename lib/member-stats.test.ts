@@ -34,6 +34,8 @@ describe("manual player statistics", () => {
     const refreshed = importCapturedRoster(state);
     expect(refreshed.members[0].manualStats).toEqual(player.manualStats);
     expect(memberStats(refreshed.members[0])).toMatchObject({ heroPower: 123456789, heroPowerDisplay: "123.46M", kills: null, killsDisplay: "—" });
+    expect(memberStats({ ...player, manualStats: undefined })).toMatchObject({ power: player.gameProfile!.power, powerDisplay: player.gameProfile!.powerDisplay, profession: player.gameProfile!.profession });
+    expect(memberStats({ ...player, manualStats: { power: 450500000, profession: null, updatedAt: "2026-09-15" } })).toMatchObject({ power: 450500000, powerDisplay: "450.5M", profession: null, heroPower: player.gameProfile!.heroPower });
     refreshed.members.push({ id: "duplicate", canonicalName: "Duplicate", aliases: [], active: false, manualStats: { kills: 42, updatedAt: "2026-09-05T00:00:00Z" } });
     expect(mergeMemberIdentities(refreshed, player.id, "duplicate").members[0].manualStats).toEqual(player.manualStats);
   });

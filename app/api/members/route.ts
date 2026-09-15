@@ -3,7 +3,7 @@ import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
-import { memberStats, parseMemberStat } from "@/lib/member-stats";
+import { memberStats, parseMemberStat, PROFESSIONS } from "@/lib/member-stats";
 
 const schema = z.object({
   members: z.array(z.object({
@@ -51,6 +51,9 @@ const editSchema = renameSchema.extend({
   action: z.literal("edit"),
   heroPower: z.string().max(40),
   kills: z.string().max(40),
+  // Optional so an editor opened before power and profession existed still saves.
+  power: z.string().max(40).optional(),
+  profession: z.enum(["", ...PROFESSIONS]).optional(),
 });
 const setActiveSchema = z.object({
   action: z.literal("set-active"),
@@ -82,11 +85,15 @@ export async function PATCH(request: Request) {
         const heroPower = parseMemberStat(parsed.data.heroPower);
         const kills = parseMemberStat(parsed.data.kills);
         const current = memberStats(member);
-        if (heroPower !== current.heroPower || kills !== current.kills) {
+        const power = parsed.data.power === undefined ? current.power : parseMemberStat(parsed.data.power);
+        const profession = parsed.data.profession === undefined ? current.profession : parsed.data.profession || null;
+        if (heroPower !== current.heroPower || kills !== current.kills || power !== current.power || profession !== current.profession) {
           changes.manualStats = {
             ...member.manualStats,
+            ...(power !== current.power ? { power } : {}),
             ...(heroPower !== current.heroPower ? { heroPower } : {}),
             ...(kills !== current.kills ? { kills } : {}),
+            ...(profession !== current.profession ? { profession } : {}),
             updatedAt: new Date().toISOString(),
           };
         }
