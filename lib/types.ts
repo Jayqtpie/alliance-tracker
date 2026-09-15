@@ -9,7 +9,7 @@ export interface Member {
   joinedAt?: string;
   leftAt?: string;
   notes?: string;
-  manualStats?: { heroPower?: number | null; kills?: number | null; updatedAt: string };
+  manualStats?: { power?: number | null; heroPower?: number | null; kills?: number | null; profession?: string | null; updatedAt: string };
   gameProfile?: {
     uid: string;
     rank: string;

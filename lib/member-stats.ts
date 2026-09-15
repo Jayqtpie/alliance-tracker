@@ -1,5 +1,7 @@
 import type { Member } from "./types";
 
+export const PROFESSIONS = ["Engineer", "War Leader"] as const;
+
 export function parseMemberStat(input: string): number | null {
   const text = input.trim();
   if (!text || text === "—") return null;
@@ -22,8 +24,11 @@ function statDisplay(value: number | null): string {
 export function memberStats(member: Member) {
   const heroPower = member.manualStats?.heroPower !== undefined ? member.manualStats.heroPower : member.gameProfile?.heroPower ?? null;
   const kills = member.manualStats?.kills !== undefined ? member.manualStats.kills : member.gameProfile?.kills ?? null;
+  const power = member.manualStats?.power !== undefined ? member.manualStats.power : member.gameProfile?.power ?? null;
   return {
-    heroPower, kills,
+    heroPower, kills, power,
+    profession: member.manualStats?.profession !== undefined ? member.manualStats.profession : member.gameProfile?.profession ?? null,
+    powerDisplay: member.manualStats?.power !== undefined ? statDisplay(power) : member.gameProfile?.powerDisplay ?? "—",
     heroPowerDisplay: member.manualStats?.heroPower !== undefined ? statDisplay(heroPower) : member.gameProfile?.heroPowerDisplay ?? "—",
     killsDisplay: member.manualStats?.kills !== undefined ? statDisplay(kills) : member.gameProfile?.killsDisplay ?? "—",
   };
