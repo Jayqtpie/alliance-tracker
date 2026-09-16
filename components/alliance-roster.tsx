@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Search, Swords, Users, X, Zap } from "lucide-react";
+import { Crown, Search, Swords, Users, Wrench, X, Zap } from "lucide-react";
 import { useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import { MemberName } from "./member-name";
@@ -87,6 +87,13 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
         ] as const).map(({ key, label, Icon }) => <div className="alliance-total" data-stat={key} key={key}>
           <dt><Icon size={14} aria-hidden="true" />{label}</dt>
           <dd><strong>{totals[key].display}</strong><span>{totals[key].recorded} / {totals.activeCount} active members recorded</span></dd>
+        </div>)}
+        {([
+          { key: "engineers", label: "Engineers", Icon: Wrench },
+          { key: "warLeaders", label: "War Leaders", Icon: Crown },
+        ] as const).map(({ key, label, Icon }) => <div className="alliance-total" data-stat={key} key={key}>
+          <dt><Icon size={14} aria-hidden="true" />{label}</dt>
+          <dd><strong>{totals[key]}</strong><span>of {totals.activeCount} active members</span></dd>
         </div>)}
       </dl>
     </section>

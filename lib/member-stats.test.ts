@@ -9,14 +9,14 @@ describe("manual player statistics", () => {
     const state = importCapturedRoster({ ...createEmptyState(), rosterImport: undefined, alliance: { name: "The Rascals", tag: "RSCL", server: "927" } });
     const profileMember = { ...state.members.find((member) => member.gameProfile)!, active: true };
     const totals = allianceStatTotals([
-      { ...profileMember, manualStats: { heroPower: 2000000000, kills: null, updatedAt: "2026-09-07" } },
-      { id: "manual", canonicalName: "Manual", aliases: [], active: true, manualStats: { heroPower: 500000000, kills: 0, updatedAt: "2026-09-07" } },
+      { ...profileMember, manualStats: { heroPower: 2000000000, kills: null, profession: "Engineer", updatedAt: "2026-09-07" } },
+      { id: "manual", canonicalName: "Manual", aliases: [], active: true, manualStats: { heroPower: 500000000, kills: 0, profession: "War Leader", updatedAt: "2026-09-07" } },
       { id: "missing", canonicalName: "Missing", aliases: [], active: true },
-      { ...profileMember, id: "departed", active: false, manualStats: { heroPower: 999, kills: 999, updatedAt: "2026-09-07" } },
+      { ...profileMember, id: "departed", active: false, manualStats: { heroPower: 999, kills: 999, profession: "Engineer", updatedAt: "2026-09-07" } },
     ]);
-    expect(totals).toEqual({ activeCount: 3, heroPower: { value: 2500000000, display: "2.5B", recorded: 2 }, kills: { value: 0, display: "0", recorded: 1 } });
+    expect(totals).toEqual({ activeCount: 3, heroPower: { value: 2500000000, display: "2.5B", recorded: 2 }, kills: { value: 0, display: "0", recorded: 1 }, engineers: 1, warLeaders: 1 });
     expect(allianceStatTotals([profileMember]).heroPower.value).toBe(profileMember.gameProfile!.heroPower);
-    expect(allianceStatTotals([])).toEqual({ activeCount: 0, heroPower: { value: null, display: "—", recorded: 0 }, kills: { value: null, display: "—", recorded: 0 } });
+    expect(allianceStatTotals([])).toEqual({ activeCount: 0, heroPower: { value: null, display: "—", recorded: 0 }, kills: { value: null, display: "—", recorded: 0 }, engineers: 0, warLeaders: 0 });
   });
 
   it("reads full numbers, compact values, zero and unavailable values", () => {
