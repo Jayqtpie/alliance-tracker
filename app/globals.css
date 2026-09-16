@@ -510,7 +510,6 @@ button:disabled { cursor: not-allowed; }
 .alliance-rank.leader { color: #07826a; background: #dcefe9; padding: 3px 6px; border-radius: 5px; }
 .alliance-stat { display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: 4px; text-align: right; font-variant-numeric: tabular-nums; }
 .alliance-stat strong { font-size: 14px; color: #556486; font-weight: 750; }
-.alliance-stat .profession-short { display: none; }
 .alliance-legacy { font-size: 8px; text-transform: uppercase; color: #987441; border: 1px solid #e8d8bb; border-radius: 4px; padding: 2px 3px; }
 .alliance-roster-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 18px; font-size: 11px; color: #7b88a7; }
 .profile-metrics .profile-capture-date { font-size: 15px; }
@@ -521,8 +520,8 @@ button:disabled { cursor: not-allowed; }
   .alliance-roster-toolbar { flex-wrap: wrap; gap: 8px; margin-top: 18px; }
   .alliance-roster-toolbar .search-box { flex: 1 0 100%; width: 100%; }
   .alliance-roster-toolbar select { flex: 1; min-width: 0; }
-  .alliance-roster-columns, .alliance-roster-row { grid-template-columns: minmax(0, 1fr) 34px 52px 44px 50px; column-gap: 4px; }
-  .alliance-col-power { display: none; }
+  .alliance-roster-columns, .alliance-roster-row { grid-template-columns: minmax(0, 1fr) 34px 58px 50px; column-gap: 4px; }
+  .alliance-col-power, .alliance-col-profession { display: none; }
   .alliance-roster-columns { padding: 0 7px 10px; font-size: 8px; letter-spacing: 0; }
   .alliance-roster-columns span:first-child { padding-left: 22px; }
   .alliance-roster-row { padding: 8px 6px; min-height: 52px; }

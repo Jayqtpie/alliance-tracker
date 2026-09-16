@@ -206,10 +206,8 @@ html { scrollbar-gutter: stable; }
   .member-actions-name { font-size: 12px; }
 }
 @media (max-width: 760px) {
-  .alliance-roster-directory .alliance-roster-columns, .alliance-roster-directory .alliance-roster-row { grid-template-columns: minmax(0, 1fr) 48px 52px 48px 34px; }
+  .alliance-roster-directory .alliance-roster-columns, .alliance-roster-directory .alliance-roster-row { grid-template-columns: minmax(0, 1fr) 48px 62px 56px; }
   .alliance-roster-directory .alliance-stat strong { font-size: 11px; }
-  .alliance-roster-directory .alliance-stat .profession-full { display: none; }
-  .alliance-roster-directory .alliance-stat .profession-short { display: inline; }
   .alliance-roster-directory .alliance-roster-columns { top: 64px; padding: 12px 39px 12px 4px; }
   .alliance-roster-directory .alliance-roster-row { min-height: 62px; padding: 10px 4px; }
   .alliance-roster-directory .alliance-avatar { width: 26px; height: 26px; flex-basis: 26px; }
