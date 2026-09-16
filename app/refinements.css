@@ -242,7 +242,7 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 }
 @media (max-width: 760px) {
   .app-shell { grid-template-columns: minmax(0, 1fr); }
-  .sidebar, :root[data-theme="dark"] .sidebar { padding: 7px 8px calc(7px + env(safe-area-inset-bottom)); height: calc(130px + env(safe-area-inset-bottom)); flex-direction: column; gap: 4px; overflow: visible; border-inline-end: 0; border-top: 1px solid var(--sidebar-line); }
+  .sidebar, :root[data-theme="dark"] .sidebar { padding: 7px 8px calc(7px + env(safe-area-inset-bottom)); height: auto; flex-direction: column; gap: 4px; overflow: visible; border-inline-end: 0; border-top: 1px solid var(--sidebar-line); }
   .sidebar-alliance { display: none; }
   .sidebar nav { width: 100%; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; overflow: visible; }
   .sidebar .nav-item { min-height: 49px; padding: 5px 2px; font-size: 9px; gap: 3px; line-height: 1.25; text-align: center; }
@@ -254,7 +254,7 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
   .language-control { min-height: 32px; width: 100%; justify-content: center; border-color: transparent; background: #162339; }
   .language-control select { width: auto; max-width: calc(100% - 70px); font-size: 12px; padding-block: 5px; text-align: center; }
   .topbar { height: 64px; padding-inline: 16px; }
-  .page-stack { padding: 23px 16px calc(158px + env(safe-area-inset-bottom)); gap: 17px; }
+  .page-stack { padding: 23px 16px calc(140px + env(safe-area-inset-bottom)); gap: 17px; }
   .metric-grid { gap: 10px; }
   .metric-card, .metric-card:first-child { padding: 16px; }
   :root .metric-card .metric-icon, :root[data-theme="dark"] .metric-card .metric-icon { display: none; }
@@ -276,6 +276,10 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 .theme-selector select { min-width: 0; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; cursor: pointer; }
 .theme-selector select option { background: var(--panel); color: var(--ink); }
 .theme-selector:focus-within { outline: 2px solid var(--focus); outline-offset: 3px; }
+/* Narrow phones wrap the longest nav labels onto a third line, growing the bar. */
+@media (max-width: 360px) {
+  .page-stack { padding-bottom: calc(163px + env(safe-area-inset-bottom)); }
+}
 @media (max-width: 760px) {
   .sidebar-foot .creator-credit { padding: 4px 0 0; font-size: 10px; text-align: center; }
   .theme-selector select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; }
