@@ -107,7 +107,7 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
       {membershipError && <p className="form-error-box" role="alert">{membershipError}</p>}
       <div className="alliance-roster-scroll"><div className="alliance-roster-columns"><span>Commander</span><select className="roster-rank-filter" aria-label="Filter roster by rank" aria-controls={rosterListId} value={rankFilter} onChange={(event) => setRankFilter(event.target.value as RosterRankFilter)}>
         {ROSTER_RANK_FILTERS.map(({ value }) => <option key={value} value={value}>{value === "all" ? "Rank" : value}</option>)}
-      </select><span className="alliance-col-power">Power</span><span>Hero power</span><span>Kills</span><span>Profession</span></div>
+      </select><span className="alliance-col-power">Power</span><span>Hero power</span><span>Kills</span><span className="alliance-col-profession">Profession</span></div>
       <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id} className="roster-with-merge" data-rank={member.gameProfile?.rank}>
         <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={`View ${member.canonicalName}, power ${memberStats(member).powerDisplay}, hero power ${memberStats(member).heroPowerDisplay}, kills ${memberStats(member).killsDisplay}, profession ${memberStats(member).profession ?? "—"}`}>
           <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><MemberName member={member} /></span>
@@ -115,7 +115,7 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
           <span className="alliance-stat alliance-col-power"><strong>{memberStats(member).powerDisplay}</strong></span>
           <span className="alliance-stat"><strong>{memberStats(member).heroPowerDisplay}</strong></span>
           <span className="alliance-stat"><strong>{memberStats(member).killsDisplay}</strong></span>
-          <span className="alliance-stat"><strong><span className="profession-full">{memberStats(member).profession ?? "—"}</span><span className="profession-short" aria-hidden="true">{memberStats(member).profession === "War Leader" ? "WL" : memberStats(member).profession === "Engineer" ? "ENG" : "—"}</span></strong></span>
+          <span className="alliance-stat alliance-col-profession"><strong>{memberStats(member).profession ?? "—"}</strong></span>
         </button>
         {canManage && <MemberActions name={member.canonicalName} canMerge={state.members.length > 1} active={member.active} onEdit={() => setEditingId(member.id)} onMerge={() => onMergeMember(member.id)} onToggleActive={() => setMemberActive(member)} onDelete={() => onDeleteMember(member.id)} />}
       </li>)}</ol></div>
