@@ -42,5 +42,6 @@ export function allianceStatTotals(members: Member[]) {
     const value = recorded.length ? recorded.reduce((sum, stat) => sum + (stat[key] ?? 0), 0) : null;
     return { value, display: statDisplay(value), recorded: recorded.length };
   };
-  return { activeCount: active.length, heroPower: total("heroPower"), kills: total("kills") };
+  const professionCount = (profession: string) => stats.filter((stat) => stat.profession === profession).length;
+  return { activeCount: active.length, heroPower: total("heroPower"), kills: total("kills"), engineers: professionCount("Engineer"), warLeaders: professionCount("War Leader") };
 }
