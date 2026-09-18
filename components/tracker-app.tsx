@@ -1065,27 +1065,29 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     }
   }
 
-  async function discardBridgeJob() {
-    if (!bridgeJob || bridgeJob.status === "processing") return;
-    if (!window.confirm("Discard this extraction and delete its uploaded screenshots? Nothing has been published.")) return;
+  async function discardImport() {
+    if (bridgeJob?.status === "processing") return;
+    if (!window.confirm("Discard this upload and its extracted rows? Nothing has been published.")) return;
     setDiscardingBridge(true);
     setError("");
     try {
-      const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`, { method: "DELETE" });
-      const body = await response.json().catch(() => ({}));
-      // An already expired job counts as discarded.
-      if (!response.ok && body.error !== "Bridge job not found.") throw new Error(body.error || "Could not discard this extraction.");
-      window.localStorage.removeItem(bridgeJobStorageKey);
-      if (loadedBridgeJobId.current === bridgeJob.id) {
-        setRows([]);
-        setWarnings([]);
-        setSourceType("screenshots");
+      if (bridgeJob) {
+        const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`, { method: "DELETE" });
+        const body = await response.json().catch(() => ({}));
+        // An already expired job counts as discarded.
+        if (!response.ok && body.error !== "Bridge job not found.") throw new Error(body.error || "Could not discard this upload.");
       }
+      window.localStorage.removeItem(bridgeJobStorageKey);
       loadedBridgeJobId.current = undefined;
       setBridgeJob(undefined);
       setBridgeLoadFailed(false);
+      setRows([]);
+      setWarnings([]);
+      setFiles([]);
+      setManual("");
+      setSourceType("screenshots");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not discard this extraction.");
+      setError(reason instanceof Error ? reason.message : "Could not discard this upload.");
     } finally {
       setDiscardingBridge(false);
     }
@@ -1190,7 +1192,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
             <span>{bridgeJob.status === "pending" ? "Extraction starts automatically, usually within a few minutes." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
             {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
             {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {retryingBridge ? "Requeueing…" : "Retry retained upload"}</button>}
-            {bridgeJob.status !== "processing" && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardBridgeJob}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}
+            {(bridgeJob.status === "pending" || bridgeJob.status === "failed") && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardImport}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}
           </div>}
           {!bridgeConfigured && <p className="bridge-unavailable">Claude extraction appears after private Blob storage and a worker secret are configured.</p>}
         </div>
@@ -1212,7 +1214,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
           <small>Bulk verification applies only to flagged rows you have checked. Resolve duplicate ranks and identities separately.</small>
         </div>
         <RankingReview rows={rows} members={state.members} identities={review.identities} blockers={review.blockers} busy={busy} onUpdate={updateRow} onVerify={verifyRow} onRemove={removeRow} />
-        <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><button className="button primary" disabled={busy || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div>
+        <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><div className="publish-actions">{!snapshotId && <button className="button ghost" disabled={busy || discardingBridge || bridgeJob?.status === "processing" || (!rows.length && !files.length && !bridgeJob)} onClick={discardImport}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}<button className="button primary" disabled={busy || discardingBridge || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div></div>
       </section>
     </div>
   );
