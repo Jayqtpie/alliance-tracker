@@ -298,3 +298,8 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 @media (max-width: 760px) {
   .app-shell.viewer .sidebar nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+
+/* Align the roster/pairings and reports/snapshots switchers with the page heading below them. */
+.reports-tabs-wrap { max-width: 1600px; padding-inline: 30px; }
+@media (min-width: 761px) and (max-width: 1200px) { .reports-tabs-wrap { padding-inline: 24px; } }
+@media (max-width: 760px) { .reports-tabs-wrap { padding-inline: 16px; } }
