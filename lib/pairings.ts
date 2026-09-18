@@ -36,10 +36,9 @@ function activeByProfession(members: Member[], profession: string): Member[] {
   return sortByPowerDesc(members.filter((member) => member.active && memberStats(member).profession === profession));
 }
 
-function trimTrailingEmpty(rows: PairingRow[]): PairingRow[] {
-  let end = rows.length;
-  while (end > 0 && !rows[end - 1].warLeaderId && !rows[end - 1].engineerId) end -= 1;
-  return rows.slice(0, end);
+// A row with neither slot filled is dropped so the rows below it move up and leave no gap.
+function dropEmptyRows(rows: PairingRow[]): PairingRow[] {
+  return rows.filter((row) => row.warLeaderId || row.engineerId);
 }
 
 export function defaultPairings(members: Member[]): PairingRow[] {
@@ -71,7 +70,7 @@ export function resolvePairings(members: Member[], rows: PairingRow[] | undefine
   });
 
   return {
-    rows: trimTrailingEmpty(reconciled),
+    rows: dropEmptyRows(reconciled),
     unpairedWarLeaders: activeByProfession(active, "War Leader").filter((member) => !seen.has(member.id)),
     unpairedEngineers: activeByProfession(active, "Engineer").filter((member) => !seen.has(member.id)),
     withoutProfession: active.filter((member) => memberStats(member).profession === null && !seen.has(member.id)).length,
@@ -100,7 +99,7 @@ export function movePairing(
     return next;
   });
 
-  if (move.target.kind === "unpaired") return trimTrailingEmpty(working);
+  if (move.target.kind === "unpaired") return dropEmptyRows(working);
 
   const field = FIELD_BY_COLUMN[move.column];
   const targetRowId = move.target.rowId;
@@ -119,5 +118,5 @@ export function movePairing(
     return row;
   });
 
-  return trimTrailingEmpty(working);
+  return dropEmptyRows(working);
 }

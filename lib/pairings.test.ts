@@ -67,7 +67,7 @@ describe("pairings", () => {
     expect(slotMismatch(member("none1", null, 50), "engineer")).toBe("no profession");
   });
 
-  it("resolvePairings trims trailing empty rows but preserves a gap in the middle", () => {
+  it("resolvePairings drops every empty row so the rows below move up", () => {
     const members = [member("wl1", "War Leader", 100), member("eng2", "Engineer", 200)];
     const rows = [
       { id: "pair-1", warLeaderId: "wl1" },
@@ -77,7 +77,6 @@ describe("pairings", () => {
     ];
     expect(resolvePairings(members, rows).rows).toEqual([
       { id: "pair-1", warLeaderId: "wl1" },
-      { id: "pair-2" },
       { id: "pair-3", engineerId: "eng2" },
     ]);
   });
@@ -138,7 +137,6 @@ describe("pairings", () => {
     ];
     const result = movePairing(rows, { memberId: "wl1", column: "engineer", target: { kind: "row", rowId: "pair-2" } });
     expect(result).toEqual([
-      { id: "pair-1" },
       { id: "pair-2", engineerId: "wl1" },
     ]);
     expect(result.every((row) => row.warLeaderId !== "wl1" && row.engineerId !== "eng2")).toBe(true); // eng2 landed in neither slot (pool)
@@ -154,6 +152,21 @@ describe("pairings", () => {
     const rows = [{ id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" }];
     const result = movePairing(rows, { memberId: "wl1", column: "warLeader", target: { kind: "unpaired" } });
     expect(result).toEqual([{ id: "pair-1", engineerId: "eng1" }]);
+  });
+
+  it("movePairing drops a middle row once both of its members are moved out, keeping half-filled rows", () => {
+    const rows = [
+      { id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" },
+      { id: "pair-2", warLeaderId: "wl2", engineerId: "eng2" },
+      { id: "pair-3", warLeaderId: "wl3", engineerId: "eng3" },
+    ];
+    const halfEmpty = movePairing(rows, { memberId: "wl2", column: "warLeader", target: { kind: "unpaired" } });
+    expect(halfEmpty.map((row) => row.id)).toEqual(["pair-1", "pair-2", "pair-3"]);
+    const result = movePairing(halfEmpty, { memberId: "eng2", column: "engineer", target: { kind: "unpaired" } });
+    expect(result).toEqual([
+      { id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" },
+      { id: "pair-3", warLeaderId: "wl3", engineerId: "eng3" },
+    ]);
   });
 
   it("movePairing with an unknown rowId appends a new row", () => {
