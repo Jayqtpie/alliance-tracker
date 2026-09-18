@@ -1,9 +1,9 @@
-import capture from "./data/rscl-roster-2026-09-14.json";
+import capture from "./data/rscl-roster-2026-09-18.json";
 import type { Member, TrackerState } from "./types";
 
 // Keep the legacy prefix so older deployments also reject this newer capture.
 // The capture source and profile public IDs identify LastRank independently.
-export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-14-v1";
+export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-18-v1";
 
 const capturedRenames: { uid: string; previous: string; current: string }[] = capture.changes.renamed;
 

@@ -7,6 +7,7 @@ import capture from "./data/rscl-roster-2026-09-14.json";
 // Simulate a tracker that applied the 14 September capture before power and profession were stored.
 const baseline = () => {
   const state = importCapturedRoster(structuredClone(INITIAL_STATE));
+  state.memberProfileUpdates = state.memberProfileUpdates?.filter((id) => id !== PROFILE_STATS_UPDATE);
   for (const member of state.members) {
     if (!member.gameProfile) continue;
     delete member.gameProfile.power;
@@ -21,7 +22,7 @@ describe("LastRank power and profession", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     const row = capture.members.find((row) => row.name === "Zothargirl")!;
     const member = state.members.find((m) => m.gameProfile?.uid === row.uid)!;
-    expect(member.gameProfile).toMatchObject({ power: 605009632, powerDisplay: "605.01M", profession: "War Leader" });
+    expect(member.gameProfile).toMatchObject({ power: 605844162, powerDisplay: "605.84M", profession: "War Leader" });
   });
 
   it("adds stats once to fresh profiles, leaving retained profiles and officer edits unaltered", () => {

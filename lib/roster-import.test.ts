@@ -23,7 +23,7 @@ describe("captured RSCL roster", () => {
     expect(refreshed.previousNames).toEqual(expect.arrayContaining(["war parrot", "A verified earlier name"]));
     expect(refreshed.previousNames).not.toContain("An OCR alias");
     expect(refreshed.notes).toBe(parrot.notes);
-    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-14", lastRankPublicId: "1186935", refreshStatus: "fresh" });
+    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-18", lastRankPublicId: "1186935", refreshStatus: "fresh" });
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
@@ -32,7 +32,7 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(after)).toBe(after);
   });
   it("does not downgrade a newer roster capture", () => {
-    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-15-v1" };
+    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-19-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
   it("imports 100 active members and local avatars without treating missing stats as zero", () => {
@@ -59,7 +59,7 @@ describe("captured RSCL roster", () => {
     expect(importedJay.id).toBe(jay.id);
     expect(importedJay.notes).toBe(jay.notes);
     expect(importedJay.aliases).toContain("Previous Jay");
-    expect(importedJay.gameProfile?.heroPower).toBe(197_989_195);
+    expect(importedJay.gameProfile?.heroPower).toBe(199_028_018);
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(before.members.every((member) => after.members.some((entry) => entry.id === member.id))).toBe(true);
@@ -88,10 +88,10 @@ describe("captured RSCL roster", () => {
     expect(merged.members.find((member) => member.id === historical.id)?.gameProfile).toEqual(imported.gameProfile);
   });
   it.each([
-    "lastrank-rscl-927-2026-09-15-v1",
-    "lwservers-rscl-927-2026-09-14-v10",
-    "lastrank-rscl-927-2026-09-14-v2",
-    "lastrank-rscl-927-2026-09-14-v1",
+    "lastrank-rscl-927-2026-09-19-v1",
+    "lwservers-rscl-927-2026-09-18-v10",
+    "lastrank-rscl-927-2026-09-18-v2",
+    "lastrank-rscl-927-2026-09-18-v1",
   ])("retains an equal or newer capture across sources: %s", (rosterImport) => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport };
     expect(importCapturedRoster(state)).toBe(state);
@@ -100,7 +100,7 @@ describe("captured RSCL roster", () => {
   it("preserves live stats and original dates when a source profile cannot refresh", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     state.rosterImport = "lwservers-rscl-927-2026-09-10-v1";
-    const member = state.members.find((row) => row.gameProfile?.lastRankPublicId === "1161573")!;
+    const member = state.members.find((row) => row.gameProfile?.lastRankPublicId === "1187353")!;
     member.gameProfile = { ...member.gameProfile!, heroPower: 0, heroPowerDisplay: "0", kills: 42, killsDisplay: "42", capturedOn: "2026-09-12", sourceActivityDate: "2026-09-11" };
     member.manualStats = { kills: 77, updatedAt: "2026-09-13" };
     const before = structuredClone(member);
@@ -114,7 +114,7 @@ describe("captured RSCL roster", () => {
   it("keeps a member absent from the source list active, unaltered and linked to scores", () => {
     const before = importCapturedRoster(structuredClone(INITIAL_STATE));
     before.rosterImport = "lwservers-rscl-927-2026-09-13-v1";
-    const player = before.members.find((member) => member.gameProfile?.uid === "1305964827000862")!;
+    const player = before.members.find((member) => member.gameProfile?.uid === "1164006719000922")!;
     before.snapshots[0].entries[0].memberId = player.id;
     const after = importCapturedRoster(before);
     const retained = after.members.find((member) => member.id === player.id)!;
