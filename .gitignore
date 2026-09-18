@@ -7,3 +7,9 @@ node_modules
 local-extractions
 *.log
 tsconfig.tsbuildinfo
+
+# Agent tooling and internal docs (kept locally, not published)
+CLAUDE.md
+AGENTS.md
+.claude/
+docs/

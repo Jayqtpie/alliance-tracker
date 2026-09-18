@@ -21,21 +21,6 @@ A mobile-friendly Alliance Duel tracker for alliance leadership. Officers can up
 - Responsive officer dashboard, dedicated reports, detailed CSV, and shareable PNG export
 - Commander profiles with score history, rank records, participation rate, aliases, and week-over-week movement
 
-## A private app for each alliance
-
-Use the same codebase for each customer, with a separate deployment and private Blob store for each alliance. Do not connect two customers to the same Blob store: state, uploads and worker queues use shared paths within that store, not tenant partitions.
-
-1. Create a separate Vercel project and private Blob store for the customer.
-2. Set unique `OFFICER_PASSCODE`, `VIEWER_PASSCODE`, `SESSION_SECRET`, `CRON_SECRET` and, if used, `BRIDGE_SECRET` values for that deployment. Configure its extraction API key if cloud OCR is needed.
-3. Deploy without copying `.data`, `.env.local` or `.env.bridge.local` from another installation.
-4. The first officer signs in and enters the alliance name, short tag and server number. The roster and score history start empty.
-5. Import the alliance leaderboard. Use the Settings button in the header to edit alliance details later; renaming preserves member IDs, scores and operations.
-6. For a PC worker, explicitly set `BRIDGE_URL` to the customer deployment and use that deployment's worker secret. There is no default production target.
-
-Login branding, workspace identity, CSV filenames, PNG reports and train schedule exports use the saved alliance details. Every alliance keeps the existing badge as its default emblem, regardless of its name, tag or server. Settings accepts a custom PNG, JPG or WebP (up to 5 MB), resizes it to at most 192 pixels, and stores the resulting PNG with the alliance identity when saved. Use default emblem restores the original badge. The existing RSCL installation keeps its saved data. Historical fixtures remain in the repository for migration and regression tests; they are never seeded into new installations. If handing over source code, remove the RSCL roster fixtures and avatar assets from the customer delivery; retain the shared default emblem.
-
-This supports a private deployment per alliance. Billing, customer provisioning, custom domains and individual officer accounts are not automated. Operations remains paused in the navigation.
-
 ## Local development
 
 ```powershell
@@ -131,14 +116,6 @@ After connecting this repository to Vercel, deploy normally. [`vercel.json`](ver
 
 ## Capture guidance
 
-### Weekly LWServers roster refresh
-
-In Codex, run: **Use $lwservers-roster-refresh to update the roster.**
-
-The saved workflow reads the current signed-in LWServers roster and every player profile, updates names/statistics/avatars by UID, preserves previous-name tags and ranking history, then verifies, commits, pushes and checks the live deployment. Keep your LWServers sign-in available for the source read.
-
-The versioned skill is in [`docs/codex-skills/lwservers-roster-refresh`](docs/codex-skills/lwservers-roster-refresh/SKILL.md), with an installed copy under `~/.codex/skills/lwservers-roster-refresh`. On another PC, copy that skill folder into its Codex skills directory. After changing the versioned workflow, update the installed copy too. If the skill is not listed in an already-open task, start a new task or ask Codex to read the linked `SKILL.md` directly.
-
 ### Ranking screenshots
 
 - Take overlapping screenshots while scrolling slowly.
@@ -150,10 +127,6 @@ The versioned skill is in [`docs/codex-skills/lwservers-roster-refresh`](docs/co
 - During transfers, do not infer that unranked players scored zero until a current roster capture exists.
 
 ## Verification
-
-The existing RSCL deployment includes the signed-in LWServers capture from 5 September 2026: 100 members and avatars, 90 hero-power values (eight marked legacy), and 60 kill counts. Displayed numbers are rounded; unavailable values remain null. This is a saved capture, not a live game integration.
-
-`lib/roster-import.ts` applies this capture once when state is loaded, then saves a `rosterImport` marker in local or Blob storage. It matches game IDs first and unambiguous normalized names/known aliases next. Existing member IDs, scores, notes and operations remain intact; unmatched older identities appear under Previous records rather than being deleted. Fuzzy OCR names are not automatically merged. The marker prevents later officer changes from being overwritten on refresh. Avatars are bundled under `public/avatars/rscl`.
 
 ```powershell
 npm run test
