@@ -873,6 +873,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const [bridgeJob, setBridgeJob] = useState<BridgeJobView>();
   const [bridgeLoadFailed, setBridgeLoadFailed] = useState(false);
   const [retryingBridge, setRetryingBridge] = useState(false);
+  const [discardingBridge, setDiscardingBridge] = useState(false);
   const [preparingVideo, setPreparingVideo] = useState(false);
   const [error, setError] = useState("");
   const [date, setDate] = useState(editingSnapshot?.capturedAt.slice(0, 10) || new Date().toISOString().slice(0, 10));
@@ -1064,6 +1065,32 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     }
   }
 
+  async function discardBridgeJob() {
+    if (!bridgeJob || bridgeJob.status === "processing") return;
+    if (!window.confirm("Discard this extraction and delete its uploaded screenshots? Nothing has been published.")) return;
+    setDiscardingBridge(true);
+    setError("");
+    try {
+      const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`, { method: "DELETE" });
+      const body = await response.json().catch(() => ({}));
+      // An already expired job counts as discarded.
+      if (!response.ok && body.error !== "Bridge job not found.") throw new Error(body.error || "Could not discard this extraction.");
+      window.localStorage.removeItem(bridgeJobStorageKey);
+      if (loadedBridgeJobId.current === bridgeJob.id) {
+        setRows([]);
+        setWarnings([]);
+        setSourceType("screenshots");
+      }
+      loadedBridgeJobId.current = undefined;
+      setBridgeJob(undefined);
+      setBridgeLoadFailed(false);
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Could not discard this extraction.");
+    } finally {
+      setDiscardingBridge(false);
+    }
+  }
+
   function loadBridgeResults() {
     if (bridgeJob) loadRowsFromBridge(bridgeJob);
   }
@@ -1163,6 +1190,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
             <span>{bridgeJob.status === "pending" ? "Extraction starts automatically, usually within a few minutes." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
             {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
             {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {retryingBridge ? "Requeueing…" : "Retry retained upload"}</button>}
+            {bridgeJob.status !== "processing" && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardBridgeJob}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}
           </div>}
           {!bridgeConfigured && <p className="bridge-unavailable">Claude extraction appears after private Blob storage and a worker secret are configured.</p>}
         </div>
