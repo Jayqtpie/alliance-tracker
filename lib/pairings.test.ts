@@ -118,6 +118,38 @@ describe("pairings", () => {
     expect(result.every((row) => row.warLeaderId !== "wl1")).toBe(true);
   });
 
+  it("movePairing cross-column onto an empty slot moves the member into the new column and clears the old one", () => {
+    const rows = [
+      { id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" },
+      { id: "pair-2", warLeaderId: "wl2" },
+    ];
+    const result = movePairing(rows, { memberId: "wl1", column: "engineer", target: { kind: "row", rowId: "pair-2" } });
+    expect(result).toEqual([
+      { id: "pair-1", engineerId: "eng1" },
+      { id: "pair-2", warLeaderId: "wl2", engineerId: "wl1" },
+    ]);
+    expect(result.every((row) => row.warLeaderId !== "wl1")).toBe(true);
+  });
+
+  it("movePairing cross-column onto an occupied slot pools the displaced member instead of swapping", () => {
+    const rows = [
+      { id: "pair-1", warLeaderId: "wl1" },
+      { id: "pair-2", engineerId: "eng2" },
+    ];
+    const result = movePairing(rows, { memberId: "wl1", column: "engineer", target: { kind: "row", rowId: "pair-2" } });
+    expect(result).toEqual([
+      { id: "pair-1" },
+      { id: "pair-2", engineerId: "wl1" },
+    ]);
+    expect(result.every((row) => row.warLeaderId !== "wl1" && row.engineerId !== "eng2")).toBe(true); // eng2 landed in neither slot (pool)
+  });
+
+  it("movePairing self-move (same row, same column) is a clean no-op", () => {
+    const rows = [{ id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" }];
+    const result = movePairing(rows, { memberId: "wl1", column: "warLeader", target: { kind: "row", rowId: "pair-1" } });
+    expect(result).toEqual(rows);
+  });
+
   it("movePairing to the unpaired pool removes the member from their row", () => {
     const rows = [{ id: "pair-1", warLeaderId: "wl1", engineerId: "eng1" }];
     const result = movePairing(rows, { memberId: "wl1", column: "warLeader", target: { kind: "unpaired" } });

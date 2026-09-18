@@ -50,11 +50,11 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
 
   function pickUp(member: Member, column: PairingColumn) {
     setHeld({ memberId: member.id, column });
-    setAnnouncement(`Picked up ${member.canonicalName}. Choose a ${columnLabel(column)} slot.`);
+    setAnnouncement(`Picked up ${member.canonicalName}. Choose any slot.`);
   }
 
   function place(column: PairingColumn, target: Target, rowNumber?: number) {
-    if (!held || held.column !== column) return;
+    if (!held) return;
     const member = memberById.get(held.memberId);
     applyMove(held.memberId, column, target);
     setHeld(undefined);
@@ -63,7 +63,7 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
 
   function handleChipPick(member: Member, column: PairingColumn, rowId: string | undefined, rowNumber: number | undefined) {
     if (held?.memberId === member.id) { setHeld(undefined); setAnnouncement(`Cancelled moving ${member.canonicalName}.`); return; }
-    if (held && held.column === column && rowId) { place(column, { kind: "row", rowId }, rowNumber); return; }
+    if (held && rowId) { place(column, { kind: "row", rowId }, rowNumber); return; }
     pickUp(member, column);
   }
 
@@ -79,7 +79,7 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
     event.preventDefault();
     const data = dragData.current ?? parseDragData(event);
     dragData.current = null;
-    if (!data || data.column !== column) return;
+    if (!data) return;
     applyMove(data.memberId, column, { kind: "row", rowId });
     setHeld(undefined);
   }
@@ -88,7 +88,7 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
     event.preventDefault();
     const data = dragData.current ?? parseDragData(event);
     dragData.current = null;
-    if (!data || data.column !== column) return;
+    if (!data) return;
     applyMove(data.memberId, column, { kind: "unpaired" });
     setHeld(undefined);
   }
@@ -162,7 +162,12 @@ function PairingChip({ member, column, rowId, rowNumber, canManage, held, onPick
   const picked = held?.memberId === member.id;
   const mismatch = rowId !== undefined ? slotMismatch(member, column) : null;
   const flagText = mismatch === null ? null : mismatch === "no profession" ? "no profession" : `currently ${mismatch}`;
-  const content = <><MemberAvatar member={member} /><MemberName member={member} /><span className="pairing-chip-power">{memberStats(member).powerDisplay}</span>{flagText && <span className="pairing-chip-flag" title={flagText}>{flagText}</span>}</>;
+  const shortFlagText = mismatch === null || mismatch === "no profession" ? flagText : `currently ${mismatch === "War Leader" ? "WL" : "ENG"}`;
+  const content = <><MemberAvatar member={member} /><MemberName member={member} />{flagText && <span className="pairing-chip-flag" title={flagText}>
+    <span className="sr-only">{flagText}</span>
+    <span aria-hidden="true" className="pairing-chip-flag-long">{flagText}</span>
+    <span aria-hidden="true" className="pairing-chip-flag-short">{shortFlagText}</span>
+  </span>}<span className="pairing-chip-power">{memberStats(member).powerDisplay}</span></>;
   if (!canManage) return <div className="pairing-chip">{content}</div>;
   return <button type="button" className="pairing-chip" draggable aria-pressed={picked}
     onDragStart={(event) => onDragStart(event, member, column)} onDragEnd={onDragEnd}
@@ -188,7 +193,7 @@ function PairingSlot({ column, row, rowNumber, member, canManage, held, onPick, 
     {member
       ? <PairingChip member={member} column={column} rowId={row.id} rowNumber={rowNumber} canManage={canManage} held={held} onPick={onPick} onDragStart={onDragStart} onDragEnd={onDragEnd} />
       : canManage
-        ? <button type="button" className="pairing-slot-empty" disabled={!held || held.column !== column} aria-label={`Empty ${columnLabel(column)} slot, row ${rowNumber}`} onClick={onEmptyActivate}>Empty</button>
+        ? <button type="button" className="pairing-slot-empty" disabled={!held} aria-label={`Empty ${columnLabel(column)} slot, row ${rowNumber}`} onClick={onEmptyActivate}>Empty</button>
         : <span className="pairing-slot-empty">—</span>}
   </div>;
 }
@@ -215,6 +220,6 @@ function PairingPool({ column, title, members, canManage, held, onPick, onPoolAc
         <PairingChip member={member} column={column} canManage={canManage} held={held} onPick={onPick} onDragStart={onDragStart} onDragEnd={onDragEnd} />
       </li>) : <li className="pairing-pool-empty">None</li>}
     </ul>
-    {canManage && <button type="button" className="pairing-pool-target" disabled={!held || held.column !== column} onClick={onPoolActivate}>Move held {columnLabel(column)} here</button>}
+    {canManage && <button type="button" className="pairing-pool-target" disabled={!held} onClick={onPoolActivate}>Move held {columnLabel(column)} here</button>}
   </section>;
 }

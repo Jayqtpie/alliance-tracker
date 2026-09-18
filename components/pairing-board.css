@@ -16,7 +16,9 @@ button.pairing-chip:hover { border-color: var(--focus); background: var(--row-ho
 .pairing-chip[aria-pressed="true"] { border-color: var(--focus); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--focus); }
 .pairing-chip .alliance-member-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pairing-chip-power { margin-left: auto; flex-shrink: 0; font-size: 11px; color: var(--muted); white-space: nowrap; }
-.pairing-chip-flag { flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: 6px; padding: 1px 6px; border: 1px solid var(--orange); border-radius: 999px; background: var(--accent-soft); color: var(--orange); font-size: 10px; font-weight: 600; white-space: nowrap; }
+.pairing-chip-flag { flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: auto; padding: 1px 6px; border: 1px solid var(--orange); border-radius: 999px; background: var(--accent-soft); color: var(--orange); font-size: 10px; font-weight: 600; white-space: nowrap; }
+.pairing-chip-flag + .pairing-chip-power { margin-left: 6px; }
+.pairing-chip-flag-short { display: none; }
 
 .pairing-slot-empty { flex: 1; display: flex; align-items: center; justify-content: center; min-height: 52px; border: 1px dashed var(--line); border-radius: 8px; color: var(--muted); font-size: 11px; background: transparent; }
 button.pairing-slot-empty:not(:disabled):hover { border-color: var(--focus); color: var(--accent-text); }
@@ -43,4 +45,9 @@ span.pairing-slot-empty { border-style: solid; }
   .pairing-row { padding: 10px 14px; }
   .pairing-row-number { justify-content: flex-start; }
   .pairing-unpaired-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 760px) {
+  .pairing-chip-flag-long { display: none; }
+  .pairing-chip-flag-short { display: inline; }
 }

@@ -73,6 +73,12 @@ describe("PairingBoard slot mismatch badge", () => {
     expect(html).toContain("currently War Leader");
   });
 
+  it("renders the abbreviated badge text for narrow widths alongside the full text for screen readers", () => {
+    const html = renderToStaticMarkup(<PairingBoard canManage state={mismatchState} onSaved={() => {}} />);
+    expect(html).toContain("currently WL"); // always rendered, CSS hides it above 760px
+    expect((html.match(/currently War Leader/g) ?? []).length).toBe(3); // title attribute + sr-only span + desktop long-text span
+  });
+
   it("renders no badge for a member whose profession matches the column", () => {
     const html = renderToStaticMarkup(<PairingBoard canManage state={mismatchState} onSaved={() => {}} />);
     const kaelIndex = html.indexOf("Kael");

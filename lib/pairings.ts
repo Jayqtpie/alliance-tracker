@@ -87,16 +87,22 @@ export function movePairing(
   rows: PairingRow[],
   move: { memberId: string; column: PairingColumn; target: { kind: "row"; rowId: string } | { kind: "unpaired" } },
 ): PairingRow[] {
-  const field = FIELD_BY_COLUMN[move.column];
-  let origin: string | undefined;
+  let origin: { rowId: string; column: PairingColumn } | undefined;
   let working = rows.map((row) => {
-    if (row[field] !== move.memberId) return row;
-    origin = row.id;
-    return { ...row, [field]: undefined };
+    let next = row;
+    for (const column of ["warLeader", "engineer"] as const) {
+      const field = FIELD_BY_COLUMN[column];
+      if (next[field] === move.memberId) {
+        origin = { rowId: row.id, column };
+        next = { ...next, [field]: undefined };
+      }
+    }
+    return next;
   });
 
   if (move.target.kind === "unpaired") return trimTrailingEmpty(working);
 
+  const field = FIELD_BY_COLUMN[move.column];
   const targetRowId = move.target.rowId;
   let targetRow = working.find((row) => row.id === targetRowId);
   if (!targetRow) {
@@ -107,7 +113,9 @@ export function movePairing(
 
   working = working.map((row) => {
     if (row.id === targetRowId) return { ...row, [field]: move.memberId };
-    if (displaced && origin !== undefined && row.id === origin) return { ...row, [field]: displaced };
+    if (displaced && origin !== undefined && origin.column === move.column && row.id === origin.rowId) {
+      return { ...row, [field]: displaced };
+    }
     return row;
   });
 
