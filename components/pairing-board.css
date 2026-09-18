@@ -6,7 +6,9 @@
 .pairing-col-head { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; color: var(--muted); }
 .pairing-row-number { display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--muted); }
 
-.pairing-slot { display: flex; min-height: 52px; border-radius: 8px; }
+/* Grid and flex items default to min-width:auto, which refuses to shrink below the
+   content width. Without these the long names overflow the column instead of ellipsising. */
+.pairing-slot { display: flex; min-width: 0; min-height: 52px; border-radius: 8px; }
 .pairing-slot[data-dragover] { outline: 2px dashed var(--focus); outline-offset: -2px; background: var(--accent-soft); }
 
 .pairing-chip { flex: 1; display: flex; align-items: center; gap: 8px; min-width: 0; padding: 6px 10px; border: 1px solid var(--panel-border); border-radius: 8px; background: var(--surface); color: var(--ink); text-align: left; }
@@ -14,6 +16,7 @@ button.pairing-chip { cursor: grab; }
 button.pairing-chip:hover { border-color: var(--focus); background: var(--row-hover); }
 .pairing-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .pairing-chip[aria-pressed="true"] { border-color: var(--focus); background: var(--accent-soft); box-shadow: inset 0 0 0 1px var(--focus); }
+.pairing-chip .member-nameplate { min-width: 0; }
 .pairing-chip .alliance-member-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .pairing-chip-power { margin-left: auto; flex-shrink: 0; font-size: 11px; color: var(--muted); white-space: nowrap; }
 .pairing-chip-flag { flex-shrink: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; margin-left: auto; padding: 1px 6px; border: 1px solid var(--orange); border-radius: 999px; background: var(--accent-soft); color: var(--orange); font-size: 10px; font-weight: 600; white-space: nowrap; }
@@ -39,15 +42,12 @@ span.pairing-slot-empty { border-style: solid; }
 .pairing-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
 .pairing-dirty-note { margin-right: auto; color: var(--muted); font-size: 12px; }
 
-@media (max-width: 640px) {
-  .pairing-board-head, .pairing-row { grid-template-columns: 1fr; gap: 6px; }
-  .pairing-row-number-head { display: none; }
-  .pairing-row { padding: 10px 14px; }
-  .pairing-row-number { justify-content: flex-start; }
-  .pairing-unpaired-grid { grid-template-columns: 1fr; }
-}
-
 @media (max-width: 760px) {
   .pairing-chip-flag-long { display: none; }
   .pairing-chip-flag-short { display: inline; }
+  .pairing-board-head, .pairing-row { grid-template-columns: 26px 1fr 1fr; gap: 6px; padding: 8px 10px; }
+  .pairing-chip-power, .pairing-chip-flag + .pairing-chip-power {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+  .pairing-unpaired-grid { grid-template-columns: 1fr; }
 }
