@@ -3,6 +3,7 @@ import { AllianceMark } from "@/components/alliance-mark";
 import { TrackerApp } from "@/components/tracker-app";
 import { getAccessRole } from "@/lib/auth";
 import { bridgeConfigured } from "@/lib/bridge-auth";
+import { openAiExtractionEnabled } from "@/lib/extract";
 import { getState, storageMode } from "@/lib/store";
 
 import { stateForRole } from "@/lib/state-view";
@@ -37,7 +38,7 @@ export default async function Home() {
       canManage={role === "admin"}
       initialState={stateForRole(state, role)}
       storageMode={storageMode()}
-      ocrConfigured={Boolean(process.env.OPENAI_API_KEY)}
+      ocrConfigured={openAiExtractionEnabled && Boolean(process.env.OPENAI_API_KEY)}
       bridgeConfigured={bridgeConfigured()}
     />
   );

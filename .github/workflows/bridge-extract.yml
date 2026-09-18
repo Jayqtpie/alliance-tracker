@@ -1,0 +1,38 @@
+# Reads queued screenshot jobs with Claude Code on the owner's Claude subscription,
+# replacing the always-on PC worker. Started by the app when a job is queued.
+name: Bridge extraction
+
+on:
+  repository_dispatch:
+    types: [bridge-job]
+  workflow_dispatch:
+
+# One run at a time; a queued run drains every pending job, so extra triggers can wait.
+concurrency:
+  group: bridge-extract
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Install Claude Code
+        run: |
+          curl -fsSL https://claude.ai/install.sh | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: Process queued jobs
+        run: node scripts/bridge-worker.mjs --once
+        env:
+          BRIDGE_URL: ${{ secrets.BRIDGE_URL }}
+          BRIDGE_SECRET: ${{ secrets.BRIDGE_SECRET }}
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}

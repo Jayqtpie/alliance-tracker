@@ -14,7 +14,7 @@ export function bridgeJobView(job: BridgeJob): BridgeJobView {
     updatedAt: job.updatedAt,
     expiresAt: job.expiresAt,
     attempts: job.attempts,
-    error: job.error ? "The PC extraction failed. Check the worker terminal and retry." : undefined,
+    error: job.error ? "Extraction failed. Retry, or check the latest Bridge extraction run on GitHub." : undefined,
     rows: job.status === "completed" ? job.rows : undefined,
   };
 }

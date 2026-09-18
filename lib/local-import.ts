@@ -14,8 +14,8 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export function parseLocalExtraction(value: unknown): ExtractedRow[] {
   const candidate = Array.isArray(value) ? value : isRecord(value) ? value.rows : undefined;
-  if (!Array.isArray(candidate)) throw new Error("This file does not contain a Codex rows array.");
-  if (!candidate.length) throw new Error("The Codex extraction file contains no rows.");
+  if (!Array.isArray(candidate)) throw new Error("This file does not contain an extraction rows array.");
+  if (!candidate.length) throw new Error("The extraction file contains no rows.");
   if (candidate.length > 300) throw new Error("Import no more than 300 rows at a time.");
 
   return candidate.map((value, index) => {

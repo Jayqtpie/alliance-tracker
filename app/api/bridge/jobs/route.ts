@@ -5,6 +5,7 @@ import { isAdmin } from "@/lib/auth";
 import { blobToken } from "@/lib/blob";
 import { bridgeJobView, retryBridgeJob, BridgeValidationError } from "@/lib/bridge";
 import { getBridgeQueue, mutateBridgeQueue } from "@/lib/bridge-store";
+import { triggerBridgeExtraction } from "@/lib/github-dispatch";
 import type { BridgeJob } from "@/lib/bridge-types";
 
 export const runtime = "nodejs";
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
       if (jobs.some((item) => item.id === job.id)) throw new BridgeValidationError("This bridge job already exists.");
       jobs.push(job);
     });
+    await triggerBridgeExtraction();
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not queue this capture." }, { status: 409 });
@@ -76,6 +78,7 @@ export async function PATCH(request: Request) {
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
     const job = await mutateBridgeQueue((jobs) => retryBridgeJob(jobs, parsed.data.id));
+    await triggerBridgeExtraction();
     return NextResponse.json({ job: bridgeJobView(job) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not retry this bridge job." }, { status: 409 });

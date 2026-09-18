@@ -3,6 +3,10 @@ import OpenAI from "openai";
 import { z } from "zod";
 import type { ExtractedRow } from "@/lib/types";
 
+// OpenAI screenshot extraction is kept but switched off; Claude reads screenshots
+// through the bridge queue instead. Set to true (with OPENAI_API_KEY) to restore it.
+export const openAiExtractionEnabled = false;
+
 const outputSchema = z.object({
   rows: z.array(
     z.object({

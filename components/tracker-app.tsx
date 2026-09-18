@@ -1032,12 +1032,12 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
         body: JSON.stringify({ id: jobId, files: uploadedFiles }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not create the PC bridge job.");
+      if (!response.ok) throw new Error(body.error || "Could not create the extraction job.");
       setBridgeProgress(100);
       setBridgeJob(body.job as BridgeJobView);
       window.localStorage.setItem(bridgeJobStorageKey, jobId);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not queue this capture for the PC worker.");
+      setError(reason instanceof Error ? reason.message : "Could not queue this capture for extraction.");
     } finally {
       setQueueing(false);
     }
@@ -1086,14 +1086,14 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     if (!file) return;
     setError("");
     try {
-      if (file.size > 2_000_000) throw new Error("The Codex JSON file is unexpectedly large.");
+      if (file.size > 2_000_000) throw new Error("The extraction JSON file is unexpectedly large.");
       const parsed = parseLocalExtractionText(await file.text());
       const merged = dedupeRows(parsed);
       setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
       setWarnings(merged.warnings);
       setSourceType("local-codex");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not import the Codex extraction file.");
+      setError(reason instanceof Error ? reason.message : "Could not import the extraction file.");
     } finally {
       if (localImportInput.current) localImportInput.current.value = "";
     }
@@ -1143,8 +1143,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
 
   return (
     <div className="page-stack snapshot-editor">
-      <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload screenshots for cloud extraction, import a local Codex result, or paste rows manually.</p></div></section>
-      {!ocrConfigured && <div className="review-banner warning"><CircleAlert size={18} /><span><strong>Cloud extraction is not configured.</strong> You can still import Codex JSON generated on an officer&apos;s computer or paste rows manually.</span></div>}
+      <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload screenshots for Claude extraction, import a local extraction file, or paste rows manually.</p></div></section>
       <section className="panel import-meta">
         <label><span>Capture date</span><input type="date" value={date} onChange={(event) => { setDate(event.target.value); setStatus(new Date(`${event.target.value}T12:00:00Z`).getUTCDay() === 6 ? "final" : "live"); }} /></label>
         <label><span>Snapshot type</span><select value={status} onChange={(event) => setStatus(event.target.value as "live" | "final")}><option value="live">Live Mon–Fri</option><option value="final">Final Saturday</option></select></label>
@@ -1156,21 +1155,21 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
           <input ref={input} hidden multiple type="file" accept="image/*,video/*" onChange={(event) => void addFiles([...(event.target.files || [])])} />
           <button className="button secondary" disabled={preparingVideo} onClick={() => input.current?.click()}>{preparingVideo ? "Preparing recording…" : "Choose screenshots or video"}</button>
           {files.length > 0 && <div className="file-list"><div>{sourceType === "video" ? <FileVideo size={16} /> : <FileImage size={16} />}<strong>{files.length} frame{files.length === 1 ? "" : "s"} ready</strong></div><button onClick={() => { setFiles([]); setSourceType("screenshots"); }}><X size={15} /> Clear</button></div>}
-          <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo || !ocrConfigured} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract with cloud API</>}</button>
-          {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? `Uploading frames… ${bridgeProgress}%` : <><Cloud size={16} /> Queue for PC Codex</>}</button>}
+          {ocrConfigured && <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract with cloud API</>}</button>}
+          {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? `Uploading frames… ${bridgeProgress}%` : <><Cloud size={16} /> Extract with Claude</>}</button>}
           {queueing && <div className="bridge-progress" aria-label={`Upload ${bridgeProgress}% complete`}><span style={{ width: `${bridgeProgress}%` }} /></div>}
           {bridgeJob && <div className={`bridge-status ${bridgeJob.status}`}>
-            <strong>{bridgeJob.status === "pending" ? "Waiting for PC worker" : bridgeJob.status === "processing" ? "Codex is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
-            <span>{bridgeJob.status === "pending" ? "Start npm run bridge:worker on the PC." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
+            <strong>{bridgeJob.status === "pending" ? "Waiting for Claude" : bridgeJob.status === "processing" ? "Claude is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
+            <span>{bridgeJob.status === "pending" ? "Extraction starts automatically, usually within a few minutes." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
             {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
             {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {retryingBridge ? "Requeueing…" : "Retry retained upload"}</button>}
           </div>}
-          {!bridgeConfigured && <p className="bridge-unavailable">The PC bridge appears after private Blob storage and a worker secret are configured.</p>}
+          {!bridgeConfigured && <p className="bridge-unavailable">Claude extraction appears after private Blob storage and a worker secret are configured.</p>}
         </div>
         <div className="panel manual-paste">
-          <p className="eyebrow">LOCAL CODEX</p><h3>Import an extracted JSON file</h3><p>Generate it on a signed-in computer with <code>npm run extract:local</code>. Screenshots never pass through Vercel.</p>
+          <p className="eyebrow">LOCAL CLAUDE</p><h3>Import an extracted JSON file</h3><p>Generate it on a computer signed in to Claude Code with <code>npm run extract:local</code>. Screenshots never pass through Vercel.</p>
           <input ref={localImportInput} hidden type="file" accept="application/json,.json" onChange={(event) => void importLocalExtraction(event.target.files?.[0])} />
-          <button className="button secondary wide" onClick={() => localImportInput.current?.click()}><FileJson size={16} /> Import Codex JSON</button>
+          <button className="button secondary wide" onClick={() => localImportInput.current?.click()}><FileJson size={16} /> Import extraction JSON</button>
           <div className="import-divider"><span>or paste manually</span></div>
           <p>Accepts CSV or tab-separated rank, name and points.</p><textarea value={manual} onChange={(event) => setManual(event.target.value)} placeholder={'1,Super McNasty,74,831,650\n2,Retired Goblin,49,744,827'} /><button className="button secondary wide" disabled={!manual.trim()} onClick={parseManual}>Build review table</button>
         </div>

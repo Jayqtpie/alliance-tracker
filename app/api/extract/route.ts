@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdmin } from "@/lib/auth";
 import { dedupeRows } from "@/lib/tracker";
-import { extractLeaderboard } from "@/lib/extract";
+import { extractLeaderboard, openAiExtractionEnabled } from "@/lib/extract";
 import { getState, setState } from "@/lib/store";
 import { retainUpload } from "@/lib/uploads";
 import type { UploadRecord } from "@/lib/types";
@@ -19,6 +19,7 @@ async function inBatches<T, R>(items: T[], size: number, work: (item: T) => Prom
 
 export async function POST(request: Request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
+  if (!openAiExtractionEnabled) return NextResponse.json({ error: "Cloud API extraction is disabled." }, { status: 503 });
   if (!process.env.OPENAI_API_KEY) {
     return NextResponse.json(
       { error: "Screenshot extraction needs OPENAI_API_KEY. Manual paste is available without it." },

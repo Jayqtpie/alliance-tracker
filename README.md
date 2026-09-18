@@ -7,8 +7,8 @@ A mobile-friendly Alliance Duel tracker for alliance leadership. Officers can up
 - Separate admin and read-only viewer passcodes with signed, HTTP-only role sessions
 - Reports protected from deletion by default, with persistent admin-controlled padlocks
 - First-time alliance setup, editable name/tag/server, and an empty roster for new installations
-- Multi-image extraction through the OpenAI Responses API
-- Optional local Codex CLI extraction using an officer's ChatGPT sign-in
+- Multi-image extraction with Claude Code on a Claude subscription, run by GitHub Actions
+- Local Claude Code extraction as a manual backup
 - On-device screen-recording frame extraction (the original video is never uploaded)
 - Automatic removal of the repeated green pinned-player card
 - Rank deduplication, gap/order warnings, likely name-change suggestions, large-change checks, confidence flags, and human review
@@ -29,65 +29,53 @@ npm install
 npm run dev
 ```
 
-Without a connected Vercel Blob store, development data is stored under `.data/` and is deliberately ignored by Git. Without `OPENAI_API_KEY`, the dashboard still supports manual CSV/tab-separated imports.
+Without a connected Vercel Blob store, development data is stored under `.data/` and is deliberately ignored by Git. Without extraction configured, the dashboard still supports manual CSV/tab-separated imports.
 
-## Local Codex extraction (no API key)
+## Claude extraction
 
-The original cloud extractor remains available. As an alternative, an officer can process screenshots on a Windows, macOS, or Linux computer using a locally authenticated Codex CLI, then import the generated JSON into the deployed tracker.
+Screenshots are read by Claude Code running on the owner's Claude subscription, not a paid API key. Queued captures are processed by a GitHub Actions workflow, so no PC needs to be on. The same extraction script also runs locally as a manual backup.
 
-1. Install the Codex CLI and sign in once with your ChatGPT account:
+Each screenshot is read together with overlapping zoomed strips of itself, so small and non-Latin commander names are read at full resolution. Extraction uses Claude Opus with high effort, three screenshots per batch, and one focused retry when a batch returns no rows.
+
+### Queue extraction (GitHub Actions)
+
+1. On any computer signed in to Claude Code, run `claude setup-token` and copy the long-lived token.
+2. In this GitHub repository, open **Settings > Secrets and variables > Actions** and add:
+   - `CLAUDE_CODE_OAUTH_TOKEN`: the token from step 1
+   - `BRIDGE_URL`: this alliance deployment URL
+   - `BRIDGE_SECRET`: the same value configured in Vercel
+3. Create a fine-grained GitHub token limited to this repository with **Contents: read and write**. In Vercel, add it as `GITHUB_DISPATCH_TOKEN` and set `GITHUB_REPO` to `owner/name`.
+
+Then, from the phone or any browser:
+
+1. Open **New import** and choose screenshots or a screen recording. The browser turns a recording into up to 18 frames on the device, so the original video is never uploaded.
+2. Choose **Extract with Claude**. The frames are uploaded to the private Vercel Blob store and the **Bridge extraction** workflow starts.
+3. The page changes from waiting, to processing, to rows ready, usually within a few minutes. Review the rows and publish.
+
+The workflow can also be started by hand from the **Actions** tab. It processes every waiting job and then stops. The repository is public, so workflow logs are public. They show job IDs and row counts only, never names or screenshots. Queue records and private frames expire after five days.
+
+### Local extraction (manual backup)
+
+1. Install [Claude Code](https://claude.com/claude-code) and sign in once with your Claude subscription by running `claude`.
+2. From this repository, run the extractor with one or more screenshots:
 
    ```powershell
-   codex login
-   codex login status
-   ```
-
-2. From this repository, run the companion with one or more screenshots:
-
-   ```powershell
-   npm run extract:local -- "C:\path\rank-01.png" "C:\path\rank-02.png"
+   npm run extract:local -- "C:\pathank-01.png" "C:\pathank-02.png"
    ```
 
    To choose the output filename:
 
    ```powershell
-   npm run extract:local -- --out "C:\path\tuesday-results.json" "C:\path\rank-01.png"
+   npm run extract:local -- --out "C:\path	uesday-results.json" "C:\pathank-01.png"
    ```
 
-3. Open **New import** in Alliance Manager, choose **Import Codex JSON**, review the rows, and publish the snapshot.
+3. Open **New import** in Alliance Manager, choose **Import extraction JSON**, review the rows, and publish the snapshot.
 
-The companion uses the Codex authentication available in the terminal where it is launched and refuses an explicitly detected API-key login. It runs Codex non-interactively with read-only sandboxing, retains no Codex session, and writes only the result JSON. Screenshots are sent from that computer to Codex and are not uploaded to Alliance Manager or retained in Vercel.
+The extractor removes `ANTHROPIC_API_KEY` from Claude's environment and refuses an API-key login, so it always uses the subscription. Claude may only read the copied screenshots. The extractor keeps no session and writes only the result JSON. Choose a different model with `--model <name>`.
 
-Local screenshot extraction defaults to **GPT-5.6 Sol** (`gpt-5.6-sol`) with **high reasoning**, reading at most six screenshots per batch, including the retry when no rows are found. This also applies to **Queue for PC Codex**, which launches the same extraction script for each job. It does not change your general Codex model setting. Manual runs can select a different model with `--model <name>`.
+A PC can still act as the queue worker instead of GitHub Actions. Put `BRIDGE_URL` and `BRIDGE_SECRET` in `.env.bridge.local`, then run `npm run bridge:worker`. Add `-- --once` to process every waiting job once and exit.
 
-## Phone-to-PC Codex bridge
-
-The queue bridge lets an officer choose a screen recording directly from the deployed Alliance Manager on an iPhone. The browser extracts JPEG frames on the phone, so the original recording never leaves the device. Those frames are uploaded directly to the private Vercel Blob store and wait for a trusted PC worker.
-
-On the PC, add the worker settings to `.env.bridge.local`:
-
-```dotenv
-BRIDGE_URL=https://your-alliance-app.vercel.app
-BRIDGE_SECRET=the-same-value-as-vercel
-```
-
-`BRIDGE_SECRET` is recommended as a separate long random value configured in Vercel Production. If it is absent, the deployed app and local worker both fall back to `OFFICER_PASSCODE`.
-
-Start the worker from this repository and leave the terminal open:
-
-```powershell
-npm run bridge:worker
-```
-
-Then, from the phone:
-
-1. Open **New import** and choose the screen recording.
-2. Wait while the browser prepares up to 18 local frames.
-3. Choose **Queue for PC Codex**.
-4. Keep the PC worker running. The phone page changes from waiting, to processing, to rows ready.
-5. Choose **Load extracted rows**, review them, and publish.
-
-The worker receives only short-lived frame files through authenticated endpoints. Queue records and private frames expire after five days. Run a one-shot worker health check with `npm run bridge:worker -- --once`.
+OpenAI screenshot extraction is still in the code but switched off (`openAiExtractionEnabled` in `lib/extract.ts`).
 
 ## Vercel Blob setup
 
@@ -105,12 +93,14 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 | `OFFICER_PASSCODE` | Configured admin passcode, 1–256 characters; no default |
 | `VIEWER_PASSCODE` | Optional viewer passcode, 1–256 characters; unset disables viewers |
 | `SESSION_SECRET` | Required random signing secret, at least 32 characters; no default |
-| `OPENAI_API_KEY` | Reads uploaded leaderboard screenshots |
-| `OPENAI_VISION_MODEL` | Optional; defaults to `gpt-5-mini` |
+| `OPENAI_API_KEY` | Unused while OpenAI extraction is switched off |
+| `OPENAI_VISION_MODEL` | Unused while OpenAI extraction is switched off |
 | `BLOB_READ_WRITE_TOKEN` / `BLOB1_READ_WRITE_TOKEN` | Added by Vercel when the private Blob store is connected |
 | `CRON_SECRET` | Protects the scheduled cleanup endpoint |
-| `BRIDGE_SECRET` | Authenticates the local PC queue worker; falls back to `OFFICER_PASSCODE` |
-| `BRIDGE_URL` | Required local worker target: this alliance deployment URL |
+| `BRIDGE_SECRET` | Authenticates the queue worker (GitHub Actions or PC); falls back to `OFFICER_PASSCODE` |
+| `BRIDGE_URL` | Queue worker target: this alliance deployment URL |
+| `GITHUB_DISPATCH_TOKEN` | Starts the GitHub Actions extraction when a capture is queued |
+| `GITHUB_REPO` | This repository as `owner/name` |
 
 After connecting this repository to Vercel, deploy normally. [`vercel.json`](vercel.json) schedules a daily cleanup request. Upload metadata and the original private blob are removed after five days; published ranking data remains.
 

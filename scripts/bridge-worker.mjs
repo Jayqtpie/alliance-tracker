@@ -1,4 +1,4 @@
-import { spawnSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { hostname, tmpdir } from "node:os";
 import { extname, join, resolve } from "node:path";
@@ -77,8 +77,14 @@ async function processJob(job) {
     const images = await downloadFiles(job, folder);
 
     const output = join(folder, "result.json");
-    const extraction = spawnSync(process.execPath, [extractor, "--out", output, ...images], { stdio: "inherit" });
-    if (extraction.error || extraction.status !== 0) throw new Error("Local Codex extraction did not complete.");
+    // Async so the event loop keeps servicing pooled connections; a blocking run
+    // leaves stale sockets that reset the "complete" request (ECONNRESET).
+    const status = await new Promise((resolvePromise) => {
+      const extraction = spawn(process.execPath, [extractor, "--out", output, ...images], { stdio: "inherit" });
+      extraction.on("error", () => resolvePromise(-1));
+      extraction.on("exit", (code) => resolvePromise(code));
+    });
+    if (status !== 0) throw new Error("Claude extraction did not complete.");
     const parsed = JSON.parse(readFileSync(output, "utf8"));
     if (!Array.isArray(parsed.rows) || !parsed.rows.length) {
       const firstFile = job.files[0]?.name || "the retained upload";
@@ -106,18 +112,23 @@ async function processJob(job) {
 console.log(`Alliance Manager bridge worker ${workerId}`);
 console.log(`Watching ${bridgeUrl}. Press Ctrl+C to stop.`);
 
-do {
+// With --once, keep claiming until the queue is empty, then exit.
+while (true) {
+  let claimed = false;
   try {
     const body = await request("/api/bridge/worker", {
       method: "POST",
       headers,
       body: JSON.stringify({ action: "claim", workerId }),
     });
-    if (body?.job) await processJob(body.job);
-    else if (once) console.log("No bridge jobs are waiting.");
+    if (body?.job) {
+      claimed = true;
+      await processJob(body.job);
+    } else if (once) console.log("No bridge jobs are waiting.");
   } catch (error) {
     console.error(error instanceof Error ? error.message : error);
     if (once) process.exitCode = 1;
   }
+  if (once && (!claimed || process.exitCode)) break;
   if (!once) await wait(10_000);
-} while (!once);
+}
