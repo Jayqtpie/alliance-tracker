@@ -24,8 +24,12 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 24
-          cache: npm
-      - run: npm ci
+      # The worker needs only sharp. npm ci would install the whole app and trips on
+      # wasm-only optional packages the Windows-generated lockfile leaves out.
+      - name: Install sharp
+        run: |
+          npm install --prefix "$RUNNER_TEMP/deps" --no-audit --no-fund "sharp@$(node -p "require('./package.json').devDependencies.sharp")"
+          ln -s "$RUNNER_TEMP/deps/node_modules" node_modules
       - name: Install Claude Code
         run: |
           curl -fsSL https://claude.ai/install.sh | bash
