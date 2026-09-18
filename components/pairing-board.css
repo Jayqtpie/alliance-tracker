@@ -45,9 +45,13 @@ span.pairing-slot-empty { border-style: solid; }
 @media (max-width: 760px) {
   .pairing-chip-flag-long { display: none; }
   .pairing-chip-flag-short { display: inline; }
-  .pairing-board-head, .pairing-row { grid-template-columns: 26px 1fr 1fr; gap: 6px; padding: 8px 10px; }
+  .pairing-board-head, .pairing-row { grid-template-columns: 18px 1fr 1fr; gap: 4px; padding: 8px 6px; }
+  .pairing-row-number { font-size: 10px; }
   .pairing-chip-power, .pairing-chip-flag + .pairing-chip-power {
     position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
   }
+  .pairing-chip:has(.pairing-chip-flag) { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; column-gap: 8px; row-gap: 1px; }
+  .pairing-chip:has(.pairing-chip-flag) > .alliance-avatar { grid-row: 1 / span 2; }
+  .pairing-chip:has(.pairing-chip-flag) .pairing-chip-flag { margin-left: 0; justify-self: start; }
   .pairing-unpaired-grid { grid-template-columns: 1fr; }
 }
