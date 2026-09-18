@@ -19,6 +19,8 @@
 .alliance-identity-preview { display: flex; align-items: center; gap: 20px; padding: 28px; border-bottom: 1px solid var(--line); }
 .alliance-identity-preview strong { display: block; font-size: 23px; letter-spacing: -.035em; overflow-wrap: anywhere; }
 .alliance-identity-preview p { color: var(--muted); margin: 8px 0 0; font-size: 13px; }
+.alliance-lock-toggle { margin-left: auto; flex-shrink: 0; }
+@media (max-width: 600px) { .alliance-identity-preview { flex-wrap: wrap; }.alliance-lock-toggle { width: 100%; justify-content: center; } }
 .alliance-settings-form { padding: 28px; display: grid; gap: 22px; }
 .alliance-settings-form fieldset { display: grid; gap: 22px; margin: 0; padding: 0; min-width: 0; border: 0; }
 .alliance-settings-form label { min-width: 0; display: grid; align-content: start; gap: 9px; font-size: 12px; font-weight: 650; }

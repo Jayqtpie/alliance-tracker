@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Check, ShieldCheck } from "lucide-react";
+import { ArrowRight, Check, Lock, LockOpen, ShieldCheck } from "lucide-react";
 import { AllianceMark } from "./alliance-mark";
 import { allianceNeedsSetup, allianceSchema } from "@/lib/alliance";
 import type { TrackerState } from "@/lib/types";
@@ -9,6 +9,8 @@ import type { TrackerState } from "@/lib/types";
 export function AllianceSettings({ state, onSaved }: { state: TrackerState; onSaved: (state: TrackerState) => void }) {
   const setup = allianceNeedsSetup(state.alliance);
   const [alliance, setAlliance] = useState(state.alliance);
+  // Existing settings open locked so they cannot be changed by accident; saving re-mounts (new key) and re-locks.
+  const [locked, setLocked] = useState(!setup);
   const [busy, setBusy] = useState(false);
   const [processingEmblem, setProcessingEmblem] = useState(false);
   const [error, setError] = useState("");
@@ -75,9 +77,10 @@ export function AllianceSettings({ state, onSaved }: { state: TrackerState; onSa
         <div className="alliance-identity-preview">
           <AllianceMark alliance={alliance} />
           <div><strong>{alliance.name || "Your alliance"}</strong><p>{alliance.tag || "TAG"} · Server {alliance.server || "—"}</p></div>
+          {!setup && <button type="button" className="button ghost alliance-lock-toggle" aria-pressed={locked} onClick={() => { setLocked(!locked); setAlliance(state.alliance); setError(""); }} disabled={busy || processingEmblem}>{locked ? <><Lock size={16} /> Unlock to edit</> : <><LockOpen size={16} /> Lock</>}</button>}
         </div>
         <form onSubmit={save} className="alliance-settings-form">
-          <fieldset disabled={busy || processingEmblem}>
+          <fieldset disabled={locked || busy || processingEmblem}>
             <div className="alliance-emblem-controls">
               <label htmlFor="alliance-emblem">Alliance emblem<input id="alliance-emblem" type="file" accept="image/png,image/jpeg,image/webp" onChange={chooseEmblem} /><small>{processingEmblem ? "Preparing emblem…" : "Keep the default badge or choose your own. PNG, JPG or WebP, up to 5 MB."}</small></label>
               {alliance.emblem && <button type="button" className="button ghost" onClick={() => setAlliance((current) => ({ ...current, emblem: null }))}>Use default emblem</button>}
@@ -89,7 +92,7 @@ export function AllianceSettings({ state, onSaved }: { state: TrackerState; onSa
             </div>
           </fieldset>
           {error && <p className="form-error-box" role="alert">{error}</p>}
-          <div className="alliance-settings-footer"><p><ShieldCheck size={17} /> {setup ? "A fresh roster, ready for your commanders." : "Your roster and score history stay connected."}</p><button className="button primary" disabled={busy || processingEmblem}>{busy ? "Saving…" : setup ? "Create alliance workspace" : "Save changes"}{setup ? <ArrowRight size={16} /> : <Check size={16} />}</button></div>
+          <div className="alliance-settings-footer"><p><ShieldCheck size={17} /> {setup ? "A fresh roster, ready for your commanders." : "Your roster and score history stay connected."}</p><button className="button primary" disabled={locked || busy || processingEmblem}>{busy ? "Saving…" : setup ? "Create alliance workspace" : "Save changes"}{setup ? <ArrowRight size={16} /> : <Check size={16} />}</button></div>
         </form>
       </section>
     </div>
