@@ -123,6 +123,12 @@ export interface OperationsState {
   trainAssignments: TrainAssignment[];
 }
 
+export interface PairingRow {
+  id: string;
+  warLeaderId?: string;
+  engineerId?: string;
+}
+
 export interface TrackerState {
   version: number;
   rosterImport?: string;
@@ -137,6 +143,7 @@ export interface TrackerState {
   snapshots: Snapshot[];
   uploads: UploadRecord[];
   operations?: OperationsState;
+  pairings?: PairingRow[];
   updatedAt: string;
 }
 

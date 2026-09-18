@@ -46,7 +46,8 @@ import { useRouter } from "next/navigation";
 import { AllianceSettings } from "@/components/alliance-settings";
 import { allianceNeedsSetup, allianceFilePrefix } from "@/lib/alliance";
 import { AllianceMark } from "@/components/alliance-mark";
-import { AllianceRoster, MemberAvatar } from "@/components/alliance-roster";
+import { MemberAvatar } from "@/components/alliance-roster";
+import { MembersView } from "@/components/members-view";
 import { MergeMemberDialog } from "@/components/merge-member-dialog";
 import { DeleteMemberDialog } from "./delete-member-dialog";
 import { memberStats } from "@/lib/member-stats";
@@ -589,7 +590,7 @@ export function TrackerApp({
           />}
         </>}
         {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <AllianceRoster canManage={canManage} onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>
       {selectedMember && <CommanderProfile canManage={canManage} member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
