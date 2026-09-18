@@ -132,6 +132,7 @@ export interface PairingRow {
 export interface TrackerState {
   version: number;
   rosterImport?: string;
+  pairingImport?: string;
   memberProfileUpdates?: string[];
   alliance: {
     name: string;

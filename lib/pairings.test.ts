@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { defaultPairings, movePairing, nextRowId, resolvePairings } from "./pairings";
+import { defaultPairings, movePairing, nextRowId, resolvePairings, slotMismatch } from "./pairings";
 import type { Member } from "./types";
 
 const member = (id: string, profession: string | null, power: number | null, overrides: Partial<Member> = {}): Member => ({
@@ -21,13 +21,24 @@ describe("pairings", () => {
     ]);
   });
 
-  it("resolvePairings clears a slot when the member was deleted, went inactive, or changed profession", () => {
+  it("resolvePairings clears a slot when the member was deleted or went inactive, but keeps a profession change", () => {
     const wl = member("wl1", "War Leader", 100);
     const rows = [{ id: "pair-1", warLeaderId: "wl1" }];
 
     expect(resolvePairings([], rows).rows).toEqual([]); // wl1 deleted entirely, row trimmed once empty
     expect(resolvePairings([{ ...wl, active: false }], rows).rows).toEqual([]);
-    expect(resolvePairings([{ ...wl, manualStats: { ...wl.manualStats!, profession: "Engineer" } }], rows).rows).toEqual([]);
+    expect(resolvePairings([{ ...wl, manualStats: { ...wl.manualStats!, profession: "Engineer" } }], rows).rows).toEqual([
+      { id: "pair-1", warLeaderId: "wl1" },
+    ]);
+  });
+
+  it("resolvePairings retains a member slotted against a mismatched profession, and puts them in neither pool", () => {
+    const members = [member("wl1", "War Leader", 100), member("eng1", "Engineer", 200)];
+    const rows = [{ id: "pair-1", warLeaderId: "eng1" }]; // Engineer deliberately slotted as War Leader
+    const result = resolvePairings(members, rows);
+    expect(result.rows).toEqual([{ id: "pair-1", warLeaderId: "eng1" }]);
+    expect(result.unpairedWarLeaders.map((m) => m.id)).toEqual(["wl1"]); // real war leader still pooled
+    expect(result.unpairedEngineers).toEqual([]); // eng1 is slotted, so absent from its own pool
   });
 
   it("resolvePairings puts un-slotted active members into the right pool sorted by power desc, and counts withoutProfession", () => {
@@ -41,6 +52,19 @@ describe("pairings", () => {
     expect(result.unpairedWarLeaders.map((m) => m.id)).toEqual(["wl2", "wl1"]);
     expect(result.unpairedEngineers.map((m) => m.id)).toEqual(["eng1"]);
     expect(result.withoutProfession).toBe(1);
+  });
+
+  it("withoutProfession excludes a slotted no-profession member but counts an un-slotted one", () => {
+    const members = [member("wl1", "War Leader", 100), member("none1", null, 50), member("none2", null, 40)];
+    const rows = [{ id: "pair-1", warLeaderId: "wl1", engineerId: "none1" }]; // no-profession member deliberately slotted
+    const result = resolvePairings(members, rows);
+    expect(result.withoutProfession).toBe(1); // only none2, not the slotted none1
+  });
+
+  it("slotMismatch returns null on a match, the profession on a mismatch, and \"no profession\" for null", () => {
+    expect(slotMismatch(member("wl1", "War Leader", 100), "warLeader")).toBeNull();
+    expect(slotMismatch(member("eng1", "Engineer", 200), "warLeader")).toBe("Engineer");
+    expect(slotMismatch(member("none1", null, 50), "engineer")).toBe("no profession");
   });
 
   it("resolvePairings trims trailing empty rows but preserves a gap in the middle", () => {

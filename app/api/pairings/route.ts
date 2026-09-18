@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
-import { memberStats } from "@/lib/member-stats";
 
 const schema = z.object({
   rows: z.array(z.object({
@@ -12,8 +11,6 @@ const schema = z.object({
   })).max(250),
   version: z.number().int().positive(),
 });
-
-const PROFESSION_BY_FIELD = { warLeaderId: "War Leader", engineerId: "Engineer" } as const;
 
 export async function PUT(request: Request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
@@ -32,7 +29,7 @@ export async function PUT(request: Request) {
         const memberId = row[field];
         if (!memberId) continue;
         const member = memberById.get(memberId);
-        if (!member || !member.active || memberStats(member).profession !== PROFESSION_BY_FIELD[field] || seen.has(memberId)) {
+        if (!member || !member.active || seen.has(memberId)) {
           return NextResponse.json({ error: "That roster changed. Refresh the pairings before saving." }, { status: 400 });
         }
         seen.add(memberId);

@@ -50,10 +50,10 @@ describe("pairings API", () => {
     expect(setState).toHaveBeenCalledWith(expect.objectContaining({ pairings: rows }));
   });
 
-  it("rejects a warLeaderId that points at an Engineer", async () => {
+  it("accepts a warLeaderId that points at an Engineer (intended role may differ from profession)", async () => {
     const response = await PUT(request({ rows: [{ id: "pair-1", warLeaderId: "eng1" }], version: 1 }));
-    expect(response.status).toBe(400);
-    expect(setState).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    expect(setState).toHaveBeenCalled();
   });
 
   it("rejects an id pointing at an inactive member", async () => {

@@ -55,7 +55,7 @@ export function defaultPairings(members: Member[]): PairingRow[] {
 
 export function resolvePairings(members: Member[], rows: PairingRow[] | undefined): ResolvedPairings {
   const active = members.filter((member) => member.active);
-  const professionById = new Map(active.map((member) => [member.id, memberStats(member).profession]));
+  const activeIds = new Set(active.map((member) => member.id));
 
   const seen = new Set<string>();
   const reconciled = (rows ?? defaultPairings(members)).map((row) => {
@@ -63,7 +63,7 @@ export function resolvePairings(members: Member[], rows: PairingRow[] | undefine
     for (const column of ["warLeader", "engineer"] as const) {
       const field = FIELD_BY_COLUMN[column];
       const memberId = row[field];
-      if (!memberId || seen.has(memberId) || professionById.get(memberId) !== PROFESSION_BY_COLUMN[column]) continue;
+      if (!memberId || seen.has(memberId) || !activeIds.has(memberId)) continue;
       next[field] = memberId;
       seen.add(memberId);
     }
@@ -74,8 +74,13 @@ export function resolvePairings(members: Member[], rows: PairingRow[] | undefine
     rows: trimTrailingEmpty(reconciled),
     unpairedWarLeaders: activeByProfession(active, "War Leader").filter((member) => !seen.has(member.id)),
     unpairedEngineers: activeByProfession(active, "Engineer").filter((member) => !seen.has(member.id)),
-    withoutProfession: active.filter((member) => memberStats(member).profession === null).length,
+    withoutProfession: active.filter((member) => memberStats(member).profession === null && !seen.has(member.id)).length,
   };
+}
+
+export function slotMismatch(member: Member, column: PairingColumn): string | null {
+  const profession = memberStats(member).profession;
+  return profession === PROFESSION_BY_COLUMN[column] ? null : (profession ?? "no profession");
 }
 
 export function movePairing(

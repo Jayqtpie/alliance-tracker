@@ -4,7 +4,7 @@ import { Crown, Wrench } from "lucide-react";
 import { useRef, useState } from "react";
 import type { Member, PairingRow, TrackerState } from "@/lib/types";
 import type { PairingColumn } from "@/lib/pairings";
-import { movePairing, nextRowId, resolvePairings } from "@/lib/pairings";
+import { movePairing, nextRowId, resolvePairings, slotMismatch } from "@/lib/pairings";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { memberStats } from "@/lib/member-stats";
@@ -160,7 +160,9 @@ function PairingChip({ member, column, rowId, rowNumber, canManage, held, onPick
   onDragEnd: () => void;
 }) {
   const picked = held?.memberId === member.id;
-  const content = <><MemberAvatar member={member} /><MemberName member={member} /><span className="pairing-chip-power">{memberStats(member).powerDisplay}</span></>;
+  const mismatch = rowId !== undefined ? slotMismatch(member, column) : null;
+  const flagText = mismatch === null ? null : mismatch === "no profession" ? "no profession" : `currently ${mismatch}`;
+  const content = <><MemberAvatar member={member} /><MemberName member={member} /><span className="pairing-chip-power">{memberStats(member).powerDisplay}</span>{flagText && <span className="pairing-chip-flag" title={flagText}>{flagText}</span>}</>;
   if (!canManage) return <div className="pairing-chip">{content}</div>;
   return <button type="button" className="pairing-chip" draggable aria-pressed={picked}
     onDragStart={(event) => onDragStart(event, member, column)} onDragEnd={onDragEnd}

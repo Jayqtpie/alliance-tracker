@@ -1,0 +1,574 @@
+{
+  "source": "Hospital Expansion pairing sheet (alliance admin)",
+  "capturedOn": "2026-09-18",
+  "allianceTag": "RSCL",
+  "warzone": 927,
+  "note": "Slot position is the pairing. Sheet spellings were reconciled to roster identities by UID; columns record intended role, which may differ from current in-game profession. 구름DongJa appeared in two slots on the sheet and only one such player exists; both were left empty by request.",
+  "rowCount": 44,
+  "rows": [
+    {
+      "position": 1,
+      "warLeader": {
+        "uid": "1604759675000843",
+        "name": "Zothargirl",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1415256998000915",
+        "name": "l  Orion  l",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 2,
+      "warLeader": {
+        "uid": "1644943893000856",
+        "name": "MJQ8",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1153137664000856",
+        "name": "abood201440",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 3,
+      "warLeader": {
+        "uid": "1311513210000927",
+        "name": "NotDoom",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1305257078000927",
+        "name": "LYS łR1ł",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 4,
+      "warLeader": {
+        "uid": "1500145514000927",
+        "name": "Petros888",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1164257150000927",
+        "name": "Retired Goblin",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 5,
+      "warLeader": {
+        "uid": "1312967191000927",
+        "name": "Motion Lotion",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1055557385000931",
+        "name": "AlvaAlva",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 6,
+      "warLeader": {
+        "uid": "1032469361000927",
+        "name": "InfernoBlaze",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1345061146000927",
+        "name": "CubeWorld",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 7,
+      "warLeader": {
+        "uid": "2118929520000856",
+        "name": "Abu Mosaed",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1157942274000844",
+        "name": "ＨＩＳＯＫΛ ss",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 8,
+      "warLeader": {
+        "uid": "1276396135000866",
+        "name": "Fоg",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1291563187000927",
+        "name": "S L E D",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 9,
+      "warLeader": {
+        "uid": "1867036308000905",
+        "name": "MedievalKnievel",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1426415525000863",
+        "name": "ABU BADDA",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 10,
+      "warLeader": {
+        "uid": "1601085524000862",
+        "name": "dr parrot",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1531744654000927",
+        "name": "KrlZ",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 11,
+      "warLeader": {
+        "uid": "1529582961000843",
+        "name": "War Sgt",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1356650581000927",
+        "name": "MMmmmmmmmmmmmmmmm",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 12,
+      "warLeader": {
+        "uid": "1087497222000923",
+        "name": "Trash010",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1674633159000926",
+        "name": "Hoax LeBeau",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 13,
+      "warLeader": {
+        "uid": "1398298916000863",
+        "name": "LacKa",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1520178614000919",
+        "name": "Gino the chaos",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 14,
+      "warLeader": {
+        "uid": "1417138315000843",
+        "name": "Abbaqq",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1001286443000927",
+        "name": "이힛 IHit",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 15,
+      "warLeader": {
+        "uid": "1436417874000866",
+        "name": "ღMBღ Gíxxìe",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1164006719000922",
+        "name": "Youmei Qiu",
+        "profession": null
+      }
+    },
+    {
+      "position": 16,
+      "warLeader": {
+        "uid": "1223276182000862",
+        "name": "WAR6DOG",
+        "profession": "Engineer"
+      },
+      "engineer": null
+    },
+    {
+      "position": 17,
+      "warLeader": {
+        "uid": "1400285347000866",
+        "name": "Mark Anderr",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1290070340000927",
+        "name": "Obsius",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 18,
+      "warLeader": {
+        "uid": "1072311031000905",
+        "name": "Saíyan Prince",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1255883238000927",
+        "name": "Bomahni",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 19,
+      "warLeader": {
+        "uid": "1494614657000830",
+        "name": "리니지 Lineage",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1173790054000919",
+        "name": "Joccos Croccos",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 20,
+      "warLeader": {
+        "uid": "1583897883000843",
+        "name": "monsta717",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1395039702000922",
+        "name": "ackeng",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 21,
+      "warLeader": {
+        "uid": "1650522690000856",
+        "name": "WuGy",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1241567354000872",
+        "name": "Leandro Pinto",
+        "profession": "War Leader"
+      }
+    },
+    {
+      "position": 22,
+      "warLeader": {
+        "uid": "1327568165000927",
+        "name": "Pauly Provolone",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1269262662000927",
+        "name": "BadLui",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 23,
+      "warLeader": {
+        "uid": "1445438760000927",
+        "name": "Toutounator",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1305964827000862",
+        "name": "Special KK",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 24,
+      "warLeader": {
+        "uid": "1432984853000841",
+        "name": "WAR BLVCK łR1ł",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1056579044000915",
+        "name": "NACHÓ",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 25,
+      "warLeader": null,
+      "engineer": {
+        "uid": "1212993895000900",
+        "name": "Shan Baratheon",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 26,
+      "warLeader": {
+        "uid": "1433711278000862",
+        "name": "The Grooch",
+        "profession": "Engineer"
+      },
+      "engineer": {
+        "uid": "1396777732000905",
+        "name": "AsrExpress",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 27,
+      "warLeader": {
+        "uid": "1059777042000927",
+        "name": "LickᴿᵒʸFeetkins",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1563350938000922",
+        "name": "PRINCESSss",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 28,
+      "warLeader": {
+        "uid": "1360939579000863",
+        "name": "Cheesy016",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1058234761000927",
+        "name": "Newsshooter",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 29,
+      "warLeader": {
+        "uid": "1157385172000841",
+        "name": "RageAndHatred",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1080182622000927",
+        "name": "notFiiSSSHHHH",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 30,
+      "warLeader": {
+        "uid": "1257131454000866",
+        "name": "Bąbą Yąga",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1544524091000927",
+        "name": "Sappy Chappy",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 31,
+      "warLeader": {
+        "uid": "1543033399000841",
+        "name": "FRIJOLERO",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1044133159000908",
+        "name": "Stoops Visor łR1ł",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 32,
+      "warLeader": {
+        "uid": "1303662525000863",
+        "name": "Goli90",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1662308667000830",
+        "name": "클래식 classic",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 33,
+      "warLeader": {
+        "uid": "1174872981000912",
+        "name": "Queeníe",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1543620585000927",
+        "name": "JOCCO łR1ł",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 34,
+      "warLeader": {
+        "uid": "1346884246000830",
+        "name": "천사star",
+        "profession": "Engineer"
+      },
+      "engineer": {
+        "uid": "1476079594000927",
+        "name": "ApacheJohn",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 35,
+      "warLeader": {
+        "uid": "1451726686000927",
+        "name": "RollTide ᶜᵒᵈʸ",
+        "profession": "Engineer"
+      },
+      "engineer": {
+        "uid": "1036648524000927",
+        "name": "SᵒᵒᵒᵒʳʳʳY",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 36,
+      "warLeader": {
+        "uid": "1320072346000907",
+        "name": "MaveriC",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1226135106000922",
+        "name": "PeTeNueng",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 37,
+      "warLeader": {
+        "uid": "1689415806000891",
+        "name": "BananaFade",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1445201149000927",
+        "name": "I  Mystery  l",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 38,
+      "warLeader": {
+        "uid": "1794888799000844",
+        "name": "ᏗᏝᎥ ᏗᏦ47",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "2480441935000856",
+        "name": "abo hana ammar",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 39,
+      "warLeader": {
+        "uid": "2655899837000856",
+        "name": "oMRADY",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "3021584716000844",
+        "name": "art 1",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 40,
+      "warLeader": {
+        "uid": "1205420305000866",
+        "name": "Uncle M F Irøh",
+        "profession": "Engineer"
+      },
+      "engineer": {
+        "uid": "1553467250000927",
+        "name": "iaReChachi",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 41,
+      "warLeader": {
+        "uid": "1136632270000866",
+        "name": "Baby Bee aka FAFO",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1290641233000927",
+        "name": "PAYOBER",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 42,
+      "warLeader": {
+        "uid": "1666146601000931",
+        "name": "JayQT",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1074726330000927",
+        "name": "derpynoob",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 43,
+      "warLeader": {
+        "uid": "1201977595000919",
+        "name": "TOMMB łR1ł",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "1783634224000918",
+        "name": "fALIENangel",
+        "profession": "Engineer"
+      }
+    },
+    {
+      "position": 44,
+      "warLeader": {
+        "uid": "1354432303000927",
+        "name": "IREZEY łR1ł",
+        "profession": "War Leader"
+      },
+      "engineer": {
+        "uid": "2857110336000836",
+        "name": "Màŕöűşĥ łR1ł",
+        "profession": "Engineer"
+      }
+    }
+  ]
+}
