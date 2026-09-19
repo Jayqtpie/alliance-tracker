@@ -1,3 +1,7 @@
+.alliance-totals.svs-totals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.alliance-total[data-stat="svs-rate"] { --total-colour: var(--green); }
+.alliance-total[data-stat="svs-turnout"] { --total-colour: var(--cyan); }
+
 .svs-mode { display: inline-flex; justify-self: start; align-self: flex-start; width: fit-content; padding: 3px; border: 1px solid var(--panel-border); border-radius: 9px; background: var(--surface); }
 .svs-mode button { padding: 6px 14px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; }
 .svs-mode button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 3px #0000001a; }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, setAttendance } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -39,6 +39,20 @@ describe("attendanceCounts", () => {
   it("counts each state", () => {
     expect(attendanceCounts({ id: "e", date: "2026-09-19", attendance: { a: "present", b: "absent", c: "excused", d: "present" } }))
       .toEqual({ present: 2, absent: 1, excused: 1, total: 4 });
+  });
+});
+
+describe("overallAttendance", () => {
+  it("pools every fight, leaving excused out of the rate", () => {
+    const totals = overallAttendance([
+      { id: "1", date: "2026-09-01", attendance: { a: "present", b: "absent", c: "excused", d: "present" } },
+      { id: "2", date: "2026-09-08", attendance: { a: "present", b: "present" } },
+    ]);
+    expect(totals).toEqual({ fights: 2, rate: 4 / 5, averagePresent: 2, averageRoster: 3 });
+  });
+
+  it("has no numbers before the first fight", () => {
+    expect(overallAttendance([])).toEqual({ fights: 0, rate: null, averagePresent: null, averageRoster: null });
   });
 });
 

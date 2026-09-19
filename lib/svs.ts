@@ -27,6 +27,22 @@ export function attendanceCounts(event: SvsEvent) {
   return counts;
 }
 
+/** Alliance-wide totals across every fight. Excused doesn't count toward the rate. */
+export function overallAttendance(events: SvsEvent[]) {
+  if (!events.length) return { fights: 0, rate: null, averagePresent: null, averageRoster: null };
+  let present = 0, absent = 0, roster = 0;
+  for (const event of events) {
+    const counts = attendanceCounts(event);
+    present += counts.present; absent += counts.absent; roster += counts.total;
+  }
+  return {
+    fights: events.length,
+    rate: present + absent ? present / (present + absent) : null,
+    averagePresent: present / events.length,
+    averageRoster: roster / events.length,
+  };
+}
+
 export interface AttendanceSummaryRow { member: Member; present: number; absent: number; excused: number; rate: number | null }
 
 /** Excused fights don't count toward the rate. Sorted worst rate first; members with no counted fights last. */

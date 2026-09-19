@@ -1,9 +1,9 @@
 "use client";
 
-import { CheckCheck, Plus, Search, Trash2, X } from "lucide-react";
+import { CheckCheck, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import "./svs-attendance.css";
@@ -85,6 +85,9 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
     .filter((row) => !needle || row.member.canonicalName.toLocaleLowerCase().includes(needle))
     .sort((a, b) => a.member.canonicalName.localeCompare(b.member.canonicalName)) : [];
 
+  const overall = overallAttendance(events);
+  const fightsLine = overall.fights ? `across ${overall.fights} fight${overall.fights === 1 ? "" : "s"}` : "no fights recorded yet";
+
   // attendanceSummary already orders by rate; Array.sort is stable, so ties keep that order.
   const summary = attendanceSummary(events, state.members)
     .filter((row) => row.member.active || row.present + row.absent + row.excused > 0)
@@ -93,7 +96,19 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         : sort === "present" ? b.present - a.present : 0);
 
   return <div className="page-stack svs-page">
-    <section className="section-heading"><div><p className="eyebrow">SERVER VS SERVER</p><h2>SvS attendance<span>.</span></h2><p>{canManage ? "Add a fight, then mark who showed up. Excused absences don’t count against a member’s rate." : "Who showed up to each fight. Excused absences don’t count against a member’s rate."}</p></div></section>
+    <section className="dashboard-heading">
+      <div><p className="eyebrow">SERVER VS SERVER</p><h1>SvS attendance<span>.</span></h1><p>{canManage ? "Add a fight, then mark who showed up. Excused absences don’t count against a member’s rate." : "Who showed up to each fight. Excused absences don’t count against a member’s rate."}</p></div>
+      <dl className="alliance-totals svs-totals" aria-label="Attendance across all fights">
+        <div className="alliance-total" data-stat="svs-rate">
+          <dt><Percent size={14} aria-hidden="true" />Attendance</dt>
+          <dd><strong>{overall.rate === null ? "—" : `${Math.round(overall.rate * 100)}%`}</strong><span>{fightsLine}</span></dd>
+        </div>
+        <div className="alliance-total" data-stat="svs-turnout">
+          <dt><Users size={14} aria-hidden="true" />Showed up</dt>
+          <dd><strong>{overall.averagePresent === null ? "—" : `${Math.round(overall.averagePresent)} / ${Math.round(overall.averageRoster)}`}</strong><span>{overall.fights ? "average per fight" : fightsLine}</span></dd>
+        </div>
+      </dl>
+    </section>
     <div className="svs-mode" role="group" aria-label="SvS view">
       <button type="button" aria-pressed={mode === "fights"} onClick={() => setMode("fights")}>Fights</button>
       <button type="button" aria-pressed={mode === "summary"} onClick={() => setMode("summary")}>Summary</button>
