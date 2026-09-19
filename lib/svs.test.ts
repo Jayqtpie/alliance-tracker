@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, setAttendance } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -23,6 +23,14 @@ describe("setAttendance", () => {
     const event: SvsEvent = { id: "e", date: "2026-09-19", attendance: { a: "absent" } };
     const next = setAttendance(event, "a", "present");
     expect(next.attendance.a).toBe("present");
+    expect(event.attendance.a).toBe("absent");
+  });
+});
+
+describe("markAllPresent", () => {
+  it("marks absent members present and leaves excused alone", () => {
+    const event: SvsEvent = { id: "e", date: "2026-09-19", attendance: { a: "absent", b: "excused", c: "present" } };
+    expect(markAllPresent(event).attendance).toEqual({ a: "present", b: "excused", c: "present" });
     expect(event.attendance.a).toBe("absent");
   });
 });

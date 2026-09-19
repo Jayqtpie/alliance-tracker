@@ -32,6 +32,7 @@ describe("SvsAttendanceView", () => {
     expect(html).toContain("Delete fight");
     expect(html).toContain('aria-label="Mark Tamsin excused"');
     expect(html).toContain("Save attendance");
+    expect(html).toContain("Mark all present");
   });
 
   it("is read-only for viewers", () => {
@@ -40,6 +41,7 @@ describe("SvsAttendanceView", () => {
     expect(html).not.toContain("Add fight");
     expect(html).not.toContain("Delete fight");
     expect(html).not.toContain("Mark Tamsin");
+    expect(html).not.toContain("Mark all present");
     expect(html).not.toContain("Save attendance");
   });
 

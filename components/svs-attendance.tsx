@@ -1,9 +1,9 @@
 "use client";
 
-import { Plus, Search, Trash2, X } from "lucide-react";
+import { CheckCheck, Plus, Search, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import type { SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import "./svs-attendance.css";
@@ -121,7 +121,11 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
       {selected && <section className="panel svs-checklist">
         <div className="panel-head">
           <div><h3>{fightDate(selected.date)}{selected.label ? ` · ${selected.label}` : ""}</h3><p className="svs-counts">{countLine(selected)}</p></div>
+          <div className="svs-checklist-tools">
+          {canManage && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
+            onClick={() => setDraft(events.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />Mark all present</button>}
           <div className="search-box"><Search size={16} /><input aria-label="Filter fight members" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear member filter" onClick={() => setQuery("")}><X size={14} /></button>}</div>
+          </div>
         </div>
         <ul className="svs-member-list">
           {checklist.map(({ member, value }) => <li key={member.id} data-state={value}>

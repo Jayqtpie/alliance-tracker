@@ -16,6 +16,11 @@ export function setAttendance(event: SvsEvent, memberId: string, value: SvsAtten
   return { ...event, attendance: { ...event.attendance, [memberId]: value } };
 }
 
+/** Excused marks are deliberate, so they survive a bulk "everyone showed up". */
+export function markAllPresent(event: SvsEvent): SvsEvent {
+  return { ...event, attendance: Object.fromEntries(Object.entries(event.attendance).map(([id, value]) => [id, value === "excused" ? value : "present"])) };
+}
+
 export function attendanceCounts(event: SvsEvent) {
   const counts = { present: 0, absent: 0, excused: 0, total: 0 };
   for (const value of Object.values(event.attendance)) { counts[value] += 1; counts.total += 1; }

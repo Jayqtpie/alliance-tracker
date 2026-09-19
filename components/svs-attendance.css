@@ -16,6 +16,8 @@
 .svs-fight-list small { color: var(--muted); font-size: 11px; }
 .svs-empty { margin: 0; padding: 16px 20px; color: var(--muted); font-size: 12px; }
 
+.svs-checklist-tools { display: flex; align-items: center; gap: 10px; }
+.svs-checklist-tools .button { white-space: nowrap; }
 .svs-counts { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
 .svs-member-list { margin: 0; padding: 0; list-style: none; }
 .svs-member-list > li { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); }
@@ -49,6 +51,7 @@
 
 @media (max-width: 760px) {
   .svs-new { grid-template-columns: minmax(0, 1fr); }
+  .svs-checklist-tools { flex-direction: column; align-items: stretch; }
   .svs-member-list > li { flex-wrap: wrap; padding: 8px 12px; }
   .svs-toggle { width: 100%; }
   .svs-toggle button { flex: 1; padding: 9px 4px; }
