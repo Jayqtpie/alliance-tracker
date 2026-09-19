@@ -20,6 +20,10 @@
 .svs-member-list { margin: 0; padding: 0; list-style: none; }
 .svs-member-list > li { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); }
 .svs-member-list > li:last-child { border-bottom: 0; }
+/* Wide rows put the name far from its toggle; highlight the whole row so they read as one line. */
+@media (hover: hover) {
+  .svs-member-list > li:not(.svs-empty):hover { background: var(--accent-soft); box-shadow: inset 3px 0 var(--focus); }
+}
 .svs-member { display: flex; align-items: center; gap: 8px; min-width: 0; margin-right: auto; }
 .svs-member .alliance-member-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
