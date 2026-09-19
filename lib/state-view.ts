@@ -23,5 +23,6 @@ export function stateForRole(state: TrackerState, role: AccessRole): TrackerStat
         needsReview: entry.needsReview, reviewed: entry.reviewed,
       })),
     })),
+    svsEvents: state.svsEvents?.map((event) => ({ id: event.id, date: event.date, label: event.label, attendance: event.attendance })),
   };
 }

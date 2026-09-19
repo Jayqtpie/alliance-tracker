@@ -24,6 +24,8 @@ describe("security boundaries", () => {
     expect(JSON.stringify(viewer)).not.toContain("PRIVATE");
     expect(viewer.members[0].canonicalName).toBe("雨");
     expect(viewer.snapshots[0].entries[0].points).toBe(0);
+    expect(stateForRole({ ...state, svsEvents: [{ id: "e", date: "2026-09-19", attendance: { a: "present" } }] }, "viewer").svsEvents)
+      .toEqual([{ id: "e", date: "2026-09-19", attendance: { a: "present" } }]);
     expect(state).toEqual(before);
     expect(stateForRole(state, "admin")).toBe(state);
   });

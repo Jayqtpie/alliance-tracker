@@ -129,6 +129,17 @@ export interface PairingRow {
   engineerId?: string;
 }
 
+export type SvsAttendance = "present" | "absent" | "excused";
+
+export interface SvsEvent {
+  id: string;
+  /** Fight date, YYYY-MM-DD. */
+  date: string;
+  label?: string;
+  /** Roster captured when the fight was created, keyed by member id. */
+  attendance: Record<string, SvsAttendance>;
+}
+
 export interface TrackerState {
   version: number;
   rosterImport?: string;
@@ -145,6 +156,7 @@ export interface TrackerState {
   uploads: UploadRecord[];
   operations?: OperationsState;
   pairings?: PairingRow[];
+  svsEvents?: SvsEvent[];
   updatedAt: string;
 }
 

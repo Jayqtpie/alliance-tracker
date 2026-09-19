@@ -17,6 +17,7 @@ import * as jobs from "./bridge/jobs/route";
 import * as worker from "./bridge/worker/route";
 import * as file from "./bridge/file/route";
 import * as cleanup from "./cleanup/route";
+import * as svs from "./svs/route";
 
 beforeEach(() => { vi.resetAllMocks(); vi.mocked(isAdmin).mockResolvedValue(false); vi.mocked(getAccessRole).mockResolvedValue("viewer"); vi.mocked(isBridgeWorker).mockReturnValue(false); });
 const routes = [
@@ -25,6 +26,7 @@ const routes = [
   ["alliance", "PUT", alliance.PUT], ["operations", "PUT", operations.PUT], ["extract", "POST", extract.POST],
   ["bridge/jobs", "GET", jobs.GET], ["bridge/jobs", "POST", jobs.POST], ["bridge/jobs", "PATCH", jobs.PATCH], ["bridge/jobs", "DELETE", jobs.DELETE],
   ["bridge/worker", "POST", worker.POST], ["bridge/file", "GET", file.GET], ["cleanup", "GET", cleanup.GET],
+  ["svs", "PUT", svs.PUT],
 ] as const;
 describe("API server-side authorization", () => {
   it.each(routes)("blocks viewer requests to %s %s before data access", async (route, method, handler) => {

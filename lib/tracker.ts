@@ -1,6 +1,8 @@
-import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
+import type { ExtractedRow, Member, RankingEntry, Snapshot, SvsAttendance, TrackerState } from "@/lib/types";
 
 import { rankGaps } from "./rank-gaps";
+
+const SVS_RANK: Record<SvsAttendance, number> = { absent: 0, excused: 1, present: 2 };
 
 export function normalizeName(value: string) {
   return value
@@ -210,6 +212,16 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
         backupMemberId: assignment.backupMemberId === duplicateId ? primaryId : assignment.backupMemberId,
       })),
     } : undefined,
+    ...(state.svsEvents ? { svsEvents: state.svsEvents.map((event) => {
+      const moved = event.attendance[duplicateId];
+      if (!moved) return event;
+      const attendance = { ...event.attendance };
+      delete attendance[duplicateId];
+      const kept = attendance[primaryId];
+      // Both identities recorded for the same fight: keep the better state.
+      attendance[primaryId] = kept && SVS_RANK[kept] >= SVS_RANK[moved] ? kept : moved;
+      return { ...event, attendance };
+    }) } : {}),
   };
 }
 
@@ -219,6 +231,10 @@ export function removeMemberFromRoster(state: TrackerState, memberId: string): T
     ...state,
     members: state.members.filter((member) => member.id !== memberId),
     operations: state.operations ? { ...state.operations, guardianPool: state.operations.guardianPool.filter((id) => id !== memberId) } : undefined,
+    ...(state.svsEvents ? { svsEvents: state.svsEvents.map((event) => ({
+      ...event,
+      attendance: Object.fromEntries(Object.entries(event.attendance).filter(([id]) => id !== memberId)),
+    })) } : {}),
   };
 }
 

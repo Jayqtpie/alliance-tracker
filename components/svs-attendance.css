@@ -1,0 +1,54 @@
+.svs-mode { display: inline-flex; justify-self: start; align-self: flex-start; width: fit-content; padding: 3px; border: 1px solid var(--panel-border); border-radius: 9px; background: var(--surface); }
+.svs-mode button { padding: 6px 14px; border: 0; border-radius: 6px; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; }
+.svs-mode button[aria-pressed="true"] { background: var(--panel); color: var(--ink); box-shadow: 0 1px 3px #0000001a; }
+
+.svs-layout { display: grid; grid-template-columns: minmax(240px, 300px) minmax(0, 1fr); gap: 16px; align-items: start; }
+.svs-new { display: grid; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.svs-new input { width: 100%; min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+.svs-new .button { justify-content: center; }
+
+.svs-fight-list { display: grid; gap: 4px; margin: 0; padding: 10px; list-style: none; }
+.svs-fight-list button { display: grid; gap: 2px; width: 100%; padding: 9px 11px; border: 1px solid transparent; border-radius: 8px; background: transparent; color: var(--ink); text-align: left; }
+.svs-fight-list button:hover { background: var(--row-hover); }
+.svs-fight-list button[aria-pressed="true"] { border-color: var(--focus); background: var(--accent-soft); }
+.svs-fight-list strong { font-size: 12px; }
+.svs-fight-list span { color: var(--accent-text); font-size: 11px; }
+.svs-fight-list small { color: var(--muted); font-size: 11px; }
+.svs-empty { margin: 0; padding: 16px 20px; color: var(--muted); font-size: 12px; }
+
+.svs-counts { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.svs-member-list { margin: 0; padding: 0; list-style: none; }
+.svs-member-list > li { display: flex; align-items: center; gap: 12px; padding: 8px 16px; border-bottom: 1px solid var(--line); }
+.svs-member-list > li:last-child { border-bottom: 0; }
+.svs-member { display: flex; align-items: center; gap: 8px; min-width: 0; margin-right: auto; }
+.svs-member .alliance-member-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.svs-toggle { display: inline-flex; flex-shrink: 0; border: 1px solid var(--panel-border); border-radius: 8px; overflow: hidden; }
+.svs-toggle button { padding: 6px 10px; border: 0; background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 600; }
+.svs-toggle button + button { border-left: 1px solid var(--panel-border); }
+.svs-toggle button:hover { background: var(--row-hover); color: var(--ink); }
+.svs-toggle button:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.svs-toggle button[aria-pressed="true"][data-option="present"] { background: var(--green); color: #fff; }
+.svs-toggle button[aria-pressed="true"][data-option="absent"] { background: var(--red); color: #fff; }
+.svs-toggle button[aria-pressed="true"][data-option="excused"] { background: var(--orange); color: #fff; }
+
+.svs-pill { flex-shrink: 0; padding: 2px 9px; border: 1px solid currentColor; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.svs-pill[data-option="present"] { color: var(--green); }
+.svs-pill[data-option="absent"] { color: var(--red); }
+.svs-pill[data-option="excused"] { color: var(--orange); }
+
+.svs-delete { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.svs-summary select { padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+.svs-summary tr.svs-left { opacity: .55; }
+.svs-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.svs-dirty-note { margin-right: auto; color: var(--muted); font-size: 12px; }
+
+/* Side-by-side leaves the checklist too narrow for names until the viewport is wide. */
+@media (max-width: 1100px) {
+  .svs-layout { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .svs-member-list > li { flex-wrap: wrap; padding: 8px 12px; }
+  .svs-toggle { width: 100%; }
+  .svs-toggle button { flex: 1; padding: 9px 4px; }
+}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createEmptyState } from "./alliance";
-import { analyzeImport, matchMember, memberMergeConflicts, memberPerformance, mergeMemberIdentities, normalizeName } from "./tracker";
+import { analyzeImport, matchMember, memberMergeConflicts, memberPerformance, mergeMemberIdentities, normalizeName, removeMemberFromRoster } from "./tracker";
 import type { TrackerState } from "./types";
 
 function fixture(): TrackerState {
@@ -65,6 +65,23 @@ describe("roster duplicate cleanup", () => {
     const result = mergeMemberIdentities(state, "keep", "duplicate");
     expect(memberPerformance(result.members[0], result.snapshots).appearances).toBe(2);
     expect(result.members[0].joinedAt).toBeUndefined();
+  });
+
+  it("moves SvS attendance to the kept member, keeping the better state when both were recorded", () => {
+    const state = fixture();
+    state.svsEvents = [
+      { id: "only-dup", date: "2026-09-01", attendance: { duplicate: "present" } },
+      { id: "both", date: "2026-09-08", attendance: { keep: "absent", duplicate: "excused" } },
+      { id: "keep-better", date: "2026-09-15", attendance: { keep: "present", duplicate: "absent" } },
+    ];
+    const result = mergeMemberIdentities(state, "keep", "duplicate");
+    expect(result.svsEvents!.map((event) => event.attendance)).toEqual([{ keep: "present" }, { keep: "excused" }, { keep: "present" }]);
+  });
+
+  it("drops a removed member from SvS attendance", () => {
+    const state = fixture();
+    state.svsEvents = [{ id: "e", date: "2026-09-01", attendance: { keep: "present", duplicate: "absent" } }];
+    expect(removeMemberFromRoster(state, "duplicate").svsEvents![0].attendance).toEqual({ keep: "present" });
   });
 });
 
