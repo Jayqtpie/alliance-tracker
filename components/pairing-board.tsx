@@ -113,7 +113,7 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
   }
 
   return <div className="page-stack pairing-board-page">
-    <section className="section-heading"><div><p className="eyebrow">WAR LEADER · ENGINEER PAIRING</p><h2>Pairing board<span>.</span></h2><p>Drag a commander onto a slot, or {canManage ? "use keyboard: click a commander then click their destination." : "sign in as an officer to make changes."}</p></div></section>
+    <section className="dashboard-heading"><div><p className="eyebrow">WAR LEADER · ENGINEER PAIRING</p><h1>Pairing board<span>.</span></h1><p>Drag a commander onto a slot, or {canManage ? "use keyboard: click a commander then click their destination." : "sign in as an officer to make changes."}</p></div></section>
     {canManage && <p aria-live="polite" className="sr-only">{announcement}</p>}
     <div className="pairing-board">
       <div className="pairing-board-head">
