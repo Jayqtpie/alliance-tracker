@@ -8,7 +8,11 @@
 
 .svs-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 .svs-new { display: grid; grid-template-columns: 170px minmax(0, 320px) auto; justify-content: start; gap: 8px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
-.svs-new input { width: 100%; min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+/* iOS Safari gives date inputs an intrinsic min-width that ignores the grid; resetting
+   appearance lets the input shrink to its column instead of spilling out of the card. */
+.svs-new input[type="date"] { -webkit-appearance: none; appearance: none; display: block; min-height: 34px; text-align: left; }
+.svs-new input[type="date"]::-webkit-date-and-time-value { text-align: left; }
+.svs-new input { width: 100%; max-width: 100%; min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
 .svs-new .button { justify-content: center; }
 
 .svs-fight-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; margin: 0; padding: 10px; list-style: none; }
@@ -31,6 +35,7 @@
   .svs-member-list > li:not(.svs-empty):hover { background: var(--accent-soft); box-shadow: inset 3px 0 var(--focus); }
 }
 .svs-member { display: flex; align-items: center; gap: 8px; min-width: 0; margin-right: auto; }
+.svs-member .member-nameplate { min-width: 0; }
 .svs-member .alliance-member-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 .svs-toggle { display: inline-flex; flex-shrink: 0; border: 1px solid var(--panel-border); border-radius: 8px; overflow: hidden; }
@@ -58,5 +63,12 @@
   .svs-checklist-tools { flex-direction: column; align-items: stretch; }
   .svs-member-list > li { flex-wrap: wrap; padding: 8px 12px; }
   .svs-toggle { width: 100%; }
+  /* Fit the summary to the screen: fixed narrow number columns, the name takes the rest and truncates. */
+  .svs-summary table { table-layout: fixed; }
+  .svs-summary th, .svs-summary td { padding: 9px 4px; text-align: center; }
+  .svs-summary th:not(:first-child), .svs-summary td:not(:first-child) { width: 46px; }
+  .svs-summary th:first-child, .svs-summary td:first-child { padding-left: 12px; text-align: left; }
+  .svs-summary th:last-child, .svs-summary td:last-child { padding-right: 12px; width: 54px; }
+  .svs-summary td:first-child .alliance-avatar { display: none; }
   .svs-toggle button { flex: 1; padding: 9px 4px; }
 }
