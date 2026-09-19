@@ -491,7 +491,7 @@ button:disabled { cursor: not-allowed; }
 .alliance-roster-heading h2 { display: flex; align-items: center; gap: 10px; font-size: 17px; margin: 0 0 12px; }
 .alliance-roster-heading p { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin: 0; color: #7b88a7; font-size: 12px; }
 .alliance-roster-heading strong { color: #25324b; }
-.alliance-source-date { color: #7b88a7; font-size: 11px; white-space: nowrap; padding-top: 4px; }
+.alliance-source-date { color: #7b88a7; font-size: 11px; white-space: nowrap; }
 .alliance-roster-toolbar { display: flex; gap: 10px; align-items: center; margin: 24px 0 18px; }
 .alliance-roster-toolbar .search-box { margin-right: auto; width: min(100%, 340px); }
 .alliance-roster-toolbar select { background: #fff; border: 1px solid #e0e5f0; border-radius: 8px; padding: 9px 12px; color: #53617e; font-size: 12px; min-width: 130px; }
