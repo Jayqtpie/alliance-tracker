@@ -1,11 +1,11 @@
 import capture from "./data/rscl-roster-2026-09-20.json";
 import type { Member, TrackerState } from "./types";
 
+type RosterCapture = typeof capture;
+
 // Keep the legacy prefix so older deployments also reject this newer capture.
 // The capture source and profile public IDs identify LastRank independently.
 export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-20-v1";
-
-const capturedRenames: { uid: string; previous: string; current: string }[] = capture.changes.renamed;
 
 function nameKey(name: string) {
   return name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
@@ -24,9 +24,15 @@ function captureVersion(marker: string | undefined) {
 
 /** One reconciled roster capture, applied once to the freshly loaded state. */
 export function importCapturedRoster(state: TrackerState): TrackerState {
-  if (state.rosterImport === "custom-alliance" || state.rosterImport === ROSTER_IMPORT || state.alliance.tag !== "RSCL" || String(state.alliance.server) !== "927") return state;
+  return applyCapturedRoster(state, capture, ROSTER_IMPORT);
+}
+
+/** Exported so tests can supply a capture containing rows this run's real capture may not have. */
+export function applyCapturedRoster(state: TrackerState, capture: RosterCapture, marker: string): TrackerState {
+  const capturedRenames: { uid: string; previous: string; current: string }[] = capture.changes.renamed;
+  if (state.rosterImport === "custom-alliance" || state.rosterImport === marker || state.alliance.tag !== "RSCL" || String(state.alliance.server) !== "927") return state;
   const current = captureVersion(state.rosterImport);
-  const incoming = captureVersion(ROSTER_IMPORT)!;
+  const incoming = captureVersion(marker)!;
   if (current && (current.date > incoming.date || (current.date === incoming.date && current.version >= incoming.version))) return state;
 
   // A duplicated live UID or conflicting source mapping requires reconciliation,
@@ -82,7 +88,7 @@ export function importCapturedRoster(state: TrackerState): TrackerState {
   const historical = state.members.filter((member) => !used.has(member.id)).map((member) => ({ ...member, active: false }));
   return {
     ...state,
-    rosterImport: ROSTER_IMPORT,
+    rosterImport: marker,
     // Older deployments must not replay an earlier name/avatar correction.
     memberProfileUpdates: [...new Set([...(state.memberProfileUpdates ?? []), ...capture.supersedesProfileUpdates])],
     members: [...members, ...historical],

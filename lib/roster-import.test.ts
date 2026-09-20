@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { INITIAL_STATE } from "./seed";
-import { importCapturedRoster, parseDisplayedPower, ROSTER_IMPORT } from "./roster-import";
+import { applyCapturedRoster, importCapturedRoster, parseDisplayedPower, ROSTER_IMPORT } from "./roster-import";
+import capture from "./data/rscl-roster-2026-09-20.json";
 import { mergeMemberIdentities } from "./tracker";
 
 describe("captured RSCL roster", () => {
@@ -97,34 +98,38 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(state)).toBe(state);
   });
 
-  // Skipped on 2026-09-20: this capture refreshed all 100 profiles, so no row is "retained" to assert against.
-  it.skip("preserves live stats and original dates when a source profile cannot refresh", () => {
-    const state = importCapturedRoster(structuredClone(INITIAL_STATE));
-    state.rosterImport = "lwservers-rscl-927-2026-09-10-v1";
-    const member = state.members.find((row) => row.gameProfile?.lastRankPublicId === "1187353")!;
+  // A row is "retained" for two reasons: the profile was too stale to refresh, or the player was
+  // absent from the source alliance list. The importer sees only freshness.status, so both take the
+  // same path. A real capture may contain neither, so the retained row is built here instead.
+  it.each([
+    ["a source profile cannot refresh", "stale-profile"],
+    ["the player is absent from the source alliance list", "not-in-source-alliance-list"],
+  ])("preserves live stats, dates and active status when %s", (_reason, refreshResult) => {
+    const source = structuredClone(capture);
+    const row = source.members.find((entry) => entry.lastRankPublicId === "1187353")!;
+    row.freshness.status = "retained";
+    row.freshness.refreshResult = refreshResult;
+    row.active = true;
+
+    const before = importCapturedRoster(structuredClone(INITIAL_STATE));
+    before.rosterImport = "lwservers-rscl-927-2026-09-10-v1";
+    const member = before.members.find((entry) => entry.gameProfile?.lastRankPublicId === "1187353")!;
     member.gameProfile = { ...member.gameProfile!, heroPower: 0, heroPowerDisplay: "0", kills: 42, killsDisplay: "42", capturedOn: "2026-09-12", sourceActivityDate: "2026-09-11" };
     member.manualStats = { kills: 77, updatedAt: "2026-09-13" };
-    const before = structuredClone(member);
-    const result = importCapturedRoster(state).members.find((row) => row.id === member.id)!;
-    expect(result.gameProfile).toEqual(before.gameProfile);
-    expect(result.manualStats).toEqual(before.manualStats);
-    expect(result.gameProfile?.capturedOn).toBe("2026-09-12");
-    expect(result.gameProfile?.refreshStatus).toBe("retained");
-  });
+    before.snapshots[0].entries[0].memberId = member.id;
+    const expected = structuredClone(member);
 
-  it("keeps a member absent from the source list active, unaltered and linked to scores", () => {
-    const before = importCapturedRoster(structuredClone(INITIAL_STATE));
-    before.rosterImport = "lwservers-rscl-927-2026-09-13-v1";
-    const player = before.members.find((member) => member.gameProfile?.uid === "1164006719000922")!;
-    before.snapshots[0].entries[0].memberId = player.id;
-    const after = importCapturedRoster(before);
-    const retained = after.members.find((member) => member.id === player.id)!;
+    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-20-v2");
+    const retained = after.members.find((entry) => entry.id === member.id)!;
     expect(retained.active).toBe(true);
-    expect(retained.canonicalName).toBe(player.canonicalName);
-    expect(retained.gameProfile).toEqual(player.gameProfile);
+    expect(retained.canonicalName).toBe(expected.canonicalName);
+    // Every live value survives byte-for-byte; only the refresh marker moves.
+    expect(retained.gameProfile).toEqual({ ...expected.gameProfile, refreshStatus: "retained" });
+    expect(retained.manualStats).toEqual(expected.manualStats);
+    expect(retained.gameProfile?.capturedOn).toBe("2026-09-12");
     expect(after.snapshots).toBe(before.snapshots);
     expect(after.operations).toBe(before.operations);
-    expect(new Set(after.members.filter((member) => member.gameProfile?.lastRankPublicId).map((member) => member.gameProfile!.lastRankPublicId)).size).toBe(100);
+    expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(100);
   });
 
   it("stops on duplicate game UIDs or conflicting verified LastRank mappings", () => {
