@@ -1,11 +1,11 @@
-import capture from "./data/rscl-roster-2026-09-20.json";
+import capture from "./data/rscl-roster-2026-09-21.json";
 import type { Member, TrackerState } from "./types";
 
 type RosterCapture = typeof capture;
 
 // Keep the legacy prefix so older deployments also reject this newer capture.
 // The capture source and profile public IDs identify LastRank independently.
-export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-20-v1";
+export const ROSTER_IMPORT = "lwservers-rscl-927-2026-09-21-v1";
 
 function nameKey(name: string) {
   return name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");
