@@ -4,8 +4,6 @@ import type { Member, RankingEntry, Snapshot, TrackerState } from "./types";
 export interface WeeklyPerformer {
   member: Member;
   entry: RankingEntry;
-  pointChange?: number;
-  percentChange?: number;
 }
 
 // A capture is a cumulative score, so each highlight uses one capture only.
@@ -31,35 +29,23 @@ function eligibleEntries(snapshot: Snapshot, members: Member[]): WeeklyPerformer
 export function weeklyPerformance(state: Pick<TrackerState, "members" | "snapshots">, selected: Snapshot) {
   const leaders = eligibleEntries(selected, state.members).sort((a, b) =>
     b.entry.points - a.entry.points || a.entry.rank - b.entry.rank || a.member.id.localeCompare(b.member.id));
-  const previousWeekDate = new Date(`${selected.weekStart}T12:00:00Z`);
-  previousWeekDate.setUTCDate(previousWeekDate.getUTCDate() - 7);
-  const previousWeek = previousWeekDate.toISOString().slice(0, 10);
-  // Never compare an unfinished live week with a completed week. Also exclude
-  // later corrections when viewing a historical capture.
-  const previous = selected.status === "final" ? state.snapshots
-    .filter((snapshot) => snapshot.status === "final" && snapshot.id !== selected.id
-      && snapshot.weekStart === previousWeek
-      && Date.parse(snapshot.capturedAt) < Date.parse(selected.capturedAt))
-    .sort((a, b) => b.weekStart.localeCompare(a.weekStart)
-      || Date.parse(b.capturedAt) - Date.parse(a.capturedAt) || a.id.localeCompare(b.id))[0] : undefined;
-  const previousByMember = new Map(previous
-    ? eligibleEntries(previous, state.members).map((row) => [row.member.id, row.entry]) : []);
-  const compared = leaders.flatMap((row): WeeklyPerformer[] => {
-    const prior = previousByMember.get(row.member.id);
-    if (!prior) return [];
-    const pointChange = row.entry.points - prior.points;
-    return [{ ...row, pointChange, percentChange: prior.points > 0 ? pointChange / prior.points * 100 : undefined }];
-  });
-  const declines = compared.filter((row) => (row.pointChange ?? 0) < 0)
-    .sort((a, b) => a.pointChange! - b.pointChange! || a.member.id.localeCompare(b.member.id));
+  // A member who joined part-way through the week scores low for a structural
+  // reason, not a performance one, so they are not called a low scorer. An
+  // import records joinedAt as the capture that first saw the member, so
+  // everyone present when tracking began shares the earliest capture date and
+  // must not be mistaken for a new joiner.
+  const trackingStart = state.snapshots.reduce((earliest, snapshot) =>
+    snapshot.capturedAt < earliest ? snapshot.capturedAt : earliest, selected.capturedAt).slice(0, 10);
+  const laggards = leaders.filter(({ member }) => {
+    const joined = member.joinedAt?.slice(0, 10);
+    return !joined || joined < selected.weekStart || joined <= trackingStart;
+  }).slice(-3).reverse();
   return {
     snapshot: selected,
-    previous,
     leaders,
     winner: leaders[0],
     tiedLeaders: leaders.length ? leaders.filter((row) => row.entry.points === leaders[0].entry.points).length : 0,
-    declines,
-    comparedCount: compared.length,
+    laggards,
     excludedCount: selected.entries.length - leaders.length,
   };
 }

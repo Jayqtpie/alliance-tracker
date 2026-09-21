@@ -20,13 +20,8 @@ export function WeeklyPerformance({ state, selected, onOpenMember, translate = i
   const descriptionId = useId();
   const t = translate;
   const performance = weeklyPerformance(state, selected);
-  const { winner, previous, leaders, declines } = performance;
+  const { winner, leaders, laggards } = performance;
   const live = selected.status === "live";
-  const improvementEmpty = live
-    ? t("A final capture is needed before comparing completed weeks.")
-    : !previous ? t("Import a previous final week to compare performance.")
-      : !performance.comparedCount ? t("No verified members appear in both final captures.")
-        : t("No point declines among members with comparable final scores.");
 
   return <section className="weekly-performance-grid" aria-label={t(section === "spotlight" ? "WEEKLY SPOTLIGHT" : "Weekly performance")}>
     {section !== "cards" && <article className="panel performer-spotlight" aria-describedby={descriptionId}>
@@ -60,16 +55,16 @@ export function WeeklyPerformance({ state, selected, onOpenMember, translate = i
     </article>
 
     <article className="panel performance-card needs-improvement">
-      <div className="performance-card-heading"><span className="performance-icon"><ArrowDownRight size={20} aria-hidden="true" /></span><span className="performance-status">{t("Final-week comparison")}</span></div>
+      <div className="performance-card-heading"><span className="performance-icon"><ArrowDownRight size={20} aria-hidden="true" /></span><span className="performance-status">{t(live ? "Live scores" : "Weekly scores")}</span></div>
       <h3>{t("Needs improvement")}</h3>
-      <p className="performance-basis">{previous ? `${t("Compared with final week of")} ${previous.weekStart}` : t("Based on comparable completed weeks")}</p>
-      {declines.length ? <ol className="performance-list">{declines.slice(0, 3).map((row) => <li key={row.member.id}>
+      <p className="performance-basis">{t("Lowest points in the selected capture")}</p>
+      {laggards.length ? <ol className="performance-list">{laggards.map((row) => <li key={row.member.id}>
         <button type="button" className="performance-row" onClick={() => onOpenMember(row.member.id)} aria-label={`${t("View profile")}: ${row.member.canonicalName}`}>
           <CommanderIdentity member={row.member} name={row.entry.displayName} />
-          <span className="performance-value negative"><strong>{score(row.pointChange!, language)}</strong><small>{t("points")}{row.percentChange !== undefined ? ` · ${row.percentChange.toFixed(1)}%` : ""}</small></span>
+          <span className="performance-value"><strong>{score(row.entry.points, language)}</strong><small>{t("points")}</small></span>
         </button>
-      </li>)}</ol> : <p className="performance-empty">{improvementEmpty}</p>}
-      <p className="performance-footnote">{t("Largest point declines. Missing scores are never treated as zero.")}</p>
+      </li>)}</ol> : <p className="performance-empty">{t("No verified active-member scores in this capture yet.")}</p>}
+      <p className="performance-footnote">{t("Recent joiners are excluded. Missing scores are never treated as zero.")}</p>
     </article>
     </div>}
   </section>;
