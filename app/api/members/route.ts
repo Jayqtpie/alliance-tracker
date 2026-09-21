@@ -3,7 +3,7 @@ import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
-import { memberStats, parseMemberStat, PROFESSIONS } from "@/lib/member-stats";
+import { memberStats, parseMemberStat, parseServerId, PROFESSIONS } from "@/lib/member-stats";
 
 const schema = z.object({
   members: z.array(z.object({
@@ -27,6 +27,8 @@ export async function PUT(request: Request) {
       ...member,
       gameProfile: state.members.find((existing) => existing.id === member.id)?.gameProfile,
       previousNames: state.members.find((existing) => existing.id === member.id)?.previousNames,
+      originServer: state.members.find((existing) => existing.id === member.id)?.originServer,
+      transferredTo: state.members.find((existing) => existing.id === member.id)?.transferredTo,
       manualStats: state.members.find((existing) => existing.id === member.id)?.manualStats,
     }));
     return NextResponse.json(await setState({ ...state, members }));
@@ -54,6 +56,9 @@ const editSchema = renameSchema.extend({
   // Optional so an editor opened before power and profession existed still saves.
   power: z.string().max(40).optional(),
   profession: z.enum(["", ...PROFESSIONS]).optional(),
+  // Likewise for the origin and departure servers.
+  originServer: z.string().max(10).optional(),
+  transferredTo: z.string().max(10).optional(),
 });
 const setActiveSchema = z.object({
   action: z.literal("set-active"),
@@ -82,6 +87,13 @@ export async function PATCH(request: Request) {
       const previousNames = [...new Set([...(member.previousNames ?? []), member.canonicalName])].filter((name) => name !== canonicalName);
       const changes: Partial<typeof member> = { canonicalName, aliases, previousNames };
       if (parsed.data.action === "edit") {
+        if (parsed.data.originServer !== undefined) {
+          const entered = parseServerId(parsed.data.originServer);
+          // Saving the captured value unchanged leaves the capture in charge; any
+          // other value, blank included, is an officer correction that outranks it.
+          changes.originServer = entered === (member.gameProfile?.originServer ?? null) ? undefined : entered;
+        }
+        if (parsed.data.transferredTo !== undefined) changes.transferredTo = parseServerId(parsed.data.transferredTo) ?? undefined;
         const heroPower = parseMemberStat(parsed.data.heroPower);
         const kills = parseMemberStat(parsed.data.kills);
         const current = memberStats(member);

@@ -79,6 +79,8 @@ export function applyCapturedRoster(state: TrackerState, capture: RosterCapture,
       leftAt: row.active ? undefined : existing?.leftAt,
       gameProfile: {
         ...profile,
+        // A starting server never goes stale, so a retained profile takes it too.
+        originServer: row.originServerId ?? profile.originServer ?? null,
         lastRankPublicId: row.lastRankPublicId,
         refreshStatus: retained ? "retained" : "fresh",
         refreshAttemptedOn: capture.capturedOn,

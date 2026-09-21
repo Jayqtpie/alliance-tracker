@@ -2,14 +2,14 @@
 
 import Image from "next/image";
 import { Crown, Search, Swords, Users, Wrench, X, Zap } from "lucide-react";
-import { useId, useState } from "react";
+import { type CSSProperties, useId, useState } from "react";
 import type { Member, TrackerState } from "@/lib/types";
 import { MemberName } from "./member-name";
 import { MemberActions } from "./member-actions";
 import { useLanguage } from "./language-selector";
 
 import { EditMemberDialog } from "./edit-member-dialog";
-import { allianceStatTotals, memberStats } from "@/lib/member-stats";
+import { allianceStatTotals, memberServers, memberStats, serverHuePalette, serverLabel } from "@/lib/member-stats";
 
 const ROSTER_RANK_FILTERS = [
   { value: "all", label: "All" },
@@ -30,6 +30,22 @@ export function MemberAvatar({ member, large = false }: { member: Member; large?
   </span>;
 }
 
+/** A player who started on this alliance's own warzone carries no tag. */
+export function memberServerTags(member: Member, homeServer: string) {
+  const { origin, transferredTo } = memberServers(member);
+  return { origin: origin !== null && String(origin) !== String(homeServer) ? origin : null, transferredTo };
+}
+
+function ServerTags({ member, homeServer, hues }: { member: Member; homeServer: string; hues: Map<number, number> }) {
+  const { t } = useLanguage();
+  const { origin, transferredTo } = memberServerTags(member, homeServer);
+  if (origin === null && transferredTo === null) return null;
+  return <span className="member-server-tags">
+    {origin !== null && <b className="member-server-tag" style={{ "--server-hue": hues.get(origin) ?? 0 } as CSSProperties} title={t("Came from server {server}", { server: origin })}>{serverLabel(origin)}</b>}
+    {transferredTo !== null && <b className="member-server-tag departed" title={t("Transferred to server {server}", { server: transferredTo })}>→ {serverLabel(transferredTo)}</b>}
+  </span>;
+}
+
 export function AllianceRoster({ canManage = false, state, onOpenMember, onMergeMember, onDeleteMember, onSaved }: { canManage?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void; onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void }) {
   const { language, t } = useLanguage();
   const [editingId, setEditingId] = useState<string>();
@@ -41,6 +57,11 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
   const rosterListId = useId();
   const active = state.members.filter((member) => member.active);
   const totals = allianceStatTotals(state.members);
+  // Built from the whole roster, not the filtered view, so a search or a rank
+  // filter never repaints the tags that stay on screen.
+  const serverHues = serverHuePalette(state.members
+    .map((member) => memberServerTags(member, state.alliance.server).origin)
+    .filter((server): server is number => server !== null));
   const leader = active.find((member) => member.gameProfile?.rank === "R5");
   const lastUpdated = active.flatMap((member) => [member.gameProfile?.capturedOn, member.manualStats?.updatedAt])
     .filter((date): date is string => Boolean(date)).map((date) => date.slice(0, 10)).sort().at(-1);
@@ -113,8 +134,13 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
         {ROSTER_RANK_FILTERS.map(({ value }) => <option key={value} value={value}>{value === "all" ? t("Rank") : value}</option>)}
       </select><span className="alliance-col-power">{t("Power")}</span><span>{t("Hero power")}</span><span>{t("Kills")}</span><span className="alliance-col-profession">{t("Profession")}</span></div>
       <ol id={rosterListId} className="alliance-roster-list">{filtered.map(({ member, position }) => <li key={member.id} className="roster-with-merge" data-rank={member.gameProfile?.rank}>
-        <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={t("View {name}, power {power}, hero power {heroPower}, kills {kills}, profession {profession}", { name: member.canonicalName, power: memberStats(member).powerDisplay, heroPower: memberStats(member).heroPowerDisplay, kills: memberStats(member).killsDisplay, profession: memberStats(member).profession ?? "—" })}>
-          <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} /><MemberName member={member} /></span>
+        <button className="alliance-roster-row" data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={[
+          t("View {name}, power {power}, hero power {heroPower}, kills {kills}, profession {profession}", { name: member.canonicalName, power: memberStats(member).powerDisplay, heroPower: memberStats(member).heroPowerDisplay, kills: memberStats(member).killsDisplay, profession: memberStats(member).profession ?? "—" }),
+          memberServerTags(member, state.alliance.server).origin !== null ? t("Came from server {server}", { server: memberServerTags(member, state.alliance.server).origin! }) : "",
+          memberServerTags(member, state.alliance.server).transferredTo !== null ? t("Transferred to server {server}", { server: memberServerTags(member, state.alliance.server).transferredTo! }) : "",
+        ].filter(Boolean).join(", ")}>
+          <span className="alliance-row-identity"><span className="alliance-position">{position}</span><MemberAvatar member={member} />
+            <span className="alliance-row-naming"><MemberName member={member} /><ServerTags member={member} homeServer={state.alliance.server} hues={serverHues} /></span></span>
           <span className="member-rank-cell">{member.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
           <span className="alliance-stat alliance-col-power"><strong>{memberStats(member).powerDisplay}</strong></span>
           <span className="alliance-stat"><strong>{memberStats(member).heroPowerDisplay}</strong></span>

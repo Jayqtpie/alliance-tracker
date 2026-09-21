@@ -50,7 +50,7 @@ import { MemberAvatar } from "@/components/alliance-roster";
 import { MembersView } from "@/components/members-view";
 import { MergeMemberDialog } from "@/components/merge-member-dialog";
 import { DeleteMemberDialog } from "./delete-member-dialog";
-import { memberStats } from "@/lib/member-stats";
+import { memberServers, memberStats, serverLabel } from "@/lib/member-stats";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector, useLanguage } from "@/components/language-selector";
@@ -840,6 +840,8 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
               <div><dt>{t("Known aliases")}</dt><dd>{member.aliases.length ? member.aliases.join(", ") : t("None recorded")}</dd></div>
               <div><dt>{t("Joined")}</dt><dd>{member.joinedAt || t("Not recorded")}</dd></div>
               <div><dt>{t("Left")}</dt><dd>{member.leftAt || "—"}</dd></div>
+              <div><dt>{t("Origin server")}</dt><dd>{memberServers(member).origin === null ? t("Not recorded") : serverLabel(memberServers(member).origin)}</dd></div>
+              <div><dt>{t("Transferred to")}</dt><dd>{memberServers(member).transferredTo === null ? "—" : serverLabel(memberServers(member).transferredTo)}</dd></div>
               {canManage && <div><dt>{t("Officer notes")}</dt><dd>{member.notes || t("No notes")}</dd></div>}
             </dl>
             {canManage && <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> {t("Merge into another player")}</button>}

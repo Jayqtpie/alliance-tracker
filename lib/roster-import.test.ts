@@ -132,6 +132,25 @@ describe("captured RSCL roster", () => {
     expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(100);
   });
 
+  it("carries the starting server onto fresh and retained profiles alike", () => {
+    const source = structuredClone(capture);
+    const row = source.members.find((entry) => entry.lastRankPublicId === "1187353")!;
+    row.freshness.status = "retained";
+    expect(row.originServerId).not.toBeNull();
+
+    const before = importCapturedRoster(structuredClone(INITIAL_STATE));
+    before.rosterImport = "lwservers-rscl-927-2026-09-10-v1";
+    // A tracker that stored this profile before origin servers existed.
+    const member = before.members.find((entry) => entry.gameProfile?.lastRankPublicId === "1187353")!;
+    delete member.gameProfile!.originServer;
+
+    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-21-v2");
+    expect(after.members.find((entry) => entry.id === member.id)?.gameProfile?.originServer).toBe(row.originServerId);
+    for (const entry of source.members) {
+      expect(after.members.find((item) => item.gameProfile?.uid === entry.uid)?.gameProfile?.originServer).toBe(entry.originServerId);
+    }
+  });
+
   it("stops on duplicate game UIDs or conflicting verified LastRank mappings", () => {
     const before = importCapturedRoster(structuredClone(INITIAL_STATE));
     before.rosterImport = "lwservers-rscl-927-2026-09-10-v1";

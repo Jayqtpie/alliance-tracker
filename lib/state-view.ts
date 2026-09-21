@@ -11,6 +11,7 @@ export function stateForRole(state: TrackerState, role: AccessRole): TrackerStat
       id: member.id, canonicalName: member.canonicalName, aliases: member.aliases,
       previousNames: member.previousNames, active: member.active,
       joinedAt: member.joinedAt, leftAt: member.leftAt,
+      originServer: member.originServer, transferredTo: member.transferredTo,
       manualStats: member.manualStats, gameProfile: member.gameProfile,
     })),
     snapshots: state.snapshots.map((snapshot) => ({

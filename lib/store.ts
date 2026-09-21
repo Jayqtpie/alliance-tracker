@@ -10,10 +10,20 @@ import { importCapturedRoster } from "@/lib/roster-import";
 import { applyMemberProfileUpdates } from "@/lib/member-profile-updates";
 import { applyProfileRefreshRetries } from "@/lib/profile-refresh-retries";
 import { applyProfileStats } from "@/lib/profile-stats";
+import { applyOriginServers } from "@/lib/origin-servers";
 import { applyPairingImport } from "@/lib/pairings-import";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
+
+// Every one-shot data import, in the order each one's guards expect. Each returns
+// the state unchanged once it has been applied, so an unchanged result is the
+// signal that nothing needs saving.
+const DATA_IMPORTS = [importCapturedRoster, applyMemberProfileUpdates, applyProfileRefreshRetries, applyProfileStats, applyOriginServers, applyPairingImport];
+
+export function applyDataImports(state: TrackerState): TrackerState {
+  return DATA_IMPORTS.reduce((current, apply) => apply(current), state);
+}
 
 export class StateConflictError extends Error {
   constructor() {
@@ -78,7 +88,7 @@ async function getStoredState(): Promise<TrackerState> {
 async function loadState(): Promise<TrackerState> {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const stored = await getStoredState();
-    const imported = applyPairingImport(applyProfileStats(applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(stored)))));
+    const imported = applyDataImports(stored);
     if (imported === stored) return stored;
     try {
       return await setState(imported);
@@ -88,7 +98,7 @@ async function loadState(): Promise<TrackerState> {
     }
   }
   const latest = await getStoredState();
-  if (applyPairingImport(applyProfileStats(applyProfileRefreshRetries(applyMemberProfileUpdates(importCapturedRoster(latest))))) === latest) return latest;
+  if (applyDataImports(latest) === latest) return latest;
   throw new StateConflictError();
 }
 

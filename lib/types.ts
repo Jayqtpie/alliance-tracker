@@ -9,6 +9,10 @@ export interface Member {
   joinedAt?: string;
   leftAt?: string;
   notes?: string;
+  /** Officer correction to the source origin server. Absent means use the captured value. */
+  originServer?: number | null;
+  /** Server this player moved to when they left. Manual only: the source cannot see departed players. */
+  transferredTo?: number | null;
   manualStats?: { power?: number | null; heroPower?: number | null; kills?: number | null; profession?: string | null; updatedAt: string };
   gameProfile?: {
     uid: string;
@@ -22,6 +26,8 @@ export interface Member {
     power?: number | null;
     powerDisplay?: string;
     profession?: string | null;
+    /** Server the player started on, from the source capture. */
+    originServer?: number | null;
     capturedOn: string;
     sourceActivityDate?: string;
     lastRankPublicId?: string;

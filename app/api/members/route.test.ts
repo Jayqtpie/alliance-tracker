@@ -51,6 +51,32 @@ describe("player edits and deletion", () => {
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "", kills: "", profession: "Wizard", version: 1 }))).status).toBe(400);
   });
 
+  it("records origin and departure servers, letting a correction outrank the captured value", async () => {
+    const profiled = { id: "keep", canonicalName: "Alpha", active: true, aliases: [], gameProfile: { uid: "1", rank: "R3", avatarPath: "", heroPower: 5, heroPowerDisplay: "5", heroPowerLegacy: false, kills: 6, killsDisplay: "6", originServer: 856, capturedOn: "2026-09-14", source: "test" } };
+    const edit = (body: Record<string, unknown>) => {
+      vi.mocked(getState).mockResolvedValueOnce({ ...createEmptyState(), members: [structuredClone(profiled)] });
+      return PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "5", kills: "6", version: 1, ...body })).then((response) => response.json());
+    };
+    // Saving the captured value back leaves the capture in charge of the field.
+    expect((await edit({ originServer: "856" })).members[0].originServer).toBeUndefined();
+    expect((await edit({ originServer: "900" })).members[0].originServer).toBe(900);
+    // Clearing it is a correction too, so a later refresh cannot reinstate 856.
+    expect((await edit({ originServer: "" })).members[0].originServer).toBeNull();
+    expect((await edit({ transferredTo: "931" })).members[0].transferredTo).toBe(931);
+    expect((await edit({ transferredTo: "" })).members[0].transferredTo).toBeUndefined();
+    // Neither edit disturbs the captured profile or the statistics.
+    const saved = await edit({ originServer: "900", transferredTo: "931" });
+    expect(saved.members[0].gameProfile).toEqual(profiled.gameProfile);
+    expect(saved.members[0].manualStats).toBeUndefined();
+    // An editor opened before these fields existed leaves both untouched.
+    const legacy = await edit({});
+    expect(legacy.members[0]).not.toHaveProperty("transferredTo");
+    for (const invalid of ["92", "12345", "nine"]) {
+      vi.mocked(getState).mockResolvedValueOnce({ ...createEmptyState(), members: [structuredClone(profiled)] });
+      expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "", kills: "", originServer: invalid, version: 1 }))).status).toBe(400);
+    }
+  });
+
   it("rejects invalid stats and stale edits without partially saving the name", async () => {
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Changed", heroPower: "-12", kills: "2M", version: 1 }))).status).toBe(400);
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Changed", heroPower: "12M", kills: "2M", version: 2 }))).status).toBe(409);

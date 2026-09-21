@@ -171,6 +171,32 @@ html { scrollbar-gutter: stable; }
 .alliance-roster-directory .roster-with-merge[data-rank="R5"]:is(:hover, :focus-within) { background: var(--leader-hover); }
 .alliance-roster-directory .roster-with-merge[data-rank="R4"]:is(:hover, :focus-within) { background: var(--officer-hover); }
 .alliance-roster-directory .roster-with-merge .alliance-roster-row[data-rank] { background: transparent; box-shadow: none; }
+/* Fills the commander column so the tag can sit against its right edge, lining
+   every tag up just left of the rank chip instead of trailing each name. */
+.alliance-row-naming { min-width: 0; display: flex; flex-direction: row; align-items: center; gap: 8px; flex: 1 1 auto; }
+.alliance-row-naming .member-nameplate { min-width: 0; }
+/* Clipped, and the first to give up space, so a squeezed column always spends
+   its width on the name rather than on the tag beside it. */
+.member-server-tags { display: flex; align-items: center; gap: 5px; min-width: 0; flex: 0 100 auto; margin-inline-start: auto; overflow: hidden; }
+/* --server-hue is set per tag from the warzone number. OKLCH holds the same
+   perceived lightness across every hue, so no server shouts louder than another. */
+.member-server-tag {
+  flex-shrink: 0; padding: 1px 5px; border-radius: 5px; font-size: 9px; font-weight: 700;
+  letter-spacing: .02em; font-variant-numeric: tabular-nums;
+  color: oklch(.46 .13 var(--server-hue)); background: oklch(.95 .04 var(--server-hue));
+  border: 1px solid oklch(.86 .07 var(--server-hue));
+}
+:root[data-theme="dark"] .member-server-tag {
+  color: oklch(.85 .12 var(--server-hue)); background: oklch(.31 .06 var(--server-hue));
+  border-color: oklch(.46 .08 var(--server-hue));
+}
+/* A departure is solid rather than tinted, so it never reads as just another
+   origin hue that happens to land on red. The dark-theme selector above outranks
+   a lone .departed class, so that case is named explicitly; without it the hue
+   variables leak onto a tag that never sets one and the declarations are dropped.
+   Text is --panel, which inverts with the theme and keeps contrast either way. */
+.member-server-tag.departed,
+:root[data-theme="dark"] .member-server-tag.departed { color: var(--panel); background: var(--red); border-color: var(--red); }
 .alliance-roster-directory .alliance-avatar { width: 34px; height: 34px; flex-basis: 34px; }
 .alliance-roster-directory .alliance-roster-foot { margin-top: 16px; }
 .member-actions { flex: 0 0 48px; display: flex; justify-content: center; }
@@ -213,6 +239,11 @@ html { scrollbar-gutter: stable; }
   .alliance-roster-directory .alliance-avatar { width: 26px; height: 26px; flex-basis: 26px; }
   .alliance-roster-directory .alliance-row-identity { gap: 5px; }
   .alliance-roster-directory .alliance-position { display: none; }
+  /* Stacked under the name, so the tag returns to the start edge rather than
+     being pushed across the row by the auto margin. */
+  .alliance-row-naming { flex-direction: column; align-items: flex-start; gap: 3px; }
+  .member-server-tags { margin-inline-start: 0; }
+  .member-server-tag { padding: 0 4px; font-size: 8px; }
   .alliance-roster-directory .alliance-roster-columns span:first-child { padding-left: 0; }
   .member-actions { flex-basis: 35px; }
   .member-actions-trigger { width: 32px; height: 42px; }
