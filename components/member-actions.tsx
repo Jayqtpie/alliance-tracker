@@ -2,6 +2,7 @@
 
 import { GitMerge, MoreHorizontal, PencilLine, Trash2, UserCheck, UserMinus } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
+import { useLanguage } from "./language-selector";
 
 export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggleActive, onDelete }: {
   name: string;
@@ -12,6 +13,7 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
   onToggleActive: () => void;
   onDelete: () => void;
 }) {
+  const { t } = useLanguage();
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const menu = useRef<HTMLDivElement>(null);
@@ -35,13 +37,13 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
   }
 
   return <div className="member-actions">
-    <button ref={trigger} type="button" className="member-actions-trigger" popoverTarget={id} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label={`Actions for ${name}`} title={`Actions for ${name}`} onKeyDown={(event) => {
+    <button ref={trigger} type="button" className="member-actions-trigger" popoverTarget={id} aria-haspopup="menu" aria-expanded={open} aria-controls={id} aria-label={t("Actions for {name}", { name })} title={t("Actions for {name}", { name })} onKeyDown={(event) => {
       if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
       event.preventDefault();
       focusLast.current = event.key === "ArrowUp";
       menu.current?.showPopover();
     }}><MoreHorizontal size={20} aria-hidden="true" /></button>
-    <div ref={menu} id={id} popover="auto" role="menu" aria-label={`Actions for ${name}`} className="member-actions-menu" onToggle={(event) => {
+    <div ref={menu} id={id} popover="auto" role="menu" aria-label={t("Actions for {name}", { name })} className="member-actions-menu" onToggle={(event) => {
       const panel = event.currentTarget;
       const isOpen = panel.matches(":popover-open");
       setOpen(isOpen);
@@ -68,11 +70,11 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
       buttons[next]?.focus();
     }}>
       <p className="member-actions-name">{name}</p>
-      <button type="button" role="menuitem" onClick={() => run(onEdit)}><PencilLine size={16} aria-hidden="true" /><span>Edit member</span></button>
-      <button type="button" role="menuitem" disabled={!canMerge} onClick={() => run(onMerge)}><GitMerge size={16} aria-hidden="true" /><span>Merge duplicate</span></button>
-      <button type="button" role="menuitem" onClick={() => run(onToggleActive)}>{active ? <UserMinus size={16} aria-hidden="true" /> : <UserCheck size={16} aria-hidden="true" />}<span>{active ? "Move to previous records" : "Restore to roster"}</span></button>
+      <button type="button" role="menuitem" onClick={() => run(onEdit)}><PencilLine size={16} aria-hidden="true" /><span>{t("Edit member")}</span></button>
+      <button type="button" role="menuitem" disabled={!canMerge} onClick={() => run(onMerge)}><GitMerge size={16} aria-hidden="true" /><span>{t("Merge duplicate")}</span></button>
+      <button type="button" role="menuitem" onClick={() => run(onToggleActive)}>{active ? <UserMinus size={16} aria-hidden="true" /> : <UserCheck size={16} aria-hidden="true" />}<span>{t(active ? "Move to previous records" : "Restore to roster")}</span></button>
       <div className="member-actions-divider" role="separator" />
-      <button type="button" role="menuitem" className="member-actions-delete" onClick={() => run(onDelete)}><Trash2 size={16} aria-hidden="true" /><span>Delete member</span></button>
+      <button type="button" role="menuitem" className="member-actions-delete" onClick={() => run(onDelete)}><Trash2 size={16} aria-hidden="true" /><span>{t("Delete member")}</span></button>
     </div>
   </div>;
 }

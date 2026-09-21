@@ -1,6 +1,10 @@
 import type { ExtractedRow, Member, RankingEntry, Snapshot, SvsAttendance, TrackerState } from "@/lib/types";
 
 import { rankGaps } from "./rank-gaps";
+import { translate, type Translator } from "./i18n";
+
+// Warnings default to English so server code and tests read plainly; the UI passes its translator.
+const englishTranslator: Translator = (phrase, values) => translate("en", phrase, values);
 
 const SVS_RANK: Record<SvsAttendance, number> = { absent: 0, excused: 1, present: 2 };
 
@@ -26,8 +30,9 @@ export function dayLabelFor(isoDate: string) {
   );
 }
 
-export function dedupeRows(rows: ExtractedRow[]) {
+export function dedupeRows(rows: ExtractedRow[], t: Translator = englishTranslator) {
   const warnings: string[] = [];
+  const rankWarnings: string[] = [];
   const byRank = new Map<number, ExtractedRow>();
 
   for (const row of rows) {
@@ -42,7 +47,7 @@ export function dedupeRows(rows: ExtractedRow[]) {
     const same =
       normalizeName(existing.displayName) === normalizeName(row.displayName) &&
       existing.points === row.points;
-    if (!same) warnings.push(`Rank ${row.rank} has conflicting readings and needs review.`);
+    if (!same) rankWarnings.push(t("Rank {rank} has conflicting readings and needs review.", { rank: row.rank }));
     const chosen = row.confidence > existing.confidence ? row : existing;
     byRank.set(row.rank, !same || existing.needsReview ? { ...chosen, needsReview: true, reviewed: false } : chosen);
   }
@@ -50,10 +55,11 @@ export function dedupeRows(rows: ExtractedRow[]) {
   const deduped = [...byRank.values()].sort((a, b) => a.rank - b.rank);
   if (deduped.length) {
     const gaps = rankGaps(deduped.map((row) => row.rank), 150);
-    for (const rank of gaps.missing) warnings.push(`Rank ${rank} is missing from this import.`);
-    if (gaps.total > gaps.missing.length) warnings.push(`${gaps.total - gaps.missing.length} additional ranks are missing from this import.`);
+    for (const rank of gaps.missing) rankWarnings.push(t("Rank {rank} is missing from this import.", { rank }));
+    if (gaps.total > gaps.missing.length) warnings.push(t("{count} additional ranks are missing from this import.", { count: gaps.total - gaps.missing.length }));
   }
-  return { rows: deduped, warnings: [...new Set(warnings)] };
+  // rankWarnings are repeated by analyzeImport, so the importer shows them only once.
+  return { rows: deduped, warnings: [...new Set([...rankWarnings, ...warnings])], rankWarnings: [...new Set(rankWarnings)] };
 }
 
 export function matchMember(name: string, members: Member[]) {
@@ -94,7 +100,7 @@ export function suggestMember(name: string, members: Member[]) {
     .sort((a, b) => b.score - a.score)[0];
 }
 
-export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; createMember?: boolean; confirmReturned?: boolean }>, members: Member[]) {
+export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; createMember?: boolean; confirmReturned?: boolean }>, members: Member[], t: Translator = englishTranslator) {
   const warnings: string[] = [];
   const normalizedNames = new Map<string, number[]>();
   const rankCounts = new Map<number, number>();
@@ -109,36 +115,36 @@ export function analyzeImport(rows: Array<ExtractedRow & { memberId?: string; cr
       const suggestion = suggestMember(row.displayName, members);
       warnings.push(
         suggestion
-          ? `Rank ${row.rank} (${row.displayName}) is unmatched. Possible name change: ${suggestion.member.canonicalName}.`
-          : `Rank ${row.rank} (${row.displayName}) is not linked to a known member.`,
+          ? t("Rank {rank} ({name}) is unmatched. Possible name change: {suggestion}.", { rank: row.rank, name: row.displayName, suggestion: suggestion.member.canonicalName })
+          : t("Rank {rank} ({name}) is not linked to a known member.", { rank: row.rank, name: row.displayName }),
       );
     } else if (member && !member.active && !row.confirmReturned) {
-      warnings.push(`Rank ${row.rank} matches departed member ${member.canonicalName}; confirm they returned.`);
+      warnings.push(t("Rank {rank} matches departed member {name}; confirm they returned.", { rank: row.rank, name: member.canonicalName }));
     }
   }
 
   for (const [name, ranks] of normalizedNames) {
-    if (name && ranks.length > 1) warnings.push(`The same commander appears at ranks ${ranks.join(", ")}.`);
+    if (name && ranks.length > 1) warnings.push(t("The same commander appears at ranks {ranks}.", { ranks: ranks.join(", ") }));
   }
 
   for (const [rank, count] of rankCounts) {
-    if (count > 1) warnings.push(`Rank ${rank} appears ${count} times.`);
+    if (count > 1) warnings.push(t("Rank {rank} appears {count} times.", { rank, count }));
   }
   if (sorted.length) {
     const { missing, total } = rankGaps(rankCounts.keys(), 12);
-    if (total) warnings.push(`Missing rank${total === 1 ? "" : "s"}: ${missing.join(", ")}${total > 12 ? "…" : ""}.`);
+    if (total) warnings.push(t(total === 1 ? "Missing rank: {ranks}{ellipsis}." : "Missing ranks: {ranks}{ellipsis}.", { ranks: missing.join(", "), ellipsis: total > 12 ? "…" : "" }));
   }
 
   for (let index = 1; index < sorted.length; index += 1) {
     const previous = sorted[index - 1];
     const current = sorted[index];
     if (current.rank > previous.rank && current.points > previous.points && !(current.reviewed && previous.reviewed)) {
-      warnings.push(`Points increase between ranks ${previous.rank} and ${current.rank}; check both readings.`);
+      warnings.push(t("Points increase between ranks {previous} and {current}; check both readings.", { previous: previous.rank, current: current.rank }));
     }
   }
 
   const lowConfidence = rows.filter((row) => row.confidence < 0.86 && !row.reviewed).length;
-  if (lowConfidence) warnings.push(`${lowConfidence} row${lowConfidence === 1 ? " has" : "s have"} low OCR confidence.`);
+  if (lowConfidence) warnings.push(t(lowConfidence === 1 ? "1 row has low OCR confidence." : "{count} rows have low OCR confidence.", { count: lowConfidence }));
   return [...new Set(warnings)];
 }
 
@@ -244,6 +250,7 @@ export function analyzeLargeChanges(
   snapshots: Snapshot[],
   capturedDate: string,
   status: Snapshot["status"],
+  t: Translator = englishTranslator,
 ) {
   const draft: Snapshot = {
     id: "draft",
@@ -265,7 +272,7 @@ export function analyzeLargeChanges(
   const comparison = snapshotComparison(draft, snapshots);
   return comparison.rows
     .filter((row) => !row.reviewed && row.percentChange !== undefined && Math.abs(row.percentChange) >= 75 && Math.abs(row.pointChange || 0) >= 5_000_000)
-    .map((row) => `${row.displayName} differs by ${Math.round(row.percentChange || 0)}% from the matching prior capture.`);
+    .map((row) => t("{name} differs by {percent}% from the matching prior capture.", { name: row.displayName, percent: Math.round(row.percentChange || 0) }));
 }
 
 export function snapshotComparison(current: Snapshot, snapshots: Snapshot[]) {

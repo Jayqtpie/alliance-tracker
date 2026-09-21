@@ -54,6 +54,7 @@ import { memberStats } from "@/lib/member-stats";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { LanguageSelector, useLanguage } from "@/components/language-selector";
+import { languageDirection } from "@/lib/i18n";
 import { WeeklyPerformance } from "@/components/weekly-performance";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
@@ -68,6 +69,14 @@ import { accurateAsOf } from "@/lib/display-date";
 type View = "overview" | "import" | "reports" | "operations" | "members" | "settings";
 const bridgeJobStorageKey = "alliance-manager:active-bridge-job";
 
+// compact/full/signed/dateLabel are shared with the canvas export helpers, which are plain
+// module functions. The active language is mirrored here instead of threaded through them all.
+let displayLocale = "en-GB";
+
+function setDisplayLocale(language: string) {
+  displayLocale = language === "en" ? "en-GB" : language;
+}
+
 function compact(value: number) {
   const units = [
     { threshold: 1_000_000_000, suffix: "bn" },
@@ -80,16 +89,16 @@ function compact(value: number) {
 }
 
 function full(value: number) {
-  return new Intl.NumberFormat("en-GB").format(value);
+  return new Intl.NumberFormat(displayLocale).format(value);
 }
 
 function signed(value?: number, suffix = "") {
   if (value === undefined) return "—";
-  return `${value > 0 ? "+" : ""}${new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 }).format(value)}${suffix}`;
+  return `${value > 0 ? "+" : ""}${new Intl.NumberFormat(displayLocale, { maximumFractionDigits: 1 }).format(value)}${suffix}`;
 }
 
 function dateLabel(value: string) {
-  return new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
+  return new Intl.DateTimeFormat(displayLocale, { day: "numeric", month: "short", year: "numeric" }).format(new Date(value));
 }
 
 function statusTone(value?: number) {
@@ -419,6 +428,7 @@ export function TrackerApp({
 }) {
   const router = useRouter();
   const { language, t } = useLanguage();
+  setDisplayLocale(language);
   const [state, setState] = useState(initialState);
   const [view, setView] = useState<View>("overview");
   const [reportsTab, setReportsTab] = useState<"reports" | "snapshots">("reports");
@@ -454,12 +464,12 @@ export function TrackerApp({
   async function deleteSnapshot(snapshot: Snapshot) {
     const response = await fetch(`/api/snapshots?id=${encodeURIComponent(snapshot.id)}`, { method: "DELETE" });
     const body = await response.json();
-    if (!response.ok) throw new Error(body.error || "Could not delete this snapshot.");
+    if (!response.ok) throw new Error(body.error || t("Could not delete this snapshot."));
     const nextState = body.state as TrackerState;
     const latestRemaining = [...nextState.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt))[0];
     setState(nextState);
     if (selectedSnapshotId === snapshot.id) setSelectedSnapshotId(latestRemaining?.id || "");
-    showNotice("Snapshot deleted.");
+    showNotice(t("Snapshot deleted."));
   }
 
   async function toggleReportLock(snapshot: Snapshot) {
@@ -472,11 +482,11 @@ export function TrackerApp({
         body: JSON.stringify({ id: snapshot.id, deletionLocked, version: state.version }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not change this report lock.");
+      if (!response.ok) throw new Error(body.error || t("Could not change this report lock."));
       setState(body.state as TrackerState);
-      showNotice(deletionLocked ? "Report locked against deletion." : "Report unlocked. It can now be deleted from Snapshot history.");
+      showNotice(t(deletionLocked ? "Report locked against deletion." : "Report unlocked. It can now be deleted from Snapshot history."));
     } catch (error) {
-      showNotice(error instanceof Error ? error.message : "Could not change this report lock.");
+      showNotice(error instanceof Error ? error.message : t("Could not change this report lock."));
     } finally {
       setChangingReportLock(false);
     }
@@ -498,7 +508,7 @@ export function TrackerApp({
   }
 
   if (allianceNeedsSetup(state.alliance)) {
-    if (!canManage) return <main className="login-shell"><p>The alliance is waiting for an admin to finish setup.</p><button className="button secondary" onClick={logout}>Sign out</button></main>;
+    if (!canManage) return <main className="login-shell"><p>{t("The alliance is waiting for an admin to finish setup.")}</p><button className="button secondary" onClick={logout}>{t("Sign out")}</button></main>;
     return <main className="alliance-setup-shell"><AllianceSettings state={state} onSaved={(next) => { setState(next); setView("overview"); router.refresh(); }} /></main>;
   }
 
@@ -533,13 +543,12 @@ export function TrackerApp({
         <header className="topbar">
           <div>
             <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span></p>
-            {view !== "overview" && view !== "members" && <h1 className="sr-only">{view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1]}</h1>}
+            {view !== "overview" && view !== "members" && <h1 className="sr-only">{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</h1>}
           </div>
           <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {canManage ? t("Admin") : t("Viewer")} <span className="officer-avatar">{canManage ? "R4/5" : <Users size={15} />}</span></div>{canManage && <button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button>}<ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
         </header>
 
-        {language !== "en" && view !== "overview" && <p className="translation-note">{t("Detailed tools are currently in English.")}</p>}
-        <div lang={view === "overview" ? language : "en"} dir={view === "overview" && language === "ar" ? "rtl" : "ltr"}>
+        <div lang={language} dir={languageDirection(language)}>
         {view === "overview" && selected && comparison && (
           <Overview
             key={selected.id}
@@ -569,14 +578,14 @@ export function TrackerApp({
               setEditingSnapshot(undefined);
               setSelectedSnapshotId(snapshot.id);
               setView("overview");
-              showNotice("Snapshot published successfully.");
+              showNotice(t("Snapshot published successfully."));
             }}
           />
         )}
         {view === "reports" && <>
           <div className="reports-tabs-wrap"><div className="operations-tabs reports-tabs">
-            <button className={reportsTab === "reports" ? "active" : ""} onClick={() => setReportsTab("reports")}><LineChart size={16} />Reports</button>
-            <button className={reportsTab === "snapshots" ? "active" : ""} onClick={() => setReportsTab("snapshots")}><History size={16} />Snapshot history</button>
+            <button className={reportsTab === "reports" ? "active" : ""} onClick={() => setReportsTab("reports")}><LineChart size={16} />{t("Reports")}</button>
+            <button className={reportsTab === "snapshots" ? "active" : ""} onClick={() => setReportsTab("snapshots")}><History size={16} />{t("Snapshot history")}</button>
           </div></div>
           {reportsTab === "reports" ? <Reports canManage={canManage} state={state} onOpenMember={setSelectedMemberId} onToggleLock={toggleReportLock} changingLock={changingReportLock} /> : <Snapshots
             canManage={canManage}
@@ -589,22 +598,22 @@ export function TrackerApp({
             changingLock={changingReportLock}
           />}
         </>}
-        {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice("Alliance settings saved."); router.refresh(); }} />}
-        {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice("Player changes saved."); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice(t("Alliance settings saved.")); router.refresh(); }} />}
+        {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>
       {selectedMember && <CommanderProfile canManage={canManage} member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
       {canManage && deletingMember && <DeleteMemberDialog key={deletingMember.id} member={deletingMember} state={state} onClose={() => setDeleteMemberId(undefined)} onDeleted={(next) => {
         setState(next); setDeleteMemberId(undefined);
         if (selectedMemberId === deletingMember.id) setSelectedMemberId(undefined);
-        showNotice("Player deleted. Saved rankings kept."); router.refresh();
+        showNotice(t("Player deleted. Saved rankings kept.")); router.refresh();
       }} />}
       {canManage && mergeMember && <MergeMemberDialog key={mergeMember.id} duplicate={mergeMember} state={state} onClose={() => setMergeMemberId(undefined)} onMerged={(next, primaryId) => {
         const name = next.members.find((member) => member.id === primaryId)?.canonicalName;
         setState(next);
         setMergeMemberId(undefined);
         setSelectedMemberId(primaryId);
-        showNotice(`Merged ${mergeMember.canonicalName} into ${name}. Duplicate removed and history linked.`);
+        showNotice(t("Merged {duplicate} into {primary}. Duplicate removed and history linked.", { duplicate: mergeMember.canonicalName, primary: name ?? "" }));
       }} />}
       {notice && <div className="toast" role="status"><Check size={17} /> {notice}</div>}
     </div>
@@ -698,7 +707,7 @@ function Overview({
         <Metric icon={Shield} label={t("Top 25 share")} value={total ? `${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%` : "—"} detail={t("Of all recorded points")} />
       </section>
 
-      <WeeklyPerformance section="spotlight" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} />
+      <WeeklyPerformance section="spotlight" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} language={language} />
 
       {canManage && reviewCount > 0 && (
         <div className="review-banner dashboard-review"><CircleAlert size={17} /><span><strong>{t("{count} ranking rows need a second look.", { count: reviewCount })}</strong> {t("Verify the names, ranks and points in this capture to clear review flags.")}</span><button onClick={onReview}>{t("Review capture")} <ArrowRight size={14} /></button></div>
@@ -732,7 +741,7 @@ function Overview({
         </section>
         </aside>
       </section>
-      <WeeklyPerformance section="cards" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} />
+      <WeeklyPerformance section="cards" state={state} selected={selected} onOpenMember={onOpenMember} translate={t} language={language} />
     </div>
   );
 }
@@ -742,8 +751,9 @@ function Metric({ icon: Icon, label, value, detail, tone = "neutral" }: { icon: 
 }
 
 function Delta({ value, format }: { value?: number; format: (value: number) => string }) {
+  const { t } = useLanguage();
   if (value === undefined) return <span className="delta neutral">—</span>;
-  if (value === 0) return <span className="delta neutral">No change</span>;
+  if (value === 0) return <span className="delta neutral">{t("No change")}</span>;
   const positive = value > 0;
   return <span className={`delta ${positive ? "positive" : "negative"}`}>{positive ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}{format(value)}</span>;
 }
@@ -761,6 +771,7 @@ function ScoreBands({ entries }: { entries: RankingEntry[] }) {
 }
 
 function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete }: { canManage: boolean; member: Member; state: TrackerState; onClose: () => void; onMerge: () => void; onDelete: () => void }) {
+  const { language, t } = useLanguage();
   const stats = memberStats(member);
   const performance = memberPerformance(member, state.snapshots);
   const stormHistory = (state.operations?.stormEvents || []).flatMap((event) => {
@@ -787,32 +798,32 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
         <header className="profile-head">
           <div className="profile-identity">
             <MemberAvatar member={member} large />
-            <div><p className="eyebrow">COMMANDER PROFILE</p><h2 id="commander-profile-title">{member.canonicalName}</h2><span className={`member-state ${member.active ? "active" : "departed"}`}>{member.active ? "Active roster" : "Previous record"}</span></div>
+            <div><p className="eyebrow">{t("COMMANDER PROFILE")}</p><h2 id="commander-profile-title">{member.canonicalName}</h2><span className={`member-state ${member.active ? "active" : "departed"}`}>{t(member.active ? "Active roster" : "Previous record")}</span></div>
           </div>
-          <button className="drawer-close" aria-label="Close commander profile" onClick={onClose}><X size={20} /></button>
+          <button className="drawer-close" aria-label={t("Close commander profile")} onClick={onClose}><X size={20} /></button>
         </header>
 
         <div className="profile-body">
-          {Boolean(member.previousNames?.length) && <div className="profile-previous-names" aria-label="Previous player names">{member.previousNames!.map((name) => <span key={name}><small>Previous name</small><strong>{name}</strong></span>)}</div>}
+          {Boolean(member.previousNames?.length) && <div className="profile-previous-names" aria-label={t("Previous player names")}>{member.previousNames!.map((name) => <span key={name}><small>{t("Previous name")}</small><strong>{name}</strong></span>)}</div>}
           {(member.gameProfile || member.manualStats) && <section className="profile-metrics">
-            <div><span>Power</span><strong>{stats.powerDisplay}</strong></div>
-            <div><span>Hero power</span><strong>{stats.heroPowerDisplay}</strong></div>
-            <div><span>Kills</span><strong>{stats.killsDisplay}</strong></div>
-            <div><span>Profession</span><strong>{stats.profession ?? "—"}</strong></div>
-            <div><span>Alliance rank</span><strong>{member.gameProfile?.rank ?? "—"}</strong></div>
-            <div><span>Profile accuracy</span><strong className="profile-capture-date">{member.gameProfile ? accurateAsOf(member.gameProfile.capturedOn) : "No profile capture"}</strong><small>{member.manualStats ? `Stats edited: ${dateLabel(member.manualStats.updatedAt)}` : member.gameProfile?.refreshStatus === "retained" ? "Source refresh unavailable · earlier stats retained" : member.gameProfile?.sourceUpdatedAt ? `LastRank updated: ${dateLabel(member.gameProfile.sourceUpdatedAt)}` : member.gameProfile?.sourceActivityDate ? `Last activity: ${dateLabel(member.gameProfile.sourceActivityDate)}` : "Saved profile data"}</small></div>
+            <div><span>{t("Power")}</span><strong>{stats.powerDisplay}</strong></div>
+            <div><span>{t("Hero power")}</span><strong>{stats.heroPowerDisplay}</strong></div>
+            <div><span>{t("Kills")}</span><strong>{stats.killsDisplay}</strong></div>
+            <div><span>{t("Profession")}</span><strong>{stats.profession ? t(stats.profession) : "—"}</strong></div>
+            <div><span>{t("Alliance rank")}</span><strong>{member.gameProfile?.rank ?? "—"}</strong></div>
+            <div><span>{t("Profile accuracy")}</span><strong className="profile-capture-date">{member.gameProfile ? accurateAsOf(member.gameProfile.capturedOn, t, language) : t("No profile capture")}</strong><small>{member.manualStats ? t("Stats edited: {date}", { date: dateLabel(member.manualStats.updatedAt) }) : member.gameProfile?.refreshStatus === "retained" ? t("Source refresh unavailable · earlier stats retained") : member.gameProfile?.sourceUpdatedAt ? t("LastRank updated: {date}", { date: dateLabel(member.gameProfile.sourceUpdatedAt) }) : member.gameProfile?.sourceActivityDate ? t("Last activity: {date}", { date: dateLabel(member.gameProfile.sourceActivityDate) }) : t("Saved profile data")}</small></div>
           </section>}
           <section className="profile-metrics">
-            <div><span>Latest score</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? `${performance.latest.dayLabel} capture` : "No captures yet"}</small></div>
-            <div><span>Best rank</span><strong>{performance.bestRank ? `#${performance.bestRank}` : "—"}</strong><small>{performance.appearances} appearance{performance.appearances === 1 ? "" : "s"}</small></div>
-            <div><span>Average score</span><strong>{performance.appearances ? compact(performance.averagePoints) : "—"}</strong><small>Across recorded captures</small></div>
-            <div><span>On-board rate</span><strong>{performance.eligibleCaptures ? `${Math.round(performance.participationRate)}%` : "—"}</strong><small>{performance.appearances}/{performance.eligibleCaptures} eligible captures</small></div>
+            <div><span>{t("Latest score")}</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? t("{day} capture", { day: t(performance.latest.dayLabel) }) : t("No captures yet")}</small></div>
+            <div><span>{t("Best rank")}</span><strong>{performance.bestRank ? `#${performance.bestRank}` : "—"}</strong><small>{t(performance.appearances === 1 ? "1 appearance" : "{count} appearances", { count: performance.appearances })}</small></div>
+            <div><span>{t("Average score")}</span><strong>{performance.appearances ? compact(performance.averagePoints) : "—"}</strong><small>{t("Across recorded captures")}</small></div>
+            <div><span>{t("On-board rate")}</span><strong>{performance.eligibleCaptures ? `${Math.round(performance.participationRate)}%` : "—"}</strong><small>{t("{count}/{total} eligible captures", { count: performance.appearances, total: performance.eligibleCaptures })}</small></div>
           </section>
 
           <section className="profile-panel profile-chart-panel">
-            <div className="profile-section-head"><div><p className="eyebrow">SCORE HISTORY</p><h3>Recorded performance</h3></div>{performance.history.length > 0 && <strong>{compact(performance.bestPoints)} best</strong>}</div>
+            <div className="profile-section-head"><div><p className="eyebrow">{t("SCORE HISTORY")}</p><h3>{t("Recorded performance")}</h3></div>{performance.history.length > 0 && <strong>{t("{points} best", { points: compact(performance.bestPoints) })}</strong>}</div>
             {chartPoints.length ? <>
-              <svg className="score-history-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={`Score history for ${member.canonicalName}`} preserveAspectRatio="none">
+              <svg className="score-history-chart" viewBox={`0 0 ${chartWidth} ${chartHeight}`} role="img" aria-label={t("Score history for {name}", { name: member.canonicalName })} preserveAspectRatio="none">
                 <line x1="16" y1="16" x2="544" y2="16" />
                 <line x1="16" y1="75" x2="544" y2="75" />
                 <line x1="16" y1="134" x2="544" y2="134" />
@@ -820,41 +831,41 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
                 {chartPoints.map((point) => <circle key={point.snapshotId} cx={point.x} cy={point.y} r="5" />)}
               </svg>
               <div className="chart-range"><span>{dateLabel(chartPoints[0].capturedAt)}</span><span>{dateLabel(chartPoints.at(-1)!.capturedAt)}</span></div>
-            </> : <p className="empty-copy profile-empty">This commander has no linked ranking history yet.</p>}
+            </> : <p className="empty-copy profile-empty">{t("This commander has no linked ranking history yet.")}</p>}
           </section>
 
           <section className="profile-panel">
-            <div className="profile-section-head"><div><p className="eyebrow">IDENTITY</p><h3>Roster details</h3></div></div>
+            <div className="profile-section-head"><div><p className="eyebrow">{t("IDENTITY")}</p><h3>{t("Roster details")}</h3></div></div>
             <dl className="profile-details">
-              <div><dt>Known aliases</dt><dd>{member.aliases.length ? member.aliases.join(", ") : "None recorded"}</dd></div>
-              <div><dt>Joined</dt><dd>{member.joinedAt || "Not recorded"}</dd></div>
-              <div><dt>Left</dt><dd>{member.leftAt || "—"}</dd></div>
-              {canManage && <div><dt>Officer notes</dt><dd>{member.notes || "No notes"}</dd></div>}
+              <div><dt>{t("Known aliases")}</dt><dd>{member.aliases.length ? member.aliases.join(", ") : t("None recorded")}</dd></div>
+              <div><dt>{t("Joined")}</dt><dd>{member.joinedAt || t("Not recorded")}</dd></div>
+              <div><dt>{t("Left")}</dt><dd>{member.leftAt || "—"}</dd></div>
+              {canManage && <div><dt>{t("Officer notes")}</dt><dd>{member.notes || t("No notes")}</dd></div>}
             </dl>
-            {canManage && <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> Merge into another player</button>}
-            {canManage && <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> Delete player</button>}
+            {canManage && <button className="button secondary profile-merge-action" disabled={state.members.length < 2} onClick={onMerge}><GitMerge size={16} /> {t("Merge into another player")}</button>}
+            {canManage && <button className="button secondary profile-merge-action" onClick={onDelete}><Trash2 size={16} /> {t("Delete player")}</button>}
           </section>
 
           {canManage && <section className="profile-panel profile-operations-panel">
-            <div className="profile-section-head"><div><p className="eyebrow">OPERATIONS</p><h3>Storm and train history</h3></div></div>
+            <div className="profile-section-head"><div><p className="eyebrow">{t("OPERATIONS")}</p><h3>{t("Storm and train history")}</h3></div></div>
             <div className="profile-operation-metrics">
-              <div><span>Storm selections</span><strong>{stormHistory.filter(({ participant }) => participant.role !== "unassigned").length}</strong></div>
-              <div><span>Storm attendance</span><strong>{stormHistory.filter(({ participant }) => participant.attendance === "attended" || participant.attendance === "substitute-used").length}</strong></div>
-              <div><span>Trains conducted</span><strong>{trainHistory.filter((assignment) => assignment.conductorMemberId === member.id && assignment.status === "completed").length}</strong></div>
-              <div><span>VIP / Guardian</span><strong>{trainHistory.filter((assignment) => assignment.vipMemberId === member.id && assignment.status === "completed").length}</strong></div>
+              <div><span>{t("Storm selections")}</span><strong>{stormHistory.filter(({ participant }) => participant.role !== "unassigned").length}</strong></div>
+              <div><span>{t("Storm attendance")}</span><strong>{stormHistory.filter(({ participant }) => participant.attendance === "attended" || participant.attendance === "substitute-used").length}</strong></div>
+              <div><span>{t("Trains conducted")}</span><strong>{trainHistory.filter((assignment) => assignment.conductorMemberId === member.id && assignment.status === "completed").length}</strong></div>
+              <div><span>{t("VIP / Guardian")}</span><strong>{trainHistory.filter((assignment) => assignment.vipMemberId === member.id && assignment.status === "completed").length}</strong></div>
             </div>
             <div className="profile-operation-list">
-              {stormHistory.slice(0, 5).map(({ event, participant }) => <div key={`${event.id}-${member.id}`}><span>{event.battleAt.slice(0, 10)}</span><strong>{event.type === "desert" ? "Desert" : "Canyon"} · Team {event.team}</strong><small>{participant.role.replace("-", " ")} · {participant.attendance.replace("-", " ")}{participant.score !== undefined ? ` · ${full(participant.score)} pts` : ""}</small></div>)}
-              {trainHistory.slice(0, 5).map((assignment) => <div key={`${assignment.id}-${member.id}`}><span>{assignment.date}</span><strong>{assignment.conductorMemberId === member.id ? "Train conductor" : assignment.vipType === "guardian-defender" ? "Guardian Defender" : "Special Guest"}</strong><small>{assignment.status}</small></div>)}
-              {!stormHistory.length && !trainHistory.length && <p className="empty-copy">No operations history recorded yet.</p>}
+              {stormHistory.slice(0, 5).map(({ event, participant }) => <div key={`${event.id}-${member.id}`}><span>{event.battleAt.slice(0, 10)}</span><strong>{t(event.type === "desert" ? "Desert" : "Canyon")} · {t("Team {team}", { team: event.team })}</strong><small>{participant.role.replace("-", " ")} · {participant.attendance.replace("-", " ")}{participant.score !== undefined ? ` · ${full(participant.score)} pts` : ""}</small></div>)}
+              {trainHistory.slice(0, 5).map((assignment) => <div key={`${assignment.id}-${member.id}`}><span>{assignment.date}</span><strong>{t(assignment.conductorMemberId === member.id ? "Train conductor" : assignment.vipType === "guardian-defender" ? "Guardian Defender" : "Special Guest")}</strong><small>{assignment.status}</small></div>)}
+              {!stormHistory.length && !trainHistory.length && <p className="empty-copy">{t("No operations history recorded yet.")}</p>}
             </div>
           </section>}
 
           <section className="profile-panel profile-history-panel">
-            <div className="profile-section-head"><div><p className="eyebrow">CAPTURE LOG</p><h3>Recent results</h3></div></div>
-            <div className="profile-history-head"><span>Capture</span><span>Rank</span><span>Points</span><span>Vs prior</span></div>
-            {[...performance.history].reverse().map((point) => <div className="profile-history-row" key={point.snapshotId}><span><strong>{point.dayLabel}</strong><small>{dateLabel(point.capturedAt)}</small></span><b>#{point.rank}</b><b>{compact(point.points)}</b><Delta value={point.pointChange} format={(value) => compact(Math.abs(value))} /></div>)}
-            {!performance.history.length && <p className="empty-copy">No linked results to show.</p>}
+            <div className="profile-section-head"><div><p className="eyebrow">{t("CAPTURE LOG")}</p><h3>{t("Recent results")}</h3></div></div>
+            <div className="profile-history-head"><span>{t("Capture")}</span><span>{t("Rank")}</span><span>{t("Points")}</span><span>{t("Vs prior")}</span></div>
+            {[...performance.history].reverse().map((point) => <div className="profile-history-row" key={point.snapshotId}><span><strong>{t(point.dayLabel)}</strong><small>{dateLabel(point.capturedAt)}</small></span><b>#{point.rank}</b><b>{compact(point.points)}</b><Delta value={point.pointChange} format={(value) => compact(Math.abs(value))} /></div>)}
+            {!performance.history.length && <p className="empty-copy">{t("No linked results to show.")}</p>}
           </section>
         </div>
       </aside>
@@ -863,6 +874,7 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
 }
 
 function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSnapshot, onPublished }: { state: TrackerState; setState: (state: TrackerState) => void; ocrConfigured: boolean; bridgeConfigured: boolean; editingSnapshot?: Snapshot; onPublished: (snapshot: Snapshot) => void }) {
+  const { t } = useLanguage();
   const [files, setFiles] = useState<File[]>([]);
   const [rows, setRows] = useState<ReviewRow[]>(() => editingSnapshot?.entries || []);
   const [warnings, setWarnings] = useState<string[]>([]);
@@ -886,9 +898,9 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const reviewPanel = useRef<HTMLElement>(null);
   const loadedBridgeJobId = useRef<string | undefined>(undefined);
   const scrollToReviewAfterLoad = useRef(false);
-  const diagnosticWarnings = useMemo(() => rows.length ? analyzeImport(rows, state.members) : [], [rows, state.members]);
-  const changeWarnings = useMemo(() => rows.length && date ? analyzeLargeChanges(rows, state.members, state.snapshots, date, status) : [], [rows, state.members, state.snapshots, date, status]);
-  const allWarnings = [...new Set([...warnings.filter((warning) => !/^Rank \d+ (is missing|has conflicting readings)/.test(warning)), ...diagnosticWarnings, ...changeWarnings])];
+  const diagnosticWarnings = useMemo(() => rows.length ? analyzeImport(rows, state.members, t) : [], [rows, state.members, t]);
+  const changeWarnings = useMemo(() => rows.length && date ? analyzeLargeChanges(rows, state.members, state.snapshots, date, status, t) : [], [rows, state.members, state.snapshots, date, status, t]);
+  const allWarnings = [...new Set([...warnings, ...diagnosticWarnings, ...changeWarnings])];
   const review = useMemo(() => analyzeReview(rows, state.members), [rows, state.members]);
   const linkedMemberIds = new Set(review.identities.map((member) => member?.id).filter(Boolean));
   const missingActive = state.members.filter((member) => member.active && !linkedMemberIds.has(member.id)).length;
@@ -900,19 +912,19 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const loadRowsFromBridge = useCallback((job: BridgeJobView) => {
     if (!job.rows?.length || loadedBridgeJobId.current === job.id) return;
     try {
-      const merged = dedupeRows(job.rows);
+      const merged = dedupeRows(job.rows, t);
       loadedBridgeJobId.current = job.id;
       scrollToReviewAfterLoad.current = window.matchMedia("(max-width: 760px)").matches;
       setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
-      setWarnings(merged.warnings);
+      setWarnings(merged.warnings.filter((warning) => !merged.rankWarnings.includes(warning)));
       setSourceType("local-codex");
       setFiles([]);
       setBridgeLoadFailed(false);
     } catch {
       setBridgeLoadFailed(true);
-      setError("Could not load the extracted rows. Refresh and try again.");
+      setError(t("Could not load the extracted rows. Refresh and try again."));
     }
-  }, []);
+  }, [t]);
 
   const receiveBridgeJob = useCallback((job: BridgeJobView) => {
     setBridgeJob(job);
@@ -968,7 +980,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       setFiles((current) => [...current, ...frames].slice(0, 25));
       setSourceType("video");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not read the screen recording.");
+      setError(reason instanceof Error ? reason.message : t("Could not read the screen recording."));
     } finally {
       setPreparingVideo(false);
     }
@@ -985,15 +997,15 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       try {
         const response = await fetch("/api/extract", { method: "POST", body: form });
         const body = await response.json();
-        if (!response.ok) throw new Error(`${file.name}: ${body.error || "extraction failed"}`);
+        if (!response.ok) throw new Error(`${file.name}: ${body.error || t("extraction failed")}`);
         results.push(...body.rows as ExtractedRow[]);
       } catch (reason) {
-        failures.push(reason instanceof Error ? reason.message : `${file.name}: extraction failed`);
+        failures.push(reason instanceof Error ? reason.message : `${file.name}: ${t("extraction failed")}`);
       }
     }
-    const merged = dedupeRows(results);
+    const merged = dedupeRows(results, t);
     setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
-    setWarnings([...merged.warnings, ...failures]);
+    setWarnings([...merged.warnings.filter((warning) => !merged.rankWarnings.includes(warning)), ...failures]);
     if (!results.length && failures.length) setError(failures[0]);
     setBusy(false);
   }
@@ -1033,12 +1045,12 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
         body: JSON.stringify({ id: jobId, files: uploadedFiles }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not create the extraction job.");
+      if (!response.ok) throw new Error(body.error || t("Could not create the extraction job."));
       setBridgeProgress(100);
       setBridgeJob(body.job as BridgeJobView);
       window.localStorage.setItem(bridgeJobStorageKey, jobId);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not queue this capture for extraction.");
+      setError(reason instanceof Error ? reason.message : t("Could not queue this capture for extraction."));
     } finally {
       setQueueing(false);
     }
@@ -1055,11 +1067,11 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
         body: JSON.stringify({ id: bridgeJob.id }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not retry this extraction.");
+      if (!response.ok) throw new Error(body.error || t("Could not retry this extraction."));
       receiveBridgeJob(body.job as BridgeJobView);
       window.localStorage.setItem(bridgeJobStorageKey, bridgeJob.id);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not retry this extraction.");
+      setError(reason instanceof Error ? reason.message : t("Could not retry this extraction."));
     } finally {
       setRetryingBridge(false);
     }
@@ -1067,7 +1079,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
 
   async function discardImport() {
     if (bridgeJob?.status === "processing") return;
-    if (!window.confirm("Discard this upload and its extracted rows? Nothing has been published.")) return;
+    if (!window.confirm(t("Discard this upload and its extracted rows? Nothing has been published."))) return;
     setDiscardingBridge(true);
     setError("");
     try {
@@ -1075,7 +1087,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
         const response = await fetch(`/api/bridge/jobs?id=${encodeURIComponent(bridgeJob.id)}`, { method: "DELETE" });
         const body = await response.json().catch(() => ({}));
         // An already expired job counts as discarded.
-        if (!response.ok && body.error !== "Bridge job not found.") throw new Error(body.error || "Could not discard this upload.");
+        if (!response.ok && body.error !== "Bridge job not found.") throw new Error(body.error || t("Could not discard this upload."));
       }
       window.localStorage.removeItem(bridgeJobStorageKey);
       loadedBridgeJobId.current = undefined;
@@ -1087,7 +1099,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       setManual("");
       setSourceType("screenshots");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not discard this upload.");
+      setError(reason instanceof Error ? reason.message : t("Could not discard this upload."));
     } finally {
       setDiscardingBridge(false);
     }
@@ -1108,21 +1120,21 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     });
     setRows(parsed.sort((a, b) => a.rank - b.rank).map((row) => ({ ...row, id: crypto.randomUUID() })));
     setSourceType("manual");
-    setWarnings(failed.length ? [`Could not read pasted line${failed.length === 1 ? "" : "s"}: ${failed.join(", ")}`] : []);
+    setWarnings(failed.length ? [t(failed.length === 1 ? "Could not read pasted line: {lines}" : "Could not read pasted lines: {lines}", { lines: failed.join(", ") })] : []);
   }
 
   async function importLocalExtraction(file?: File) {
     if (!file) return;
     setError("");
     try {
-      if (file.size > 2_000_000) throw new Error("The extraction JSON file is unexpectedly large.");
+      if (file.size > 2_000_000) throw new Error(t("The extraction JSON file is unexpectedly large."));
       const parsed = parseLocalExtractionText(await file.text());
-      const merged = dedupeRows(parsed);
+      const merged = dedupeRows(parsed, t);
       setRows(merged.rows.map((row) => ({ ...row, id: crypto.randomUUID() })));
-      setWarnings(merged.warnings);
+      setWarnings(merged.warnings.filter((warning) => !merged.rankWarnings.includes(warning)));
       setSourceType("local-codex");
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not import the extraction file.");
+      setError(reason instanceof Error ? reason.message : t("Could not import the extraction file."));
     } finally {
       if (localImportInput.current) localImportInput.current.value = "";
     }
@@ -1148,7 +1160,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   }
 
   async function publish() {
-    if (unresolved) { setError("Choose a roster identity or confirm a new member for every unmatched name."); return; }
+    if (unresolved) { setError(t("Choose a roster identity or confirm a new member for every unmatched name.")); return; }
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/snapshots", {
@@ -1157,14 +1169,14 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
         body: JSON.stringify({ snapshotId, capturedDate: date, status, sourceType, notes, rows }),
       });
       const body = await response.json();
-      if (!response.ok) setError(body.error || "Could not publish snapshot");
+      if (!response.ok) setError(body.error || t("Could not publish snapshot"));
       else {
         if (bridgeJob?.id) window.localStorage.removeItem(bridgeJobStorageKey);
         setState(body.state);
         onPublished(body.snapshot);
       }
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not publish this snapshot. Please try again.");
+      setError(reason instanceof Error ? reason.message : t("Could not publish this snapshot. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -1172,66 +1184,68 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
 
   return (
     <div className="page-stack snapshot-editor">
-      <section className="section-heading"><div><p className="eyebrow">{snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE"}</p><h2>{snapshotId ? "Correct published results" : "Import weekly rankings"}</h2><p>Upload screenshots for Claude extraction, import a local extraction file, or paste rows manually.</p></div></section>
+      <section className="section-heading"><div><p className="eyebrow">{t(snapshotId ? "EDIT SNAPSHOT" : "NEW CAPTURE")}</p><h2>{t(snapshotId ? "Correct published results" : "Import weekly rankings")}</h2><p>{t("Upload screenshots for Claude extraction, import a local extraction file, or paste rows manually.")}</p></div></section>
       <section className="panel import-meta">
-        <label><span>Capture date</span><input type="date" value={date} onChange={(event) => { setDate(event.target.value); setStatus(new Date(`${event.target.value}T12:00:00Z`).getUTCDay() === 6 ? "final" : "live"); }} /></label>
-        <label><span>Snapshot type</span><select value={status} onChange={(event) => setStatus(event.target.value as "live" | "final")}><option value="live">Live Mon–Fri</option><option value="final">Final Saturday</option></select></label>
-        <label className="grow"><span>Officer note</span><input value={notes} onChange={(event) => setNotes(event.target.value)} placeholder="Transfer week, incomplete roster…" /></label>
+        <label><span>{t("Capture date")}</span><input type="date" value={date} onChange={(event) => { setDate(event.target.value); setStatus(new Date(`${event.target.value}T12:00:00Z`).getUTCDay() === 6 ? "final" : "live"); }} /></label>
+        <label><span>{t("Snapshot type")}</span><select value={status} onChange={(event) => setStatus(event.target.value as "live" | "final")}><option value="live">{t("Live Mon–Fri")}</option><option value="final">{t("Final Saturday")}</option></select></label>
+        <label className="grow"><span>{t("Officer note")}</span><input value={notes} onChange={(event) => setNotes(event.target.value)} placeholder={t("Transfer week, incomplete roster…")} /></label>
       </section>
       {!snapshotId && <section className="import-grid">
         <div className="panel uploader" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); void addFiles([...event.dataTransfer.files]); }}>
-          <div className="upload-icon">{preparingVideo ? <FileVideo size={26} /> : <UploadCloud size={26} />}</div><h3>Screenshots or screen recording</h3><p>Images stay under 4 MB. Video is converted into up to 18 frames on your device before upload.</p>
+          <div className="upload-icon">{preparingVideo ? <FileVideo size={26} /> : <UploadCloud size={26} />}</div><h3>{t("Screenshots or screen recording")}</h3><p>{t("Images stay under 4 MB. Video is converted into up to 18 frames on your device before upload.")}</p>
           <input ref={input} hidden multiple type="file" accept="image/*,video/*" onChange={(event) => void addFiles([...(event.target.files || [])])} />
-          <button className="button secondary" disabled={preparingVideo} onClick={() => input.current?.click()}>{preparingVideo ? "Preparing recording…" : "Choose screenshots or video"}</button>
-          {files.length > 0 && <div className="file-list"><div>{sourceType === "video" ? <FileVideo size={16} /> : <FileImage size={16} />}<strong>{files.length} frame{files.length === 1 ? "" : "s"} ready</strong></div><button onClick={() => { setFiles([]); setSourceType("screenshots"); }}><X size={15} /> Clear</button></div>}
-          {ocrConfigured && <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={extract}>{busy ? `Reading ${files.length} frame${files.length === 1 ? "" : "s"}…` : <><Sparkles size={16} /> Extract with cloud API</>}</button>}
-          {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? `Uploading frames… ${bridgeProgress}%` : <><Cloud size={16} /> Extract with Claude</>}</button>}
-          {queueing && <div className="bridge-progress" aria-label={`Upload ${bridgeProgress}% complete`}><span style={{ width: `${bridgeProgress}%` }} /></div>}
+          <button className="button secondary" disabled={preparingVideo} onClick={() => input.current?.click()}>{t(preparingVideo ? "Preparing recording…" : "Choose screenshots or video")}</button>
+          {files.length > 0 && <div className="file-list"><div>{sourceType === "video" ? <FileVideo size={16} /> : <FileImage size={16} />}<strong>{t(files.length === 1 ? "1 frame ready" : "{count} frames ready", { count: files.length })}</strong></div><button onClick={() => { setFiles([]); setSourceType("screenshots"); }}><X size={15} /> {t("Clear")}</button></div>}
+          {ocrConfigured && <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={extract}>{busy ? t(files.length === 1 ? "Reading 1 frame…" : "Reading {count} frames…", { count: files.length }) : <><Sparkles size={16} /> {t("Extract with cloud API")}</>}</button>}
+          {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? t("Uploading frames… {percent}%", { percent: bridgeProgress }) : <><Cloud size={16} /> {t("Extract with Claude")}</>}</button>}
+          {queueing && <div className="bridge-progress" aria-label={t("Upload {percent}% complete", { percent: bridgeProgress })}><span style={{ width: `${bridgeProgress}%` }} /></div>}
           {bridgeJob && <div className={`bridge-status ${bridgeJob.status}`}>
-            <strong>{bridgeJob.status === "pending" ? "Waiting for Claude" : bridgeJob.status === "processing" ? "Claude is reading the frames" : bridgeJob.status === "completed" ? `${bridgeJob.rows?.length || 0} rows ready` : "Bridge extraction failed"}</strong>
-            <span>{bridgeJob.status === "pending" ? "Extraction starts automatically, usually within a few minutes." : bridgeJob.status === "processing" ? `Attempt ${bridgeJob.attempts} · this page updates automatically.` : bridgeJob.status === "completed" ? "Loaded automatically below. Review the rows before publishing." : bridgeJob.error}</span>
-            {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> Retry loading rows</button>}
-            {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {retryingBridge ? "Requeueing…" : "Retry retained upload"}</button>}
-            {(bridgeJob.status === "pending" || bridgeJob.status === "failed") && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardImport}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}
+            <strong>{bridgeJob.status === "pending" ? t("Waiting for Claude") : bridgeJob.status === "processing" ? t("Claude is reading the frames") : bridgeJob.status === "completed" ? t("{count} rows ready", { count: bridgeJob.rows?.length || 0 }) : t("Bridge extraction failed")}</strong>
+            <span>{bridgeJob.status === "pending" ? t("Extraction starts automatically, usually within a few minutes.") : bridgeJob.status === "processing" ? t("Attempt {count} · this page updates automatically.", { count: bridgeJob.attempts }) : bridgeJob.status === "completed" ? t("Loaded automatically below. Review the rows before publishing.") : bridgeJob.error}</span>
+            {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> {t("Retry loading rows")}</button>}
+            {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {t(retryingBridge ? "Requeueing…" : "Retry retained upload")}</button>}
+            {(bridgeJob.status === "pending" || bridgeJob.status === "failed") && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardImport}><Trash2 size={16} /> {t(discardingBridge ? "Discarding…" : "Discard")}</button>}
           </div>}
-          {!bridgeConfigured && <p className="bridge-unavailable">Claude extraction appears after private Blob storage and a worker secret are configured.</p>}
+          {!bridgeConfigured && <p className="bridge-unavailable">{t("Claude extraction appears after private Blob storage and a worker secret are configured.")}</p>}
         </div>
         <div className="panel manual-paste">
-          <p className="eyebrow">LOCAL CLAUDE</p><h3>Import an extracted JSON file</h3><p>Generate it on a computer signed in to Claude Code with <code>npm run extract:local</code>. Screenshots never pass through Vercel.</p>
+          <p className="eyebrow">{t("LOCAL CLAUDE")}</p><h3>{t("Import an extracted JSON file")}</h3><p>{t("Generate it on a computer signed in to Claude Code with {command}. Screenshots never pass through Vercel.", { command: "npm run extract:local" })}</p>
           <input ref={localImportInput} hidden type="file" accept="application/json,.json" onChange={(event) => void importLocalExtraction(event.target.files?.[0])} />
-          <button className="button secondary wide" onClick={() => localImportInput.current?.click()}><FileJson size={16} /> Import extraction JSON</button>
-          <div className="import-divider"><span>or paste manually</span></div>
-          <p>Accepts CSV or tab-separated rank, name and points.</p><textarea value={manual} onChange={(event) => setManual(event.target.value)} placeholder={'1,Super McNasty,74,831,650\n2,Retired Goblin,49,744,827'} /><button className="button secondary wide" disabled={!manual.trim()} onClick={parseManual}>Build review table</button>
+          <button className="button secondary wide" onClick={() => localImportInput.current?.click()}><FileJson size={16} /> {t("Import extraction JSON")}</button>
+          <div className="import-divider"><span>{t("or paste manually")}</span></div>
+          <p>{t("Accepts CSV or tab-separated rank, name and points.")}</p><textarea value={manual} onChange={(event) => setManual(event.target.value)} placeholder={'1,Super McNasty,74,831,650\n2,Retired Goblin,49,744,827'} /><button className="button secondary wide" disabled={!manual.trim()} onClick={parseManual}>{t("Build review table")}</button>
         </div>
       </section>}
       {error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}
       {allWarnings.length > 0 && <div className="warning-list">{allWarnings.slice(0, 12).map((warning) => <span key={warning}><CircleAlert size={14} />{warning}</span>)}</div>}
       <section ref={reviewPanel} className="panel review-panel">
-        <div className="panel-head"><div><p className="eyebrow">HUMAN REVIEW</p><h3>{rows.length} ranking rows</h3></div><span className="retention-note">{rows.filter((row) => row.reviewed).length} verified · {unmatched} unmatched · {missingActive} active members not on board</span></div>
+        <div className="panel-head"><div><p className="eyebrow">{t("HUMAN REVIEW")}</p><h3>{t("{count} ranking rows", { count: rows.length })}</h3></div><span className="retention-note">{t("{verified} verified · {unmatched} unmatched · {missing} active members not on board", { verified: rows.filter((row) => row.reviewed).length, unmatched, missing: missingActive })}</span></div>
         <div className="review-controls">
-          <p>Review low-confidence or flagged readings. Confident roster matches do not need manual verification. Use All to inspect any player.</p>
-          <div><button className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow()}>Add row</button>{gaps.slice(0, 12).map((rank) => <button key={rank} className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow(rank)}>Add rank {rank}</button>)}<button className="button secondary" disabled={busy || !verifiable.length} onClick={() => setRows((current) => current.map((row, index) => !requiresHumanReview(row) || review.blockers[index] ? row : { ...row, reviewed: true }))}>Verify eligible flagged rows ({verifiable.length})</button></div>
-          <small>Bulk verification applies only to flagged rows you have checked. Resolve duplicate ranks and identities separately.</small>
+          <p>{t("Review low-confidence or flagged readings. Confident roster matches do not need manual verification. Use All to inspect any player.")}</p>
+          <div><button className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow()}>{t("Add row")}</button>{gaps.slice(0, 12).map((rank) => <button key={rank} className="button secondary" disabled={busy || rows.length >= 150} onClick={() => addRow(rank)}>{t("Add rank {rank}", { rank })}</button>)}<button className="button secondary" disabled={busy || !verifiable.length} onClick={() => setRows((current) => current.map((row, index) => !requiresHumanReview(row) || review.blockers[index] ? row : { ...row, reviewed: true }))}>{t("Verify eligible flagged rows ({count})", { count: verifiable.length })}</button></div>
+          <small>{t("Bulk verification applies only to flagged rows you have checked. Resolve duplicate ranks and identities separately.")}</small>
         </div>
         <RankingReview rows={rows} members={state.members} identities={review.identities} blockers={review.blockers} busy={busy} onUpdate={updateRow} onVerify={verifyRow} onRemove={removeRow} />
-        <div className="publish-row"><div><strong>{unresolved ? `${unresolved} name${unresolved === 1 ? " needs" : "s need"} an identity` : "Ready to publish?"}</strong><span>For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.</span></div><div className="publish-actions">{!snapshotId && <button className="button ghost" disabled={busy || discardingBridge || bridgeJob?.status === "processing" || (!rows.length && !files.length && !bridgeJob)} onClick={discardImport}><Trash2 size={16} /> {discardingBridge ? "Discarding…" : "Discard"}</button>}<button className="button primary" disabled={busy || discardingBridge || !date || !rows.length || unresolved > 0} onClick={publish}>{busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot"}</button></div></div>
+        <div className="publish-row"><div><strong>{unresolved ? t(unresolved === 1 ? "1 name needs an identity" : "{count} names need an identity", { count: unresolved }) : t("Ready to publish?")}</strong><span>{t("For OCR mistakes or names in another script, select the correct roster player. Only confirmed new members are added; linked names become aliases.")}</span></div><div className="publish-actions">{!snapshotId && <button className="button ghost" disabled={busy || discardingBridge || bridgeJob?.status === "processing" || (!rows.length && !files.length && !bridgeJob)} onClick={discardImport}><Trash2 size={16} /> {t(discardingBridge ? "Discarding…" : "Discard")}</button>}<button className="button primary" disabled={busy || discardingBridge || !date || !rows.length || unresolved > 0} onClick={publish}>{t(busy ? "Saving…" : snapshotId ? "Save corrections" : "Publish snapshot")}</button></div></div>
       </section>
     </div>
   );
 }
 
 function ReportLock({ snapshot, disabled, onToggle }: { snapshot: Snapshot; disabled: boolean; onToggle: (snapshot: Snapshot) => Promise<void> }) {
+  const { t } = useLanguage();
   const locked = snapshot.deletionLocked !== false;
-  return <button className="button secondary" disabled={disabled} aria-pressed={locked} aria-label={locked ? "Unlock report for deletion" : "Lock report against deletion"} title={locked ? "Protected from deletion. Click to unlock." : "Unprotected. Click to prevent deletion."} onClick={() => onToggle(snapshot)}>{locked ? <LockKeyhole size={15} /> : <LockKeyholeOpen size={15} />}{locked ? "Locked" : "Unlocked"}</button>;
+  return <button className="button secondary" disabled={disabled} aria-pressed={locked} aria-label={t(locked ? "Unlock report for deletion" : "Lock report against deletion")} title={t(locked ? "Protected from deletion. Click to unlock." : "Unprotected. Click to prevent deletion.")} onClick={() => onToggle(snapshot)}>{locked ? <LockKeyhole size={15} /> : <LockKeyholeOpen size={15} />}{t(locked ? "Locked" : "Unlocked")}</button>;
 }
 
 function Reports({ canManage, state, onOpenMember, onToggleLock, changingLock }: { canManage: boolean; state: TrackerState; onOpenMember: (id: string) => void; onToggleLock: (snapshot: Snapshot) => Promise<void>; changingLock: boolean }) {
+  const { t } = useLanguage();
   const ordered = [...state.snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
   const [selectedId, setSelectedId] = useState(ordered[0]?.id || "");
   const [threshold, setThreshold] = useState(15_000_000);
   const [query, setQuery] = useState("");
   const selected = state.snapshots.find((snapshot) => snapshot.id === selectedId) || ordered[0];
-  if (!selected) return <div className="page-stack"><div className="review-banner warning">Publish a snapshot to create reports.</div></div>;
+  if (!selected) return <div className="page-stack"><div className="review-banner warning">{t("Publish a snapshot to create reports.")}</div></div>;
   const comparison = snapshotComparison(selected, state.snapshots);
   const total = selected.entries.reduce((sum, entry) => sum + entry.points, 0);
   const previousTotal = comparison.previous?.entries.reduce((sum, entry) => sum + entry.points, 0);
@@ -1249,40 +1263,40 @@ function Reports({ canManage, state, onOpenMember, onToggleLock, changingLock }:
   return (
     <div className="page-stack">
       <section className="section-heading report-heading">
-        <div><p className="eyebrow">OFFICER REPORTING</p><h2>Weekly performance report</h2><p>Participation, movement and share-ready summaries from the selected capture.</p></div>
+        <div><p className="eyebrow">{t("OFFICER REPORTING")}</p><h2>{t("Weekly performance report")}</h2><p>{t("Participation, movement and share-ready summaries from the selected capture.")}</p></div>
         <div className="report-actions">
-          <button className="button secondary" onClick={() => exportDetailedSnapshot(selected, state)}><Download size={15} /> Detailed CSV</button>
-          <button className="button primary" onClick={() => exportReportImage(selected, state)}><Share2 size={15} /> Report image</button>
+          <button className="button secondary" onClick={() => exportDetailedSnapshot(selected, state)}><Download size={15} /> {t("Detailed CSV")}</button>
+          <button className="button primary" onClick={() => exportReportImage(selected, state)}><Share2 size={15} /> {t("Report image")}</button>
         </div>
       </section>
       <section className="panel report-controls">
         {canManage && <ReportLock snapshot={selected} disabled={changingLock} onToggle={onToggleLock} />}
-        <label className="select-wrap"><CalendarDays size={17} /><select aria-label="Report snapshot" value={selected.id} onChange={(event) => setSelectedId(event.target.value)}>{ordered.map((snapshot) => <option key={snapshot.id} value={snapshot.id}>{snapshot.dayLabel} · {snapshot.capturedAt.slice(0, 10)} · {snapshot.status}</option>)}</select><ChevronDown size={15} /></label>
-        <label><span>Participation target</span><input type="number" min="0" step="1000000" value={threshold} onChange={(event) => setThreshold(Math.max(0, Number(event.target.value)))} /></label>
+        <label className="select-wrap"><CalendarDays size={17} /><select aria-label={t("Report snapshot")} value={selected.id} onChange={(event) => setSelectedId(event.target.value)}>{ordered.map((snapshot) => <option key={snapshot.id} value={snapshot.id}>{t(snapshot.dayLabel)} · {snapshot.capturedAt.slice(0, 10)} · {t(snapshot.status === "final" ? "final" : "live")}</option>)}</select><ChevronDown size={15} /></label>
+        <label><span>{t("Participation target")}</span><input type="number" min="0" step="1000000" value={threshold} onChange={(event) => setThreshold(Math.max(0, Number(event.target.value)))} /></label>
       </section>
       <section className="metric-grid">
-        <Metric icon={Activity} label="Alliance points" value={compact(total)} detail={previousTotal === undefined ? "No matching prior capture" : `${signed(total - previousTotal)} vs prior`} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
-        <Metric icon={Shield} label="Meeting target" value={`${meetingThreshold}/${selected.entries.length}`} detail={`At least ${compact(threshold)} points`} />
-        <Metric icon={Users} label="Not on board" value={String(missing.length)} detail="Active roster members" tone={missing.length ? "negative" : "positive"} />
-        <Metric icon={UserPlus} label="New on board" value={String(newOnBoard.length)} detail={comparison.previous ? "Not present in comparison" : "Baseline capture"} />
+        <Metric icon={Activity} label={t("Alliance points")} value={compact(total)} detail={previousTotal === undefined ? t("No matching prior capture") : t("{change} vs prior", { change: signed(total - previousTotal) })} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
+        <Metric icon={Shield} label={t("Meeting target")} value={`${meetingThreshold}/${selected.entries.length}`} detail={t("At least {points} points", { points: compact(threshold) })} />
+        <Metric icon={Users} label={t("Not on board")} value={String(missing.length)} detail={t("Active roster members")} tone={missing.length ? "negative" : "positive"} />
+        <Metric icon={UserPlus} label={t("New on board")} value={String(newOnBoard.length)} detail={t(comparison.previous ? "Not present in comparison" : "Baseline capture")} />
       </section>
       <section className="panel roster-score-panel report-score-panel">
-        <div className="panel-head"><div><p className="eyebrow">SELECTED CAPTURE</p><h3>Commander scores <span className="count-chip">{selected.entries.length}</span></h3></div><div className="search-box"><Search size={16} /><input aria-label="Search report commanders" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Find a commander…" />{query && <button className="search-clear" aria-label="Clear report search" onClick={() => setQuery("")}><X size={14} /></button>}</div></div>
+        <div className="panel-head"><div><p className="eyebrow">{t("SELECTED CAPTURE")}</p><h3>{t("Commander scores")} <span className="count-chip">{selected.entries.length}</span></h3></div><div className="search-box"><Search size={16} /><input aria-label={t("Search report commanders")} value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear report search")} onClick={() => setQuery("")}><X size={14} /></button>}</div></div>
         <ScoreRows rows={comparison.rows.filter((row) => {
           const member = state.members.find((member) => member.id === row.memberId);
           return [row.displayName, member?.canonicalName ?? "", ...(member?.aliases ?? [])].join(" ").toLocaleLowerCase().includes(query.trim().toLocaleLowerCase());
         })} members={state.members} onOpenMember={onOpenMember} scroll />
-        <div className="score-source-note">{selected.dayLabel} · {dateLabel(selected.capturedAt)} · {comparison.previous ? `Compared with ${dateLabel(comparison.previous.capturedAt)}` : "No matching prior capture"}</div>
+        <div className="score-source-note">{t(selected.dayLabel)} · {dateLabel(selected.capturedAt)} · {comparison.previous ? t("Compared with {date}", { date: dateLabel(comparison.previous.capturedAt) }) : t("No matching prior capture")}</div>
       </section>
       <section className="panel progression-panel">
-        <div className="panel-head"><div><p className="eyebrow">MONDAY–SATURDAY</p><h3>Week progression</h3></div><span className="retention-note">Week of {selected.weekStart}</span></div>
-        <div className="progression-grid">{week.map((snapshot) => { const dayTotal = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); return <div className="progression-day" key={snapshot.id}><div><strong>{snapshot.dayLabel.slice(0, 3)}</strong><span>{snapshot.entries.length} ranked</span></div><b>{compact(dayTotal)}</b><div className="progression-track"><span style={{ width: `${dayTotal / maxWeeklyTotal * 100}%` }} /></div></div>; })}</div>
+        <div className="panel-head"><div><p className="eyebrow">{t("MONDAY–SATURDAY")}</p><h3>{t("Week progression")}</h3></div><span className="retention-note">{t("Week of")} {selected.weekStart}</span></div>
+        <div className="progression-grid">{week.map((snapshot) => { const dayTotal = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); return <div className="progression-day" key={snapshot.id}><div><strong>{t(snapshot.dayLabel).slice(0, 3)}</strong><span>{t("{count} ranked", { count: snapshot.entries.length })}</span></div><b>{compact(dayTotal)}</b><div className="progression-track"><span style={{ width: `${dayTotal / maxWeeklyTotal * 100}%` }} /></div></div>; })}</div>
       </section>
       <section className="report-grid">
-        <ReportList members={state.members} onOpenMember={onOpenMember} title="Biggest point gains" empty="A matching prior capture is needed." rows={improvers.slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: signed(row.pointChange) }))} />
-        <ReportList members={state.members} onOpenMember={onOpenMember} title="Biggest rank climbs" empty="A matching prior capture is needed." rows={rankMovers.filter((row) => (row.rankChange || 0) > 0).slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: `+${row.rankChange} places` }))} />
-        <ReportList members={state.members} onOpenMember={onOpenMember} title="New or returning" empty="No newly ranked members detected." rows={newOnBoard.slice(0, 12).map((row) => ({ memberId: row.memberId, name: row.displayName, value: `Rank ${row.rank}` }))} />
-        <ReportList members={state.members} onOpenMember={onOpenMember} title="Active members not ranked" empty="Every active member appears on the board." rows={missing.map((member) => ({ memberId: member.id, name: member.canonicalName, value: "Not ranked" }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title={t("Biggest point gains")} empty={t("A matching prior capture is needed.")} rows={improvers.slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: signed(row.pointChange) }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title={t("Biggest rank climbs")} empty={t("A matching prior capture is needed.")} rows={rankMovers.filter((row) => (row.rankChange || 0) > 0).slice(0, 8).map((row) => ({ memberId: row.memberId, name: row.displayName, value: t("+{count} places", { count: row.rankChange ?? 0 }) }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title={t("New or returning")} empty={t("No newly ranked members detected.")} rows={newOnBoard.slice(0, 12).map((row) => ({ memberId: row.memberId, name: row.displayName, value: t("Rank {rank}", { rank: row.rank }) }))} />
+        <ReportList members={state.members} onOpenMember={onOpenMember} title={t("Active members not ranked")} empty={t("Every active member appears on the board.")} rows={missing.map((member) => ({ memberId: member.id, name: member.canonicalName, value: t("Not ranked") }))} />
       </section>
     </div>
   );
@@ -1297,13 +1311,14 @@ function ReportList({ title, rows, empty, members, onOpenMember }: { title: stri
 }
 
 function Snapshots({ canManage, alliance, snapshots, onOpen, onEdit, onDelete, onToggleLock, changingLock }: { canManage: boolean; alliance: TrackerState["alliance"]; snapshots: Snapshot[]; onOpen: (snapshot: Snapshot) => void; onEdit: (snapshot: Snapshot) => void; onDelete: (snapshot: Snapshot) => Promise<void>; onToggleLock: (snapshot: Snapshot) => Promise<void>; changingLock: boolean }) {
+  const { language, t } = useLanguage();
   const [deletingId, setDeletingId] = useState("");
   const [error, setError] = useState("");
 
   async function removeSnapshot(snapshot: Snapshot) {
     if (snapshot.deletionLocked !== false || changingLock) return;
     const confirmed = window.confirm(
-      `Delete the ${snapshot.dayLabel} capture from ${dateLabel(snapshot.capturedAt)}?\n\nThis removes its ranking results and comparisons. Roster members will not be deleted.`,
+      `${t("Delete the {day} capture from {date}?", { day: t(snapshot.dayLabel), date: dateLabel(snapshot.capturedAt) })}\n\n${t("This removes its ranking results and comparisons. Roster members will not be deleted.")}`,
     );
     if (!confirmed) return;
     setDeletingId(snapshot.id);
@@ -1311,12 +1326,12 @@ function Snapshots({ canManage, alliance, snapshots, onOpen, onEdit, onDelete, o
     try {
       await onDelete(snapshot);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not delete this snapshot.");
+      setError(reason instanceof Error ? reason.message : t("Could not delete this snapshot."));
     } finally {
       setDeletingId("");
     }
   }
 
   const ordered = [...snapshots].sort((a, b) => b.capturedAt.localeCompare(a.capturedAt));
-  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">HISTORY</p><h2>Recorded snapshots</h2><p>Live captures compare with the same weekday; Saturday finals compare week over week.</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat("en-GB", { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{snapshot.status}</span><strong>{snapshot.dayLabel} capture</strong></div><p>{snapshot.entries.length} ranked · {compact(total)} total points</p><small>{snapshot.notes || "No capture note"}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot, alliance)}><Download size={15} /> CSV</button>{canManage && <><ReportLock snapshot={snapshot} disabled={changingLock || Boolean(deletingId)} onToggle={onToggleLock} /><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> Edit</button><button className="button danger" disabled={Boolean(deletingId) || changingLock || snapshot.deletionLocked !== false} title={snapshot.deletionLocked !== false ? "Unlock this report before deleting" : undefined} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {deleting ? "Deleting…" : "Delete"}</button></>}<button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>Open</button></div></article>; }) : <section className="panel"><p className="empty-copy">No snapshots have been published yet.</p></section>}</div></div>;
+  return <div className="page-stack narrow-page"><section className="section-heading"><div><p className="eyebrow">{t("HISTORY")}</p><h2>{t("Recorded snapshots")}</h2><p>{t("Live captures compare with the same weekday; Saturday finals compare week over week.")}</p></div></section>{error && <div className="form-error-box"><CircleAlert size={17} />{error}</div>}<div className="snapshot-list">{ordered.length ? ordered.map((snapshot) => { const total = snapshot.entries.reduce((sum, entry) => sum + entry.points, 0); const deleting = deletingId === snapshot.id; return <article className="panel snapshot-card" key={snapshot.id}><div className="snapshot-date"><span>{new Date(snapshot.capturedAt).getUTCDate()}</span><small>{new Intl.DateTimeFormat(language === "en" ? "en-GB" : language, { month: "short", timeZone: "UTC" }).format(new Date(snapshot.capturedAt))}</small></div><div className="snapshot-card-main"><div><span className={`status-pill ${snapshot.status}`}>{t(snapshot.status === "final" ? "final" : "live")}</span><strong>{t("{day} capture", { day: t(snapshot.dayLabel) })}</strong></div><p>{t("{count} ranked", { count: snapshot.entries.length })} · {t("{points} total points", { points: compact(total) })}</p><small>{snapshot.notes || t("No capture note")}</small></div><div className="snapshot-actions"><button className="button ghost" disabled={deleting} onClick={() => exportSnapshot(snapshot, alliance)}><Download size={15} /> CSV</button>{canManage && <><ReportLock snapshot={snapshot} disabled={changingLock || Boolean(deletingId)} onToggle={onToggleLock} /><button className="button ghost" disabled={deleting} onClick={() => onEdit(snapshot)}><PencilLine size={15} /> {t("Edit")}</button><button className="button danger" disabled={Boolean(deletingId) || changingLock || snapshot.deletionLocked !== false} title={snapshot.deletionLocked !== false ? t("Unlock this report before deleting") : undefined} onClick={() => removeSnapshot(snapshot)}><Trash2 size={15} /> {t(deleting ? "Deleting…" : "Delete")}</button></>}<button className="button secondary" disabled={deleting} onClick={() => onOpen(snapshot)}>{t("Open")}</button></div></article>; }) : <section className="panel"><p className="empty-copy">{t("No snapshots have been published yet.")}</p></section>}</div></div>;
 }

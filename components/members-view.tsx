@@ -6,17 +6,19 @@ import type { TrackerState } from "@/lib/types";
 import { AllianceRoster } from "./alliance-roster";
 import { PairingBoard } from "./pairing-board";
 import { SvsAttendanceView } from "./svs-attendance";
+import { useLanguage } from "./language-selector";
 
 export function MembersView({ canManage = false, state, onSaved, onOpenMember, onMergeMember, onDeleteMember }: {
   canManage?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void;
   onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void;
 }) {
+  const { t } = useLanguage();
   const [tab, setTab] = useState<"roster" | "pairings" | "svs">("roster");
   return <>
     <div className="reports-tabs-wrap"><div className="operations-tabs reports-tabs">
-      <button className={tab === "roster" ? "active" : ""} onClick={() => setTab("roster")}><Users size={16} />Roster</button>
-      <button className={tab === "pairings" ? "active" : ""} onClick={() => setTab("pairings")}><Link2 size={16} />Pairings</button>
-      <button className={tab === "svs" ? "active" : ""} onClick={() => setTab("svs")}><Swords size={16} />SvS</button>
+      <button className={tab === "roster" ? "active" : ""} onClick={() => setTab("roster")}><Users size={16} />{t("Roster")}</button>
+      <button className={tab === "pairings" ? "active" : ""} onClick={() => setTab("pairings")}><Link2 size={16} />{t("Pairings")}</button>
+      <button className={tab === "svs" ? "active" : ""} onClick={() => setTab("svs")}><Swords size={16} />{t("SvS")}</button>
     </div></div>
     {tab === "roster"
       ? <AllianceRoster canManage={canManage} state={state} onSaved={onSaved} onOpenMember={onOpenMember} onMergeMember={onMergeMember} onDeleteMember={onDeleteMember} />

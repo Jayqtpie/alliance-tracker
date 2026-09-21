@@ -6,9 +6,11 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import { AllianceMark } from "@/components/alliance-mark";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { LanguageSelector, useLanguage } from "@/components/language-selector";
 
 export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] }) {
   const router = useRouter();
+  const { t } = useLanguage();
   const [passcode, setPasscode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -23,10 +25,10 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
         body: JSON.stringify({ passcode }),
       });
       if (response.ok) router.push("/");
-      else setError(response.status === 429 ? "Too many sign-in attempts. Please wait five minutes." :
-        response.status === 503 ? "Sign-in is unavailable. Contact your administrator." : "That passcode was not recognised.");
+      else setError(response.status === 429 ? t("Too many sign-in attempts. Please wait five minutes.") :
+        response.status === 503 ? t("Sign-in is unavailable. Contact your administrator.") : t("That passcode was not recognised."));
     } catch {
-      setError("Could not connect. Please try again.");
+      setError(t("Could not connect. Please try again."));
     } finally {
       setBusy(false);
     }
@@ -34,14 +36,14 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
 
   return (
     <main className="login-shell">
-      <div className="login-theme-toggle"><ThemeToggle /></div>
+      <div className="login-theme-toggle"><LanguageSelector /><ThemeToggle /></div>
       <section className="login-panel">
         <AllianceMark alliance={alliance} />
-        <p className="eyebrow">{alliance?.name ? `${alliance.tag} · SERVER ${alliance.server}` : "ALLIANCE ACCESS"}</p>
-        <h1>Alliance Manager</h1>
-        <p className="muted">A clear view of who is moving the alliance forward.</p>
+        <p className="eyebrow">{alliance?.name ? `${alliance.tag} · ${t("SERVER")} ${alliance.server}` : t("ALLIANCE ACCESS")}</p>
+        <h1>{t("Alliance Manager")}</h1>
+        <p className="muted">{t("A clear view of who is moving the alliance forward.")}</p>
         <form onSubmit={submit} className="login-form">
-          <label htmlFor="passcode">Passcode</label>
+          <label htmlFor="passcode">{t("Passcode")}</label>
           <input
             id="passcode"
             type="password"
@@ -49,15 +51,15 @@ export function LoginForm({ alliance }: { alliance?: TrackerState["alliance"] })
             maxLength={256}
             value={passcode}
             onChange={(event) => setPasscode(event.target.value)}
-            placeholder="Enter shared passcode"
+            placeholder={t("Enter shared passcode")}
             autoFocus
           />
           {error && <p className="form-error">{error}</p>}
           <button className="button primary wide" disabled={busy || !passcode}>
-            {busy ? "Checking…" : "Open alliance manager"} <ArrowRight size={17} />
+            {t(busy ? "Checking…" : "Open alliance manager")} <ArrowRight size={17} />
           </button>
         </form>
-        <div className="login-note"><ShieldCheck size={15} /> Admin and viewer access</div>
+        <div className="login-note"><ShieldCheck size={15} /> {t("Admin and viewer access")}</div>
       </section>
     </main>
   );

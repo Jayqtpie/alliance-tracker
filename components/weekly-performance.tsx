@@ -6,14 +6,15 @@ import { CommanderIdentity } from "./score-rows";
 import { weeklyPerformance } from "@/lib/weekly-performance";
 import type { Snapshot, TrackerState } from "@/lib/types";
 
-const score = (value: number) => new Intl.NumberFormat("en-GB").format(value);
+const score = (value: number, language = "en") => new Intl.NumberFormat(language === "en" ? "en-GB" : language).format(value);
 const identity = (text: string) => text;
 
-export function WeeklyPerformance({ state, selected, onOpenMember, translate = identity, section = "all" }: {
+export function WeeklyPerformance({ state, selected, onOpenMember, translate = identity, language = "en", section = "all" }: {
   state: TrackerState;
   selected: Snapshot;
   onOpenMember: (id: string) => void;
   translate?: (text: string) => string;
+  language?: string;
   section?: "all" | "spotlight" | "cards";
 }) {
   const descriptionId = useId();
@@ -38,7 +39,7 @@ export function WeeklyPerformance({ state, selected, onOpenMember, translate = i
       </div>
       <div className="spotlight-summary" title={`${t("Week of")} ${selected.weekStart}`}>
         <span>{t(winner ? live ? "Provisional" : "Weekly scores" : "Needs review")}</span>
-        <strong>{winner ? score(winner.entry.points) : "—"}</strong>
+        <strong>{winner ? score(winner.entry.points, language) : "—"}</strong>
       </div>
       <p id={descriptionId} className="sr-only">{t("Week of")} {selected.weekStart}. {winner ? performance.tiedLeaders > 1 ? t("Joint highest verified score in this capture.") : t("Highest verified score among active members in this capture.") : t("Verified scores from linked, active members will appear here.")}</p>
     </article>}
@@ -52,7 +53,7 @@ export function WeeklyPerformance({ state, selected, onOpenMember, translate = i
         <button type="button" className="performance-row" onClick={() => onOpenMember(row.member.id)} aria-label={`${t("View profile")}: ${row.member.canonicalName}`}>
           <span className="performance-position">{index + 1}</span>
           <CommanderIdentity member={row.member} name={row.entry.displayName} />
-          <span className="performance-value"><strong>{score(row.entry.points)}</strong><small>{t("points")}</small></span>
+          <span className="performance-value"><strong>{score(row.entry.points, language)}</strong><small>{t("points")}</small></span>
         </button>
       </li>)}</ol> : <p className="performance-empty">{t("No verified active-member scores in this capture yet.")}</p>}
       <p className="performance-footnote">{t("Unlinked, inactive and unresolved review entries are excluded.")}</p>
@@ -65,7 +66,7 @@ export function WeeklyPerformance({ state, selected, onOpenMember, translate = i
       {declines.length ? <ol className="performance-list">{declines.slice(0, 3).map((row) => <li key={row.member.id}>
         <button type="button" className="performance-row" onClick={() => onOpenMember(row.member.id)} aria-label={`${t("View profile")}: ${row.member.canonicalName}`}>
           <CommanderIdentity member={row.member} name={row.entry.displayName} />
-          <span className="performance-value negative"><strong>{score(row.pointChange!)}</strong><small>{t("points")}{row.percentChange !== undefined ? ` · ${row.percentChange.toFixed(1)}%` : ""}</small></span>
+          <span className="performance-value negative"><strong>{score(row.pointChange!, language)}</strong><small>{t("points")}{row.percentChange !== undefined ? ` · ${row.percentChange.toFixed(1)}%` : ""}</small></span>
         </button>
       </li>)}</ol> : <p className="performance-empty">{improvementEmpty}</p>}
       <p className="performance-footnote">{t("Largest point declines. Missing scores are never treated as zero.")}</p>

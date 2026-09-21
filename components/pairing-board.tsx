@@ -8,13 +8,15 @@ import { movePairing, nextRowId, resolvePairings, slotMismatch } from "@/lib/pai
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { memberStats } from "@/lib/member-stats";
+import { useLanguage } from "./language-selector";
+import type { Translator } from "@/lib/i18n";
 import "./pairing-board.css";
 
 type Held = { memberId: string; column: PairingColumn };
 type Target = { kind: "row"; rowId: string } | { kind: "unpaired" };
 
-function columnLabel(column: PairingColumn) {
-  return column === "warLeader" ? "War Leader" : "Engineer";
+function columnLabel(t: Translator, column: PairingColumn) {
+  return t(column === "warLeader" ? "War Leader" : "Engineer");
 }
 
 function parseDragData(event: React.DragEvent): Held | null {
@@ -28,6 +30,7 @@ function parseDragData(event: React.DragEvent): Held | null {
 }
 
 export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
+  const { t } = useLanguage();
   const [draft, setDraft] = useState<PairingRow[] | undefined>(undefined);
   const [held, setHeld] = useState<Held>();
   const [announcement, setAnnouncement] = useState("");
@@ -50,7 +53,7 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
 
   function pickUp(member: Member, column: PairingColumn) {
     setHeld({ memberId: member.id, column });
-    setAnnouncement(`Picked up ${member.canonicalName}. Choose any slot.`);
+    setAnnouncement(t("Picked up {name}. Choose any slot.", { name: member.canonicalName }));
   }
 
   function place(column: PairingColumn, target: Target, rowNumber?: number) {
@@ -58,11 +61,11 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
     const member = memberById.get(held.memberId);
     applyMove(held.memberId, column, target);
     setHeld(undefined);
-    setAnnouncement(member ? `Moved ${member.canonicalName} to ${target.kind === "row" ? `row ${rowNumber}` : "the unpaired pool"}.` : "Moved.");
+    setAnnouncement(member ? target.kind === "row" ? t("Moved {name} to row {row}.", { name: member.canonicalName, row: rowNumber ?? "" }) : t("Moved {name} to the unpaired pool.", { name: member.canonicalName }) : t("Moved."));
   }
 
   function handleChipPick(member: Member, column: PairingColumn, rowId: string | undefined, rowNumber: number | undefined) {
-    if (held?.memberId === member.id) { setHeld(undefined); setAnnouncement(`Cancelled moving ${member.canonicalName}.`); return; }
+    if (held?.memberId === member.id) { setHeld(undefined); setAnnouncement(t("Cancelled moving {name}.", { name: member.canonicalName })); return; }
     if (held && rowId) { place(column, { kind: "row", rowId }, rowNumber); return; }
     pickUp(member, column);
   }
@@ -102,24 +105,24 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
         body: JSON.stringify({ rows: draft, version: state.version }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not save pairings.");
+      if (!response.ok) throw new Error(body.error || t("Could not save pairings."));
       onSaved(body);
       setDraft(undefined);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not save pairings.");
+      setError(reason instanceof Error ? reason.message : t("Could not save pairings."));
     } finally {
       setBusy(false);
     }
   }
 
   return <div className="page-stack pairing-board-page">
-    <section className="dashboard-heading"><div><p className="eyebrow">WAR LEADER · ENGINEER PAIRING</p><h1>Pairing board<span>.</span></h1><p>Drag a commander onto a slot, or {canManage ? "use keyboard: click a commander then click their destination." : "sign in as an officer to make changes."}</p></div></section>
+    <section className="dashboard-heading"><div><p className="eyebrow">{t("WAR LEADER · ENGINEER PAIRING")}</p><h1>{t("Pairing board")}<span>.</span></h1><p>{t(canManage ? "Drag a commander onto a slot, or use keyboard: click a commander then click their destination." : "Drag a commander onto a slot, or sign in as an officer to make changes.")}</p></div></section>
     {canManage && <p aria-live="polite" className="sr-only">{announcement}</p>}
     <div className="pairing-board">
       <div className="pairing-board-head">
         <span className="pairing-row-number-head" aria-hidden="true" />
-        <span className="pairing-col-head"><Crown size={14} aria-hidden="true" />War Leaders<span className="count-chip">{pairedWarLeaders}</span></span>
-        <span className="pairing-col-head"><Wrench size={14} aria-hidden="true" />Engineers<span className="count-chip">{pairedEngineers}</span></span>
+        <span className="pairing-col-head"><Crown size={14} aria-hidden="true" />{t("War Leaders")}<span className="count-chip">{pairedWarLeaders}</span></span>
+        <span className="pairing-col-head"><Wrench size={14} aria-hidden="true" />{t("Engineers")}<span className="count-chip">{pairedEngineers}</span></span>
       </div>
       {displayRows.map((row, index) => <div className="pairing-row" key={row.id}>
         <span className="pairing-row-number">{index + 1}</span>
@@ -136,18 +139,18 @@ export function PairingBoard({ canManage, state, onSaved }: { canManage: boolean
       </div>)}
     </div>
     <div className="pairing-unpaired-grid">
-      <PairingPool column="warLeader" title="Unpaired War Leaders" members={resolved.unpairedWarLeaders} canManage={canManage} held={held}
+      <PairingPool column="warLeader" title={t("Unpaired War Leaders")} members={resolved.unpairedWarLeaders} canManage={canManage} held={held}
         onPick={handleChipPick} onPoolActivate={() => place("warLeader", { kind: "unpaired" })}
         onDrop={(event) => handlePoolDrop(event, "warLeader")} onDragStart={handleDragStart} onDragEnd={handleDragEnd} />
-      <PairingPool column="engineer" title="Unpaired Engineers" members={resolved.unpairedEngineers} canManage={canManage} held={held}
+      <PairingPool column="engineer" title={t("Unpaired Engineers")} members={resolved.unpairedEngineers} canManage={canManage} held={held}
         onPick={handleChipPick} onPoolActivate={() => place("engineer", { kind: "unpaired" })}
         onDrop={(event) => handlePoolDrop(event, "engineer")} onDragStart={handleDragStart} onDragEnd={handleDragEnd} />
     </div>
-    {resolved.withoutProfession > 0 && <p className="pairing-footnote">{resolved.withoutProfession} active member{resolved.withoutProfession === 1 ? "" : "s"} {resolved.withoutProfession === 1 ? "has" : "have"} no profession recorded and {resolved.withoutProfession === 1 ? "isn’t" : "aren’t"} shown here.</p>}
+    {resolved.withoutProfession > 0 && <p className="pairing-footnote">{t(resolved.withoutProfession === 1 ? "1 active member has no profession recorded and isn’t shown here." : "{count} active members have no profession recorded and aren’t shown here.", { count: resolved.withoutProfession })}</p>}
     {canManage && <div className="pairing-actions">
-      {dirty && <span className="pairing-dirty-note">Unsaved changes</span>}
-      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setError(""); }}>Discard</button>
-      <button type="button" className="button primary" disabled={busy || !dirty} onClick={save}>{busy ? "Saving…" : "Save pairings"}</button>
+      {dirty && <span className="pairing-dirty-note">{t("Unsaved changes")}</span>}
+      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setError(""); }}>{t("Discard")}</button>
+      <button type="button" className="button primary" disabled={busy || !dirty} onClick={save}>{t(busy ? "Saving…" : "Save pairings")}</button>
     </div>}
     {error && <p className="form-error-box" role="alert">{error}</p>}
   </div>;
@@ -159,10 +162,11 @@ function PairingChip({ member, column, rowId, rowNumber, canManage, held, onPick
   onDragStart: (event: React.DragEvent, member: Member, column: PairingColumn) => void;
   onDragEnd: () => void;
 }) {
+  const { t } = useLanguage();
   const picked = held?.memberId === member.id;
   const mismatch = rowId !== undefined ? slotMismatch(member, column) : null;
-  const flagText = mismatch === null ? null : mismatch === "no profession" ? "no profession" : `currently ${mismatch}`;
-  const shortFlagText = mismatch === null || mismatch === "no profession" ? flagText : `currently ${mismatch === "War Leader" ? "WL" : "ENG"}`;
+  const flagText = mismatch === null ? null : mismatch === "no profession" ? t("no profession") : t(mismatch === "War Leader" ? "currently War Leader" : "currently Engineer");
+  const shortFlagText = mismatch === null || mismatch === "no profession" ? flagText : t(mismatch === "War Leader" ? "currently WL" : "currently ENG");
   const content = <><MemberAvatar member={member} /><MemberName member={member} />{flagText && <span className="pairing-chip-flag" title={flagText}>
     <span className="sr-only">{flagText}</span>
     <span aria-hidden="true" className="pairing-chip-flag-long">{flagText}</span>
@@ -182,6 +186,7 @@ function PairingSlot({ column, row, rowNumber, member, canManage, held, onPick, 
   onDragStart: (event: React.DragEvent, member: Member, column: PairingColumn) => void;
   onDragEnd: () => void;
 }) {
+  const { t } = useLanguage();
   const [dragOver, setDragOver] = useState(false);
   const dragProps = canManage ? {
     onDragOver: (event: React.DragEvent) => event.preventDefault(),
@@ -193,7 +198,7 @@ function PairingSlot({ column, row, rowNumber, member, canManage, held, onPick, 
     {member
       ? <PairingChip member={member} column={column} rowId={row.id} rowNumber={rowNumber} canManage={canManage} held={held} onPick={onPick} onDragStart={onDragStart} onDragEnd={onDragEnd} />
       : canManage
-        ? <button type="button" className="pairing-slot-empty" disabled={!held} aria-label={`Empty ${columnLabel(column)} slot, row ${rowNumber}`} onClick={onEmptyActivate}>Empty</button>
+        ? <button type="button" className="pairing-slot-empty" disabled={!held} aria-label={t("Empty {column} slot, row {row}", { column: columnLabel(t, column), row: rowNumber })} onClick={onEmptyActivate}>{t("Empty")}</button>
         : <span className="pairing-slot-empty">—</span>}
   </div>;
 }
@@ -206,6 +211,7 @@ function PairingPool({ column, title, members, canManage, held, onPick, onPoolAc
   onDragStart: (event: React.DragEvent, member: Member, column: PairingColumn) => void;
   onDragEnd: () => void;
 }) {
+  const { t } = useLanguage();
   const [dragOver, setDragOver] = useState(false);
   const dragProps = canManage ? {
     onDragOver: (event: React.DragEvent) => event.preventDefault(),
@@ -218,8 +224,8 @@ function PairingPool({ column, title, members, canManage, held, onPick, onPoolAc
     <ul className="pairing-pool-list" data-dragover={dragOver || undefined} {...dragProps}>
       {members.length ? members.map((member) => <li key={member.id}>
         <PairingChip member={member} column={column} canManage={canManage} held={held} onPick={onPick} onDragStart={onDragStart} onDragEnd={onDragEnd} />
-      </li>) : <li className="pairing-pool-empty">None</li>}
+      </li>) : <li className="pairing-pool-empty">{t("None")}</li>}
     </ul>
-    {canManage && <button type="button" className="pairing-pool-target" disabled={!held} onClick={onPoolActivate}>Move held {columnLabel(column)} here</button>}
+    {canManage && <button type="button" className="pairing-pool-target" disabled={!held} onClick={onPoolActivate}>{t("Move held {column} here", { column: columnLabel(t, column) })}</button>}
   </section>;
 }

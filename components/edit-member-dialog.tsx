@@ -5,10 +5,12 @@ import { X } from "lucide-react";
 import type { Member, TrackerState } from "@/lib/types";
 import "./merge-member.css";
 import { memberStats, parseMemberStat, PROFESSIONS } from "@/lib/member-stats";
+import { useLanguage } from "./language-selector";
 
 export function EditMemberDialog({ member, version, onSaved, onClose }: {
   member: Member; version: number; onSaved: (state: TrackerState) => void; onClose: () => void;
 }) {
+  const { t } = useLanguage();
   const dialog = useRef<HTMLDialogElement>(null);
   const titleId = useId();
   const stats = memberStats(member);
@@ -38,21 +40,21 @@ export function EditMemberDialog({ member, version, onSaved, onClose }: {
         body: JSON.stringify({ action: "edit", memberId: member.id, canonicalName: name, power, heroPower, kills, profession, version }),
       });
       const body = await response.json();
-      if (!response.ok) throw new Error(body.error || "Could not save this player.");
+      if (!response.ok) throw new Error(body.error || t("Could not save this player."));
       onSaved(body);
     } catch (reason) {
-      setError(reason instanceof Error ? reason.message : "Could not save this player.");
+      setError(reason instanceof Error ? reason.message : t("Could not save this player."));
     } finally { setBusy(false); }
   }
 
   return <dialog ref={dialog} className="merge-member-dialog" aria-labelledby={titleId} onCancel={(event) => { event.preventDefault(); if (!busy) onClose(); }}>
     <form onSubmit={save}>
-      <div className="merge-dialog-heading"><h2 id={titleId}>Edit player</h2><button type="button" className="icon-button" aria-label="Close player editor" disabled={busy} onClick={onClose}><X size={18} /></button></div>
-      <p className="merge-copy">Changes appear across the roster and player profile. Previous names and ranking history are kept.</p>
-      <fieldset disabled={busy}><label>Player name<input autoFocus required maxLength={100} value={name} onChange={(event) => setName(event.target.value)} /></label><label>Power<input value={power} onChange={(event) => setPower(event.target.value)} maxLength={40} placeholder="e.g. 450M" aria-describedby={`${titleId}-stat-help`} /></label><label>Hero power<input value={heroPower} onChange={(event) => setHeroPower(event.target.value)} maxLength={40} placeholder="e.g. 125M" aria-describedby={`${titleId}-stat-help`} /></label><label>Kills<input value={kills} onChange={(event) => setKills(event.target.value)} maxLength={40} placeholder="e.g. 12.5M" aria-describedby={`${titleId}-stat-help`} /></label><label>Profession<select value={profession} onChange={(event) => setProfession(event.target.value)}><option value="">Unavailable</option>{PROFESSIONS.map((option) => <option key={option} value={option}>{option}</option>)}</select></label></fieldset>
-      <p id={`${titleId}-stat-help`} className="merge-copy">Enter a full number or use K, M or B. Leave blank for unavailable. Manual corrections are kept during roster refreshes.</p>
+      <div className="merge-dialog-heading"><h2 id={titleId}>{t("Edit player")}</h2><button type="button" className="icon-button" aria-label={t("Close player editor")} disabled={busy} onClick={onClose}><X size={18} /></button></div>
+      <p className="merge-copy">{t("Changes appear across the roster and player profile. Previous names and ranking history are kept.")}</p>
+      <fieldset disabled={busy}><label>{t("Player name")}<input autoFocus required maxLength={100} value={name} onChange={(event) => setName(event.target.value)} /></label><label>{t("Power")}<input value={power} onChange={(event) => setPower(event.target.value)} maxLength={40} placeholder={t("e.g. {example}", { example: "450M" })} aria-describedby={`${titleId}-stat-help`} /></label><label>{t("Hero power")}<input value={heroPower} onChange={(event) => setHeroPower(event.target.value)} maxLength={40} placeholder={t("e.g. {example}", { example: "125M" })} aria-describedby={`${titleId}-stat-help`} /></label><label>{t("Kills")}<input value={kills} onChange={(event) => setKills(event.target.value)} maxLength={40} placeholder={t("e.g. {example}", { example: "12.5M" })} aria-describedby={`${titleId}-stat-help`} /></label><label>{t("Profession")}<select value={profession} onChange={(event) => setProfession(event.target.value)}><option value="">{t("Unavailable")}</option>{PROFESSIONS.map((option) => <option key={option} value={option}>{t(option)}</option>)}</select></label></fieldset>
+      <p id={`${titleId}-stat-help`} className="merge-copy">{t("Enter a full number or use K, M or B. Leave blank for unavailable. Manual corrections are kept during roster refreshes.")}</p>
       {error && <p className="form-error-box" role="alert">{error}</p>}
-      <div className="merge-dialog-footer"><button type="button" className="button secondary" disabled={busy} onClick={onClose}>Cancel</button><button type="submit" className="button primary" disabled={busy || !name.trim()}>{busy ? "Saving…" : "Save changes"}</button></div>
+      <div className="merge-dialog-footer"><button type="button" className="button secondary" disabled={busy} onClick={onClose}>{t("Cancel")}</button><button type="submit" className="button primary" disabled={busy || !name.trim()}>{t(busy ? "Saving…" : "Save changes")}</button></div>
     </form>
   </dialog>;
 }

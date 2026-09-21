@@ -10,8 +10,9 @@ import type { snapshotComparison } from "@/lib/tracker";
 import { requiresHumanReview } from "@/lib/review";
 
 type ScoreRow = ReturnType<typeof snapshotComparison>["rows"][number];
-const fullScore = (value: number) => new Intl.NumberFormat("en-GB").format(value);
-const shortScore = (value: number) => new Intl.NumberFormat("en-GB", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+const scoreLocale = (language: string) => language === "en" ? "en-GB" : language;
+const fullScore = (value: number, language = "en") => new Intl.NumberFormat(scoreLocale(language)).format(value);
+const shortScore = (value: number, language = "en") => new Intl.NumberFormat(scoreLocale(language), { notation: "compact", maximumFractionDigits: 1 }).format(value);
 
 export function CommanderIdentity({ member, name, needsReview, showRank = true }: { member?: Member; name: string; needsReview?: boolean; showRank?: boolean }) {
   const { t } = useLanguage();
@@ -24,10 +25,10 @@ export function CommanderIdentity({ member, name, needsReview, showRank = true }
 }
 
 function Movement({ value, rank = false }: { value?: number; rank?: boolean }) {
-  const { t } = useLanguage();
+  const { language, t } = useLanguage();
   if (value === undefined) return <span className="score-movement unavailable" title={t("No matching prior score")}>—</span>;
-  return <span className={`score-movement ${value > 0 ? "positive" : value < 0 ? "negative" : "unchanged"}`} title={rank ? value === 0 ? t("No rank change") : t(value > 0 ? "{count} rank places up" : "{count} rank places down", { count: Math.abs(value) }) : t("{value} points", { value: `${value > 0 ? "+" : ""}${fullScore(value)}` })}>
-    {value > 0 ? "+" : ""}{rank ? value : shortScore(value)}{rank && <span className="score-places"> {t("places")}</span>}
+  return <span className={`score-movement ${value > 0 ? "positive" : value < 0 ? "negative" : "unchanged"}`} title={rank ? value === 0 ? t("No rank change") : t(value > 0 ? "{count} rank places up" : "{count} rank places down", { count: Math.abs(value) }) : t("{value} points", { value: `${value > 0 ? "+" : ""}${fullScore(value, language)}` })}>
+    {value > 0 ? "+" : ""}{rank ? value : shortScore(value, language)}{rank && <span className="score-places"> {t("places")}</span>}
   </span>;
 }
 
@@ -44,12 +45,12 @@ export function ScoreRows({ rows, members, onOpenMember, scroll = false }: {
       const content = <>
         <span className="score-commander"><span className={`alliance-position${row.rank <= 3 ? ` podium-rank podium-${row.rank}` : ""}`} title={row.rank <= 3 ? t(["Gold · first place", "Silver · second place", "Bronze · third place"][row.rank - 1]) : undefined}>{row.rank}</span><CommanderIdentity member={member} name={row.displayName} needsReview={requiresHumanReview(row)} showRank={false} /></span>
         <span className="member-rank-cell">{member?.gameProfile && <b className="alliance-rank" data-rank={member.gameProfile.rank}>{member.gameProfile.rank}</b>}</span>
-        <span className="score-value"><strong>{fullScore(row.points)}</strong>{row.pointChange !== undefined && <span className="score-mobile-change"><span className="sr-only">{t("Score change")}: </span><Movement value={row.pointChange} /></span>}</span>
+        <span className="score-value"><strong>{fullScore(row.points, language)}</strong>{row.pointChange !== undefined && <span className="score-mobile-change"><span className="sr-only">{t("Score change")}: </span><Movement value={row.pointChange} /></span>}</span>
         <span className="score-desktop-change"><Movement value={row.pointChange} /></span>
         <span className={`score-rank-change${row.rankChange === undefined ? " no-comparison" : ""}`}><span className="score-mobile-label">{t("Rank")} </span><Movement value={row.rankChange} rank /></span>
       </>;
       return <li key={row.id}>{member
-        ? <button className={rowClass} data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={t("View {name}, rank {rank}, {points} points", { name: member.canonicalName, rank: row.rank, points: fullScore(row.points) })}>{content}</button>
+        ? <button className={rowClass} data-rank={member.gameProfile?.rank} onClick={() => onOpenMember(member.id)} aria-label={t("View {name}, rank {rank}, {points} points", { name: member.canonicalName, rank: row.rank, points: fullScore(row.points, language) })}>{content}</button>
         : <div className={`${rowClass} unlinked`}>{content}</div>}
       </li>;
     })}</ol>
