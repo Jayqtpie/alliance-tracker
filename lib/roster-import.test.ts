@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { INITIAL_STATE } from "./seed";
 import { applyCapturedRoster, importCapturedRoster, parseDisplayedPower, ROSTER_IMPORT } from "./roster-import";
-import capture from "./data/rscl-roster-2026-09-21.json";
+import capture from "./data/rscl-roster-2026-09-23.json";
 import { mergeMemberIdentities } from "./tracker";
 
 describe("captured RSCL roster", () => {
@@ -24,7 +24,7 @@ describe("captured RSCL roster", () => {
     expect(refreshed.previousNames).toEqual(expect.arrayContaining(["war parrot", "A verified earlier name"]));
     expect(refreshed.previousNames).not.toContain("An OCR alias");
     expect(refreshed.notes).toBe(parrot.notes);
-    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-21", lastRankPublicId: "1186935", refreshStatus: "fresh" });
+    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-09-23", lastRankPublicId: "1186935", refreshStatus: "fresh" });
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
@@ -33,7 +33,7 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(after)).toBe(after);
   });
   it("does not downgrade a newer roster capture", () => {
-    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-22-v1" };
+    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-09-24-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
   it("imports 100 active members and local avatars without treating missing stats as zero", () => {
@@ -60,7 +60,7 @@ describe("captured RSCL roster", () => {
     expect(importedJay.id).toBe(jay.id);
     expect(importedJay.notes).toBe(jay.notes);
     expect(importedJay.aliases).toContain("Previous Jay");
-    expect(importedJay.gameProfile?.heroPower).toBe(199_172_385);
+    expect(importedJay.gameProfile?.heroPower).toBe(199_434_873);
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(before.members.every((member) => after.members.some((entry) => entry.id === member.id))).toBe(true);
@@ -89,10 +89,10 @@ describe("captured RSCL roster", () => {
     expect(merged.members.find((member) => member.id === historical.id)?.gameProfile).toEqual(imported.gameProfile);
   });
   it.each([
-    "lastrank-rscl-927-2026-09-22-v1",
-    "lwservers-rscl-927-2026-09-21-v10",
-    "lastrank-rscl-927-2026-09-21-v2",
-    "lastrank-rscl-927-2026-09-21-v1",
+    "lastrank-rscl-927-2026-09-24-v1",
+    "lwservers-rscl-927-2026-09-23-v10",
+    "lastrank-rscl-927-2026-09-23-v2",
+    "lastrank-rscl-927-2026-09-23-v1",
   ])("retains an equal or newer capture across sources: %s", (rosterImport) => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport };
     expect(importCapturedRoster(state)).toBe(state);
@@ -119,7 +119,7 @@ describe("captured RSCL roster", () => {
     before.snapshots[0].entries[0].memberId = member.id;
     const expected = structuredClone(member);
 
-    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-21-v2");
+    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-23-v2");
     const retained = after.members.find((entry) => entry.id === member.id)!;
     expect(retained.active).toBe(true);
     expect(retained.canonicalName).toBe(expected.canonicalName);
@@ -144,7 +144,7 @@ describe("captured RSCL roster", () => {
     const member = before.members.find((entry) => entry.gameProfile?.lastRankPublicId === "1187353")!;
     delete member.gameProfile!.originServer;
 
-    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-21-v2");
+    const after = applyCapturedRoster(before, source, "lwservers-rscl-927-2026-09-23-v2");
     expect(after.members.find((entry) => entry.id === member.id)?.gameProfile?.originServer).toBe(row.originServerId);
     for (const entry of source.members) {
       expect(after.members.find((item) => item.gameProfile?.uid === entry.uid)?.gameProfile?.originServer).toBe(entry.originServerId);
