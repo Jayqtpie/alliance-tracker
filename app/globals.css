@@ -343,6 +343,9 @@ button:disabled { cursor: not-allowed; }
 .coverage-body > div:last-child > strong > span { font-size: 13px; font-weight: 400; color: var(--muted); }
 .coverage-body p { max-width: 95px; margin: 5px 0; font-size: 10px; line-height: 1.6; color: var(--muted); }
 .coverage-note { padding: 0 20px; margin: 12px 0; font-size: 10px; color: var(--muted); line-height: 1.6; }
+.coverage-missing { display: flex; flex-wrap: wrap; gap: 4px 12px; margin: -6px 0 12px; padding: 0 20px; list-style: none; font-size: 10px; line-height: 1.6; }
+.coverage-missing-name { padding: 0; border: 0; background: transparent; color: var(--blue); font: inherit; font-weight: 650; text-align: start; overflow-wrap: anywhere; cursor: pointer; }
+.coverage-missing-more { color: var(--muted); }
 .text-action { display: flex; align-items: center; gap: 7px; margin: 0 20px 19px; padding: 3px 0; border: 0; background: transparent; color: var(--blue); font-size: 10px; font-weight: 650; }
 .band:nth-child(2) .band-track span { background: #8aaa7e; }
 .band:nth-child(3) .band-track span { background: #bbcaa0; }

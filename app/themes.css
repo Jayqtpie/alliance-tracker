@@ -258,7 +258,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; border-color: var(
   .panel-head h3, .profile-section-head h3 { font-size: 17px; }
   .button, .insight-panel .button, .search-box input, .alliance-roster-toolbar select { font-size: 14px; }
   .leaderboard-filters button, .dashboard-review, .dashboard-review button, .table-footer { font-size: 12px; }
-  .coverage-body p, .coverage-note, .text-action, .capture-note, .score-source-note { font-size: 13px; }
+  .coverage-body p, .coverage-note, .coverage-missing, .text-action, .capture-note, .score-source-note { font-size: 13px; }
   .alliance-roster-heading h2 { font-size: 19px; }
   .alliance-header-summary h2 > span, .alliance-roster-heading p { font-size: 14px; }
   .alliance-source-date, .alliance-roster-foot { font-size: 13px; }

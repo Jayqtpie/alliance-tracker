@@ -675,6 +675,7 @@ function Overview({
   const activeMembers = state.members.filter((member) => member.active);
   const rankedIds = new Set(selected.entries.map((entry) => entry.memberId));
   const coveredMembers = activeMembers.filter((member) => rankedIds.has(member.id)).length;
+  const missingMembers = activeMembers.filter((member) => !rankedIds.has(member.id)).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName));
   const reviewCount = selected.entries.filter(requiresHumanReview).length;
 
   return (
@@ -728,6 +729,10 @@ function Overview({
           <div className="panel-head"><div><p className="eyebrow">{t("Roster health")}</p><h3>{t("Capture coverage")}</h3></div><Users size={18} /></div>
           <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>{t("active members on this board")}</p></div></div>
           <p className="coverage-note">{activeMembers.length === 0 ? t("Add active members to track roster coverage.") : coveredMembers === activeMembers.length ? t("Every active member is accounted for.") : t("{count} active members are missing from this capture.", { count: activeMembers.length - coveredMembers })}</p>
+          {missingMembers.length > 0 && <ul className="coverage-missing" aria-label={t("Missing from this capture")}>
+            {missingMembers.slice(0, 10).map((member) => <li key={member.id}><button className="coverage-missing-name" onClick={() => onOpenMember(member.id)}>{member.canonicalName}</button></li>)}
+            {missingMembers.length > 10 && <li className="coverage-missing-more">{t("+{count} more", { count: missingMembers.length - 10 })}</li>}
+          </ul>}
           <button className="text-action" onClick={() => onNavigate("members")}>{t(canManage ? "Manage roster" : "View roster")} <ArrowRight size={14} /></button>
         </section>
         <section className="panel insight-panel">
