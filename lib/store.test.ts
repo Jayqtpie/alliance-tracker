@@ -5,11 +5,11 @@ import type { TrackerState } from "./types";
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/blob", () => ({ blobEnabled: () => true, blobToken: () => "test-token" }));
 vi.mock("@vercel/blob", () => ({
-  get: vi.fn(), head: vi.fn(), put: vi.fn(),
+  copy: vi.fn(), get: vi.fn(), head: vi.fn(), put: vi.fn(),
   BlobPreconditionFailedError: class extends Error {},
 }));
 
-import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
+import { BlobPreconditionFailedError, copy, get, head, put } from "@vercel/blob";
 import { applyDataImports, getState, setState } from "./store";
 
 let stored: TrackerState;
@@ -17,6 +17,7 @@ let revision: number;
 
 beforeEach(() => {
   vi.resetAllMocks();
+  vi.unstubAllEnvs();
   stored = structuredClone(INITIAL_STATE);
   revision = 1;
   vi.mocked(head).mockImplementation(async () => ({ etag: `metadata-${revision}` }) as Awaited<ReturnType<typeof head>>);
@@ -101,5 +102,47 @@ describe("private Blob state writes", () => {
     await expect(getState()).rejects.toThrow("Could not load shared tracker data.");
     expect(put).toHaveBeenCalledTimes(1);
     expect(stored.rosterImport).toBeUndefined();
+  });
+});
+
+describe("state backup before a data import", () => {
+  it("copies the stored state aside before the import overwrites it, once", async () => {
+    const version = stored.version;
+    const result = await getState();
+    expect(copy).toHaveBeenCalledTimes(1);
+    expect(copy).toHaveBeenCalledWith(
+      "app-data/tracker-state.json",
+      `app-data/backups/tracker-state-v${version}-before-${result.rosterImport}.json`,
+      expect.objectContaining({ access: "private", addRandomSuffix: false }),
+    );
+    expect(vi.mocked(copy).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(put).mock.invocationCallOrder[0]);
+    await getState();
+    expect(copy).toHaveBeenCalledTimes(1);
+  });
+
+  it("serves the current state unimported when the backup fails", async () => {
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.mocked(copy).mockRejectedValue(new Error("Blob unavailable"));
+    const result = await getState();
+    expect(put).not.toHaveBeenCalled();
+    expect(result.rosterImport).toBeUndefined();
+    expect(stored.rosterImport).toBeUndefined();
+  });
+
+  it("never imports on a preview deployment, which may share production's store", async () => {
+    vi.stubEnv("VERCEL", "1");
+    vi.stubEnv("VERCEL_ENV", "preview");
+    const result = await getState();
+    expect(copy).not.toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+    expect(result.rosterImport).toBeUndefined();
+  });
+
+  it("imports on the production deployment", async () => {
+    vi.stubEnv("VERCEL", "1");
+    vi.stubEnv("VERCEL_ENV", "production");
+    const result = await getState();
+    expect(copy).toHaveBeenCalledTimes(1);
+    expect(stored.rosterImport).toBe(result.rosterImport);
   });
 });

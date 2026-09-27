@@ -61,7 +61,15 @@ What the backup builder takes, and why:
 | Unmapped RSCL rows | Skipped (no tracker record with that UID); listed in `unresolvedIdentities` with `publicId: "uid:<uid>"`. |
 | Absent members | Kept active and unaltered, as with LastRank. |
 
+**A backup refresh never reaches main on its own.** The scheduled workflow pushes it to `roster-refresh/lwservers-<date>`; the owner reviews and merges it. In an interactive session, commit it to a branch and ask before anything goes to main. The builder also refuses to write if any exported UID or LastRank ID differs from the live record's, or if an active member is missing.
+
 Marker and file names are unchanged (`lwservers-rscl-927-<date>-v1`, `rscl-roster-<date>.json`); the export's `source` is the lwservers URL. The builder refuses to overwrite a LastRank export for the same date. Once LastRank's list moves past the backup export's `sourceRosterUpdatedAt`, the probe goes back to LastRank by itself.
+
+## Undoing a refresh
+
+The tracker is one private Blob, `app-data/tracker-state.json`, and the first production load after a deploy applies the new capture to it in place. Reverting the commit alone does **not** undo that. Before any import writes, `lib/store.ts` copies the current state to `app-data/backups/tracker-state-v<version>-before-<marker>.json`; if that copy fails, the import is skipped. Imports run only on the production deployment (or a local server), never on previews, since a preview may share the store.
+
+To roll back: revert the refresh commit on main first (otherwise the next load re-applies it), then replace `app-data/tracker-state.json` in the project's Blob store with the matching backup (download it from Vercel → Storage and upload it under that pathname, or copy it with the Vercel CLI). Officer edits made after the refresh are lost, so check the backup's version first.
 
 ## Tests that need new facts each refresh
 

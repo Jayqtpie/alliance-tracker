@@ -1,5 +1,5 @@
 import "server-only";
-import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
+import { BlobPreconditionFailedError, copy, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
@@ -15,6 +15,7 @@ import { applyPairingImport } from "@/lib/pairings-import";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
+const backupDir = "app-data/backups";
 
 // Every one-shot data import, in the order each one's guards expect. Each returns
 // the state unchanged once it has been applied, so an unchanged result is the
@@ -23,6 +24,31 @@ const DATA_IMPORTS = [importCapturedRoster, applyMemberProfileUpdates, applyProf
 
 export function applyDataImports(state: TrackerState): TrackerState {
   return DATA_IMPORTS.reduce((current, apply) => apply(current), state);
+}
+
+// A preview deployment may share production's Blob store, so only production (or a local
+// server) runs the one-shot imports. A review branch's preview can then never apply its capture.
+function importsAllowed() {
+  return !process.env.VERCEL || process.env.VERCEL_ENV === "production";
+}
+
+// An import overwrites the only copy of the state, and reverting its commit cannot undo that,
+// so the state it replaces is copied aside first. Named by version: a version is replaced once.
+async function backupState(state: TrackerState, incoming: string | undefined) {
+  const name = `tracker-state-v${state.version}-before-${incoming ?? "import"}.json`;
+  if (blobEnabled()) {
+    await copy(statePath, `${backupDir}/${name}`, {
+      access: "private",
+      token: blobToken(),
+      contentType: "application/json",
+      addRandomSuffix: false,
+      allowOverwrite: true,
+    });
+    return;
+  }
+  const dir = path.join(path.dirname(stateFile), "backups");
+  await mkdir(dir, { recursive: true });
+  await writeFile(path.join(dir, name), JSON.stringify(state, null, 2), "utf8");
 }
 
 export class StateConflictError extends Error {
@@ -88,8 +114,16 @@ async function getStoredState(): Promise<TrackerState> {
 async function loadState(): Promise<TrackerState> {
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const stored = await getStoredState();
+    if (!importsAllowed()) return stored;
     const imported = applyDataImports(stored);
     if (imported === stored) return stored;
+    // No backup, no import: the app keeps serving the current state until a backup succeeds.
+    try {
+      await backupState(stored, imported.rosterImport);
+    } catch (error) {
+      console.error("Skipped the data import: could not back up the current state first.", error);
+      return stored;
+    }
     try {
       return await setState(imported);
     } catch (error) {

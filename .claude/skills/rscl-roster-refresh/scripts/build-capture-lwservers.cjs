@@ -149,6 +149,13 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
     `${absent.length} active tracker members are absent from the lwservers RSCL rows (${absent.map(m => m.canonicalName).join(', ') || 'none'}); they stay active with existing values unaltered.`,
   ];
   if (new Set(capture.members.map(x => x.uid)).size !== members.length || new Set(capture.members.map(x => x.lastRankPublicId)).size !== members.length) throw new Error('Duplicate identities');
+  // Identities are copied from the live record, never from lwservers: prove it before writing.
+  for (const x of capture.members) {
+    const owners = live.members.filter(m => m.gameProfile?.uid === x.uid);
+    if (owners.length !== 1 || owners[0].gameProfile.lastRankPublicId !== x.lastRankPublicId) throw new Error('Identity not taken from the live record: ' + x.uid);
+  }
+  const exported = new Set(capture.members.map(x => x.uid));
+  for (const m of live.members.filter(m => m.active)) if (!exported.has(m.gameProfile?.uid)) throw new Error('Active tracker member missing from export: ' + m.id);
   for (const x of capture.members) if (!fs.existsSync('public/' + x.avatarFile)) throw new Error('Missing avatar ' + x.avatarFile);
   fs.writeFileSync(out, JSON.stringify(capture, null, 2) + '\n');
   const moves = fresh.map(x => { const b = liveOf(x.uid).gameProfile; return { name: x.name, heroPower: b.heroPower ? +(x.profile.heroPower / b.heroPower - 1).toFixed(3) : null, power: b.power ? +(x.profile.power / b.power - 1).toFixed(3) : null }; })
