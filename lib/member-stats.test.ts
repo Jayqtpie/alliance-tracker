@@ -70,15 +70,16 @@ describe("manual player statistics", () => {
     const profile = { uid: "1", rank: "R3", avatarPath: "", heroPower: 200_000_000, heroPowerDisplay: "200M", heroPowerLegacy: false, kills: 31_000_000, killsDisplay: "31M", power: 290_000_000, powerDisplay: "290M", profession: "War Leader", capturedOn: "2026-09-27", heroPowerMeasuredAt: "2026-09-26", source: "test" };
     const member = { id: "m", canonicalName: "M", aliases: [], active: true, gameProfile: profile };
     const older = { heroPower: 199_000_000, kills: 30_000_000, power: 310_000_000, profession: "Engineer", updatedAt: "2026-09-20T03:16:24.752Z" };
-    // An older correction yields to the capture, except profession, which not every source dates.
-    expect(memberStats({ ...member, manualStats: older })).toMatchObject({ heroPower: 200_000_000, heroPowerDisplay: "200M", kills: 31_000_000, power: 290_000_000, powerDisplay: "290M", profession: "Engineer" });
+    // An older correction yields to the capture, profession included.
+    expect(memberStats({ ...member, manualStats: older })).toMatchObject({ heroPower: 200_000_000, heroPowerDisplay: "200M", kills: 31_000_000, power: 290_000_000, powerDisplay: "290M", profession: "War Leader" });
+    expect(memberStats({ ...member, manualStats: { profession: "Engineer", updatedAt: "2026-09-27T12:00:00Z" } }).profession).toBe("Engineer");
     // Hero power is dated by its own measurement, so a correction made the day after it still stands.
     expect(memberStats({ ...member, manualStats: { heroPower: 199_000_000, kills: 30_000_000, updatedAt: "2026-09-26T20:00:00Z" } })).toMatchObject({ heroPower: 199_000_000, heroPowerDisplay: "199M", kills: 31_000_000 });
     // A later correction, including a cleared value, outranks the capture until a newer one arrives.
     expect(memberStats({ ...member, manualStats: { power: null, updatedAt: "2026-09-28T09:00:00Z" } })).toMatchObject({ power: null, powerDisplay: "—", heroPower: 200_000_000 });
     // A capture that did not measure a statistic never displaces a correction of it.
     expect(memberStats({ ...member, gameProfile: { ...profile, heroPower: null, heroPowerDisplay: "—" }, manualStats: older })).toMatchObject({ heroPower: 199_000_000, heroPowerDisplay: "199M" });
-    expect(manualStatsInEffect({ ...member, manualStats: older })).toEqual({ profession: "Engineer" });
+    expect(manualStatsInEffect({ ...member, manualStats: older })).toEqual({});
     expect(manualStatsInEffect(member)).toEqual({});
   });
 

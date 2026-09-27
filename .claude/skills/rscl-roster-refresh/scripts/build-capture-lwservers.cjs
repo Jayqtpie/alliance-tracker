@@ -20,6 +20,8 @@ const pathname = s => { try { return new URL(s).pathname; } catch { return null;
 const isoDate = ms => new Date(ms).toISOString().slice(0, 10);
 // lwservers writes 0 or null for a stat it did not read; neither is a real value.
 const reading = v => (typeof v === 'number' && v > 0 ? v : null);
+// pf[1] is the career type, same codes as LastRank's career_type; read with each confirmation.
+const PROFESSIONS = { 101: 'Engineer', 102: 'War Leader' };
 
 async function avatar(url, uid, currentPath) {
   // Same image path on the game's second CDN host, which LastRank also lists as a failover.
@@ -86,13 +88,13 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
           source: raw.source, capturedOn: DATE,
           heroPower: measured.heroPower ?? gp.heroPower, heroPowerDisplay: measured.heroPower !== null ? display(measured.heroPower) : gp.heroPowerDisplay, heroPowerLegacy: measured.heroPower !== null ? false : gp.heroPowerLegacy,
           power: measured.power ?? gp.power ?? null, powerDisplay: measured.power !== null ? display(measured.power) : gp.powerDisplay ?? '—',
-          // lwservers' profession field is undated and disagrees with LastRank for some players.
-          profession: gp.profession ?? null,
+          // Confirmed by the owner in-game on 2026-09-27: where pf and an older LastRank read disagreed, pf was right.
+          profession: PROFESSIONS[p.pf?.[1]] ?? gp.profession ?? null,
           killsApproximate: measured.kills ?? gp.kills, killsDisplay: measured.kills !== null ? display(measured.kills) : gp.killsDisplay,
           killsStatus: measured.kills !== null ? 'exact source value; compact display' : 'retained previous tracker value; not read by lwservers within 24 hours',
           activityDate: gp.sourceActivityDate ?? null,
           heroPowerMeasuredAt: measured.heroPower !== null ? d.date : gp.heroPowerMeasuredAt ?? null,
-          fieldSources: { heroPower: from('heroPower'), power: from('power'), kills: from('kills'), profession: 'retained tracker value (lwservers profession is undated)' },
+          fieldSources: { heroPower: from('heroPower'), power: from('power'), kills: from('kills'), profession: PROFESSIONS[p.pf?.[1]] ? 'lwservers pf confirmed ' + isoDate(confirmedMs) : 'retained tracker value (no lwservers career type)' },
         }
         : retainedProfile(gp, 'retained previous tracker value; ' + retainReason),
       _changedAvatar: asset.changed,
@@ -132,7 +134,7 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
       markedInactive: [],
       renamed: members.filter(x => x.name !== liveOf(x.uid).canonicalName).map(x => ({ uid: x.uid, previous: liveOf(x.uid).canonicalName, current: x.name })),
       rankChanged: members.filter(x => x.rank !== liveOf(x.uid).gameProfile.rank).map(x => ({ uid: x.uid, name: x.name, previous: liveOf(x.uid).gameProfile.rank, current: x.rank })),
-      changedStatistics: members.filter(x => { const b = liveOf(x.uid).gameProfile; return x.profile.heroPower !== b.heroPower || x.profile.killsApproximate !== b.kills || x.profile.power !== (b.power ?? null); }).map(x => x.uid),
+      changedStatistics: members.filter(x => { const b = liveOf(x.uid).gameProfile; return x.profile.heroPower !== b.heroPower || x.profile.killsApproximate !== b.kills || x.profile.power !== (b.power ?? null) || x.profile.profession !== (b.profession ?? null); }).map(x => x.uid),
       changedAvatars: members.filter(x => x._changedAvatar).map(x => x.uid),
     },
     members: members.map(({ _changedAvatar, ...x }) => x),
@@ -143,7 +145,7 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
   capture.notes = [
     `Backup source: LastRank's alliance list was stale, so this export reads lwservers.com's public warzone 927 snapshot (generated ${raw.snapshotGeneratedAt}).`,
     `lwservers lists ${listedRows.length} RSCL players; ${members.length - absent.length} mapped to existing tracker records by game UID, not by name. lwservers' own roster sweep counts ${raw.allianceMemberCount ?? 'unknown'} members (${raw.allianceMemberCountDate ?? 'undated'}).`,
-    `${fresh.length} profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for ${count('heroPower')}, power for ${count('power')}, kills for ${count('kills')}; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession and alliance rank are always kept: lwservers' values for both are undated.`,
+    `${fresh.length} profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for ${count('heroPower')}, power for ${count('power')}, kills for ${count('kills')}; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession comes from lwservers' career type (pf) for ${count('profession')}; alliance rank is always kept, as lwservers leaves it empty or undated.`,
     `${capture.retainedProfileCount} rows keep their existing tracker name, rank, statistics and dates unaltered${retainedNames.length ? ': ' + retainedNames.map(x => x.name).join(', ') : ''}.`,
     `${unresolved.length} lwservers RSCL players have no tracker record with their game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
     `${absent.length} active tracker members are absent from the lwservers RSCL rows (${absent.map(m => m.canonicalName).join(', ') || 'none'}); they stay active with existing values unaltered.`,
@@ -160,5 +162,5 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
   fs.writeFileSync(out, JSON.stringify(capture, null, 2) + '\n');
   const moves = fresh.map(x => { const b = liveOf(x.uid).gameProfile; return { name: x.name, heroPower: b.heroPower ? +(x.profile.heroPower / b.heroPower - 1).toFixed(3) : null, power: b.power ? +(x.profile.power / b.power - 1).toFixed(3) : null }; })
     .filter(m => Math.abs(m.heroPower ?? 0) > 0.05 || Math.abs(m.power ?? 0) > 0.15);
-  console.log(JSON.stringify({ prior: priorFile, active: capture.memberCount, fresh: capture.freshProfileCount, freshFields: { heroPower: count('heroPower'), power: count('power'), kills: count('kills') }, retained: retainedNames.map(x => x.name), unresolved: unresolved.map(x => x.sourceName), absent: absent.map(m => m.canonicalName), renamed: capture.changes.renamed, rankChanged: capture.changes.rankChanged, changedStats: capture.changes.changedStatistics.length, changedAvatars: capture.changes.changedAvatars.length, largeMoves: moves }, null, 2));
+  console.log(JSON.stringify({ prior: priorFile, active: capture.memberCount, fresh: capture.freshProfileCount, freshFields: { heroPower: count('heroPower'), power: count('power'), kills: count('kills'), profession: count('profession') }, professionChanged: capture.members.filter(x => x.profile.profession !== (liveOf(x.uid).gameProfile.profession ?? null)).map(x => ({ name: x.name, previous: liveOf(x.uid).gameProfile.profession ?? null, current: x.profile.profession })), retained: retainedNames.map(x => x.name), unresolved: unresolved.map(x => x.sourceName), absent: absent.map(m => m.canonicalName), renamed: capture.changes.renamed, rankChanged: capture.changes.rankChanged, changedStats: capture.changes.changedStatistics.length, changedAvatars: capture.changes.changedAvatars.length, largeMoves: moves }, null, 2));
 })().catch(e => { console.error(e.message); process.exitCode = 1; });

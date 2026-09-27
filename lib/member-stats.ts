@@ -70,14 +70,14 @@ function statDisplay(value: number | null): string {
   return String(value);
 }
 
-type NumericStat = "heroPower" | "kills" | "power";
+type CapturedStat = "heroPower" | "kills" | "power" | "profession";
 
 /**
  * A manual stat holds until a newer capture measures that stat: whichever is more recent wins,
  * and an edit made on the capture's own day counts as the newer. A capture without a value for
- * the stat never displaces it. Profession is not dated by every source, so a manual one always wins.
+ * the stat never displaces it.
  */
-function manualStatInEffect(member: Member, key: NumericStat): boolean {
+function manualStatInEffect(member: Member, key: CapturedStat): boolean {
   const manual = member.manualStats;
   if (manual?.[key] === undefined) return false;
   const profile = member.gameProfile;
@@ -95,7 +95,7 @@ export function manualStatsInEffect(member: Member): Partial<NonNullable<Member[
     ...(manualStatInEffect(member, "heroPower") ? { heroPower: manual.heroPower } : {}),
     ...(manualStatInEffect(member, "kills") ? { kills: manual.kills } : {}),
     ...(manualStatInEffect(member, "power") ? { power: manual.power } : {}),
-    ...(manual.profession !== undefined ? { profession: manual.profession } : {}),
+    ...(manualStatInEffect(member, "profession") ? { profession: manual.profession } : {}),
   };
 }
 
@@ -108,7 +108,7 @@ export function memberStats(member: Member) {
   const power = manualPower ? member.manualStats!.power ?? null : member.gameProfile?.power ?? null;
   return {
     heroPower, kills, power,
-    profession: member.manualStats?.profession !== undefined ? member.manualStats.profession : member.gameProfile?.profession ?? null,
+    profession: manualStatInEffect(member, "profession") ? member.manualStats!.profession ?? null : member.gameProfile?.profession ?? null,
     powerDisplay: manualPower ? statDisplay(power) : member.gameProfile?.powerDisplay ?? "—",
     heroPowerDisplay: manualHeroPower ? statDisplay(heroPower) : member.gameProfile?.heroPowerDisplay ?? "—",
     killsDisplay: manualKills ? statDisplay(kills) : member.gameProfile?.killsDisplay ?? "—",

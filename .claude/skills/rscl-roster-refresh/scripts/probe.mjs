@@ -43,7 +43,7 @@ async function probeLwservers(lastRank) {
   const snapshotMoved = Date.parse(manifest.generatedAt) > Date.parse(prior.sourceRosterUpdatedAt);
   const byUid = new Map(prior.members.map(m => [m.uid, m]));
   const reading = v => (typeof v === 'number' && v > 0 ? v : null);
-  const changed = { name: 0, power: 0, heroPower: 0, kills: 0 };
+  const changed = { name: 0, profession: 0, power: 0, heroPower: 0, kills: 0 };
   let fresh = 0, rowsChanged = 0;
   for (const p of players.filter(row => row.allianceId === ALLIANCE_ID)) {
     const m = byUid.get(p.uid), confirmed = (p.lastConfirmedAt?.seconds ?? 0) * 1000;
@@ -54,6 +54,7 @@ async function probeLwservers(lastRank) {
     fresh++;
     const diff = {
       name: p.name !== m.name,
+      profession: PROFESSIONS[p.pf?.[1]] !== undefined && PROFESSIONS[p.pf[1]] !== m.profile.profession,
       power: values.power !== null && values.power !== m.profile.power,
       heroPower: values.heroPower !== null && values.heroPower !== m.profile.heroPower,
       kills: values.kills !== null && values.kills !== m.profile.killsApproximate,

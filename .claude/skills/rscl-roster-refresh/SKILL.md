@@ -35,7 +35,7 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 3. **Build the export**:
    `node .claude/skills/rscl-roster-refresh/scripts/build-capture.cjs --date <date>`
    Writes `lib/data/rscl-roster-<date>.json` plus any changed avatars under `public/avatars/rscl/`.
-4. **Wire it in** — in `lib/roster-import.ts` only: point the import at the new JSON and bump `ROSTER_IMPORT` to `lwservers-rscl-927-<date>-v1`. Keep the `lwservers-` prefix; older deployments compare dates on it.
+4. **Wire it in** — in `lib/roster-import.ts` only: point the import at the new JSON and bump `ROSTER_IMPORT` to `lwservers-rscl-927-<date>-v1`. Keep the `lwservers-` prefix; older deployments compare dates on it. Rebuilding a date that production already imported needs the next version (`-v2`), or the app treats it as applied.
 5. **Update the fact-coupled tests** (they pin values from the previous capture — see below).
 6. **Verify** (below), then commit. Pushing deploys to Vercel; ask first in an interactive session. The scheduled workflow is the exception: it pushes on its own after re-running every check.
 
@@ -57,7 +57,8 @@ What the backup builder takes, and why:
 | Fresh row | `lastConfirmedAt` within 24h **and** a `daily` reading dated that day with at least one stat. Anything else is retained unaltered. |
 | Hero power, power, kills | Only from the dated `daily` block. A stat lwservers did not read that day (null or 0) keeps its tracker value; `profile.fieldSources` records which. Never `gamePower`: when lwservers has no power reading it falls back to one-hero power (~11M instead of ~290M). |
 | Name, avatar | From the fresh row. |
-| Rank, profession | Always the tracker's. lwservers' `allianceRank` and `pf` are undated, and both disagreed with LastRank on real players. |
+| Profession | From `pf[1]` on a fresh row (101 Engineer, 102 War Leader, as LastRank's `career_type`). It agreed with the tracker on 93 of 96 players on 2026-09-27, and the owner confirmed in-game that it was right where it disagreed with an older LastRank read. |
+| Rank | Always the tracker's. lwservers' `allianceRank` is empty or undated. |
 | Unmapped RSCL rows | Skipped (no tracker record with that UID); listed in `unresolvedIdentities` with `publicId: "uid:<uid>"`. |
 | Absent members | Kept active and unaltered, as with LastRank. |
 

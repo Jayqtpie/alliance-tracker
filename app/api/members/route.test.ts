@@ -56,7 +56,7 @@ describe("player edits and deletion", () => {
     vi.mocked(getState).mockResolvedValueOnce({ ...createEmptyState(), members: [profiled] });
     // The form shows the captured hero power (5); only kills changes.
     const saved = await (await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "5", kills: "9", version: 1 }))).json();
-    expect(saved.members[0].manualStats).toEqual({ kills: 9, profession: "Engineer", updatedAt: expect.any(String) });
+    expect(saved.members[0].manualStats).toEqual({ kills: 9, updatedAt: expect.any(String) });
   });
 
   it("records origin and departure servers, letting a correction outrank the captured value", async () => {
