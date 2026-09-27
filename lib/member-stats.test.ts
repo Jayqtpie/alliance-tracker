@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { allianceStatTotals, memberServers, memberStats, parseMemberStat, parseServerId, serverHuePalette, serverLabel } from "./member-stats";
+import { allianceStatTotals, manualStatsInEffect, memberServers, memberStats, parseMemberStat, parseServerId, serverHuePalette, serverLabel } from "./member-stats";
 import { importCapturedRoster } from "./roster-import";
 import { createEmptyState } from "./alliance";
 import { mergeMemberIdentities } from "./tracker";
@@ -8,8 +8,10 @@ describe("manual player statistics", () => {
   it("totals active members with corrections and tracks missing values separately from zero", () => {
     const state = importCapturedRoster({ ...createEmptyState(), rosterImport: undefined, alliance: { name: "The Rascals", tag: "RSCL", server: "927" } });
     const profileMember = { ...state.members.find((member) => member.gameProfile)!, active: true };
+    // Made on the capture's day, so the correction outranks the captured values.
+    const correctedOn = profileMember.gameProfile!.capturedOn;
     const totals = allianceStatTotals([
-      { ...profileMember, manualStats: { heroPower: 2000000000, kills: null, profession: "Engineer", updatedAt: "2026-09-07" } },
+      { ...profileMember, manualStats: { heroPower: 2000000000, kills: null, profession: "Engineer", updatedAt: correctedOn } },
       { id: "manual", canonicalName: "Manual", aliases: [], active: true, manualStats: { heroPower: 500000000, kills: 0, profession: "War Leader", updatedAt: "2026-09-07" } },
       { id: "missing", canonicalName: "Missing", aliases: [], active: true },
       { ...profileMember, id: "departed", active: false, manualStats: { heroPower: 999, kills: 999, profession: "Engineer", updatedAt: "2026-09-07" } },
@@ -64,16 +66,32 @@ describe("manual player statistics", () => {
     expect(memberServers({ id: "b", canonicalName: "B", aliases: [], active: false })).toEqual({ origin: null, transferredTo: null });
   });
 
+  it("lets whichever is newer win, per statistic, between a correction and a capture", () => {
+    const profile = { uid: "1", rank: "R3", avatarPath: "", heroPower: 200_000_000, heroPowerDisplay: "200M", heroPowerLegacy: false, kills: 31_000_000, killsDisplay: "31M", power: 290_000_000, powerDisplay: "290M", profession: "War Leader", capturedOn: "2026-09-27", heroPowerMeasuredAt: "2026-09-26", source: "test" };
+    const member = { id: "m", canonicalName: "M", aliases: [], active: true, gameProfile: profile };
+    const older = { heroPower: 199_000_000, kills: 30_000_000, power: 310_000_000, profession: "Engineer", updatedAt: "2026-09-20T03:16:24.752Z" };
+    // An older correction yields to the capture, except profession, which not every source dates.
+    expect(memberStats({ ...member, manualStats: older })).toMatchObject({ heroPower: 200_000_000, heroPowerDisplay: "200M", kills: 31_000_000, power: 290_000_000, powerDisplay: "290M", profession: "Engineer" });
+    // Hero power is dated by its own measurement, so a correction made the day after it still stands.
+    expect(memberStats({ ...member, manualStats: { heroPower: 199_000_000, kills: 30_000_000, updatedAt: "2026-09-26T20:00:00Z" } })).toMatchObject({ heroPower: 199_000_000, heroPowerDisplay: "199M", kills: 31_000_000 });
+    // A later correction, including a cleared value, outranks the capture until a newer one arrives.
+    expect(memberStats({ ...member, manualStats: { power: null, updatedAt: "2026-09-28T09:00:00Z" } })).toMatchObject({ power: null, powerDisplay: "—", heroPower: 200_000_000 });
+    // A capture that did not measure a statistic never displaces a correction of it.
+    expect(memberStats({ ...member, gameProfile: { ...profile, heroPower: null, heroPowerDisplay: "—" }, manualStats: older })).toMatchObject({ heroPower: 199_000_000, heroPowerDisplay: "199M" });
+    expect(manualStatsInEffect({ ...member, manualStats: older })).toEqual({ profession: "Engineer" });
+    expect(manualStatsInEffect(member)).toEqual({});
+  });
+
   it("retains corrections through source refreshes and member merges", () => {
     const state = importCapturedRoster({ ...createEmptyState(), rosterImport: undefined, alliance: { name: "The Rascals", tag: "RSCL", server: "927" } });
     const player = state.members[0];
-    player.manualStats = { heroPower: 123456789, kills: null, updatedAt: "2026-09-06T00:00:00Z" };
+    player.manualStats = { heroPower: 123456789, kills: null, updatedAt: `${player.gameProfile!.capturedOn}T00:00:00Z` };
     state.rosterImport = undefined;
     const refreshed = importCapturedRoster(state);
     expect(refreshed.members[0].manualStats).toEqual(player.manualStats);
     expect(memberStats(refreshed.members[0])).toMatchObject({ heroPower: 123456789, heroPowerDisplay: "123.46M", kills: null, killsDisplay: "—" });
     expect(memberStats({ ...player, manualStats: undefined })).toMatchObject({ power: player.gameProfile!.power, powerDisplay: player.gameProfile!.powerDisplay, profession: player.gameProfile!.profession });
-    expect(memberStats({ ...player, manualStats: { power: 450500000, profession: null, updatedAt: "2026-09-15" } })).toMatchObject({ power: 450500000, powerDisplay: "450.5M", profession: null, heroPower: player.gameProfile!.heroPower });
+    expect(memberStats({ ...player, manualStats: { power: 450500000, profession: null, updatedAt: player.gameProfile!.capturedOn } })).toMatchObject({ power: 450500000, powerDisplay: "450.5M", profession: null, heroPower: player.gameProfile!.heroPower });
     refreshed.members.push({ id: "duplicate", canonicalName: "Duplicate", aliases: [], active: false, manualStats: { kills: 42, updatedAt: "2026-09-05T00:00:00Z" } });
     expect(mergeMemberIdentities(refreshed, player.id, "duplicate").members[0].manualStats).toEqual(player.manualStats);
   });

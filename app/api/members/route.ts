@@ -3,7 +3,7 @@ import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { mergeMemberIdentities, removeMemberFromRoster } from "@/lib/tracker";
-import { memberStats, parseMemberStat, parseServerId, PROFESSIONS } from "@/lib/member-stats";
+import { manualStatsInEffect, memberStats, parseMemberStat, parseServerId, PROFESSIONS } from "@/lib/member-stats";
 
 const schema = z.object({
   members: z.array(z.object({
@@ -101,7 +101,7 @@ export async function PATCH(request: Request) {
         const profession = parsed.data.profession === undefined ? current.profession : parsed.data.profession || null;
         if (heroPower !== current.heroPower || kills !== current.kills || power !== current.power || profession !== current.profession) {
           changes.manualStats = {
-            ...member.manualStats,
+            ...manualStatsInEffect(member),
             ...(power !== current.power ? { power } : {}),
             ...(heroPower !== current.heroPower ? { heroPower } : {}),
             ...(kills !== current.kills ? { kills } : {}),

@@ -70,16 +70,48 @@ function statDisplay(value: number | null): string {
   return String(value);
 }
 
+type NumericStat = "heroPower" | "kills" | "power";
+
+/**
+ * A manual stat holds until a newer capture measures that stat: whichever is more recent wins,
+ * and an edit made on the capture's own day counts as the newer. A capture without a value for
+ * the stat never displaces it. Profession is not dated by every source, so a manual one always wins.
+ */
+function manualStatInEffect(member: Member, key: NumericStat): boolean {
+  const manual = member.manualStats;
+  if (manual?.[key] === undefined) return false;
+  const profile = member.gameProfile;
+  const captured = profile?.[key] ?? null;
+  const capturedOn = key === "heroPower" ? profile?.heroPowerMeasuredAt ?? profile?.capturedOn : profile?.capturedOn;
+  if (captured === null || !capturedOn) return true;
+  return manual.updatedAt.slice(0, 10) >= capturedOn.slice(0, 10);
+}
+
+/** The manual stats still in effect; an edit carries these forward and drops the superseded ones. */
+export function manualStatsInEffect(member: Member): Partial<NonNullable<Member["manualStats"]>> {
+  const manual = member.manualStats;
+  if (!manual) return {};
+  return {
+    ...(manualStatInEffect(member, "heroPower") ? { heroPower: manual.heroPower } : {}),
+    ...(manualStatInEffect(member, "kills") ? { kills: manual.kills } : {}),
+    ...(manualStatInEffect(member, "power") ? { power: manual.power } : {}),
+    ...(manual.profession !== undefined ? { profession: manual.profession } : {}),
+  };
+}
+
 export function memberStats(member: Member) {
-  const heroPower = member.manualStats?.heroPower !== undefined ? member.manualStats.heroPower : member.gameProfile?.heroPower ?? null;
-  const kills = member.manualStats?.kills !== undefined ? member.manualStats.kills : member.gameProfile?.kills ?? null;
-  const power = member.manualStats?.power !== undefined ? member.manualStats.power : member.gameProfile?.power ?? null;
+  const manualHeroPower = manualStatInEffect(member, "heroPower");
+  const manualKills = manualStatInEffect(member, "kills");
+  const manualPower = manualStatInEffect(member, "power");
+  const heroPower = manualHeroPower ? member.manualStats!.heroPower ?? null : member.gameProfile?.heroPower ?? null;
+  const kills = manualKills ? member.manualStats!.kills ?? null : member.gameProfile?.kills ?? null;
+  const power = manualPower ? member.manualStats!.power ?? null : member.gameProfile?.power ?? null;
   return {
     heroPower, kills, power,
     profession: member.manualStats?.profession !== undefined ? member.manualStats.profession : member.gameProfile?.profession ?? null,
-    powerDisplay: member.manualStats?.power !== undefined ? statDisplay(power) : member.gameProfile?.powerDisplay ?? "—",
-    heroPowerDisplay: member.manualStats?.heroPower !== undefined ? statDisplay(heroPower) : member.gameProfile?.heroPowerDisplay ?? "—",
-    killsDisplay: member.manualStats?.kills !== undefined ? statDisplay(kills) : member.gameProfile?.killsDisplay ?? "—",
+    powerDisplay: manualPower ? statDisplay(power) : member.gameProfile?.powerDisplay ?? "—",
+    heroPowerDisplay: manualHeroPower ? statDisplay(heroPower) : member.gameProfile?.heroPowerDisplay ?? "—",
+    killsDisplay: manualKills ? statDisplay(kills) : member.gameProfile?.killsDisplay ?? "—",
   };
 }
 

@@ -51,6 +51,14 @@ describe("player edits and deletion", () => {
     expect((await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "", kills: "", profession: "Wizard", version: 1 }))).status).toBe(400);
   });
 
+  it("drops corrections a newer capture superseded instead of re-dating them on the next edit", async () => {
+    const profiled = { id: "keep", canonicalName: "Alpha", active: true, aliases: [], manualStats: { heroPower: 4, power: 3, profession: "Engineer", updatedAt: "2026-09-20T00:00:00Z" }, gameProfile: { uid: "1", rank: "R3", avatarPath: "", heroPower: 5, heroPowerDisplay: "5", heroPowerLegacy: false, kills: 6, killsDisplay: "6", power: 7, powerDisplay: "7", profession: "War Leader", capturedOn: "2026-09-27", source: "test" } };
+    vi.mocked(getState).mockResolvedValueOnce({ ...createEmptyState(), members: [profiled] });
+    // The form shows the captured hero power (5); only kills changes.
+    const saved = await (await PATCH(request({ action: "edit", memberId: "keep", canonicalName: "Alpha", heroPower: "5", kills: "9", version: 1 }))).json();
+    expect(saved.members[0].manualStats).toEqual({ kills: 9, profession: "Engineer", updatedAt: expect.any(String) });
+  });
+
   it("records origin and departure servers, letting a correction outrank the captured value", async () => {
     const profiled = { id: "keep", canonicalName: "Alpha", active: true, aliases: [], gameProfile: { uid: "1", rank: "R3", avatarPath: "", heroPower: 5, heroPowerDisplay: "5", heroPowerLegacy: false, kills: 6, killsDisplay: "6", originServer: 856, capturedOn: "2026-09-14", source: "test" } };
     const edit = (body: Record<string, unknown>) => {
