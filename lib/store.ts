@@ -1,5 +1,5 @@
 import "server-only";
-import { BlobPreconditionFailedError, copy, get, head, put } from "@vercel/blob";
+import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
@@ -34,10 +34,12 @@ function importsAllowed() {
 
 // An import overwrites the only copy of the state, and reverting its commit cannot undo that,
 // so the state it replaces is copied aside first. Named by version: a version is replaced once.
+// It writes the state this request read, not a server-side copy of the Blob: a concurrent
+// request may already have imported, and copying then would back up the imported state.
 async function backupState(state: TrackerState, incoming: string | undefined) {
   const name = `tracker-state-v${state.version}-before-${incoming ?? "import"}.json`;
   if (blobEnabled()) {
-    await copy(statePath, `${backupDir}/${name}`, {
+    await put(`${backupDir}/${name}`, JSON.stringify(state), {
       access: "private",
       token: blobToken(),
       contentType: "application/json",
