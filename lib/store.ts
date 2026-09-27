@@ -11,6 +11,7 @@ import { applyMemberProfileUpdates } from "@/lib/member-profile-updates";
 import { applyProfileRefreshRetries } from "@/lib/profile-refresh-retries";
 import { applyProfileStats } from "@/lib/profile-stats";
 import { applyOriginServers } from "@/lib/origin-servers";
+import { applyAliasCorrections } from "@/lib/alias-corrections";
 import { applyPairingImport } from "@/lib/pairings-import";
 
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
@@ -20,7 +21,7 @@ const backupDir = "app-data/backups";
 // Every one-shot data import, in the order each one's guards expect. Each returns
 // the state unchanged once it has been applied, so an unchanged result is the
 // signal that nothing needs saving.
-const DATA_IMPORTS = [importCapturedRoster, applyMemberProfileUpdates, applyProfileRefreshRetries, applyProfileStats, applyOriginServers, applyPairingImport];
+const DATA_IMPORTS = [importCapturedRoster, applyMemberProfileUpdates, applyProfileRefreshRetries, applyProfileStats, applyOriginServers, applyAliasCorrections, applyPairingImport];
 
 export function applyDataImports(state: TrackerState): TrackerState {
   return DATA_IMPORTS.reduce((current, apply) => apply(current), state);
