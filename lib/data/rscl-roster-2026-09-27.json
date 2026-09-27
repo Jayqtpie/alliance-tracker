@@ -4,7 +4,7 @@
   "allianceTag": "RSCL",
   "allianceName": "The Rascals",
   "capturedOn": "2026-09-27",
-  "exportedAt": "2026-09-27T17:44:34.788Z",
+  "exportedAt": "2026-09-27T17:57:19.409Z",
   "sourceRosterUpdatedAt": "2026-09-27T04:02:38.632Z",
   "sourceListedMemberCount": 97,
   "memberCount": 100,
@@ -21,7 +21,7 @@
   "notes": [
     "Backup source: LastRank's alliance list was stale, so this export reads lwservers.com's public warzone 927 snapshot (generated 2026-09-27T04:02:38.632Z).",
     "lwservers lists 97 RSCL players; 96 mapped to existing tracker records by game UID, not by name. lwservers' own roster sweep counts 100 members (2026-09-27).",
-    "88 profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for 83, power for 68, kills for 50; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession and alliance rank are always kept: lwservers' values for both are undated.",
+    "88 profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for 83, power for 68, kills for 50; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession comes from lwservers' career type (pf) for 88; alliance rank is always kept, as lwservers leaves it empty or undated.",
     "12 rows keep their existing tracker name, rank, statistics and dates unaltered: 클래식 classic, ApacheJohn, Gino the chaos, Leandro Pinto, BadLui, I  Mystery  l, KrlZ, derpynoob, art 1, fALIENangel, Special KK, Youmei Qiu.",
     "1 lwservers RSCL players have no tracker record with their game UID and were skipped at the user's request: Tymmers.",
     "4 active tracker members are absent from the lwservers RSCL rows (art 1, fALIENangel, Special KK, Youmei Qiu); they stay active with existing values unaltered."
@@ -69,130 +69,12 @@
       }
     ],
     "markedInactive": [],
-    "renamed": [
-      {
-        "uid": "1426415525000863",
-        "previous": "ABU BADDA",
-        "current": "Baby Bee ie FAFO"
-      },
-      {
-        "uid": "1543620585000927",
-        "previous": "SAILOR PØØN łR1ł",
-        "current": "Fernღ"
-      },
-      {
-        "uid": "1305257078000927",
-        "previous": "LYS łR1ł",
-        "current": "Lys The Yapper"
-      },
-      {
-        "uid": "2857110336000836",
-        "previous": "Màŕöűşĥ łR1ł",
-        "current": "Maroush łŘ1ł"
-      }
-    ],
+    "renamed": [],
     "rankChanged": [],
     "changedStatistics": [
-      "1644943893000856",
-      "1604759675000843",
-      "1311513210000927",
-      "1500145514000927",
-      "1312967191000927",
-      "1032469361000927",
-      "2118929520000856",
-      "1276396135000866",
-      "1867036308000905",
-      "1601085524000862",
-      "1529582961000843",
-      "1087497222000923",
-      "1398298916000863",
-      "1417138315000843",
-      "1223276182000862",
-      "1436417874000866",
-      "1400285347000866",
-      "1072311031000905",
-      "1583897883000843",
-      "1494614657000830",
-      "1164257150000927",
-      "1257131454000866",
-      "1433711278000862",
-      "1059777042000927",
-      "1360939579000863",
-      "1426415525000863",
-      "1415256998000915",
-      "1303662525000863",
-      "1553246682000927",
-      "1543033399000841",
-      "1263825980000906",
-      "1346884246000830",
-      "1174872981000912",
-      "1320072346000907",
-      "1451726686000927",
-      "1689415806000891",
-      "1396777732000905",
-      "1331480819000927",
-      "1794888799000844",
-      "2655899837000856",
-      "1205420305000866",
-      "1040158253000921",
-      "1136632270000866",
-      "1666146601000931",
-      "1445438760000927",
-      "1157942274000844",
-      "1492937533000866",
-      "1354432303000927",
-      "1803857351000863",
-      "1044133159000908",
-      "1855357023000922",
-      "1201977595000919",
-      "1512437426000927",
-      "1289270503000862",
-      "1650522690000856",
-      "1674633159000926",
-      "1055557385000931",
-      "1201605079000922",
-      "1543620585000927",
-      "1345061146000927",
-      "1327568165000927",
-      "1157385172000841",
-      "1291563187000927",
-      "1153137664000856",
-      "1001286443000927",
-      "1305257078000927",
-      "1619063466000856",
-      "1080182622000927",
-      "2655813878000856",
-      "1226135106000922",
-      "2480441935000856",
-      "1036648524000927",
-      "1199403914000927",
-      "1544524091000927",
-      "1432984853000841",
-      "1356650581000927",
-      "1395039702000922",
-      "1045906174000919",
-      "1255883238000927",
-      "2857110336000836",
-      "1290641233000927",
-      "1056579044000915",
-      "1290070340000927",
-      "1173790054000919",
-      "1553467250000927",
-      "1563350938000922",
-      "1212993895000900",
-      "1058234761000927"
+      "1426415525000863"
     ],
-    "changedAvatars": [
-      "1867036308000905",
-      "1059777042000927",
-      "1426415525000863",
-      "1451726686000927",
-      "1354432303000927",
-      "1044133159000908",
-      "1201605079000922",
-      "1543620585000927",
-      "1036648524000927"
-    ]
+    "changedAvatars": []
   },
   "members": [
     {
@@ -221,8 +103,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T05:33:54.845499+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -245,7 +127,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -275,8 +157,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:01:40.882859+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -299,7 +181,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -329,8 +211,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:27:48.729356+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -353,7 +235,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -383,8 +265,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:27:55.308242+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -407,7 +289,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -437,8 +319,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:02:20.356962+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -461,7 +343,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -491,8 +373,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:02:32.435024+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -515,7 +397,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -545,8 +427,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:31:32.804159+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -569,7 +451,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -599,8 +481,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:29:24.223064+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -623,7 +505,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -653,8 +535,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:03:07.185847+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -677,7 +559,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -707,8 +589,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:33:40.916802+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -731,7 +613,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -761,8 +643,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:28:01.433779+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -785,7 +667,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -815,8 +697,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:34:16.276759+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -839,7 +721,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -869,8 +751,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:30:28.365046+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -893,7 +775,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -923,8 +805,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:04:49.538790+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -947,7 +829,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -977,8 +859,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:35:05.060246+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1001,7 +883,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1031,8 +913,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:02:54.953190+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1055,7 +937,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1085,8 +967,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:06:54.454377+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1109,7 +991,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1139,8 +1021,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:29:10.649771+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1163,7 +1045,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1193,8 +1075,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:31:38.479820+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1217,7 +1099,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1247,8 +1129,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:28:09.463069+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1271,7 +1153,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1301,8 +1183,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:30:33.929178+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1325,7 +1207,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1355,8 +1237,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:30:22.815327+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1379,7 +1261,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1409,8 +1291,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:05:38.825060+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1433,7 +1315,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1463,8 +1345,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:30:17.259411+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1487,7 +1369,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1517,8 +1399,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:29:18.421684+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1541,7 +1423,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1556,7 +1438,7 @@
       "identityEvidence": {
         "basis": "game UID on the live tracker record equals the lwservers UID",
         "initialSourceName": "Baby Bee ie FAFO",
-        "previousTrackerName": "ABU BADDA",
+        "previousTrackerName": "Baby Bee ie FAFO",
         "avatarCorroborated": false
       },
       "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/e8f586e30cdc345be20e81723e01edfb.jpg",
@@ -1571,8 +1453,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:36:37.136345+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1585,7 +1467,7 @@
         "heroPowerLegacy": false,
         "power": 295296064,
         "powerDisplay": "295.3M",
-        "profession": "Engineer",
+        "profession": "War Leader",
         "killsApproximate": 26595858,
         "killsDisplay": "26.6M",
         "killsStatus": "exact source value; compact display",
@@ -1595,7 +1477,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1625,8 +1507,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:31:27.095444+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1649,7 +1531,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1679,8 +1561,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:32:39.596452+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1703,7 +1585,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1733,8 +1615,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:10:07.471842+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1757,7 +1639,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1787,8 +1669,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:34:21.740470+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1811,7 +1693,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1841,8 +1723,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:38:27.841007+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1865,7 +1747,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1895,8 +1777,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:29:05.021534+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1919,7 +1801,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -1949,8 +1831,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:39:22.125898+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -1973,7 +1855,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2003,8 +1885,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:35:14.576639+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2027,7 +1909,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2057,8 +1939,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:05:56.437986+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2081,7 +1963,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2111,8 +1993,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:31:44.142901+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2135,7 +2017,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2165,8 +2047,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:08:07.986132+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2189,7 +2071,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2219,8 +2101,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:03:57.840597+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2243,7 +2125,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2273,8 +2155,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:39:59.057252+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2297,7 +2179,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2327,8 +2209,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:40:48.519761+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2351,7 +2233,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2381,8 +2263,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:32:47.080942+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2405,7 +2287,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2435,8 +2317,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:04:04.430871+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2459,7 +2341,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2489,8 +2371,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:36:25.449414+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2513,7 +2395,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2543,8 +2425,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:40:29.458723+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2567,7 +2449,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2597,8 +2479,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:02:49.395193+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2621,7 +2503,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2651,8 +2533,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:41:12.192099+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2675,7 +2557,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2705,8 +2587,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:07:20.788876+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2729,7 +2611,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2759,8 +2641,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:45:52.958309+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2783,7 +2665,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2813,8 +2695,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:36:31.240822+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2837,7 +2719,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2867,8 +2749,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:42:38.888086+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2891,7 +2773,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2921,8 +2803,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:34:35.214750+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2945,7 +2827,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -2975,8 +2857,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:42:25.800529+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -2999,7 +2881,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3029,8 +2911,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:52.057318+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3053,7 +2935,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3083,8 +2965,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:37:21.480683+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3107,7 +2989,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3137,8 +3019,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:11:00.721831+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3161,7 +3043,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3191,8 +3073,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:34:10.603866+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3215,7 +3097,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3245,8 +3127,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:11:39.099230+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3269,7 +3151,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3299,8 +3181,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:36:13.914200+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3323,7 +3205,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3338,7 +3220,7 @@
       "identityEvidence": {
         "basis": "game UID on the live tracker record equals the lwservers UID",
         "initialSourceName": "Fernღ",
-        "previousTrackerName": "SAILOR PØØN łR1ł",
+        "previousTrackerName": "Fernღ",
         "avatarCorroborated": false
       },
       "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/0f75d0e256cc143ee9bedc1b2936443b.jpg",
@@ -3353,8 +3235,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:03:39.708216+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3377,7 +3259,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3407,8 +3289,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:37:09.266128+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3431,7 +3313,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3461,8 +3343,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:40:36.650143+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3485,7 +3367,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3515,8 +3397,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:07:50.492826+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3539,7 +3421,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3569,8 +3451,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:42:18.215318+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3593,7 +3475,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3623,8 +3505,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:45:00.201891+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3647,7 +3529,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3677,8 +3559,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:39:53.549728+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3701,7 +3583,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3716,7 +3598,7 @@
       "identityEvidence": {
         "basis": "game UID on the live tracker record equals the lwservers UID",
         "initialSourceName": "Lys The Yapper",
-        "previousTrackerName": "LYS łR1ł",
+        "previousTrackerName": "Lys The Yapper",
         "avatarCorroborated": true
       },
       "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/cd39de5165191c0526f5fb3c45312898.jpg",
@@ -3731,8 +3613,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:11:46.356165+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3755,7 +3637,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3785,8 +3667,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:34.565882+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3809,7 +3691,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3839,8 +3721,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:16.867514+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3863,7 +3745,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3893,8 +3775,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:45:58.656072+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3917,7 +3799,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -3947,8 +3829,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:06:42.224036+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -3971,7 +3853,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4001,8 +3883,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:46.185125+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4025,7 +3907,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4055,8 +3937,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:44:48.345326+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4079,7 +3961,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4109,8 +3991,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:35:20.210472+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4133,7 +4015,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4163,8 +4045,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:40.508113+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4187,7 +4069,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4217,8 +4099,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:41:05.144907+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4241,7 +4123,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4271,8 +4153,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:34:27.261997+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4295,7 +4177,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4325,8 +4207,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:46:04.191825+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4349,7 +4231,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4379,8 +4261,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:08.220079+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4403,7 +4285,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4433,8 +4315,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:44:53.901933+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4457,7 +4339,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4472,7 +4354,7 @@
       "identityEvidence": {
         "basis": "game UID on the live tracker record equals the lwservers UID",
         "initialSourceName": "Maroush łŘ1ł",
-        "previousTrackerName": "Màŕöűşĥ łR1ł",
+        "previousTrackerName": "Maroush łŘ1ł",
         "avatarCorroborated": true
       },
       "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000836/3349a8a0f8f0bc169407e421407ffc84.jpg",
@@ -4487,8 +4369,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:11:53.739112+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4511,7 +4393,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4541,8 +4423,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:40:42.606998+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4565,7 +4447,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4595,8 +4477,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:08:19.712976+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4619,7 +4501,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4649,8 +4531,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:06:32.571125+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4673,7 +4555,7 @@
           "heroPower": "lwservers daily reading 2026-09-26",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4703,8 +4585,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:36:19.827646+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4727,7 +4609,7 @@
           "heroPower": "retained tracker value (not read by lwservers within 24 hours)",
           "power": "retained tracker value (not read by lwservers within 24 hours)",
           "kills": "lwservers daily reading 2026-09-26",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4757,7 +4639,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-21T06:12:14.276012+02:00",
         "sourceUpdatedAt": "2026-09-19T01:07:01.000Z",
         "refreshRequested": false,
@@ -4805,7 +4687,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-23T22:37:15.189230+02:00",
         "sourceUpdatedAt": "2026-09-26T01:06:17.000Z",
         "refreshRequested": false,
@@ -4853,8 +4735,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:11:07.728462+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4877,7 +4759,7 @@
           "heroPower": "retained tracker value (not read by lwservers within 24 hours)",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4907,8 +4789,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:43:22.760396+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -4931,7 +4813,7 @@
           "heroPower": "retained tracker value (not read by lwservers within 24 hours)",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -4961,7 +4843,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-21T06:13:05.542953+02:00",
         "sourceUpdatedAt": "2026-09-18T01:05:09.000Z",
         "refreshRequested": false,
@@ -5009,7 +4891,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-23T22:42:31.398236+02:00",
         "sourceUpdatedAt": "2026-09-25T01:06:30.000Z",
         "refreshRequested": false,
@@ -5057,8 +4939,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-21T06:08:55.470485+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -5081,7 +4963,7 @@
           "heroPower": "retained tracker value (not read by lwservers within 24 hours)",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -5111,7 +4993,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-23T22:46:45.596863+02:00",
         "sourceUpdatedAt": "2026-09-19T01:07:01.000Z",
         "refreshRequested": false,
@@ -5159,8 +5041,8 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
-        "previousSourceUpdatedAt": "2026-09-23T22:41:18.507746+02:00",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
+        "previousSourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "sourceUpdatedAt": "2026-09-27T01:06:35.000Z",
         "refreshRequested": false,
         "refreshResult": "lwservers-daily-reading"
@@ -5183,7 +5065,7 @@
           "heroPower": "retained tracker value (not read by lwservers within 24 hours)",
           "power": "lwservers daily reading 2026-09-26",
           "kills": "retained tracker value (not read by lwservers within 24 hours)",
-          "profession": "retained tracker value (lwservers profession is undated)"
+          "profession": "lwservers pf confirmed 2026-09-27"
         }
       }
     },
@@ -5213,7 +5095,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-23T22:46:16.600937+02:00",
         "sourceUpdatedAt": "2026-08-08T01:05:39.000Z",
         "refreshRequested": false,
@@ -5261,7 +5143,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-23T22:43:28.402226+02:00",
         "sourceUpdatedAt": "2026-09-24T01:06:26.000Z",
         "refreshRequested": false,
@@ -5309,7 +5191,7 @@
       "freshness": {
         "status": "retained",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-09-27T17:44:32.700Z",
+        "retrievedAt": "2026-09-27T17:57:17.691Z",
         "previousSourceUpdatedAt": "2026-09-21T06:12:00.215887+02:00",
         "sourceUpdatedAt": "2026-08-18T01:07:54.000Z",
         "refreshRequested": false,

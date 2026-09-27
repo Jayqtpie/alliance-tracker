@@ -92,7 +92,7 @@ describe("captured RSCL roster", () => {
     "lastrank-rscl-927-2026-09-28-v1",
     "lwservers-rscl-927-2026-09-27-v10",
     "lastrank-rscl-927-2026-09-27-v2",
-    "lastrank-rscl-927-2026-09-27-v1",
+    "lastrank-rscl-927-2026-09-27-v3",
   ])("retains an equal or newer capture across sources: %s", (rosterImport) => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport };
     expect(importCapturedRoster(state)).toBe(state);
