@@ -816,7 +816,7 @@ function CommanderProfile({ canManage, member, state, onClose, onMerge, onDelete
             <div><span>{t("Kills")}</span><strong>{stats.killsDisplay}</strong></div>
             <div><span>{t("Profession")}</span><strong>{stats.profession ? t(stats.profession) : "—"}</strong></div>
             <div><span>{t("Alliance rank")}</span><strong>{member.gameProfile?.rank ?? "—"}</strong></div>
-            <div><span>{t("Profile accuracy")}</span><strong className="profile-capture-date">{member.gameProfile ? accurateAsOf(member.gameProfile.capturedOn, t, language) : t("No profile capture")}</strong><small>{member.manualStats ? t("Stats edited: {date}", { date: dateLabel(member.manualStats.updatedAt) }) : member.gameProfile?.refreshStatus === "retained" ? t("Source refresh unavailable · earlier stats retained") : member.gameProfile?.sourceUpdatedAt ? t("LastRank updated: {date}", { date: dateLabel(member.gameProfile.sourceUpdatedAt) }) : member.gameProfile?.sourceActivityDate ? t("Last activity: {date}", { date: dateLabel(member.gameProfile.sourceActivityDate) }) : t("Saved profile data")}</small></div>
+            <div><span>{t("Profile accuracy")}</span><strong className="profile-capture-date">{member.gameProfile ? accurateAsOf(member.gameProfile.capturedOn, t, language) : t("No profile capture")}</strong></div>
           </section>}
           <section className="profile-metrics">
             <div><span>{t("Latest score")}</span><strong>{performance.latest ? compact(performance.latest.points) : "—"}</strong><small>{performance.latest ? t("{day} capture", { day: t(performance.latest.dayLabel) }) : t("No captures yet")}</small></div>
