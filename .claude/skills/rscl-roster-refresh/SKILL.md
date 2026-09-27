@@ -91,7 +91,7 @@ To roll back: revert the refresh commit on main first (otherwise the next load r
 
 ## Scheduled runs
 
-`.github/workflows/roster-refresh.yml` runs Sundays and Wednesdays at 04:00 UTC on the owner's subscription (`CLAUDE_CODE_OAUTH_TOKEN`), with `cron-prompt.md` as the prompt and the probe result appended. Claude commits but has no push credentials. The workflow then checks that the commit touches only refresh paths, adds an export and bumps the marker, re-runs tsc, eslint, vitest and the apply check, and pushes fast-forward only. A failed run emails the owner through GitHub's standard failure notice. Start one by hand with `gh workflow run roster-refresh.yml`.
+`.github/workflows/roster-refresh.yml` runs Sundays and Wednesdays at 04:52 UTC (off the hour: GitHub delays or drops `:00` runs under load) on the owner's subscription (`CLAUDE_CODE_OAUTH_TOKEN`), with `cron-prompt.md` as the prompt and the probe result appended. Claude commits but has no push credentials. The workflow then checks that the commit touches only refresh paths, adds an export and bumps the marker, re-runs tsc, eslint, vitest and the apply check, and pushes fast-forward only. A failed run emails the owner through GitHub's standard failure notice. Start one by hand with `gh workflow run roster-refresh.yml`.
 
 ## Gotchas
 
