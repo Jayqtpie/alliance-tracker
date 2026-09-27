@@ -1,7 +1,7 @@
 # Twice-weekly RSCL roster refresh with Claude Code on the owner's Claude subscription.
-# A one-request probe decides whether Claude runs at all; Claude (Opus, with a Sonnet
-# subagent collecting) builds and commits; this workflow re-verifies and pushes, which
-# deploys to production.
+# A probe decides whether Claude runs at all and from which source (LastRank, or lwservers as
+# the backup when LastRank is stale); Claude (Opus, with a Sonnet subagent collecting from
+# LastRank) builds and commits; this workflow re-verifies and pushes, which deploys to production.
 name: Roster refresh
 
 on:
@@ -35,7 +35,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Probe LastRank for changes
+      - name: Probe LastRank (and the lwservers backup) for changes
         id: probe
         run: node .claude/skills/rscl-roster-refresh/scripts/probe.mjs | tee "$RUNNER_TEMP/probe.json"
 
@@ -86,7 +86,8 @@ jobs:
           npx tsc --noEmit
           npx eslint .
           npx vitest run
-          live=$(ls .data/lastrank-refresh-*/live-before.json | sort | tail -n 1)
+          # Either source's staging directory; a fresh runner holds only this run's.
+          live=$(ls -t .data/*-refresh-*/live-before.json | head -n 1)
           LIVE_STATE="$live" npx vitest run --config .claude/skills/rscl-roster-refresh/scripts/vitest.apply.config.mts
           # Fast-forward only: if main moved during the run this fails rather than overwrite it.
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" HEAD:main

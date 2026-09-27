@@ -1,6 +1,6 @@
 ---
 name: rscl-roster-refresh
-description: Use when refreshing the RSCL members roster from lastrank.fun — pulling current alliance data, power, profession, ranks, renames or avatars into the tracker, or when asked to "update the members page" with fresh LastRank data.
+description: Use when refreshing the RSCL members roster from lastrank.fun (or lwservers.com as the backup when LastRank is stale) — pulling current alliance data, power, profession, ranks, renames or avatars into the tracker, or when asked to "update the members page" with fresh LastRank data.
 ---
 
 # RSCL roster refresh
@@ -24,7 +24,7 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 
 ## Pipeline
 
-0. **Is it worth running?** `node .claude/skills/rscl-roster-refresh/scripts/probe.mjs` makes one request and prints `run: true|false` with counts. The alliance list is a daily snapshot that our enrich requests never update, so the probe compares it against the snapshot the last export was built from. The scheduled workflow runs it before Claude starts; run it by hand when asked to refresh "only if something changed".
+0. **Is it worth running?** `node .claude/skills/rscl-roster-refresh/scripts/probe.mjs` makes one request (three when it checks the backup) and prints `run: true|false` and `source` with counts. `source: lwservers` means LastRank is stale: follow "Backup source: lwservers" below instead of steps 2–3. The alliance list is a daily snapshot that our enrich requests never update, so the probe compares it against the snapshot the last export was built from. The scheduled workflow runs it before Claude starts; run it by hand when asked to refresh "only if something changed".
 1. **Snapshot the deployed state** (the reconciliation baseline):
    `node .claude/skills/rscl-roster-refresh/scripts/live-state.mjs --out .data/lastrank-refresh-<date>`
    It needs `TRACKER_PASSCODE` (the viewer passcode) in the environment; ask the owner for it in an interactive session.
@@ -39,9 +39,33 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 5. **Update the fact-coupled tests** (they pin values from the previous capture — see below).
 6. **Verify** (below), then commit. Pushing deploys to Vercel; ask first in an interactive session. The scheduled workflow is the exception: it pushes on its own after re-running every check.
 
+## Backup source: lwservers
+
+Use this when the probe prints `"source":"lwservers"`: LastRank's alliance list is more than two days old (it stalled on 2026-09-22) or LastRank failed, and lwservers.com has a newer snapshot with changes. lwservers publishes warzone 927 as a static file keyed by **game UID**, the same ID the tracker stores, so the match-by-ID rule holds without LastRank.
+
+1. **Snapshot the deployed state** as in step 1, into `.data/lwservers-refresh-<date>`.
+2. **Collect** (three GETs, seconds; no subagent needed):
+   `node .claude/skills/rscl-roster-refresh/scripts/collect-lwservers.mjs --out .data/lwservers-refresh-<date>`
+   It refuses a snapshot older than 48 hours.
+3. **Build**: `node .claude/skills/rscl-roster-refresh/scripts/build-capture-lwservers.cjs --date <date>`
+4. Steps 4–6 as above, with the same fact-coupled test updates.
+
+What the backup builder takes, and why:
+
+| Field | Rule |
+|---|---|
+| Fresh row | `lastConfirmedAt` within 24h **and** a `daily` reading dated that day with at least one stat. Anything else is retained unaltered. |
+| Hero power, power, kills | Only from the dated `daily` block. A stat lwservers did not read that day (null or 0) keeps its tracker value; `profile.fieldSources` records which. Never `gamePower`: when lwservers has no power reading it falls back to one-hero power (~11M instead of ~290M). |
+| Name, avatar | From the fresh row. |
+| Rank, profession | Always the tracker's. lwservers' `allianceRank` and `pf` are undated, and both disagreed with LastRank on real players. |
+| Unmapped RSCL rows | Skipped (no tracker record with that UID); listed in `unresolvedIdentities` with `publicId: "uid:<uid>"`. |
+| Absent members | Kept active and unaltered, as with LastRank. |
+
+Marker and file names are unchanged (`lwservers-rscl-927-<date>-v1`, `rscl-roster-<date>.json`); the export's `source` is the lwservers URL. The builder refuses to overwrite a LastRank export for the same date. Once LastRank's list moves past the backup export's `sourceRosterUpdatedAt`, the probe goes back to LastRank by itself.
+
 ## Tests that need new facts each refresh
 
-`lib/roster-import.test.ts`: the parrot record's `capturedOn`, JayQT's `heroPower`, the marker dates in "does not downgrade a newer capture" and the `it.each` list (all must be ≥ the new capture date), the public ID used for the retained-profile test, and the UID used for the absent-from-source test — **the retained and absent members change from run to run**; read the new export's `retainedProfileCount`, `changes.absentFromSourceRoster` and `notes` to find them.
+`lib/roster-import.test.ts`: the export it imports at the top, the parrot record's `capturedOn`, JayQT's `heroPower`, the marker dates in "does not downgrade a newer capture" and the `it.each` list (all must be ≥ the new capture date), the public ID used for the retained-profile test, and the UID used for the absent-from-source test — **the retained and absent members change from run to run**; read the new export's `retainedProfileCount`, `changes.absentFromSourceRoster` and `notes` to find them.
 
 `lib/profile-stats.test.ts`: the hardcoded power/profession for Zothargirl.
 
