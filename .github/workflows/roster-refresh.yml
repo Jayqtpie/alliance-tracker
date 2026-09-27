@@ -7,9 +7,10 @@ name: Roster refresh
 
 on:
   schedule:
-    # Sundays and Wednesdays 04:00 UTC = 05:00 BST (05:00 GMT is 04:00 once the clocks go back
-    # in late October). GitHub starts scheduled runs late under load, often by 5-30 minutes.
-    - cron: "0 4 * * 0,3"
+    # Sundays and Wednesdays 04:52 UTC = 05:52 BST (04:52 GMT once the clocks go back in late
+    # October). Off the hour because GitHub delays scheduled runs under load, worst at :00, and
+    # can drop them outright: the 04:00 slot never fired on 2026-09-27.
+    - cron: "52 4 * * 0,3"
   workflow_dispatch:
 
 concurrency:
