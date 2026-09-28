@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
-import { SvsAttendanceView } from "./svs-attendance";
-import type { Member, TrackerState } from "@/lib/types";
+import { RepeatAbsences, SvsAttendanceView } from "./svs-attendance";
+import type { Member, SvsEvent, TrackerState } from "@/lib/types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
 
@@ -52,6 +52,24 @@ describe("SvsAttendanceView", () => {
     expect(html).not.toContain("Mark Tamsin");
     expect(html).not.toContain("Mark all present");
     expect(html).not.toContain("Save attendance");
+  });
+
+  it("lists repeat absentees with their streak, recent misses and last attendance", () => {
+    const events: SvsEvent[] = [...state.svsEvents!, { id: "latest", date: "2026-09-19", attendance: { Kael: "present", Roen: "absent", Tamsin: "absent" } }];
+    const html = renderToStaticMarkup(<RepeatAbsences events={events} members={state.members} />);
+    // Roen: absent, excused (skipped), absent → 2 in a row. Tamsin: 2 misses. Kael never missed; Vex left.
+    expect(html).toContain("Roen");
+    expect(html).toContain("Tamsin");
+    expect(html).not.toContain("Kael");
+    expect(html).not.toContain("Vex");
+    expect(html).toContain("2 in a row");
+    expect(html).toContain("2 of last 2");
+    expect(html).toContain("Never attended");
+  });
+
+  it("says so when no one has missed repeatedly", () => {
+    const html = renderToStaticMarkup(<RepeatAbsences events={state.svsEvents!} members={state.members} />);
+    expect(html).toContain("No one has missed repeatedly.");
   });
 
   it("shows an empty state when no fights are recorded", () => {

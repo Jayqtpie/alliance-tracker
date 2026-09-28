@@ -43,6 +43,33 @@ export function overallAttendance(events: SvsEvent[]) {
   };
 }
 
+export const REPEAT_STREAK = 2;
+export const REPEAT_WINDOW = 5;
+export const REPEAT_WINDOW_MISSES = 3;
+
+export interface RepeatAbsenceRow { member: Member; streak: number; recentAbsent: number; recentCounted: number; lastPresent: string | null }
+
+/**
+ * Active members who missed the last {@link REPEAT_STREAK}+ fights in a row, or {@link REPEAT_WINDOW_MISSES}+
+ * of their last {@link REPEAT_WINDOW}. Only fights a member was on count, and excused fights are skipped
+ * entirely: they neither break a streak nor count as a miss. Longest streak first.
+ */
+export function repeatAbsences(events: SvsEvent[], members: Member[]): RepeatAbsenceRow[] {
+  const newestFirst = [...events].sort((a, b) => b.date.localeCompare(a.date));
+  const rows: RepeatAbsenceRow[] = [];
+  for (const member of members) {
+    if (!member.active) continue;
+    const counted = newestFirst.filter((event) => event.attendance[member.id] === "present" || event.attendance[member.id] === "absent");
+    const firstPresent = counted.findIndex((event) => event.attendance[member.id] === "present");
+    const streak = firstPresent === -1 ? counted.length : firstPresent;
+    const recent = counted.slice(0, REPEAT_WINDOW);
+    const recentAbsent = recent.filter((event) => event.attendance[member.id] === "absent").length;
+    if (streak < REPEAT_STREAK && recentAbsent < REPEAT_WINDOW_MISSES) continue;
+    rows.push({ member, streak, recentAbsent, recentCounted: recent.length, lastPresent: firstPresent === -1 ? null : counted[firstPresent].date });
+  }
+  return rows.sort((a, b) => b.streak - a.streak || b.recentAbsent - a.recentAbsent || a.member.canonicalName.localeCompare(b.member.canonicalName));
+}
+
 export interface AttendanceSummaryRow { member: Member; present: number; absent: number; excused: number; rate: number | null }
 
 /** Excused fights don't count toward the rate. Sorted worst rate first; members with no counted fights last. */

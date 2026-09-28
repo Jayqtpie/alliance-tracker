@@ -1,9 +1,9 @@
 "use client";
 
-import { CheckCheck, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
+import { AlertTriangle, CheckCheck, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
-import type { SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
+import type { Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { useLanguage } from "./language-selector";
@@ -18,10 +18,35 @@ function fightDate(language: Language, date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 }
 
+function shortDate(language: Language, date: string) {
+  return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { day: "numeric", month: "short" });
+}
+
 function countLine(t: Translator, event: SvsEvent) {
   const counts = attendanceCounts(event);
   const line = t("{present}/{total} present", { present: counts.present, total: counts.total });
   return counts.excused ? `${line} · ${t("{count} excused", { count: counts.excused })}` : line;
+}
+
+/** Members to chase: see {@link repeatAbsences} for the rule. */
+export function RepeatAbsences({ events, members }: { events: SvsEvent[]; members: Member[] }) {
+  const { language, t } = useLanguage();
+  const repeats = repeatAbsences(events, members);
+  return <section className="panel svs-repeats">
+    <div className="panel-head"><div><h3><AlertTriangle size={15} aria-hidden="true" />{t("Repeat absences")} <span className="count-chip">{repeats.length}</span></h3>
+      <p className="svs-counts">{t("Missed the last 2+ fights in a row, or 3+ of their last 5. Excused fights are skipped.")}</p></div></div>
+    <ul className="svs-member-list">
+      {repeats.map((row) => <li key={row.member.id}>
+        <span className="svs-member"><MemberAvatar member={row.member} /><MemberName member={row.member} /></span>
+        <span className="svs-repeat-stats">
+          {row.streak >= REPEAT_STREAK && <span className="svs-pill" data-option="absent">{t("{count} in a row", { count: row.streak })}</span>}
+          <span>{t("{absent} of last {counted}", { absent: row.recentAbsent, counted: row.recentCounted })}</span>
+          <small>{row.lastPresent ? t("Last attended {date}", { date: shortDate(language, row.lastPresent) }) : t("Never attended")}</small>
+        </span>
+      </li>)}
+      {!repeats.length && <li className="svs-empty">{t("No one has missed repeatedly.")}</li>}
+    </ul>
+  </section>;
 }
 
 export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
@@ -166,7 +191,8 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
             : <button type="button" className="button ghost" onClick={() => setConfirmDelete(true)}><Trash2 size={14} />{t("Delete fight")}</button>}
         </div>}
       </section>}
-    </div> : <section className="panel svs-summary">
+    </div> : <>{events.length > 0 && <RepeatAbsences events={events} members={state.members} />}
+    <section className="panel svs-summary">
       <div className="panel-head"><h3>{t("Attendance rate")} <span className="count-chip">{t(events.length === 1 ? "1 fight" : "{count} fights", { count: events.length })}</span></h3>
         <select aria-label={t("Sort attendance")} value={sort} onChange={(event) => setSort(event.target.value as SummarySort)}>
           <option value="rate">{t("Rate · lowest first")}</option><option value="absent">{t("Absences")} ↓</option><option value="present">{t("Present")} ↓</option><option value="name">{t("Name A–Z")}</option>
@@ -180,7 +206,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
           <td>{row.rate === null ? "—" : `${Math.round(row.rate * 100)}%`}</td>
         </tr>)}</tbody>
       </table></div>
-    </section>}
+    </section></>}
 
     {canManage && <div className="svs-actions">
       {dirty && <span className="svs-dirty-note">{t("Unsaved changes")}</span>}

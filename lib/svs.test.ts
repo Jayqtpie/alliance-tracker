@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -80,5 +80,38 @@ describe("attendanceSummary", () => {
   it("sorts worst rate first, members with no rate last", () => {
     const rows = attendanceSummary(events, [member("a"), member("c"), member("b")]);
     expect(rows.map((row) => row.member.id)).toEqual(["b", "a", "c"]);
+  });
+});
+
+describe("repeatAbsences", () => {
+  // Deliberately out of date order: the rule reads newest first.
+  const fight = (date: string, attendance: SvsEvent["attendance"]): SvsEvent => ({ id: date, date, attendance });
+  const events: SvsEvent[] = [
+    fight("2026-09-03", { streaky: "present", window: "absent", excusedGap: "absent", fine: "present", left: "absent" }),
+    fight("2026-09-01", { streaky: "present", window: "absent", excusedGap: "present", fine: "absent", left: "absent" }),
+    fight("2026-09-05", { streaky: "present", window: "present", excusedGap: "absent", fine: "absent", left: "absent" }),
+    fight("2026-09-07", { streaky: "absent", window: "absent", excusedGap: "excused", fine: "present", left: "absent", newbie: "absent" }),
+    fight("2026-09-09", { streaky: "absent", window: "present", excusedGap: "absent", fine: "present", left: "absent", newbie: "absent" }),
+  ];
+  const roster = ["streaky", "window", "excusedGap", "fine", "newbie"].map((id) => member(id)).concat(member("left", false));
+
+  it("flags a current streak or too many misses in the recent window, skipping excused", () => {
+    const rows = repeatAbsences(events, roster);
+    const byId = Object.fromEntries(rows.map((row) => [row.member.id, row]));
+    expect(byId.streaky).toMatchObject({ streak: 2, recentAbsent: 2, recentCounted: 5, lastPresent: "2026-09-05" });
+    expect(byId.window).toMatchObject({ streak: 0, recentAbsent: 3, lastPresent: "2026-09-09" });
+    // excused on 09-07 is skipped, so 09-09, 09-05 and 09-03 are one unbroken streak
+    expect(byId.excusedGap).toMatchObject({ streak: 3, recentAbsent: 3, recentCounted: 4, lastPresent: "2026-09-01" });
+    expect(byId.newbie).toMatchObject({ streak: 2, recentCounted: 2, lastPresent: null });
+    expect(byId.fine).toBeUndefined();
+    expect(byId.left).toBeUndefined();
+  });
+
+  it("sorts longest streak first, then most recent misses, then name", () => {
+    expect(repeatAbsences(events, roster).map((row) => row.member.id)).toEqual(["excusedGap", "newbie", "streaky", "window"]);
+  });
+
+  it("does not flag a single miss", () => {
+    expect(repeatAbsences([fight("2026-09-01", { a: "absent" })], [member("a")])).toEqual([]);
   });
 });

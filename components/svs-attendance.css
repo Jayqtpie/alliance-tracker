@@ -54,6 +54,10 @@
 .svs-pill[data-option="excused"] { color: var(--orange); }
 
 .svs-delete { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 12px 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
+.svs-repeats h3 { display: flex; align-items: center; gap: 7px; }
+.svs-repeats h3 svg { color: var(--red); }
+.svs-repeat-stats { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px 10px; color: var(--ink); font-size: 12px; }
+.svs-repeat-stats small { color: var(--muted); font-size: 11px; }
 .svs-summary select { padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
 .svs-summary tr.svs-left { opacity: .55; }
 .svs-actions { display: flex; align-items: center; justify-content: flex-end; gap: 12px; }
