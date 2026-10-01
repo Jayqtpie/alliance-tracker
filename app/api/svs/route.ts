@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
+import { lockedFightViolation } from "@/lib/svs";
 
 const schema = z.object({
   events: z.array(z.object({
@@ -9,6 +10,7 @@ const schema = z.object({
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid fight date."),
     label: z.string().trim().max(80).optional(),
     kind: z.enum(["svs", "goldvein"]).optional(),
+    locked: z.boolean().optional(),
     attendance: z.record(z.string().min(1), z.enum(["present", "absent", "excused"])),
   })).max(1000),
   version: z.number().int().positive(),
@@ -24,6 +26,8 @@ export async function PUT(request: Request) {
   try {
     const state = await getState();
     if (parsed.data.version !== state.version) throw new StateConflictError();
+    const locked = lockedFightViolation(state.svsEvents ?? [], parsed.data.events);
+    if (locked) return NextResponse.json({ error: "That fight is locked. Unlock it before changing it." }, { status: 400 });
     const memberIds = new Set(state.members.map((member) => member.id));
     if (parsed.data.events.some((event) => Object.keys(event.attendance).some((id) => !memberIds.has(id)))) {
       return NextResponse.json({ error: "That roster changed. Refresh before saving." }, { status: 400 });

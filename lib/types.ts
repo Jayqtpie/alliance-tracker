@@ -146,6 +146,8 @@ export interface SvsEvent {
   label?: string;
   /** Missing on fights recorded before Goldvein existed; those are SvS. */
   kind?: AttendanceEventKind;
+  /** Attendance is final: the fight can be unlocked, but not edited or deleted while locked. */
+  locked?: boolean;
   /** Roster captured when the fight was created, keyed by member id. */
   attendance: Record<string, SvsAttendance>;
 }

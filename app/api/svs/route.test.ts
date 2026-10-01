@@ -52,6 +52,27 @@ describe("SvS attendance API", () => {
     expect((await response.json()).svsEvents).toEqual(events);
   });
 
+  describe("locked fights", () => {
+    const locked = { id: "e1", date: "2026-09-19", locked: true, attendance: { a: "present" as const } };
+    beforeEach(() => {
+      vi.mocked(getState).mockResolvedValue({ ...createEmptyState(), members, version: 1, svsEvents: [locked] });
+    });
+
+    it("refuses to edit or delete a locked fight", async () => {
+      for (const events of [[{ ...locked, attendance: { a: "absent" } }], [], [{ ...locked, locked: false, attendance: { a: "absent" } }]]) {
+        const response = await PUT(request({ events, version: 1 }));
+        expect(response.status).toBe(400);
+        expect((await response.json()).error).toMatch(/locked/);
+      }
+      expect(setState).not.toHaveBeenCalled();
+    });
+
+    it("unlocks a fight, and saves new fights beside a locked one", async () => {
+      expect((await PUT(request({ events: [{ ...locked, locked: false }], version: 1 }))).status).toBe(200);
+      expect((await PUT(request({ events: [locked, { id: "e2", date: "2026-09-26", attendance: { a: "absent" } }], version: 1 }))).status).toBe(200);
+    });
+  });
+
   it("rejects a member id that no longer exists", async () => {
     const response = await PUT(request({ events: [{ id: "e1", date: "2026-09-19", attendance: { ghost: "present" } }], version: 1 }));
     expect(response.status).toBe(400);

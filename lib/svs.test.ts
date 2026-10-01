@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, lockedFightViolation, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -20,6 +20,32 @@ describe("createSvsEvent", () => {
   it("records the event kind, SvS unless told otherwise", () => {
     expect(createSvsEvent([], "2026-09-19").kind).toBe("svs");
     expect(createSvsEvent([], "2026-10-04", undefined, "goldvein").kind).toBe("goldvein");
+  });
+});
+
+describe("lockedFightViolation", () => {
+  const locked: SvsEvent = { id: "l", date: "2026-09-19", label: "vs #931", locked: true, attendance: { a: "present", b: "absent" } };
+  const open: SvsEvent = { id: "o", date: "2026-09-26", attendance: { a: "absent" } };
+
+  it("accepts a locked fight sent back unchanged, whatever its attendance order", () => {
+    expect(lockedFightViolation([locked, open], [{ ...locked, attendance: { b: "absent", a: "present" } }, setAttendance(open, "a", "present")])).toBeUndefined();
+  });
+
+  it("accepts unlocking on its own, and locking a fight along with edits", () => {
+    expect(lockedFightViolation([locked], [{ ...locked, locked: false }])).toBeUndefined();
+    expect(lockedFightViolation([open], [{ ...setAttendance(open, "a", "present"), locked: true }])).toBeUndefined();
+  });
+
+  it("refuses edits, relabels, kind changes and deletion of a locked fight, even while unlocking", () => {
+    for (const next of [
+      [setAttendance(locked, "b", "present")],
+      [{ ...locked, label: "vs #940" }],
+      [{ ...locked, date: "2026-09-20" }],
+      [{ ...locked, kind: "goldvein" as const }],
+      [{ ...locked, attendance: { a: "present" as const } }],
+      [{ ...setAttendance(locked, "b", "present"), locked: false }],
+      [],
+    ]) expect(lockedFightViolation([locked], next)?.id).toBe("l");
   });
 });
 

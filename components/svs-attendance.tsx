@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, CheckCheck, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
+import { AlertTriangle, CheckCheck, Lock, LockOpen, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { AttendanceEventKind, Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
 import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
@@ -68,7 +68,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   const [sort, setSort] = useState<SummarySort>("rate");
   const [newDate, setNewDate] = useState(() => new Date().toLocaleDateString("en-CA"));
   const [newLabel, setNewLabel] = useState("");
-  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [confirm, setConfirm] = useState<"delete" | "unlock" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -79,7 +79,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   const selected = sorted.find((event) => event.id === selectedId) ?? sorted[0];
   const memberById = new Map(state.members.map((member) => [member.id, member]));
 
-  function select(id: string) { setSelectedId(id); setConfirmDelete(false); }
+  function select(id: string) { setSelectedId(id); setConfirm(null); }
 
   function addFight() {
     const event = createSvsEvent(state.members, newDate, newLabel, kind);
@@ -96,16 +96,26 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   function deleteFight() {
     if (!selected) return;
     setDraft(allEvents.filter((event) => event.id !== selected.id));
-    setConfirmDelete(false);
+    setConfirm(null);
+  }
+
+  // Locking saves straight away, and only with no unsaved edits, so a lock never carries other changes.
+  function setLocked(locked: boolean) {
+    if (!selected || dirty) return;
+    void persist((state.svsEvents ?? []).map((event) => event.id === selected.id ? { ...event, locked } : event));
+    setConfirm(null);
   }
 
   async function save() {
-    if (!draft) return;
+    if (draft) await persist(draft);
+  }
+
+  async function persist(next: SvsEvent[]) {
     setBusy(true); setError("");
     try {
       const response = await fetch("/api/svs", {
         method: "PUT", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ events: draft, version: state.version }),
+        body: JSON.stringify({ events: next, version: state.version }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || t("Could not save attendance."));
@@ -118,6 +128,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
     }
   }
 
+  const editable = canManage && !selected?.locked;
   const needle = query.trim().toLocaleLowerCase();
   const checklist = selected ? Object.entries(selected.attendance)
     .map(([memberId, value]) => ({ member: memberById.get(memberId), value }))
@@ -137,7 +148,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
 
   return <div className="page-stack svs-page">
     <div className="svs-mode" role="group" aria-label={t("Event type")}>
-      {EVENT_KINDS.map((option) => <button key={option} type="button" aria-pressed={kind === option} onClick={() => { setKind(option); setConfirmDelete(false); }}>{t(KINDS[option].tab)}</button>)}
+      {EVENT_KINDS.map((option) => <button key={option} type="button" aria-pressed={kind === option} onClick={() => { setKind(option); setConfirm(null); }}>{t(KINDS[option].tab)}</button>)}
     </div>
     <section className="dashboard-heading">
       <div><p className="eyebrow">{t(KINDS[kind].eyebrow)}</p><h1>{t(KINDS[kind].title)}<span>.</span></h1><p>{t(canManage ? "Add a fight, then mark who showed up. Excused absences don’t count against a member’s rate." : "Who showed up to each fight. Excused absences don’t count against a member’s rate.")}</p></div>
@@ -168,7 +179,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         {sorted.length ? <ul className="svs-fight-list">
           {sorted.map((event) => <li key={event.id}>
             <button type="button" aria-pressed={event.id === selected?.id} onClick={() => select(event.id)}>
-              <strong>{fightDate(language, event.date)}</strong>
+              <strong>{fightDate(language, event.date)}{event.locked && <Lock size={11} role="img" aria-label={t("Locked")} />}</strong>
               {event.label && <span>{event.label}</span>}
               <small>{countLine(t, event)}</small>
             </button>
@@ -178,9 +189,9 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
 
       {selected && <section className="panel svs-checklist">
         <div className="panel-head">
-          <div><h3>{fightDate(language, selected.date)}{selected.label ? ` · ${selected.label}` : ""}</h3><p className="svs-counts">{countLine(t, selected)}</p></div>
+          <div><h3>{fightDate(language, selected.date)}{selected.label ? ` · ${selected.label}` : ""}{selected.locked && <Lock size={14} role="img" aria-label={t("Locked")} />}</h3><p className="svs-counts">{countLine(t, selected)}</p></div>
           <div className="svs-checklist-tools">
-          {canManage && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
+          {editable && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
             onClick={() => setDraft(allEvents.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />{t("Mark all present")}</button>}
           <div className="search-box"><Search size={16} /><input aria-label={t("Filter fight members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
@@ -188,7 +199,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         <ul className="svs-member-list">
           {checklist.map(({ member, value }) => <li key={member.id} data-state={value}>
             <span className="svs-member"><MemberAvatar member={member} /><MemberName member={member} /></span>
-            {canManage
+            {editable
               ? <span className="svs-toggle" role="group" aria-label={t("{name} attendance", { name: member.canonicalName })}>
                 {SVS_ATTENDANCE.map((option) => <button key={option} type="button" data-option={option} aria-pressed={value === option}
                   aria-label={t("Mark {name} {status}", { name: member.canonicalName, status: t(LABELS[option]).toLocaleLowerCase() })} onClick={() => mark(member.id, option)}>{t(LABELS[option])}</button>)}
@@ -198,11 +209,20 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
           {!checklist.length && <li className="svs-empty">{t(needle ? "No one matches that name." : "No members on this fight.")}</li>}
         </ul>
         {canManage && <div className="svs-delete">
-          {confirmDelete
+          {confirm === "delete"
             ? <><span>{t("Delete this fight and its attendance?")}</span>
-              <button type="button" className="button secondary" onClick={() => setConfirmDelete(false)}>{t("Cancel")}</button>
+              <button type="button" className="button secondary" onClick={() => setConfirm(null)}>{t("Cancel")}</button>
               <button type="button" className="button danger" onClick={deleteFight}>{t("Delete")}</button></>
-            : <button type="button" className="button ghost" onClick={() => setConfirmDelete(true)}><Trash2 size={14} />{t("Delete fight")}</button>}
+            : confirm === "unlock"
+              ? <><span>{t("Unlock this fight so its attendance can be edited?")}</span>
+                <button type="button" className="button secondary" onClick={() => setConfirm(null)}>{t("Cancel")}</button>
+                <button type="button" className="button primary" disabled={busy} onClick={() => setLocked(false)}><LockOpen size={14} />{t("Unlock")}</button></>
+              : selected.locked
+                ? <><span>{t(dirty ? "Save or discard your changes first." : "Locked. Unlock it to make changes.")}</span>
+                  <button type="button" className="button ghost" disabled={busy || dirty} onClick={() => setConfirm("unlock")}><LockOpen size={14} />{t("Unlock fight")}</button></>
+                : <>{dirty && <span>{t("Save or discard your changes first.")}</span>}
+                  <button type="button" className="button ghost" disabled={busy || dirty} onClick={() => setLocked(true)}><Lock size={14} />{t("Lock fight")}</button>
+                  <button type="button" className="button ghost" onClick={() => setConfirm("delete")}><Trash2 size={14} />{t("Delete fight")}</button></>}
         </div>}
       </section>}
     </div> : <>{allEvents.length > 0 && <RepeatAbsences events={allEvents} members={state.members} />}
@@ -224,7 +244,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
 
     {canManage && <div className="svs-actions">
       {dirty && <span className="svs-dirty-note">{t("Unsaved changes")}</span>}
-      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setError(""); setConfirmDelete(false); }}>{t("Discard")}</button>
+      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setError(""); setConfirm(null); }}>{t("Discard")}</button>
       <button type="button" className="button primary" disabled={busy || !dirty} onClick={save}>{t(busy ? "Saving…" : "Save attendance")}</button>
     </div>}
     {error && <p className="form-error-box" role="alert">{error}</p>}

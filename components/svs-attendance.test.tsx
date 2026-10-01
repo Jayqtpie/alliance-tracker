@@ -44,6 +44,25 @@ describe("SvsAttendanceView", () => {
     expect(html).toContain("Mark all present");
   });
 
+  it("offers officers a lock on an open fight", () => {
+    const html = renderToStaticMarkup(<SvsAttendanceView canManage state={state} onSaved={() => {}} />);
+    expect(html).toContain("Lock fight");
+    expect(html).not.toContain("Unlock fight");
+  });
+
+  it("makes a locked fight read-only, even for officers, until it is unlocked", () => {
+    const locked: TrackerState = { ...state, svsEvents: state.svsEvents!.map((event) => event.id === "new" ? { ...event, locked: true } : event) };
+    const html = renderToStaticMarkup(<SvsAttendanceView canManage state={locked} onSaved={() => {}} />);
+    expect(html).toContain("Unlock fight");
+    expect(html).toContain("Locked. Unlock it to make changes.");
+    expect(html).toContain('aria-label="Locked"');
+    expect(html).not.toContain("Mark Tamsin");
+    expect(html).not.toContain("Mark all present");
+    expect(html).not.toContain("Delete fight");
+    expect(html).not.toContain("Lock fight");
+    expect(html).toContain('data-option="absent">Absent<');
+  });
+
   it("is read-only for viewers", () => {
     const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={state} onSaved={() => {}} />);
     expect(html).toContain("Tamsin");
@@ -52,6 +71,7 @@ describe("SvsAttendanceView", () => {
     expect(html).not.toContain("Mark Tamsin");
     expect(html).not.toContain("Mark all present");
     expect(html).not.toContain("Save attendance");
+    expect(html).not.toContain("Lock fight");
   });
 
   it("lists repeat absentees with their streak, recent misses and last attendance", () => {

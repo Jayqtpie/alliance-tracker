@@ -18,6 +18,25 @@ export function createSvsEvent(members: Member[], date: string, label?: string, 
   };
 }
 
+function sameFight(a: SvsEvent, b: SvsEvent) {
+  const ids = Object.keys(a.attendance);
+  return a.date === b.date && (a.label ?? "") === (b.label ?? "") && eventKind(a) === eventKind(b)
+    && ids.length === Object.keys(b.attendance).length && ids.every((id) => a.attendance[id] === b.attendance[id]);
+}
+
+/**
+ * The first stored locked fight that `incoming` deletes or changes. Unlocking is the only change a
+ * locked fight accepts, and only on its own: unlock, then edit in a later save.
+ */
+export function lockedFightViolation(stored: SvsEvent[], incoming: SvsEvent[]): SvsEvent | undefined {
+  const byId = new Map(incoming.map((event) => [event.id, event]));
+  return stored.find((event) => {
+    if (!event.locked) return false;
+    const next = byId.get(event.id);
+    return !next || !sameFight(event, next);
+  });
+}
+
 export function setAttendance(event: SvsEvent, memberId: string, value: SvsAttendance): SvsEvent {
   return { ...event, attendance: { ...event.attendance, [memberId]: value } };
 }
