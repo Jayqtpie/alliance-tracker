@@ -2,8 +2,8 @@
 
 import { AlertTriangle, CheckCheck, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
-import type { Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
+import type { AttendanceEventKind, Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
+import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { useLanguage } from "./language-selector";
@@ -13,6 +13,11 @@ import "./svs-attendance.css";
 type SummarySort = "rate" | "absent" | "present" | "name";
 
 const LABELS: Record<SvsAttendance, string> = { present: "Present", absent: "Absent", excused: "Excused" };
+
+const KINDS: Record<AttendanceEventKind, { tab: string; eyebrow: string; title: string; placeholder: string }> = {
+  svs: { tab: "SvS", eyebrow: "SERVER VS SERVER", title: "SvS attendance", placeholder: "Label, e.g. vs #931" },
+  goldvein: { tab: "Goldvein", eyebrow: "ALLIANCE EVENT", title: "Goldvein attendance", placeholder: "Label (optional)" },
+};
 
 function fightDate(language: Language, date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
@@ -28,13 +33,13 @@ function countLine(t: Translator, event: SvsEvent) {
   return counts.excused ? `${line} · ${t("{count} excused", { count: counts.excused })}` : line;
 }
 
-/** Members to chase: see {@link repeatAbsences} for the rule. */
+/** Members to chase: see {@link repeatAbsences} for the rule. Pass every event kind; misses count together. */
 export function RepeatAbsences({ events, members }: { events: SvsEvent[]; members: Member[] }) {
   const { language, t } = useLanguage();
   const repeats = repeatAbsences(events, members);
   return <section className="panel svs-repeats">
     <div className="panel-head"><div><h3><AlertTriangle size={15} aria-hidden="true" />{t("Repeat absences")} <span className="count-chip">{repeats.length}</span></h3>
-      <p className="svs-counts">{t("Missed the last 2+ fights in a row, or 3+ of their last 5. Excused fights are skipped.")}</p></div></div>
+      <p className="svs-counts">{t("Missed the last 2+ fights in a row, or 3+ of their last 5, counting SvS and Goldvein together. Excused fights are skipped.")}</p></div></div>
     <ul className="svs-member-list">
       {repeats.map((row) => <li key={row.member.id}>
         <span className="svs-member"><MemberAvatar member={row.member} /><MemberName member={row.member} /></span>
@@ -52,6 +57,11 @@ export function RepeatAbsences({ events, members }: { events: SvsEvent[]; member
 export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
   const { language, t } = useLanguage();
   const [draft, setDraft] = useState<SvsEvent[] | undefined>(undefined);
+  // Open on whichever kind was recorded most recently.
+  const [kind, setKind] = useState<AttendanceEventKind>(() => {
+    const newest = [...(state.svsEvents ?? [])].sort((a, b) => b.date.localeCompare(a.date))[0];
+    return newest ? eventKind(newest) : "svs";
+  });
   const [mode, setMode] = useState<"fights" | "summary">("fights");
   const [selectedId, setSelectedId] = useState<string>();
   const [query, setQuery] = useState("");
@@ -63,7 +73,8 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   const [error, setError] = useState("");
 
   const dirty = draft !== undefined;
-  const events = draft ?? state.svsEvents ?? [];
+  const allEvents = draft ?? state.svsEvents ?? [];
+  const events = allEvents.filter((event) => eventKind(event) === kind);
   const sorted = [...events].sort((a, b) => b.date.localeCompare(a.date));
   const selected = sorted.find((event) => event.id === selectedId) ?? sorted[0];
   const memberById = new Map(state.members.map((member) => [member.id, member]));
@@ -71,20 +82,20 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   function select(id: string) { setSelectedId(id); setConfirmDelete(false); }
 
   function addFight() {
-    const event = createSvsEvent(state.members, newDate, newLabel);
-    setDraft([...events, event]);
+    const event = createSvsEvent(state.members, newDate, newLabel, kind);
+    setDraft([...allEvents, event]);
     setNewLabel("");
     select(event.id);
   }
 
   function mark(memberId: string, value: SvsAttendance) {
     if (!selected) return;
-    setDraft(events.map((event) => event.id === selected.id ? setAttendance(event, memberId, value) : event));
+    setDraft(allEvents.map((event) => event.id === selected.id ? setAttendance(event, memberId, value) : event));
   }
 
   function deleteFight() {
     if (!selected) return;
-    setDraft(events.filter((event) => event.id !== selected.id));
+    setDraft(allEvents.filter((event) => event.id !== selected.id));
     setConfirmDelete(false);
   }
 
@@ -125,8 +136,11 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         : sort === "present" ? b.present - a.present : 0);
 
   return <div className="page-stack svs-page">
+    <div className="svs-mode" role="group" aria-label={t("Event type")}>
+      {EVENT_KINDS.map((option) => <button key={option} type="button" aria-pressed={kind === option} onClick={() => { setKind(option); setConfirmDelete(false); }}>{t(KINDS[option].tab)}</button>)}
+    </div>
     <section className="dashboard-heading">
-      <div><p className="eyebrow">{t("SERVER VS SERVER")}</p><h1>{t("SvS attendance")}<span>.</span></h1><p>{t(canManage ? "Add a fight, then mark who showed up. Excused absences don’t count against a member’s rate." : "Who showed up to each fight. Excused absences don’t count against a member’s rate.")}</p></div>
+      <div><p className="eyebrow">{t(KINDS[kind].eyebrow)}</p><h1>{t(KINDS[kind].title)}<span>.</span></h1><p>{t(canManage ? "Add a fight, then mark who showed up. Excused absences don’t count against a member’s rate." : "Who showed up to each fight. Excused absences don’t count against a member’s rate.")}</p></div>
       <dl className="alliance-totals svs-totals" aria-label={t("Attendance across all fights")}>
         <div className="alliance-total" data-stat="svs-rate">
           <dt><Percent size={14} aria-hidden="true" />{t("Attendance")}</dt>
@@ -148,7 +162,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         <div className="panel-head"><h3>{t("Fights")} <span className="count-chip">{events.length}</span></h3></div>
         {canManage && <form className="svs-new" onSubmit={(event) => { event.preventDefault(); addFight(); }}>
           <input type="date" aria-label={t("Fight date")} required value={newDate} onChange={(event) => setNewDate(event.target.value)} />
-          <input type="text" aria-label={t("Fight label")} placeholder={t("Label, e.g. vs #931")} maxLength={80} value={newLabel} onChange={(event) => setNewLabel(event.target.value)} />
+          <input type="text" aria-label={t("Fight label")} placeholder={t(KINDS[kind].placeholder)} maxLength={80} value={newLabel} onChange={(event) => setNewLabel(event.target.value)} />
           <button type="submit" className="button secondary" disabled={!newDate}><Plus size={14} />{t("Add fight")}</button>
         </form>}
         {sorted.length ? <ul className="svs-fight-list">
@@ -167,7 +181,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
           <div><h3>{fightDate(language, selected.date)}{selected.label ? ` · ${selected.label}` : ""}</h3><p className="svs-counts">{countLine(t, selected)}</p></div>
           <div className="svs-checklist-tools">
           {canManage && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
-            onClick={() => setDraft(events.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />{t("Mark all present")}</button>}
+            onClick={() => setDraft(allEvents.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />{t("Mark all present")}</button>}
           <div className="search-box"><Search size={16} /><input aria-label={t("Filter fight members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
         </div>
@@ -191,7 +205,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
             : <button type="button" className="button ghost" onClick={() => setConfirmDelete(true)}><Trash2 size={14} />{t("Delete fight")}</button>}
         </div>}
       </section>}
-    </div> : <>{events.length > 0 && <RepeatAbsences events={events} members={state.members} />}
+    </div> : <>{allEvents.length > 0 && <RepeatAbsences events={allEvents} members={state.members} />}
     <section className="panel svs-summary">
       <div className="panel-head"><h3>{t("Attendance rate")} <span className="count-chip">{t(events.length === 1 ? "1 fight" : "{count} fights", { count: events.length })}</span></h3>
         <select aria-label={t("Sort attendance")} value={sort} onChange={(event) => setSort(event.target.value as SummarySort)}>

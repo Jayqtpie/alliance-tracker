@@ -137,11 +137,15 @@ export interface PairingRow {
 
 export type SvsAttendance = "present" | "absent" | "excused";
 
+export type AttendanceEventKind = "svs" | "goldvein";
+
 export interface SvsEvent {
   id: string;
   /** Fight date, YYYY-MM-DD. */
   date: string;
   label?: string;
+  /** Missing on fights recorded before Goldvein existed; those are SvS. */
+  kind?: AttendanceEventKind;
   /** Roster captured when the fight was created, keyed by member id. */
   attendance: Record<string, SvsAttendance>;
 }

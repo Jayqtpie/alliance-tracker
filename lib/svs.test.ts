@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -15,6 +15,18 @@ describe("createSvsEvent", () => {
 
   it("omits a blank label", () => {
     expect(createSvsEvent([], "2026-09-19", "   ").label).toBeUndefined();
+  });
+
+  it("records the event kind, SvS unless told otherwise", () => {
+    expect(createSvsEvent([], "2026-09-19").kind).toBe("svs");
+    expect(createSvsEvent([], "2026-10-04", undefined, "goldvein").kind).toBe("goldvein");
+  });
+});
+
+describe("eventKind", () => {
+  it("treats fights saved before kinds existed as SvS", () => {
+    expect(eventKind({ id: "old", date: "2026-09-12", attendance: {} })).toBe("svs");
+    expect(eventKind({ id: "gv", date: "2026-10-04", kind: "goldvein", attendance: {} })).toBe("goldvein");
   });
 });
 

@@ -1,13 +1,19 @@
-import type { Member, SvsAttendance, SvsEvent } from "./types";
+import type { AttendanceEventKind, Member, SvsAttendance, SvsEvent } from "./types";
 
 export const SVS_ATTENDANCE: SvsAttendance[] = ["present", "absent", "excused"];
+export const EVENT_KINDS: AttendanceEventKind[] = ["svs", "goldvein"];
 
-export function createSvsEvent(members: Member[], date: string, label?: string): SvsEvent {
+export function eventKind(event: SvsEvent): AttendanceEventKind {
+  return event.kind ?? "svs";
+}
+
+export function createSvsEvent(members: Member[], date: string, label?: string, kind: AttendanceEventKind = "svs"): SvsEvent {
   const trimmed = label?.trim();
   return {
     id: crypto.randomUUID(),
     date,
     ...(trimmed ? { label: trimmed } : {}),
+    kind,
     attendance: Object.fromEntries(members.filter((member) => member.active).map((member) => [member.id, "absent" as const])),
   };
 }

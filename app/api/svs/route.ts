@@ -8,6 +8,7 @@ const schema = z.object({
     id: z.string().min(1),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid fight date."),
     label: z.string().trim().max(80).optional(),
+    kind: z.enum(["svs", "goldvein"]).optional(),
     attendance: z.record(z.string().min(1), z.enum(["present", "absent", "excused"])),
   })).max(1000),
   version: z.number().int().positive(),

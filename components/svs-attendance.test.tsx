@@ -72,6 +72,39 @@ describe("SvsAttendanceView", () => {
     expect(html).toContain("No one has missed repeatedly.");
   });
 
+  describe("with a Goldvein event", () => {
+    const withGoldvein: TrackerState = { ...state, svsEvents: [...state.svsEvents!, { id: "gv", date: "2026-10-04", label: "Goldvein run", kind: "goldvein", attendance: { Kael: "present", Roen: "absent", Tamsin: "present" } }] };
+
+    it("opens on the kind recorded most recently, with that kind's stats only", () => {
+      const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={withGoldvein} onSaved={() => {}} />);
+      expect(html).toContain("Goldvein attendance");
+      expect(html).toContain("Goldvein run");
+      expect(html).not.toContain("vs #931");
+      // 2 present, 1 absent in the one Goldvein fight
+      expect(html).toContain(">67%<");
+      expect(html).toContain("across 1 fight");
+      expect(html).toContain('aria-pressed="true">Goldvein<');
+    });
+
+    it("keeps Goldvein out of the SvS view when SvS is the newest kind", () => {
+      const svsLater: TrackerState = { ...withGoldvein, svsEvents: [...withGoldvein.svsEvents!, { id: "latest", date: "2026-10-11", label: "vs #940", attendance: { Kael: "present" } }] };
+      const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={svsLater} onSaved={() => {}} />);
+      expect(html).toContain("SvS attendance");
+      expect(html).toContain("vs #940");
+      expect(html).not.toContain("Goldvein run");
+      expect(html).toContain("across 3 fights");
+    });
+
+    it("counts Goldvein misses toward repeat absences alongside SvS", () => {
+      // Tamsin: SvS absent on 12 Sep, then Goldvein absent → 2 in a row across kinds.
+      const events: SvsEvent[] = [...state.svsEvents!, { id: "gv", date: "2026-10-04", kind: "goldvein", attendance: { Kael: "present", Roen: "present", Tamsin: "absent" } }];
+      const html = renderToStaticMarkup(<RepeatAbsences events={events} members={state.members} />);
+      expect(html).toContain("Tamsin");
+      expect(html).toContain("2 in a row");
+      expect(html).toContain("counting SvS and Goldvein together");
+    });
+  });
+
   it("shows an empty state when no fights are recorded", () => {
     const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={{ ...state, svsEvents: undefined }} onSaved={() => {}} />);
     expect(html).toContain("No fights recorded yet");

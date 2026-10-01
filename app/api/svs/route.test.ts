@@ -45,6 +45,13 @@ describe("SvS attendance API", () => {
     expect(setState).toHaveBeenCalledWith(expect.objectContaining({ svsEvents: events }));
   });
 
+  it("keeps each event's kind", async () => {
+    const events = [{ id: "e1", date: "2026-09-19", attendance: { a: "present" } }, { id: "e2", date: "2026-10-04", kind: "goldvein", attendance: { a: "absent" } }];
+    const response = await PUT(request({ events, version: 1 }));
+    expect(response.status).toBe(200);
+    expect((await response.json()).svsEvents).toEqual(events);
+  });
+
   it("rejects a member id that no longer exists", async () => {
     const response = await PUT(request({ events: [{ id: "e1", date: "2026-09-19", attendance: { ghost: "present" } }], version: 1 }));
     expect(response.status).toBe(400);
@@ -56,6 +63,7 @@ describe("SvS attendance API", () => {
       [{ id: "e1", date: "2026-09-19", attendance: {} }, { id: "e1", date: "2026-09-20", attendance: {} }],
       [{ id: "e1", date: "19/09/2026", attendance: {} }],
       [{ id: "e1", date: "2026-09-19", attendance: { a: "late" } }],
+      [{ id: "e1", date: "2026-09-19", kind: "storm", attendance: {} }],
     ];
     for (const events of bad) expect((await PUT(request({ events, version: 1 }))).status).toBe(400);
     expect(setState).not.toHaveBeenCalled();
