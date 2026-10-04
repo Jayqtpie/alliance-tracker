@@ -42,7 +42,7 @@ describe("LastRank origin servers", () => {
     }
     // A retained profile is stale for statistics, but a starting server cannot go
     // stale, so freshness is not consulted and every mapped row is written.
-    expect(after.members.filter((member) => typeof member.gameProfile?.originServer === "number")).toHaveLength(capture.members.length);
+    expect(after.members.filter((member) => typeof member.gameProfile?.originServer === "number")).toHaveLength(capture.members.filter((row) => before.members.some((member) => member.gameProfile?.uid === row.uid)).length);
     expect(applyOriginServers(after)).toBe(after);
   });
 
