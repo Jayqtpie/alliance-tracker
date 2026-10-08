@@ -78,6 +78,8 @@ To roll back: revert the refresh commit on main first (otherwise the next load r
 
 `lib/profile-stats.test.ts`: the hardcoded power/profession for Zothargirl.
 
+Active-member counts in `lib/roster-import.test.ts` (the `toHaveLength` and `.size` counts, plus the non-null hero power count) and `lib/store.test.ts`: these import the export onto the seed, so they equal the export's `memberCount` and drop whenever officers mark members left between captures. The retained-row fixture's public ID must also still be in the export; swap it for any exported member if that player left.
+
 `lib/origin-servers.test.ts`: Zothargirl's hardcoded `originServerId` (843). `lib/origin-servers.ts` is a one-shot backfill for trackers that applied the 21 September capture before origin servers were stored; it keeps reading that dated JSON on purpose. Later captures carry `originServerId` themselves, so the backfill no-ops once every profile has one and can be deleted then.
 
 `lib/member-profile-updates.test.ts`: only when the export reports a rename. It pins a `canonicalName` by UID (`1543620585000927` as of 2026-09-21), so any run whose `changes.renamed` touches that UID breaks it. Check `changes.renamed` against this file every run.
@@ -92,12 +94,13 @@ To roll back: revert the refresh commit on main first (otherwise the next load r
 
 ## Scheduled runs
 
-`.github/workflows/roster-refresh.yml` runs Sundays and Wednesdays at 04:52 UTC (off the hour: GitHub delays or drops `:00` runs under load) on the owner's subscription (`CLAUDE_CODE_OAUTH_TOKEN`), with `cron-prompt.md` as the prompt and the probe result appended. Claude commits but has no push credentials. The workflow then checks that the commit touches only refresh paths, adds an export and bumps the marker, re-runs tsc, eslint, vitest and the apply check, and pushes fast-forward only. A failed run emails the owner through GitHub's standard failure notice. Start one by hand with `gh workflow run roster-refresh.yml`.
+`.github/workflows/roster-refresh.yml` runs Sundays and Wednesdays at 04:52 UTC (off the hour: GitHub delays or drops `:00` runs under load) on the owner's subscription (`CLAUDE_CODE_OAUTH_TOKEN`), with `cron-prompt.md` as the prompt and the probe result appended. Claude commits but has no push credentials. The workflow then checks that the commit touches only refresh paths, adds an export and bumps the marker, re-runs tsc, eslint, vitest and the apply check, and pushes fast-forward only. A failed run emails the owner through GitHub's standard failure notice, and so does a run where the probe found changes but Claude made no commit; Claude's reason is in the job summary. Start one by hand with `gh workflow run roster-refresh.yml`.
 
 ## Gotchas
 
-- A listed player with `alliance_id: null` trips the collector's `membershipMismatches` check and gives exit code 2 even when every profile is fresh. If that player has no tracker mapping the builder skips them anyway — read the check output before assuming failure.
-- The builder refuses to write if a *mapped* member's source alliance or server is wrong. Reconcile, do not override.
+- The alliance list lags departures. A listed player whose fresh profile is in no alliance, or another alliance on 927, is reported under `leftAlliance` by `--check` (not an error) and treated as absent by the builder: an active member is kept active and unaltered under `changes.leftPerSourceProfile`, for an officer to mark left after the deploy loads; one an officer already marked left is not exported, so the import does not reactivate them.
+- The builder refuses to write if a *mapped* member's home server is wrong. Reconcile, do not override.
+- LastRank's `cur_member` can disagree with its own `members` list while players join and leave (91 vs 94 on 2026-10-07). The list is the roster; the collector no longer requires the two to match, and the export notes the gap. That strict check silently stopped the 2026-10-07 scheduled run.
 - `next dev` rewrites `next-env.d.ts` to the `.next/dev/types` variant. Revert it; the committed form is the build variant.
 - Don't commit `tsconfig.tsbuildinfo` (produced by `tsc`, not gitignored).
 - `supersedesProfileUpdates` in the export retires the older one-time migrations (`lib/member-profile-updates.ts`, `lib/profile-refresh-retries.ts`, `lib/profile-stats.ts`) so they cannot replay stale values over a newer capture.

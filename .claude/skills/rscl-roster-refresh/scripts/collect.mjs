@@ -20,7 +20,10 @@ export function summarize(capture, now = Date.now()) {
   const ids = new Set(members.map(row => String(row.public_id)));
   const keyedIdentitiesValid = Object.entries(capture.profiles ?? {}).every(([id, row]) => id === String(row.data?.public_id));
   const fresh = rows.filter(row => isFresh(row.data, now));
-  const mismatches = rows.filter(row => row.data?.alliance_id !== ALLIANCE_ID || row.data?.home_server_id !== 927);
+  // A listed player now in no alliance or another one on 927 has left (the list lags departures);
+  // the builder treats them as absent. Only a different home server is a mismatch.
+  const leftAlliance = rows.filter(row => row.data?.alliance_id !== ALLIANCE_ID && row.data?.home_server_id === 927);
+  const mismatches = rows.filter(row => row.data?.home_server_id !== 927);
   return {
     listed: members.length,
     sourceCount: capture.alliance?.cur_member ?? null,
@@ -34,8 +37,9 @@ export function summarize(capture, now = Date.now()) {
       lastEnrichedAt: row.data?.last_enriched_at ?? null,
       status: row.refreshResponse?.enrich_status ?? row.refreshError ?? 'freshness-unverified',
     })),
+    leftAlliance: leftAlliance.map(row => ({ publicId: row.data?.public_id, name: row.data?.name, alliance: row.data?.alliance_id ?? null })),
     membershipMismatches: mismatches.map(row => ({ publicId: row.data?.public_id, name: row.data?.name, alliance: row.data?.alliance_id })),
-    completeAndFresh: keyedIdentitiesValid && members.length > 0 && members.length === capture.alliance?.cur_member && ids.size === members.length && rows.length === ids.size && rows.every(row => ids.has(String(row.data?.public_id))) && fresh.length === rows.length && mismatches.length === 0,
+    completeAndFresh: keyedIdentitiesValid && members.length > 0 && ids.size === members.length && rows.length === ids.size && rows.every(row => ids.has(String(row.data?.public_id))) && fresh.length === rows.length && mismatches.length === 0,
   };
 }
 
@@ -83,7 +87,10 @@ async function main(args) {
   }
   const alliance = await request('/v1/alliances/' + ALLIANCE_ID);
   if (alliance.alliance_id !== ALLIANCE_ID || alliance.abbr !== 'RSCL' || alliance.server_id !== 927 || !Array.isArray(alliance.members)) throw new Error('Unexpected alliance response.');
-  if (alliance.members.length !== alliance.cur_member || new Set(alliance.members.map(row => row.public_id)).size !== alliance.members.length) throw new Error('Incomplete or duplicated source roster.');
+  // The list is the roster; cur_member is a header count that drifts from it while players join and
+  // leave (94 listed vs 91 on 2026-10-07). Absent members are retained anyway, and every listed
+  // profile's own alliance is checked below, so only a duplicated list is a hard error.
+  if (!alliance.members.length || new Set(alliance.members.map(row => row.public_id)).size !== alliance.members.length) throw new Error('Empty or duplicated source roster.');
   if (capture && JSON.stringify(capture.alliance.members.map(x => x.public_id).sort()) !== JSON.stringify(alliance.members.map(x => x.public_id).sort())) throw new Error('Roster membership changed since checkpoint; reconcile before resuming.');
   capture ??= { source: SOURCE, capturedOn: new Date().toISOString().slice(0, 10), startedAt: new Date().toISOString(), alliance, initialProfiles: {}, profiles: {} };
   capture.alliance = alliance;

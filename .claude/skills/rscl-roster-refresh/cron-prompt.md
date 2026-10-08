@@ -21,4 +21,4 @@ Power moves beyond roughly ±15% are expected (power depends on troops); cross-c
 
 Commit by staging explicit paths only: the new export, changed avatars under `public/avatars/rscl/`, `lib/roster-import.ts`, and the test files you updated. Never stage `next-env.d.ts`, `tsconfig.tsbuildinfo` or anything under `.data/`. The subject is `Refresh the RSCL roster from LastRank (<date>)`, or `from lwservers` for the backup, with a short body of counts: active, fresh, retained, renamed, rank changes, changed stats, changed avatars.
 
-The Actions log is public. Your final message must contain counts and the commit SHA only, with no player names.
+The Actions log is public, and your final message is posted to the job summary. It must contain counts and the commit SHA, or, without a commit, which condition failed and the error text, with no player names.
