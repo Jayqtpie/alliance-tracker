@@ -304,19 +304,20 @@ export function snapshotComparison(current: Snapshot, snapshots: Snapshot[]) {
 }
 
 /**
- * Which active members a capture should hold: those seen on it or an earlier capture. Someone who
- * joined after it (first seen later, or not captured yet) is not missing from it, and former
- * members stay on the captures they were part of. `joinedAt` can't decide this: many have none.
+ * A capture measured against the alliance as it was then: everyone on its board counts, including
+ * members who have since left. Missing means seen on an earlier capture and still around after it
+ * (active now, or on a later capture). Joiners first seen later, and members who had already left,
+ * are not missing. `joinedAt` and `leftAt` can't decide this: many members have neither.
  */
 export function captureCoverage(snapshot: Snapshot, snapshots: Snapshot[], members: Member[]) {
-  const seen = new Set(snapshots.filter((other) => other.capturedAt <= snapshot.capturedAt).flatMap((other) => other.entries.map((entry) => entry.memberId)));
+  const seenWhere = (keep: (other: Snapshot) => boolean) => new Set(snapshots.filter(keep).flatMap((other) => other.entries.map((entry) => entry.memberId)));
+  const before = seenWhere((other) => other.capturedAt < snapshot.capturedAt);
+  const after = seenWhere((other) => other.capturedAt > snapshot.capturedAt);
   const ranked = new Set(snapshot.entries.map((entry) => entry.memberId));
-  const expected = members.filter((member) => member.active && seen.has(member.id));
-  return {
-    expected: expected.length,
-    covered: expected.filter((member) => ranked.has(member.id)).length,
-    missing: expected.filter((member) => !ranked.has(member.id)).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName)),
-  };
+  const covered = members.filter((member) => ranked.has(member.id)).length;
+  const missing = members.filter((member) => !ranked.has(member.id) && before.has(member.id) && (member.active || after.has(member.id)))
+    .sort((a, b) => a.canonicalName.localeCompare(b.canonicalName));
+  return { expected: covered + missing.length, covered, missing };
 }
 
 export function memberPerformance(member: Member, snapshots: Snapshot[]) {

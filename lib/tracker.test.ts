@@ -144,20 +144,21 @@ describe("captureCoverage", () => {
     id, capturedAt, weekStart: capturedAt.slice(0, 10), dayLabel: "Saturday", status: "live", sourceType: "manual",
     entries: ids.map((memberId, index) => ({ id: `${id}-${memberId}`, memberId, rank: index + 1, displayName: memberId, points: 100 - index, confidence: 1 })),
   });
-  // "gap" is on the first capture but missed the second; "late" first shows up on the third;
-  // "joiner" has never been captured; "former" left after the first.
-  const members = [member("steady"), member("gap"), member("late"), member("joiner"), member("former", false)];
-  const first = capture("first", "2026-09-06T12:00:00Z", ["steady", "gap", "former"]);
+  // "gap" missed the second capture; "late" first shows up on the third; "joiner" has never been
+  // captured; "former" was on the first and left after it; "lapsed" missed the second, came back
+  // for the third and has since left.
+  const members = [member("steady"), member("gap"), member("late"), member("joiner"), member("former", false), member("lapsed", false)];
+  const first = capture("first", "2026-09-06T12:00:00Z", ["steady", "gap", "former", "lapsed"]);
   const second = capture("second", "2026-09-13T12:00:00Z", ["steady"]);
-  const third = capture("third", "2026-09-20T12:00:00Z", ["steady", "gap", "late"]);
+  const third = capture("third", "2026-09-20T12:00:00Z", ["steady", "gap", "late", "lapsed"]);
   const snapshots = [third, first, second];
 
-  it("flags only active members already seen on that capture or an earlier one", () => {
-    expect(captureCoverage(second, snapshots, members)).toEqual({ expected: 2, covered: 1, missing: [members[1]] });
+  it("counts everyone on a capture's board, members who have since left included", () => {
+    expect(captureCoverage(first, snapshots, members)).toEqual({ expected: 4, covered: 4, missing: [] });
+    expect(captureCoverage(third, snapshots, members)).toEqual({ expected: 4, covered: 4, missing: [] });
   });
 
-  it("does not count joiners against captures from before they arrived", () => {
-    expect(captureCoverage(first, snapshots, members)).toEqual({ expected: 2, covered: 2, missing: [] });
-    expect(captureCoverage(third, snapshots, members)).toEqual({ expected: 3, covered: 3, missing: [] });
+  it("flags members who were in the alliance at the time but are not on the board", () => {
+    expect(captureCoverage(second, snapshots, members)).toEqual({ expected: 3, covered: 1, missing: [members[1], members[5]] });
   });
 });
