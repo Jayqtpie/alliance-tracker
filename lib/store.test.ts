@@ -79,7 +79,7 @@ describe("private Blob state writes", () => {
 
   it("loads and persists the roster using the metadata ETag, not the delivery ETag", async () => {
     const result = await getState();
-    expect(result.members.filter((member) => member.active)).toHaveLength(90);
+    expect(result.members.filter((member) => member.active)).toHaveLength(99);
     expect(stored.rosterImport).toBe(result.rosterImport);
     expect(put).toHaveBeenCalledWith(statePath, expect.any(String), expect.objectContaining({ ifMatch: "metadata-1" }));
     expect(vi.mocked(head).mock.invocationCallOrder[0]).toBeLessThan(vi.mocked(get).mock.invocationCallOrder[1]);
@@ -113,7 +113,7 @@ describe("private Blob state writes", () => {
       revision += 1;
       throw new BlobPreconditionFailedError();
     });
-    expect((await getState()).members.filter((member) => member.active)).toHaveLength(90);
+    expect((await getState()).members.filter((member) => member.active)).toHaveLength(99);
     expect(statePuts()).toHaveLength(1);
   });
 

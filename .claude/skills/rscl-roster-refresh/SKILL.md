@@ -18,7 +18,7 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 | **24-hour freshness** | A profile whose `last_enriched_at` is older than 24h after a refresh attempt is **retained**: its name, rank, stats, dates and avatar stay exactly as they are. |
 | **Match by ID, never by name** | Identity is the stored `lastRankPublicId` → game `uid` link on the live tracker record. Names change constantly. |
 | **Absent ≠ gone** | An active tracker member missing from LastRank's alliance list stays **active and unaltered**. LastRank's list lags. |
-| **No UID, no row** | A listed player whose LastRank `uid` is null is skipped, not added. |
+| **No UID, no row** | LastRank never publishes game UIDs, so a listed player with no tracker record is skipped, not added, unless the owner asks for them and their UID is verified (see "Adding new members"). |
 
 `career_type`: `101` = Engineer, `102` = War Leader, anything else = no profession.
 
@@ -35,6 +35,7 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 3. **Build the export**:
    `node .claude/skills/rscl-roster-refresh/scripts/build-capture.cjs --date <date>`
    Writes `lib/data/rscl-roster-<date>.json` plus any changed avatars under `public/avatars/rscl/`.
+   Add `--identities <file>` to add unresolved players as new members (see "Adding new members").
 4. **Wire it in** — in `lib/roster-import.ts` only: point the import at the new JSON and bump `ROSTER_IMPORT` to `lwservers-rscl-927-<date>-v1`. Keep the `lwservers-` prefix; older deployments compare dates on it. Rebuilding a date that production already imported needs the next version (`-v2`), or the app treats it as applied.
 5. **Update the fact-coupled tests** (they pin values from the previous capture — see below).
 6. **Verify** (below), then commit. Pushing deploys to Vercel; ask first in an interactive session. The scheduled workflow is the exception: it pushes on its own after re-running every check.
@@ -65,6 +66,12 @@ What the backup builder takes, and why:
 **A backup refresh never reaches main on its own.** The scheduled workflow pushes it to `roster-refresh/lwservers-<date>`; the owner reviews and merges it. In an interactive session, commit it to a branch and ask before anything goes to main. The builder also refuses to write if any exported UID or LastRank ID differs from the live record's, or if an active member is missing.
 
 Marker and file names are unchanged (`lwservers-rscl-927-<date>-v1`, `rscl-roster-<date>.json`); the export's `source` is the lwservers URL. The builder refuses to overwrite a LastRank export for the same date. Once LastRank's list moves past the backup export's `sourceRosterUpdatedAt`, the probe goes back to LastRank by itself.
+
+## Adding new members
+
+Unresolved players (in the export's `unresolvedIdentities`) can be added when the owner asks. LastRank has no game UIDs, so take each one from **both** lwservers' 927 snapshot (`collect-lwservers.mjs`, keyed by UID) and lwatlas' `GET https://api.lwatlas.com/v1/warzones/927/bases` (send `Origin: https://lwatlas.com` and a browser User-Agent). Accept a UID only when both sources give exactly one RSCL player with that exact name and the same UID, the lwservers avatar is the same CDN path as LastRank's `photo_url`, and the UID's last three digits equal LastRank's `origin_server_id`.
+
+Write the accepted ones to `.data/lastrank-refresh-<date>/new-identities.json` as `[{ publicId, uid, name, evidence }]` and rebuild with `--identities` pointing at it. The builder adds them as fresh rows (recorded under `changes.addedToThisExport`, with the evidence in `identityEvidence.external`), and refuses an entry that is stale, outside RSCL on 927, mismatched on server suffix, already on the tracker, or not added. The importer creates them as `lw-<uid>` members. From the next refresh on they match by public ID like everyone else. Raise the active-count tests by the number added. First used on 2026-10-10, for nine joiners.
 
 ## Undoing a refresh
 

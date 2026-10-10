@@ -11,6 +11,11 @@ if (!priorFile) throw new Error('No earlier roster export to compare against.');
 const raw = JSON.parse(fs.readFileSync(dir + '/capture.json', 'utf8'));
 const prior = JSON.parse(fs.readFileSync('lib/data/' + priorFile, 'utf8'));
 const live = JSON.parse(fs.readFileSync(dir + '/live-before.json', 'utf8'));
+// Optional: --identities <file>, a JSON array of { publicId, uid, name, evidence } for listed players
+// with no tracker record yet. LastRank has no game UIDs, so each UID must be verified elsewhere
+// (lwservers and lwatlas agreeing, avatar and origin server matching) before it goes in this file.
+const identitiesFile = args.includes('--identities') ? args[args.indexOf('--identities') + 1] : null;
+const newIdentities = new Map((identitiesFile ? JSON.parse(fs.readFileSync(identitiesFile, 'utf8')) : []).map(x => [String(x.publicId), x]));
 // LastRank career_type codes, verified from LastRank's own front-end bundle.
 const PROFESSIONS = { 101: 'Engineer', 102: 'War Leader' };
 const profession = p => PROFESSIONS[p.career_type] ?? null;
@@ -32,6 +37,7 @@ async function avatar(p, uid, currentPath) {
       return { url, file, status: 'validated-current', changed: true };
     } catch (e) { console.log('avatar attempt failed', uid, url, e.message); }
   }
+  if (!currentPath) throw new Error('No avatar for new member ' + uid);
   return { url: null, file: currentPath.replace(/^\//, ''), status: 'retained-download-failed', changed: false };
 }
 
@@ -41,6 +47,26 @@ async function avatar(p, uid, currentPath) {
     const publicId = String(entry.public_id), r = raw.profiles[publicId], p = r.data;
     // Identity is the verified LastRank public ID -> game UID link on the live record, never the name.
     const matches = live.members.filter(m => m.gameProfile?.lastRankPublicId === publicId);
+    const added = newIdentities.get(publicId);
+    if (matches.length === 0 && added) {
+      const uid = String(added.uid);
+      if (!r.freshnessPassed || p.alliance_id !== ALLIANCE || p.home_server_id !== 927) throw new Error('New member ' + publicId + ' needs a fresh RSCL profile on 927');
+      if (!/^\d+$/.test(uid) || Number(uid.slice(-3)) !== p.origin_server_id) throw new Error('New member ' + publicId + ': UID server suffix does not match origin_server_id');
+      if (live.members.some(m => m.gameProfile?.uid === uid)) throw new Error('New member UID ' + uid + ' is already on the tracker');
+      const asset = await avatar(p, uid, null);
+      members.push({
+        position: members.length + 1, uid, lastRankPublicId: publicId, name: p.name, active: true,
+        rank: p.alliance_rank >= 1 && p.alliance_rank <= 5 ? 'R' + p.alliance_rank : null,
+        originServerId: p.origin_server_id ?? null,
+        identityEvidence: { basis: 'new member; game UID verified outside LastRank', initialSourceName: raw.initialProfiles[publicId].data.name, previousTrackerName: null, avatarCorroborated: !!added.evidence?.lwserversAvatarMatchesLastRank, external: added.evidence ?? null },
+        avatarUrl: asset.url, avatarFile: asset.file, avatarStatus: asset.status,
+        sourceMembership: { allianceId: p.alliance_id, allianceTag: p.alliance_abbr, allianceName: p.alliance_name, homeServerId: p.home_server_id },
+        freshness: { status: 'fresh', maxAgeHours: 24, retrievedAt: r.retrievedAt, previousSourceUpdatedAt: r.beforeLastEnrichedAt, sourceUpdatedAt: p.last_enriched_at, refreshRequested: r.refreshRequested, refreshResult: r.refreshResponse?.enrich_status ?? r.refreshError ?? (r.refreshRequested ? 'unverified' : 'already-fresh') },
+        profile: { source: raw.source, capturedOn: DATE, heroPower: p.hero_power ?? null, heroPowerDisplay: display(p.hero_power), heroPowerLegacy: false, power: p.power ?? null, powerDisplay: display(p.power), profession: profession(p), killsApproximate: p.army_kill ?? null, killsDisplay: display(p.army_kill), killsStatus: 'exact source value; compact display', activityDate: null, heroPowerMeasuredAt: p.rankings?.find(x => x.rank_type === 13)?.captured_at ?? null },
+        _changedAvatar: asset.changed, _added: true,
+      });
+      continue;
+    }
     if (matches.length !== 1) {
       unresolved.push({ publicId, sourceName: p.name, reason: matches.length ? 'multiple tracker records share this LastRank ID' : 'no verified game UID mapping; skipped at user request', sameNameTrackerRecords: live.members.filter(m => m.canonicalName === p.name).map(m => ({ id: m.id, active: m.active, uid: m.gameProfile?.uid ?? null })) });
       continue;
@@ -76,6 +102,8 @@ async function avatar(p, uid, currentPath) {
       _changedAvatar: asset.changed,
     });
   }
+  const unused = [...newIdentities.keys()].filter(id => !members.some(x => x._added && x.lastRankPublicId === id));
+  if (unused.length) throw new Error('--identities entries not added (not listed, or already on the tracker): ' + unused.join(', '));
   if (membershipMismatches.length) { console.log(JSON.stringify({ membershipMismatches }, null, 2)); throw new Error('Reconcile membership mismatches before writing'); }
   const leftIds = new Set(leftPerProfile.map(x => x.publicId));
   const listed = new Set(raw.alliance.members.map(m => String(m.public_id)).filter(id => !leftIds.has(id)));
@@ -97,6 +125,7 @@ async function avatar(p, uid, currentPath) {
     });
   }
   const liveOf = uid => live.members.find(m => m.gameProfile?.uid === uid);
+  const existingRows = members.filter(x => !x._added), addedRows = members.filter(x => x._added);
   const capture = {
     source: raw.source, warzone: 927, allianceTag: 'RSCL', allianceName: 'The Rascals', capturedOn: DATE, exportedAt: new Date().toISOString(),
     sourceRosterUpdatedAt: raw.alliance.last_seen_at, sourceListedMemberCount: raw.alliance.members.length,
@@ -107,20 +136,21 @@ async function avatar(p, uid, currentPath) {
     notes: [],
     unresolvedIdentities: unresolved,
     changes: {
-      addedToThisExport: [],
+      addedToThisExport: addedRows.map(x => ({ uid: x.uid, name: x.name, lastRankPublicId: x.lastRankPublicId, basis: x.identityEvidence.basis })),
       absentFromSourceRoster: absent.map(m => ({ uid: m.gameProfile.uid, name: m.canonicalName, lastRankPublicId: m.gameProfile.lastRankPublicId, basis: 'User confirmed still in RSCL; kept active and unaltered' })),
       leftPerSourceProfile: leftPerProfile.map(x => ({ ...x, basis: x.trackerActive ? 'Listed, but their LastRank profile is outside RSCL; kept active and unaltered for an officer to mark left' : 'Listed, but their LastRank profile is outside RSCL and an officer already marked them left; not exported' })),
       markedInactive: [],
-      renamed: members.filter(x => x.name !== liveOf(x.uid).canonicalName).map(x => ({ uid: x.uid, previous: liveOf(x.uid).canonicalName, current: x.name })),
-      rankChanged: members.filter(x => x.rank !== liveOf(x.uid).gameProfile.rank).map(x => ({ uid: x.uid, name: x.name, previous: liveOf(x.uid).gameProfile.rank, current: x.rank })),
-      changedStatistics: members.filter(x => { const b = liveOf(x.uid).gameProfile; return x.profile.heroPower !== b.heroPower || x.profile.killsApproximate !== b.kills || x.profile.power !== (b.power ?? null); }).map(x => x.uid),
+      renamed: existingRows.filter(x => x.name !== liveOf(x.uid).canonicalName).map(x => ({ uid: x.uid, previous: liveOf(x.uid).canonicalName, current: x.name })),
+      rankChanged: existingRows.filter(x => x.rank !== liveOf(x.uid).gameProfile.rank).map(x => ({ uid: x.uid, name: x.name, previous: liveOf(x.uid).gameProfile.rank, current: x.rank })),
+      changedStatistics: existingRows.filter(x => { const b = liveOf(x.uid).gameProfile; return x.profile.heroPower !== b.heroPower || x.profile.killsApproximate !== b.kills || x.profile.power !== (b.power ?? null); }).map(x => x.uid),
       changedAvatars: members.filter(x => x._changedAvatar).map(x => x.uid),
     },
-    members: members.map(({ _changedAvatar, ...x }) => x),
+    members: members.map(({ _changedAvatar, _added, ...x }) => x),
   };
   const retainedNames = capture.members.filter(x => x.freshness.status === 'retained');
   capture.notes = [
-    `LastRank alliance list read ${raw.alliance.members.length} players${raw.alliance.members.length === raw.alliance.cur_member ? '' : ` (its header count said ${raw.alliance.cur_member}; the list is used)`}; ${members.length} mapped to existing game UIDs through the stored LastRank public ID link, not by name.`,
+    `LastRank alliance list read ${raw.alliance.members.length} players${raw.alliance.members.length === raw.alliance.cur_member ? '' : ` (its header count said ${raw.alliance.cur_member}; the list is used)`}; ${existingRows.length} mapped to existing game UIDs through the stored LastRank public ID link, not by name.`,
+    ...(addedRows.length ? [`${addedRows.length} new members added with game UIDs verified outside LastRank (lwservers and lwatlas agreeing, avatar and origin server matching): ${addedRows.map(x => x.name).join(', ')}.`] : []),
     `${capture.freshProfileCount} profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). ${capture.retainedProfileCount} were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered${retainedNames.length ? ': ' + retainedNames.map(x => x.name).join(', ') : ''}.`,
     `${unresolved.length} listed players have no verified game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
     `${absent.length} active tracker members are absent from the LastRank alliance list (${absent.map(m => m.canonicalName).join(', ') || 'none'}); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.`,
@@ -130,5 +160,5 @@ async function avatar(p, uid, currentPath) {
   if (new Set(capture.members.map(x => x.uid)).size !== members.length || new Set(capture.members.map(x => x.lastRankPublicId)).size !== members.length) throw new Error('Duplicate identities');
   for (const x of capture.members) if (!fs.existsSync('public/' + x.avatarFile)) throw new Error('Missing avatar ' + x.avatarFile);
   fs.writeFileSync('lib/data/rscl-roster-' + DATE + '.json', JSON.stringify(capture, null, 2) + '\n');
-  console.log(JSON.stringify({ prior: priorFile, active: capture.memberCount, fresh: capture.freshProfileCount, retained: retainedNames.map(x => x.name), unresolved: unresolved.map(x => x.sourceName), absent: absent.map(m => m.canonicalName), leftPerProfile: leftPerProfile.map(x => `${x.name} (${x.trackerActive ? 'active, kept' : 'already left, skipped'})`), renamed: capture.changes.renamed, rankChanged: capture.changes.rankChanged, changedStats: capture.changes.changedStatistics.length, changedAvatars: capture.changes.changedAvatars.length, professions: capture.members.reduce((a, x) => (a[x.profile.profession ?? 'none'] = (a[x.profile.profession ?? 'none'] ?? 0) + 1, a), {}) }, null, 2));
+  console.log(JSON.stringify({ prior: priorFile, active: capture.memberCount, fresh: capture.freshProfileCount, added: addedRows.map(x => x.name), retained: retainedNames.map(x => x.name), unresolved: unresolved.map(x => x.sourceName), absent: absent.map(m => m.canonicalName), leftPerProfile: leftPerProfile.map(x => `${x.name} (${x.trackerActive ? 'active, kept' : 'already left, skipped'})`), renamed: capture.changes.renamed, rankChanged: capture.changes.rankChanged, changedStats: capture.changes.changedStatistics.length, changedAvatars: capture.changes.changedAvatars.length, professions: capture.members.reduce((a, x) => (a[x.profile.profession ?? 'none'] = (a[x.profile.profession ?? 'none'] ?? 0) + 1, a), {}) }, null, 2));
 })().catch(e => { console.error(e.message); process.exitCode = 1; });
