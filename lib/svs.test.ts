@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, lockedFightViolation, markAllPresent, overallAttendance, repeatAbsences, setAttendance } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, lockedFightViolation, markAllPresent, overallAttendance, repeatAbsences, rosterDrift, setAttendance, syncRoster } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -70,6 +70,30 @@ describe("markAllPresent", () => {
     const event: SvsEvent = { id: "e", date: "2026-09-19", attendance: { a: "absent", b: "excused", c: "present" } };
     expect(markAllPresent(event).attendance).toEqual({ a: "present", b: "excused", c: "present" });
     expect(event.attendance.a).toBe("absent");
+  });
+});
+
+describe("syncRoster", () => {
+  // Created before a refresh: "left" has since gone, "joined" arrived.
+  const members = [member("stays"), member("excused"), member("left", false), member("joined")];
+  const event: SvsEvent = { id: "e", date: "2026-10-10", kind: "goldvein", label: "Goldvein", attendance: { stays: "present", excused: "excused", left: "present", deleted: "absent" } };
+
+  it("finds active members missing from a fight and ids on it that are no longer active", () => {
+    const drift = rosterDrift(event, members);
+    expect(drift.added.map((m) => m.id)).toEqual(["joined"]);
+    expect(drift.removed).toEqual(["left", "deleted"]);
+  });
+
+  it("adds the missing as absent, drops leavers and keeps every other mark and field", () => {
+    const next = syncRoster(event, members);
+    expect(next.attendance).toEqual({ stays: "present", excused: "excused", joined: "absent" });
+    expect(next).toMatchObject({ id: "e", date: "2026-10-10", kind: "goldvein", label: "Goldvein" });
+    expect(event.attendance.left).toBe("present");
+  });
+
+  it("finds no drift on a fight that matches the roster", () => {
+    const synced = syncRoster(event, members);
+    expect(rosterDrift(synced, members)).toEqual({ added: [], removed: [] });
   });
 });
 

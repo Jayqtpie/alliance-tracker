@@ -1,9 +1,9 @@
 "use client";
 
-import { AlertTriangle, CheckCheck, Lock, LockOpen, Percent, Plus, Search, Trash2, Users, X } from "lucide-react";
+import { AlertTriangle, CheckCheck, Lock, LockOpen, Percent, Plus, RefreshCw, Search, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { AttendanceEventKind, Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, setAttendance, SVS_ATTENDANCE } from "@/lib/svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, rosterDrift, setAttendance, SVS_ATTENDANCE, syncRoster } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { useLanguage } from "./language-selector";
@@ -68,7 +68,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   const [sort, setSort] = useState<SummarySort>("rate");
   const [newDate, setNewDate] = useState(() => new Date().toLocaleDateString("en-CA"));
   const [newLabel, setNewLabel] = useState("");
-  const [confirm, setConfirm] = useState<"delete" | "unlock" | null>(null);
+  const [confirm, setConfirm] = useState<"delete" | "unlock" | "sync" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -91,6 +91,12 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   function mark(memberId: string, value: SvsAttendance) {
     if (!selected) return;
     setDraft(allEvents.map((event) => event.id === selected.id ? setAttendance(event, memberId, value) : event));
+  }
+
+  function syncFight() {
+    if (!selected) return;
+    setDraft(allEvents.map((event) => event.id === selected.id ? syncRoster(event, state.members) : event));
+    setConfirm(null);
   }
 
   function deleteFight() {
@@ -129,6 +135,13 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   }
 
   const editable = canManage && !selected?.locked;
+  // A fight created before a roster refresh lands is missing joiners and still lists leavers.
+  const drift = editable && selected ? rosterDrift(selected, state.members) : { added: [], removed: [] };
+  const drifted = drift.added.length > 0 || drift.removed.length > 0;
+  const syncLine = [
+    drift.added.length ? t("Add as absent: {names}", { names: drift.added.map((member) => member.canonicalName).join(", ") }) : "",
+    drift.removed.length ? t("Remove, no longer active: {names}", { names: drift.removed.map((id) => memberById.get(id)?.canonicalName ?? id).join(", ") }) : "",
+  ].filter(Boolean).join(" · ");
   const needle = query.trim().toLocaleLowerCase();
   const checklist = selected ? Object.entries(selected.attendance)
     .map(([memberId, value]) => ({ member: memberById.get(memberId), value }))
@@ -193,6 +206,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
           <div className="svs-checklist-tools">
           {editable && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
             onClick={() => setDraft(allEvents.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />{t("Mark all present")}</button>}
+          {drifted && <button type="button" className="button secondary" onClick={() => setConfirm("sync")}><RefreshCw size={14} />{t("Sync roster")}</button>}
           <div className="search-box"><Search size={16} /><input aria-label={t("Filter fight members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
         </div>
@@ -213,6 +227,10 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
             ? <><span>{t("Delete this fight and its attendance?")}</span>
               <button type="button" className="button secondary" onClick={() => setConfirm(null)}>{t("Cancel")}</button>
               <button type="button" className="button danger" onClick={deleteFight}>{t("Delete")}</button></>
+            : confirm === "sync" && drifted
+              ? <><span>{t("Sync this fight with the current roster?")} {syncLine}</span>
+                <button type="button" className="button secondary" onClick={() => setConfirm(null)}>{t("Cancel")}</button>
+                <button type="button" className="button primary" onClick={syncFight}><RefreshCw size={14} />{t("Sync roster")}</button></>
             : confirm === "unlock"
               ? <><span>{t("Unlock this fight so its attendance can be edited?")}</span>
                 <button type="button" className="button secondary" onClick={() => setConfirm(null)}>{t("Cancel")}</button>

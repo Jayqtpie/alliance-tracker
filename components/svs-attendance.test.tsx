@@ -63,6 +63,15 @@ describe("SvsAttendanceView", () => {
     expect(html).toContain('data-option="absent">Absent<');
   });
 
+  it("offers officers a roster sync only on an open fight the roster has moved past", () => {
+    const joined: TrackerState = { ...state, members: [...state.members, member("Ulric")] };
+    const lockedJoined: TrackerState = { ...joined, svsEvents: joined.svsEvents!.map((event) => event.id === "new" ? { ...event, locked: true } : event) };
+    expect(renderToStaticMarkup(<SvsAttendanceView canManage state={state} onSaved={() => {}} />)).not.toContain("Sync roster");
+    expect(renderToStaticMarkup(<SvsAttendanceView canManage state={joined} onSaved={() => {}} />)).toContain("Sync roster");
+    expect(renderToStaticMarkup(<SvsAttendanceView canManage state={lockedJoined} onSaved={() => {}} />)).not.toContain("Sync roster");
+    expect(renderToStaticMarkup(<SvsAttendanceView canManage={false} state={joined} onSaved={() => {}} />)).not.toContain("Sync roster");
+  });
+
   it("is read-only for viewers", () => {
     const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={state} onSaved={() => {}} />);
     expect(html).toContain("Tamsin");

@@ -46,6 +46,28 @@ export function markAllPresent(event: SvsEvent): SvsEvent {
   return { ...event, attendance: Object.fromEntries(Object.entries(event.attendance).map(([id, value]) => [id, value === "excused" ? value : "present"])) };
 }
 
+/**
+ * How a fight's roster differs from today's: active members it is missing, and ids on it whose
+ * member has since left. A fight created before a roster refresh lands drifts this way.
+ */
+export function rosterDrift(event: SvsEvent, members: Member[]) {
+  const byId = new Map(members.map((member) => [member.id, member]));
+  return {
+    added: members.filter((member) => member.active && !(member.id in event.attendance)),
+    removed: Object.keys(event.attendance).filter((id) => !byId.get(id)?.active),
+  };
+}
+
+/** Brings a fight to the current roster: missing members join as absent, leavers drop off. */
+export function syncRoster(event: SvsEvent, members: Member[]): SvsEvent {
+  const { added, removed } = rosterDrift(event, members);
+  const gone = new Set(removed);
+  return { ...event, attendance: {
+    ...Object.fromEntries(Object.entries(event.attendance).filter(([id]) => !gone.has(id))),
+    ...Object.fromEntries(added.map((member) => [member.id, "absent" as const])),
+  } };
+}
+
 export function attendanceCounts(event: SvsEvent) {
   const counts = { present: 0, absent: 0, excused: 0, total: 0 };
   for (const value of Object.values(event.attendance)) { counts[value] += 1; counts.total += 1; }
