@@ -5,7 +5,7 @@ type RosterCapture = typeof capture;
 
 // Keep the legacy prefix so older deployments also reject this newer capture.
 // The capture source and profile public IDs identify LastRank independently.
-export const ROSTER_IMPORT = "lwservers-rscl-927-2026-10-10-v2";
+export const ROSTER_IMPORT = "lwservers-rscl-927-2026-10-10-v3";
 
 function nameKey(name: string) {
   return name.normalize("NFKD").replace(/\p{M}/gu, "").toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu, "");

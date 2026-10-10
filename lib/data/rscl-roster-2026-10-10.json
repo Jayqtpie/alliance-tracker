@@ -4,12 +4,12 @@
   "allianceTag": "RSCL",
   "allianceName": "The Rascals",
   "capturedOn": "2026-10-10",
-  "exportedAt": "2026-10-10T19:20:05.977Z",
+  "exportedAt": "2026-10-10T19:23:54.106Z",
   "sourceRosterUpdatedAt": "2026-10-10T09:11:44.294151+02:00",
   "sourceListedMemberCount": 100,
-  "memberCount": 99,
+  "memberCount": 102,
   "profileCount": 100,
-  "freshProfileCount": 97,
+  "freshProfileCount": 100,
   "retainedProfileCount": 2,
   "leader": "Queeníe",
   "officerCount": 10,
@@ -20,35 +20,22 @@
   ],
   "notes": [
     "LastRank alliance list read 100 players; 90 mapped to existing game UIDs through the stored LastRank public ID link, not by name.",
-    "9 new members added with game UIDs verified outside LastRank (lwservers and lwatlas agreeing, avatar and origin server matching): PLiiiJI JIjJj, н ΣΔGLΣ н, Mr CORONA Vi PRO MaX, Mustafa6586, D1kTąt0Ř, MAD HAiDAR, brucgjk, Private Drax, Zyzom.",
-    "97 profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). 2 were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered: AsrExpress, Zeflash.",
-    "3 listed players have no verified game UID and were skipped at the user's request: Hyperstream, 순수한 PureX, Snedvriden2.",
+    "12 new members added with game UIDs verified outside LastRank (lwservers and lwatlas agreeing, avatar and origin server matching): Hyperstream, PLiiiJI JIjJj, н ΣΔGLΣ н, 순수한 PureX, Mr CORONA Vi PRO MaX, Mustafa6586, D1kTąt0Ř, MAD HAiDAR, brucgjk, Private Drax, Zyzom, Snedvriden2.",
+    "100 profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). 2 were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered: AsrExpress, Zeflash.",
+    "0 listed players have no verified game UID and were skipped at the user's request: none.",
     "2 active tracker members are absent from the LastRank alliance list (AsrExpress, Zeflash); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.",
     "0 listed players have a fresh LastRank profile outside RSCL: none.",
     "LastRank profile update timestamps are distinct from ranking measurement timestamps. Missing values are unavailable, not zero."
   ],
-  "unresolvedIdentities": [
-    {
-      "publicId": "658765",
-      "sourceName": "Hyperstream",
-      "reason": "no verified game UID mapping; skipped at user request",
-      "sameNameTrackerRecords": []
-    },
-    {
-      "publicId": "1171810",
-      "sourceName": "순수한 PureX",
-      "reason": "no verified game UID mapping; skipped at user request",
-      "sameNameTrackerRecords": []
-    },
-    {
-      "publicId": "1171933",
-      "sourceName": "Snedvriden2",
-      "reason": "no verified game UID mapping; skipped at user request",
-      "sameNameTrackerRecords": []
-    }
-  ],
+  "unresolvedIdentities": [],
   "changes": {
     "addedToThisExport": [
+      {
+        "uid": "1905736613000844",
+        "name": "Hyperstream",
+        "lastRankPublicId": "658765",
+        "basis": "new member; game UID verified outside LastRank"
+      },
       {
         "uid": "2425046400000844",
         "name": "PLiiiJI JIjJj",
@@ -59,6 +46,12 @@
         "uid": "1916028325000844",
         "name": "н ΣΔGLΣ н",
         "lastRankPublicId": "1171831",
+        "basis": "new member; game UID verified outside LastRank"
+      },
+      {
+        "uid": "1432949252000866",
+        "name": "순수한 PureX",
+        "lastRankPublicId": "1171810",
         "basis": "new member; game UID verified outside LastRank"
       },
       {
@@ -101,6 +94,12 @@
         "uid": "2101680014000844",
         "name": "Zyzom",
         "lastRankPublicId": "1171837",
+        "basis": "new member; game UID verified outside LastRank"
+      },
+      {
+        "uid": "1651568712000863",
+        "name": "Snedvriden2",
+        "lastRankPublicId": "1171933",
         "basis": "new member; game UID verified outside LastRank"
       }
     ],
@@ -282,6 +281,7 @@
       "1305964827000862"
     ],
     "changedAvatars": [
+      "1905736613000844",
       "1059777042000927",
       "1553246682000927",
       "1666146601000931",
@@ -294,6 +294,7 @@
       "1432984853000841",
       "1916028325000844",
       "1045906174000919",
+      "1432949252000866",
       "3174283120000844",
       "2944135611000844",
       "1170729008000866",
@@ -303,6 +304,7 @@
       "1501336387000866",
       "2101680014000844",
       "1201977595000919",
+      "1651568712000863",
       "1173790054000919"
     ]
   },
@@ -933,6 +935,63 @@
     },
     {
       "position": 14,
+      "uid": "1905736613000844",
+      "lastRankPublicId": "658765",
+      "name": "Hyperstream",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "new member; game UID verified outside LastRank",
+        "initialSourceName": "Hyperstream",
+        "previousTrackerName": null,
+        "avatarCorroborated": true,
+        "external": {
+          "lwserversUid": "1905736613000844",
+          "lwserversSnapshotAt": "2026-10-10T04:04:55.051Z",
+          "lwserversAvatarMatchesLastRank": true,
+          "lwserversHeroPower": 222432252,
+          "lwatlasUid": "1905736613000844",
+          "lwatlasLastSeenAt": "2026-10-07T05:02:50.936408",
+          "lwatlasAllianceAbbr": "RSCL"
+        }
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/745fbef3f9a8c0d09dd574d3412a5910.jpg",
+      "avatarFile": "avatars/rscl/1905736613000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-10T19:03:23.958Z",
+        "previousSourceUpdatedAt": "2026-10-08T03:28:43.993248+02:00",
+        "sourceUpdatedAt": "2026-10-10T21:03:22.594067+02:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-10",
+        "heroPower": 222432651,
+        "heroPowerDisplay": "222.43M",
+        "heroPowerLegacy": false,
+        "power": 387739171,
+        "powerDisplay": "387.74M",
+        "profession": "War Leader",
+        "killsApproximate": 10552046,
+        "killsDisplay": "10.55M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-10T09:12:00.887327+02:00"
+      }
+    },
+    {
+      "position": 15,
       "uid": "1072311031000905",
       "lastRankPublicId": "1186878",
       "name": "Saíyan Prince",
@@ -980,7 +1039,7 @@
       }
     },
     {
-      "position": 15,
+      "position": 16,
       "uid": "1436417874000866",
       "lastRankPublicId": "1171812",
       "name": "ღMBღ Gíxxìe",
@@ -1028,7 +1087,7 @@
       }
     },
     {
-      "position": 16,
+      "position": 17,
       "uid": "1360939579000863",
       "lastRankPublicId": "1171805",
       "name": "Cheesy016",
@@ -1076,7 +1135,7 @@
       }
     },
     {
-      "position": 17,
+      "position": 18,
       "uid": "1303662525000863",
       "lastRankPublicId": "1171803",
       "name": "Goli90",
@@ -1124,7 +1183,7 @@
       }
     },
     {
-      "position": 18,
+      "position": 19,
       "uid": "1223276182000862",
       "lastRankPublicId": "1186861",
       "name": "WAR6DOG",
@@ -1172,7 +1231,7 @@
       }
     },
     {
-      "position": 19,
+      "position": 20,
       "uid": "1059777042000927",
       "lastRankPublicId": "1186853",
       "name": "LickᶠᵉᵉᵗDoom",
@@ -1220,7 +1279,7 @@
       }
     },
     {
-      "position": 20,
+      "position": 21,
       "uid": "1553246682000927",
       "lastRankPublicId": "1186932",
       "name": "Gilleythakid18",
@@ -1268,7 +1327,7 @@
       }
     },
     {
-      "position": 21,
+      "position": 22,
       "uid": "1689415806000891",
       "lastRankPublicId": "1186940",
       "name": "BananaFade",
@@ -1316,7 +1375,7 @@
       }
     },
     {
-      "position": 22,
+      "position": 23,
       "uid": "1583897883000843",
       "lastRankPublicId": "1186872",
       "name": "monsta717",
@@ -1364,7 +1423,7 @@
       }
     },
     {
-      "position": 23,
+      "position": 24,
       "uid": "1400285347000866",
       "lastRankPublicId": "1171807",
       "name": "Mark Anderr",
@@ -1412,7 +1471,7 @@
       }
     },
     {
-      "position": 24,
+      "position": 25,
       "uid": "1346884246000830",
       "lastRankPublicId": "1186911",
       "name": "천사star",
@@ -1460,7 +1519,7 @@
       }
     },
     {
-      "position": 25,
+      "position": 26,
       "uid": "1426415525000863",
       "lastRankPublicId": "1171808",
       "name": "Baby Bee ie FAFO",
@@ -1508,7 +1567,7 @@
       }
     },
     {
-      "position": 26,
+      "position": 27,
       "uid": "1666146601000931",
       "lastRankPublicId": "1186938",
       "name": "JayQT",
@@ -1556,7 +1615,7 @@
       }
     },
     {
-      "position": 27,
+      "position": 28,
       "uid": "1174872981000912",
       "lastRankPublicId": "1186945",
       "name": "Queeníe",
@@ -1604,7 +1663,7 @@
       }
     },
     {
-      "position": 28,
+      "position": 29,
       "uid": "1650522690000856",
       "lastRankPublicId": "1171826",
       "name": "WuGy",
@@ -1652,7 +1711,7 @@
       }
     },
     {
-      "position": 29,
+      "position": 30,
       "uid": "1164257150000927",
       "lastRankPublicId": "1186855",
       "name": "Retired Goblin",
@@ -1700,7 +1759,7 @@
       }
     },
     {
-      "position": 30,
+      "position": 31,
       "uid": "1803857351000863",
       "lastRankPublicId": "1171828",
       "name": "S I M A",
@@ -1748,7 +1807,7 @@
       }
     },
     {
-      "position": 31,
+      "position": 32,
       "uid": "1320072346000907",
       "lastRankPublicId": "1186906",
       "name": "MaveriC",
@@ -1796,7 +1855,7 @@
       }
     },
     {
-      "position": 32,
+      "position": 33,
       "uid": "1415256998000915",
       "lastRankPublicId": "1186918",
       "name": "l  Orion  l",
@@ -1844,7 +1903,7 @@
       }
     },
     {
-      "position": 33,
+      "position": 34,
       "uid": "2655899837000856",
       "lastRankPublicId": "1171847",
       "name": "oMRADY",
@@ -1892,7 +1951,7 @@
       }
     },
     {
-      "position": 34,
+      "position": 35,
       "uid": "1327568165000927",
       "lastRankPublicId": "1186908",
       "name": "Pauly Provolone",
@@ -1940,7 +1999,7 @@
       }
     },
     {
-      "position": 35,
+      "position": 36,
       "uid": "1289270503000862",
       "lastRankPublicId": "1187027",
       "name": "Viccked",
@@ -1988,7 +2047,7 @@
       }
     },
     {
-      "position": 36,
+      "position": 37,
       "uid": "1445438760000927",
       "lastRankPublicId": "1186867",
       "name": "Toutounator",
@@ -2036,7 +2095,7 @@
       }
     },
     {
-      "position": 37,
+      "position": 38,
       "uid": "1001286443000927",
       "lastRankPublicId": "1186881",
       "name": "이힛 IHit",
@@ -2084,7 +2143,7 @@
       }
     },
     {
-      "position": 38,
+      "position": 39,
       "uid": "1040158253000921",
       "lastRankPublicId": "1186885",
       "name": "WayV",
@@ -2132,7 +2191,7 @@
       }
     },
     {
-      "position": 39,
+      "position": 40,
       "uid": "1492937533000866",
       "lastRankPublicId": "1171816",
       "name": "RICK M F NASTY",
@@ -2180,7 +2239,7 @@
       }
     },
     {
-      "position": 40,
+      "position": 41,
       "uid": "1263825980000906",
       "lastRankPublicId": "1186864",
       "name": "Lawsishet",
@@ -2228,7 +2287,7 @@
       }
     },
     {
-      "position": 41,
+      "position": 42,
       "uid": "2425046400000844",
       "lastRankPublicId": "1171843",
       "name": "PLiiiJI JIjJj",
@@ -2285,7 +2344,7 @@
       }
     },
     {
-      "position": 42,
+      "position": 43,
       "uid": "1433711278000862",
       "lastRankPublicId": "1186921",
       "name": "The Grooch",
@@ -2333,7 +2392,7 @@
       }
     },
     {
-      "position": 43,
+      "position": 44,
       "uid": "1354432303000927",
       "lastRankPublicId": "1186912",
       "name": "InfernoRez",
@@ -2381,7 +2440,7 @@
       }
     },
     {
-      "position": 44,
+      "position": 45,
       "uid": "1674633159000926",
       "lastRankPublicId": "1186950",
       "name": "NotHoaxDoom",
@@ -2429,7 +2488,7 @@
       }
     },
     {
-      "position": 45,
+      "position": 46,
       "uid": "1305257078000927",
       "lastRankPublicId": "1186903",
       "name": "NotLysDoom",
@@ -2477,7 +2536,7 @@
       }
     },
     {
-      "position": 46,
+      "position": 47,
       "uid": "1257131454000866",
       "lastRankPublicId": "1171800",
       "name": "Bąbą Yąga",
@@ -2525,7 +2584,7 @@
       }
     },
     {
-      "position": 47,
+      "position": 48,
       "uid": "1417138315000843",
       "lastRankPublicId": "1186866",
       "name": "Abbaqq",
@@ -2573,7 +2632,7 @@
       }
     },
     {
-      "position": 48,
+      "position": 49,
       "uid": "1201605079000922",
       "lastRankPublicId": "1186895",
       "name": "琳密露",
@@ -2621,7 +2680,7 @@
       }
     },
     {
-      "position": 49,
+      "position": 50,
       "uid": "1055557385000931",
       "lastRankPublicId": "1186887",
       "name": "AlvaAlva",
@@ -2669,7 +2728,7 @@
       }
     },
     {
-      "position": 50,
+      "position": 51,
       "uid": "1432984853000841",
       "lastRankPublicId": "1186920",
       "name": "WarBlvckDoom",
@@ -2717,7 +2776,7 @@
       }
     },
     {
-      "position": 51,
+      "position": 52,
       "uid": "1855357023000922",
       "lastRankPublicId": "1186942",
       "name": "琳蜜露",
@@ -2765,7 +2824,7 @@
       }
     },
     {
-      "position": 52,
+      "position": 53,
       "uid": "1794888799000844",
       "lastRankPublicId": "1171853",
       "name": "ᏗᏝᎥ ᏗᏦ47",
@@ -2813,7 +2872,7 @@
       }
     },
     {
-      "position": 53,
+      "position": 54,
       "uid": "1619063466000856",
       "lastRankPublicId": "1171823",
       "name": "ĐŘΔǤØŇ",
@@ -2861,7 +2920,7 @@
       }
     },
     {
-      "position": 54,
+      "position": 55,
       "uid": "1199403914000927",
       "lastRankPublicId": "1186894",
       "name": "구름DongJa",
@@ -2909,7 +2968,7 @@
       }
     },
     {
-      "position": 55,
+      "position": 56,
       "uid": "1153137664000856",
       "lastRankPublicId": "1171788",
       "name": "abood201440",
@@ -2957,7 +3016,7 @@
       }
     },
     {
-      "position": 56,
+      "position": 57,
       "uid": "1916028325000844",
       "lastRankPublicId": "1171831",
       "name": "н ΣΔGLΣ н",
@@ -3014,7 +3073,7 @@
       }
     },
     {
-      "position": 57,
+      "position": 58,
       "uid": "1045906174000919",
       "lastRankPublicId": "1186876",
       "name": "MotDoom 이봉봉",
@@ -3062,7 +3121,64 @@
       }
     },
     {
-      "position": 58,
+      "position": 59,
+      "uid": "1432949252000866",
+      "lastRankPublicId": "1171810",
+      "name": "순수한 PureX",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "new member; game UID verified outside LastRank",
+        "initialSourceName": "순수한 PureX",
+        "previousTrackerName": null,
+        "avatarCorroborated": true,
+        "external": {
+          "lwserversUid": "1432949252000866",
+          "lwserversSnapshotAt": "2026-10-10T04:04:55.051Z",
+          "lwserversAvatarMatchesLastRank": true,
+          "lwserversHeroPower": 199676615,
+          "lwatlasUid": "1432949252000866",
+          "lwatlasLastSeenAt": "2026-10-10T04:43:34.875242",
+          "lwatlasAllianceAbbr": "RSCL"
+        }
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/87c5682c17090f9e6f722475a3e2885d.jpg",
+      "avatarFile": "avatars/rscl/1432949252000866-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-10T19:07:34.090Z",
+        "previousSourceUpdatedAt": "2026-10-08T03:31:25.957391+02:00",
+        "sourceUpdatedAt": "2026-10-10T21:07:32.654077+02:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-10",
+        "heroPower": 199676615,
+        "heroPowerDisplay": "199.68M",
+        "heroPowerLegacy": false,
+        "power": 309990528,
+        "powerDisplay": "309.99M",
+        "profession": "Engineer",
+        "killsApproximate": 10181275,
+        "killsDisplay": "10.18M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-10T09:12:00.887327+02:00"
+      }
+    },
+    {
+      "position": 60,
       "uid": "3174283120000844",
       "lastRankPublicId": "658796",
       "name": "Mr CORONA Vi PRO MaX",
@@ -3119,7 +3235,7 @@
       }
     },
     {
-      "position": 59,
+      "position": 61,
       "uid": "2944135611000844",
       "lastRankPublicId": "1171855",
       "name": "Mustafa6586",
@@ -3176,7 +3292,7 @@
       }
     },
     {
-      "position": 60,
+      "position": 62,
       "uid": "2480441935000856",
       "lastRankPublicId": "1171844",
       "name": "abo hana ammar",
@@ -3224,7 +3340,7 @@
       }
     },
     {
-      "position": 61,
+      "position": 63,
       "uid": "1205420305000866",
       "lastRankPublicId": "1171797",
       "name": "Uncle M F Irøh",
@@ -3272,7 +3388,7 @@
       }
     },
     {
-      "position": 62,
+      "position": 64,
       "uid": "1170729008000866",
       "lastRankPublicId": "1171908",
       "name": "D1kTąt0Ř",
@@ -3329,7 +3445,7 @@
       }
     },
     {
-      "position": 63,
+      "position": 65,
       "uid": "1080182622000927",
       "lastRankPublicId": "1186857",
       "name": "notFiiSSSHHHH",
@@ -3377,7 +3493,7 @@
       }
     },
     {
-      "position": 64,
+      "position": 66,
       "uid": "1356650581000927",
       "lastRankPublicId": "1186913",
       "name": "MMmmmmmmmmmmmmmmm",
@@ -3425,7 +3541,7 @@
       }
     },
     {
-      "position": 65,
+      "position": 67,
       "uid": "1543620585000927",
       "lastRankPublicId": "1186949",
       "name": "JoccDoom",
@@ -3473,7 +3589,7 @@
       }
     },
     {
-      "position": 66,
+      "position": 68,
       "uid": "1157385172000841",
       "lastRankPublicId": "1187095",
       "name": "RageAndHatred",
@@ -3521,7 +3637,7 @@
       }
     },
     {
-      "position": 67,
+      "position": 69,
       "uid": "2043162570000844",
       "lastRankPublicId": "1171834",
       "name": "MAD HAiDAR",
@@ -3578,7 +3694,7 @@
       }
     },
     {
-      "position": 68,
+      "position": 70,
       "uid": "1476079594000927",
       "lastRankPublicId": "1186925",
       "name": "ApacheJohn",
@@ -3626,7 +3742,7 @@
       }
     },
     {
-      "position": 69,
+      "position": 71,
       "uid": "1226135106000922",
       "lastRankPublicId": "1186862",
       "name": "PeTeNueng",
@@ -3674,7 +3790,7 @@
       }
     },
     {
-      "position": 70,
+      "position": 72,
       "uid": "1290070340000927",
       "lastRankPublicId": "1186901",
       "name": "Obsius",
@@ -3722,7 +3838,7 @@
       }
     },
     {
-      "position": 71,
+      "position": 73,
       "uid": "1451726686000927",
       "lastRankPublicId": "1186924",
       "name": "RollTide ᶜᵒᵈʸ",
@@ -3770,7 +3886,7 @@
       }
     },
     {
-      "position": 72,
+      "position": 74,
       "uid": "1157942274000844",
       "lastRankPublicId": "1171790",
       "name": "ＨＩＳＯＫΛ ss",
@@ -3818,7 +3934,7 @@
       }
     },
     {
-      "position": 73,
+      "position": 75,
       "uid": "1512437426000927",
       "lastRankPublicId": "1186868",
       "name": "moeDOOM",
@@ -3866,7 +3982,7 @@
       }
     },
     {
-      "position": 74,
+      "position": 76,
       "uid": "1810478589000863",
       "lastRankPublicId": "1171936",
       "name": "brucgjk",
@@ -3923,7 +4039,7 @@
       }
     },
     {
-      "position": 75,
+      "position": 77,
       "uid": "1136632270000866",
       "lastRankPublicId": "1171785",
       "name": "Draxulas Bee",
@@ -3971,7 +4087,7 @@
       }
     },
     {
-      "position": 76,
+      "position": 78,
       "uid": "1056579044000915",
       "lastRankPublicId": "1186888",
       "name": "NACHÓ",
@@ -4019,7 +4135,7 @@
       }
     },
     {
-      "position": 77,
+      "position": 79,
       "uid": "1543033399000841",
       "lastRankPublicId": "1186931",
       "name": "FRIJOLERO",
@@ -4067,7 +4183,7 @@
       }
     },
     {
-      "position": 78,
+      "position": 80,
       "uid": "1044133159000908",
       "lastRankPublicId": "1186875",
       "name": "StoopsBot Visor",
@@ -4115,7 +4231,7 @@
       }
     },
     {
-      "position": 79,
+      "position": 81,
       "uid": "1501336387000866",
       "lastRankPublicId": "1171928",
       "name": "Private Drax",
@@ -4172,7 +4288,7 @@
       }
     },
     {
-      "position": 80,
+      "position": 82,
       "uid": "1058234761000927",
       "lastRankPublicId": "1186889",
       "name": "Newsshooter",
@@ -4220,7 +4336,7 @@
       }
     },
     {
-      "position": 81,
+      "position": 83,
       "uid": "1255883238000927",
       "lastRankPublicId": "1186863",
       "name": "BoNuff",
@@ -4268,7 +4384,7 @@
       }
     },
     {
-      "position": 82,
+      "position": 84,
       "uid": "2655813878000856",
       "lastRankPublicId": "1171845",
       "name": "ŁひƑƑɎ",
@@ -4316,7 +4432,7 @@
       }
     },
     {
-      "position": 83,
+      "position": 85,
       "uid": "1395039702000922",
       "lastRankPublicId": "1186917",
       "name": "ackeng",
@@ -4364,7 +4480,7 @@
       }
     },
     {
-      "position": 84,
+      "position": 86,
       "uid": "2101680014000844",
       "lastRankPublicId": "1171837",
       "name": "Zyzom",
@@ -4421,7 +4537,7 @@
       }
     },
     {
-      "position": 85,
+      "position": 87,
       "uid": "1544524091000927",
       "lastRankPublicId": "1186870",
       "name": "Sappy Chappy",
@@ -4469,7 +4585,7 @@
       }
     },
     {
-      "position": 86,
+      "position": 88,
       "uid": "1201977595000919",
       "lastRankPublicId": "1186860",
       "name": "K TommB 이봉봉",
@@ -4517,7 +4633,7 @@
       }
     },
     {
-      "position": 87,
+      "position": 89,
       "uid": "1290641233000927",
       "lastRankPublicId": "1186902",
       "name": "PAYOBER",
@@ -4565,7 +4681,64 @@
       }
     },
     {
-      "position": 88,
+      "position": 90,
+      "uid": "1651568712000863",
+      "lastRankPublicId": "1171933",
+      "name": "Snedvriden2",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "new member; game UID verified outside LastRank",
+        "initialSourceName": "Snedvriden2",
+        "previousTrackerName": null,
+        "avatarCorroborated": true,
+        "external": {
+          "lwserversUid": "1651568712000863",
+          "lwserversSnapshotAt": "2026-10-10T04:04:55.051Z",
+          "lwserversAvatarMatchesLastRank": true,
+          "lwserversHeroPower": 192952061,
+          "lwatlasUid": "1651568712000863",
+          "lwatlasLastSeenAt": "2026-10-07T05:02:50.936408",
+          "lwatlasAllianceAbbr": "RSCL"
+        }
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/c2ca218332eec1e945776b275052ad0f.jpg",
+      "avatarFile": "avatars/rscl/1651568712000863-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-10T19:10:32.579Z",
+        "previousSourceUpdatedAt": "2026-10-08T03:41:02.569983+02:00",
+        "sourceUpdatedAt": "2026-10-10T21:10:31.142436+02:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-10",
+        "heroPower": 192961252,
+        "heroPowerDisplay": "192.96M",
+        "heroPowerLegacy": false,
+        "power": 268898501,
+        "powerDisplay": "268.9M",
+        "profession": "War Leader",
+        "killsApproximate": 16403747,
+        "killsDisplay": "16.4M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-10T09:12:00.887327+02:00"
+      }
+    },
+    {
+      "position": 91,
       "uid": "1036648524000927",
       "lastRankPublicId": "1186884",
       "name": "SᵒᵒᵒᵒʳʳʳY",
@@ -4613,7 +4786,7 @@
       }
     },
     {
-      "position": 89,
+      "position": 92,
       "uid": "1291563187000927",
       "lastRankPublicId": "1186952",
       "name": "S L E D",
@@ -4661,7 +4834,7 @@
       }
     },
     {
-      "position": 90,
+      "position": 93,
       "uid": "1553467250000927",
       "lastRankPublicId": "1186871",
       "name": "iaReChachi",
@@ -4709,7 +4882,7 @@
       }
     },
     {
-      "position": 91,
+      "position": 94,
       "uid": "1173790054000919",
       "lastRankPublicId": "1186859",
       "name": "Joydịvision",
@@ -4757,7 +4930,7 @@
       }
     },
     {
-      "position": 92,
+      "position": 95,
       "uid": "2857110336000836",
       "lastRankPublicId": "1187243",
       "name": "Maroush łŘ1ł",
@@ -4805,7 +4978,7 @@
       }
     },
     {
-      "position": 93,
+      "position": 96,
       "uid": "1269262662000927",
       "lastRankPublicId": "1186900",
       "name": "BadLui",
@@ -4853,7 +5026,7 @@
       }
     },
     {
-      "position": 94,
+      "position": 97,
       "uid": "1445201149000927",
       "lastRankPublicId": "1186922",
       "name": "I  Mystery  l",
@@ -4901,7 +5074,7 @@
       }
     },
     {
-      "position": 95,
+      "position": 98,
       "uid": "1074726330000927",
       "lastRankPublicId": "1186890",
       "name": "derpynoob",
@@ -4949,7 +5122,7 @@
       }
     },
     {
-      "position": 96,
+      "position": 99,
       "uid": "3021584716000844",
       "lastRankPublicId": "1171849",
       "name": "art 1",
@@ -4997,7 +5170,7 @@
       }
     },
     {
-      "position": 97,
+      "position": 100,
       "uid": "1305964827000862",
       "lastRankPublicId": "1161573",
       "name": "Special KK",
@@ -5045,7 +5218,7 @@
       }
     },
     {
-      "position": 98,
+      "position": 101,
       "uid": "1396777732000905",
       "lastRankPublicId": "1186865",
       "name": "AsrExpress",
@@ -5088,7 +5261,7 @@
       }
     },
     {
-      "position": 99,
+      "position": 102,
       "uid": "1331480819000927",
       "lastRankPublicId": "1186909",
       "name": "Zeflash",

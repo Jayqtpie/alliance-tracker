@@ -28,7 +28,7 @@ describe("captured RSCL roster", () => {
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
-    expect(after.members.filter((member) => member.active)).toHaveLength(99);
+    expect(after.members.filter((member) => member.active)).toHaveLength(102);
     expect(after.rosterImport).toBe(ROSTER_IMPORT);
     expect(importCapturedRoster(after)).toBe(after);
   });
@@ -36,13 +36,13 @@ describe("captured RSCL roster", () => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-10-11-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
-  it("imports 99 active members and local avatars without treating missing stats as zero", () => {
+  it("imports 102 active members and local avatars without treating missing stats as zero", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     const active = state.members.filter((member) => member.active);
-    expect(active).toHaveLength(99);
-    expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(99);
-    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(94);
-    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(99);
+    expect(active).toHaveLength(102);
+    expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(102);
+    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(97);
+    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(102);
     expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(0);
     for (const member of active) expect(existsSync(path.join(process.cwd(), "public", member.gameProfile!.avatarPath))).toBe(true);
     expect(active.find((member) => member.canonicalName === "Newsshooter")?.gameProfile?.heroPower).toBeNull();
@@ -91,8 +91,8 @@ describe("captured RSCL roster", () => {
   it.each([
     "lastrank-rscl-927-2026-10-11-v1",
     "lwservers-rscl-927-2026-10-10-v10",
-    "lastrank-rscl-927-2026-10-10-v2",
     "lastrank-rscl-927-2026-10-10-v3",
+    "lastrank-rscl-927-2026-10-10-v4",
   ])("retains an equal or newer capture across sources: %s", (rosterImport) => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport };
     expect(importCapturedRoster(state)).toBe(state);
@@ -129,7 +129,7 @@ describe("captured RSCL roster", () => {
     expect(retained.gameProfile?.capturedOn).toBe("2026-09-12");
     expect(after.snapshots).toBe(before.snapshots);
     expect(after.operations).toBe(before.operations);
-    expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(99);
+    expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(102);
   });
 
   it("carries the starting server onto fresh and retained profiles alike", () => {
