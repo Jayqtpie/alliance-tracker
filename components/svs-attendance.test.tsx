@@ -26,13 +26,20 @@ describe("SvsAttendanceView", () => {
     expect(html.indexOf("vs #931")).toBeLessThan(html.indexOf("vs #900"));
   });
 
-  it("shows alliance-wide attendance and average turnout across all fights", () => {
-    // present 3, absent 2, excused 1 over 2 fights of 3: 60%, 1.5 → 2 of 3 per fight
+  it("shows the attendance rate across all fights and turnout for the open fight alone", () => {
+    // Rate: present 3, absent 2, excused 1 over both fights = 60%. Turnout: the newest fight, 1 of its 3.
     const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={state} onSaved={() => {}} />);
     expect(html).toContain("Attendance");
     expect(html).toContain(">60%<");
-    expect(html).toContain(">2 / 3<");
     expect(html).toContain("across 2 fights");
+    const turnout = html.match(/data-stat="svs-turnout".*?<\/dd>/)![0];
+    expect(turnout).toContain(">1 / 3<");
+    expect(turnout).toContain("vs #931");
+  });
+
+  it("has no turnout before the first fight", () => {
+    const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={{ ...state, svsEvents: [] }} onSaved={() => {}} />);
+    expect(html.match(/data-stat="svs-turnout".*?<\/dd>/)![0]).toContain(">—<");
   });
 
   it("gives officers the three-way toggle and fight controls", () => {

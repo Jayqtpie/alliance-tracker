@@ -150,6 +150,8 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
     .sort((a, b) => a.member.canonicalName.localeCompare(b.member.canonicalName)) : [];
 
   const overall = overallAttendance(events);
+  // Turnout is per fight: the selected one, so each fight reads against its own roster.
+  const selectedCounts = selected ? attendanceCounts(selected) : undefined;
   const fightsLine = overall.fights ? t(overall.fights === 1 ? "across 1 fight" : "across {count} fights", { count: overall.fights }) : t("no fights recorded yet");
 
   // attendanceSummary already orders by rate; Array.sort is stable, so ties keep that order.
@@ -172,7 +174,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         </div>
         <div className="alliance-total" data-stat="svs-turnout">
           <dt><Users size={14} aria-hidden="true" />{t("Showed up")}</dt>
-          <dd><strong>{overall.averagePresent === null ? "—" : `${Math.round(overall.averagePresent)} / ${Math.round(overall.averageRoster)}`}</strong><span>{overall.fights ? t("average per fight") : fightsLine}</span></dd>
+          <dd><strong>{selectedCounts ? `${selectedCounts.present} / ${selectedCounts.total}` : "—"}</strong><span>{selected ? [shortDate(language, selected.date), selected.label].filter(Boolean).join(" · ") : fightsLine}</span></dd>
         </div>
       </dl>
     </section>

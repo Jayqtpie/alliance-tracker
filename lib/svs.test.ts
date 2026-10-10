@@ -110,11 +110,11 @@ describe("overallAttendance", () => {
       { id: "1", date: "2026-09-01", attendance: { a: "present", b: "absent", c: "excused", d: "present" } },
       { id: "2", date: "2026-09-08", attendance: { a: "present", b: "present" } },
     ]);
-    expect(totals).toEqual({ fights: 2, rate: 4 / 5, averagePresent: 2, averageRoster: 3 });
+    expect(totals).toEqual({ fights: 2, rate: 4 / 5 });
   });
 
   it("has no numbers before the first fight", () => {
-    expect(overallAttendance([])).toEqual({ fights: 0, rate: null, averagePresent: null, averageRoster: null });
+    expect(overallAttendance([])).toEqual({ fights: 0, rate: null });
   });
 });
 

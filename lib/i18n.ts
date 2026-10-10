@@ -272,7 +272,6 @@ export const translations = {
   "across 1 fight": ["en 1 combate", "sur 1 combat", "über 1 Kampf", "su 1 battaglia", "في معركة واحدة", "จากการต่อสู้ 1 ครั้ง", "共 1 场战斗", "전투 1회 기준", "1 savaş boyunca"],
   "across {count} fights": ["en {count} combates", "sur {count} combats", "über {count} Kämpfe", "su {count} battaglie", "في {count} معركة", "จากการต่อสู้ {count} ครั้ง", "共 {count} 场战斗", "전투 {count}회 기준", "{count} savaş boyunca"],
   "no fights recorded yet": ["aún no hay combates registrados", "aucun combat enregistré", "noch keine Kämpfe erfasst", "nessuna battaglia registrata", "لا توجد معارك مسجلة بعد", "ยังไม่มีการต่อสู้ที่บันทึกไว้", "尚未记录战斗", "아직 기록된 전투가 없습니다", "henüz kayıtlı savaş yok"],
-  "average per fight": ["promedio por combate", "moyenne par combat", "Durchschnitt pro Kampf", "media per battaglia", "المتوسط لكل معركة", "เฉลี่ยต่อการต่อสู้", "每场平均", "전투당 평균", "savaş başına ortalama"],
   "SvS view": ["Vista SvS", "Vue SvS", "SvS-Ansicht", "Vista SvS", "عرض SvS", "มุมมอง SvS", "SvS 视图", "SvS 보기", "SvS görünümü"],
   "Fight date": ["Fecha del combate", "Date du combat", "Kampfdatum", "Data della battaglia", "تاريخ المعركة", "วันที่ต่อสู้", "战斗日期", "전투 날짜", "Savaş tarihi"],
   "Fight label": ["Etiqueta del combate", "Libellé du combat", "Kampfbezeichnung", "Etichetta della battaglia", "تسمية المعركة", "ป้ายกำกับการต่อสู้", "战斗标签", "전투 라벨", "Savaş etiketi"],
