@@ -59,7 +59,7 @@ import { WeeklyPerformance } from "@/components/weekly-performance";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
-import { analyzeImport, analyzeLargeChanges, dedupeRows, memberPerformance, snapshotComparison } from "@/lib/tracker";
+import { analyzeImport, analyzeLargeChanges, captureCoverage, dedupeRows, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
 import { analyzeReview, missingRanks, requiresHumanReview, type ReviewRow } from "@/lib/review";
 import "./review-controls.css";
@@ -673,9 +673,7 @@ function Overview({
   const currentPage = Math.min(page, pageCount - 1);
   const visibleRows = rows.slice(currentPage * 10, currentPage * 10 + 10);
   const activeMembers = state.members.filter((member) => member.active);
-  const rankedIds = new Set(selected.entries.map((entry) => entry.memberId));
-  const coveredMembers = activeMembers.filter((member) => rankedIds.has(member.id)).length;
-  const missingMembers = activeMembers.filter((member) => !rankedIds.has(member.id)).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName));
+  const { expected: expectedMembers, covered: coveredMembers, missing: missingMembers } = captureCoverage(selected, state.snapshots, state.members);
   const reviewCount = selected.entries.filter(requiresHumanReview).length;
 
   return (
@@ -703,7 +701,7 @@ function Overview({
 
       <section className="metric-grid">
         <Metric icon={Activity} label={t("Alliance points")} value={compact(total)} detail={previousTotal === undefined ? t("Baseline capture") : t("{value} vs prior", { value: signed(total - previousTotal) })} tone={statusTone(previousTotal === undefined ? undefined : total - previousTotal)} />
-        <Metric icon={Users} label={t("Ranked members")} value={String(selected.entries.length)} detail={t("{count} of {total} active members captured", { count: coveredMembers, total: activeMembers.length })} />
+        <Metric icon={Users} label={t("Ranked members")} value={String(selected.entries.length)} detail={t("{count} of {total} active members captured", { count: coveredMembers, total: expectedMembers })} />
         <Metric icon={BarChart3} label={t("Average score")} value={compact(average)} detail={t("Median {value}", { value: compact(median) })} />
         <Metric icon={Shield} label={t("Top 25 share")} value={total ? `${Math.round(selected.entries.filter((entry) => entry.rank <= 25).reduce((sum, entry) => sum + entry.points, 0) / total * 100)}%` : "—"} detail={t("Of all recorded points")} />
       </section>
@@ -727,8 +725,8 @@ function Overview({
         <aside className="dashboard-insights">
         <section className="panel coverage-panel">
           <div className="panel-head"><div><p className="eyebrow">{t("Roster health")}</p><h3>{t("Capture coverage")}</h3></div><Users size={18} /></div>
-          <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${activeMembers.length ? coveredMembers / activeMembers.length * 100 : 0}%, var(--line) 0)` }}><strong>{activeMembers.length ? `${Math.round(coveredMembers / activeMembers.length * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {activeMembers.length}</span></strong><p>{t("active members on this board")}</p></div></div>
-          <p className="coverage-note">{activeMembers.length === 0 ? t("Add active members to track roster coverage.") : coveredMembers === activeMembers.length ? t("Every active member is accounted for.") : t("{count} active members are missing from this capture.", { count: activeMembers.length - coveredMembers })}</p>
+          <div className="coverage-body"><div className="coverage-ring" style={{ background: `conic-gradient(var(--blue) ${expectedMembers ? coveredMembers / expectedMembers * 100 : 0}%, var(--line) 0)` }}><strong>{expectedMembers ? `${Math.round(coveredMembers / expectedMembers * 100)}%` : "—"}</strong></div><div><strong>{coveredMembers}<span> / {expectedMembers}</span></strong><p>{t("active members on this board")}</p></div></div>
+          <p className="coverage-note">{activeMembers.length === 0 ? t("Add active members to track roster coverage.") : coveredMembers === expectedMembers ? t("Every active member is accounted for.") : t("{count} active members are missing from this capture.", { count: missingMembers.length })}</p>
           {missingMembers.length > 0 && <ul className="coverage-missing" aria-label={t("Missing from this capture")}>
             {missingMembers.slice(0, 10).map((member) => <li key={member.id}><button className="coverage-missing-name" onClick={() => onOpenMember(member.id)}>{member.canonicalName}</button></li>)}
             {missingMembers.length > 10 && <li className="coverage-missing-more">{t("+{count} more", { count: missingMembers.length - 10 })}</li>}

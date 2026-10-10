@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { analyzeImport, analyzeLargeChanges, dedupeRows, memberPerformance, mergeMemberIdentities, normalizeName, removeMemberFromRoster, snapshotComparison, weekStartFor } from "./tracker";
+import { analyzeImport, analyzeLargeChanges, captureCoverage, dedupeRows, memberPerformance, mergeMemberIdentities, normalizeName, removeMemberFromRoster, snapshotComparison, weekStartFor } from "./tracker";
 import type { Snapshot } from "./types";
 
 describe("leaderboard processing", () => {
@@ -135,5 +135,29 @@ describe("leaderboard processing", () => {
     expect(result.bestRank).toBe(1);
     expect(result.latest?.pointChange).toBe(20);
     expect(result.latest?.rankChange).toBe(1);
+  });
+});
+
+describe("captureCoverage", () => {
+  const member = (id: string, active = true) => ({ id, canonicalName: id, aliases: [], active });
+  const capture = (id: string, capturedAt: string, ids: string[]): Snapshot => ({
+    id, capturedAt, weekStart: capturedAt.slice(0, 10), dayLabel: "Saturday", status: "live", sourceType: "manual",
+    entries: ids.map((memberId, index) => ({ id: `${id}-${memberId}`, memberId, rank: index + 1, displayName: memberId, points: 100 - index, confidence: 1 })),
+  });
+  // "gap" is on the first capture but missed the second; "late" first shows up on the third;
+  // "joiner" has never been captured; "former" left after the first.
+  const members = [member("steady"), member("gap"), member("late"), member("joiner"), member("former", false)];
+  const first = capture("first", "2026-09-06T12:00:00Z", ["steady", "gap", "former"]);
+  const second = capture("second", "2026-09-13T12:00:00Z", ["steady"]);
+  const third = capture("third", "2026-09-20T12:00:00Z", ["steady", "gap", "late"]);
+  const snapshots = [third, first, second];
+
+  it("flags only active members already seen on that capture or an earlier one", () => {
+    expect(captureCoverage(second, snapshots, members)).toEqual({ expected: 2, covered: 1, missing: [members[1]] });
+  });
+
+  it("does not count joiners against captures from before they arrived", () => {
+    expect(captureCoverage(first, snapshots, members)).toEqual({ expected: 2, covered: 2, missing: [] });
+    expect(captureCoverage(third, snapshots, members)).toEqual({ expected: 3, covered: 3, missing: [] });
   });
 });

@@ -303,6 +303,22 @@ export function snapshotComparison(current: Snapshot, snapshots: Snapshot[]) {
   };
 }
 
+/**
+ * Which active members a capture should hold: those seen on it or an earlier capture. Someone who
+ * joined after it (first seen later, or not captured yet) is not missing from it, and former
+ * members stay on the captures they were part of. `joinedAt` can't decide this: many have none.
+ */
+export function captureCoverage(snapshot: Snapshot, snapshots: Snapshot[], members: Member[]) {
+  const seen = new Set(snapshots.filter((other) => other.capturedAt <= snapshot.capturedAt).flatMap((other) => other.entries.map((entry) => entry.memberId)));
+  const ranked = new Set(snapshot.entries.map((entry) => entry.memberId));
+  const expected = members.filter((member) => member.active && seen.has(member.id));
+  return {
+    expected: expected.length,
+    covered: expected.filter((member) => ranked.has(member.id)).length,
+    missing: expected.filter((member) => !ranked.has(member.id)).sort((a, b) => a.canonicalName.localeCompare(b.canonicalName)),
+  };
+}
+
 export function memberPerformance(member: Member, snapshots: Snapshot[]) {
   const eligibleSnapshots = [...snapshots]
     .filter((snapshot) => {
