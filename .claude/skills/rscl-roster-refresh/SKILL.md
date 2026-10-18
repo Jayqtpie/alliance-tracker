@@ -60,7 +60,8 @@ What the backup builder takes, and why:
 | Name, avatar | From the fresh row. |
 | Profession | From `pf[1]` on a fresh row (101 Engineer, 102 War Leader, as LastRank's `career_type`). It agreed with the tracker on 93 of 96 players on 2026-09-27, and the owner confirmed in-game that it was right where it disagreed with an older LastRank read. |
 | Rank | Always the tracker's. lwservers' `allianceRank` is empty or undated. |
-| Unmapped RSCL rows | Skipped (no tracker record with that UID); listed in `unresolvedIdentities` with `publicId: "uid:<uid>"`. |
+| Unmapped RSCL rows | Skipped (no tracker record with that UID); listed in `unresolvedIdentities` with `publicId: "uid:<uid>"`, unless added with `--identities` (see "Adding new members"). |
+| Rows for members an officer marked left | Not exported, listed under `changes.listedButMarkedLeft`. lwservers keeps stale RSCL rows for weeks (iaReChachi at 20 days, derpynoob at 62 on 2026-10-19), and exporting them would reactivate the member. Both builders apply this rule. |
 | Absent members | Kept active and unaltered, as with LastRank. |
 
 **A backup refresh never reaches main on its own.** The scheduled workflow pushes it to `roster-refresh/lwservers-<date>`; the owner reviews and merges it. In an interactive session, commit it to a branch and ask before anything goes to main. The builder also refuses to write if any exported UID or LastRank ID differs from the live record's, or if an active member is missing.
@@ -72,6 +73,10 @@ Marker and file names are unchanged (`lwservers-rscl-927-<date>-v1`, `rscl-roste
 Unresolved players (in the export's `unresolvedIdentities`) can be added when the owner asks. LastRank has no game UIDs, so take each one from **both** lwservers' 927 snapshot (`collect-lwservers.mjs`, keyed by UID) and lwatlas' `GET https://api.lwatlas.com/v1/warzones/927/bases` (send `Origin: https://lwatlas.com` and a browser User-Agent). Accept a UID only when both sources give exactly one RSCL player with that exact name and the same UID, the lwservers avatar is the same CDN path as LastRank's `photo_url`, and the UID's last three digits equal LastRank's `origin_server_id`.
 
 Write the accepted ones to `.data/lastrank-refresh-<date>/new-identities.json` as `[{ publicId, uid, name, evidence }]` and rebuild with `--identities` pointing at it. The builder adds them as fresh rows (recorded under `changes.addedToThisExport`, with the evidence in `identityEvidence.external`), and refuses an entry that is stale, outside RSCL on 927, mismatched on server suffix, already on the tracker, or not added. The importer creates them as `lw-<uid>` members. From the next refresh on they match by public ID like everyone else. Raise the active-count tests by the number added. First used on 2026-10-10, for nine joiners.
+
+`build-capture-lwservers.cjs --identities <file>` does the same from lwservers, for joiners LastRank does not list yet. Find each one's LastRank ID with `GET https://lastrank.fun/v1/search?q=<name>` and the player profile. A never-enriched LastRank profile can still show the player's old server and alliance (Abo Hussain on 2026-10-19), so judge it on name, avatar path and `origin_server_id`. The entry also needs `evidence.lastRankOriginServerId` and `evidence.lwatlasRank`, because lwservers has no dated rank. A joiner lwservers has not confirmed within 24 hours is added with the verified identity and empty stats, marked retained, for the next refresh to fill.
+
+Members created by name first (by the screenshot import, or an officer) have no game profile. Every builder refuses to run while one is active, since a capture cannot carry a member without a UID and the importer deactivates anyone a capture leaves out. Adding them with `--identities` fixes that: the importer attaches the UID to the one record without a profile whose name matches, so the name must be the exact source spelling. First used on 2026-10-19, for 17 joiners from the former Roku alliance.
 
 ## Undoing a refresh
 

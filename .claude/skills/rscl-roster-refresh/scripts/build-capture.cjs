@@ -42,7 +42,7 @@ async function avatar(p, uid, currentPath) {
 }
 
 (async () => {
-  const unresolved = [], members = [], membershipMismatches = [], leftPerProfile = [];
+  const unresolved = [], members = [], membershipMismatches = [], leftPerProfile = [], listedMarkedLeft = [];
   for (const entry of raw.alliance.members) {
     const publicId = String(entry.public_id), r = raw.profiles[publicId], p = r.data;
     // Identity is the verified LastRank public ID -> game UID link on the live record, never the name.
@@ -82,6 +82,8 @@ async function avatar(p, uid, currentPath) {
       leftPerProfile.push({ publicId, uid, name: p.name, sourceAlliance: p.alliance_abbr ?? null, trackerActive: current.active });
       continue;
     }
+    // An officer marked them left; the lagging list must not reactivate them. A return is recorded in the app.
+    if (!current.active) { listedMarkedLeft.push({ publicId, uid, name: p.name, trackerName: current.canonicalName }); continue; }
     if (r.freshnessPassed && !membershipOk) membershipMismatches.push({ publicId, uid, name: p.name, alliance: p.alliance_abbr, server: p.home_server_id });
     const fresh = r.freshnessPassed && membershipOk;
     const asset = fresh ? await avatar(p, uid, gp.avatarPath) : { url: priorRow?.avatarUrl ?? null, file: gp.avatarPath.replace(/^\//, ''), status: 'retained', changed: false };
@@ -112,6 +114,7 @@ async function avatar(p, uid, currentPath) {
   // User confirmed these are still in RSCL: keep them active with every tracker value unaltered.
   // Members whose own profile says they left are kept the same way; officers record departures.
   for (const m of [...absent, ...leftActive]) {
+    if (!m.gameProfile?.uid) throw new Error('Active tracker member without a game UID: ' + m.id + '; add them with --identities');
     const gp = m.gameProfile, priorRow = prior.members.find(x => x.uid === gp.uid), left = leftIds.has(gp.lastRankPublicId);
     members.push({
       position: members.length + 1, uid: gp.uid, lastRankPublicId: gp.lastRankPublicId, name: m.canonicalName, active: true, rank: gp.rank,
@@ -139,6 +142,7 @@ async function avatar(p, uid, currentPath) {
       addedToThisExport: addedRows.map(x => ({ uid: x.uid, name: x.name, lastRankPublicId: x.lastRankPublicId, basis: x.identityEvidence.basis })),
       absentFromSourceRoster: absent.map(m => ({ uid: m.gameProfile.uid, name: m.canonicalName, lastRankPublicId: m.gameProfile.lastRankPublicId, basis: 'User confirmed still in RSCL; kept active and unaltered' })),
       leftPerSourceProfile: leftPerProfile.map(x => ({ ...x, basis: x.trackerActive ? 'Listed, but their LastRank profile is outside RSCL; kept active and unaltered for an officer to mark left' : 'Listed, but their LastRank profile is outside RSCL and an officer already marked them left; not exported' })),
+      listedButMarkedLeft: listedMarkedLeft.map(x => ({ ...x, basis: 'Listed in RSCL, but an officer marked them left; not exported, so the import keeps them left' })),
       markedInactive: [],
       renamed: existingRows.filter(x => x.name !== liveOf(x.uid).canonicalName).map(x => ({ uid: x.uid, previous: liveOf(x.uid).canonicalName, current: x.name })),
       rankChanged: existingRows.filter(x => x.rank !== liveOf(x.uid).gameProfile.rank).map(x => ({ uid: x.uid, name: x.name, previous: liveOf(x.uid).gameProfile.rank, current: x.rank })),
@@ -155,6 +159,7 @@ async function avatar(p, uid, currentPath) {
     `${unresolved.length} listed players have no verified game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
     `${absent.length} active tracker members are absent from the LastRank alliance list (${absent.map(m => m.canonicalName).join(', ') || 'none'}); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.`,
     `${leftPerProfile.length} listed players have a fresh LastRank profile outside RSCL: ${leftPerProfile.map(x => `${x.name} (${x.sourceAlliance ?? 'no alliance'}; ${x.trackerActive ? 'kept active and unaltered for an officer to mark left' : 'already marked left, not exported'})`).join(', ') || 'none'}.`,
+    `${listedMarkedLeft.length} listed players were marked left by an officer and are not exported: ${listedMarkedLeft.map(x => x.trackerName).join(', ') || 'none'}.`,
     'LastRank profile update timestamps are distinct from ranking measurement timestamps. Missing values are unavailable, not zero.',
   ];
   if (new Set(capture.members.map(x => x.uid)).size !== members.length || new Set(capture.members.map(x => x.lastRankPublicId)).size !== members.length) throw new Error('Duplicate identities');
