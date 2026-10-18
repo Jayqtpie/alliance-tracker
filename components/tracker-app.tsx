@@ -890,6 +890,8 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
   const [bridgeJob, setBridgeJob] = useState<BridgeJobView>();
   const [bridgeLoadFailed, setBridgeLoadFailed] = useState(false);
   const [retryingBridge, setRetryingBridge] = useState(false);
+  // Why GitHub did not start the worker for the job just queued or retried; the job itself is saved.
+  const [dispatchError, setDispatchError] = useState("");
   const [discardingBridge, setDiscardingBridge] = useState(false);
   const [preparingVideo, setPreparingVideo] = useState(false);
   const [error, setError] = useState("");
@@ -1053,6 +1055,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       if (!response.ok) throw new Error(body.error || t("Could not create the extraction job."));
       setBridgeProgress(100);
       setBridgeJob(body.job as BridgeJobView);
+      setDispatchError(body.dispatchError ?? "");
       window.localStorage.setItem(bridgeJobStorageKey, jobId);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t("Could not queue this capture for extraction."));
@@ -1061,8 +1064,9 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     }
   }
 
+  // Requeues a failed job, or asks GitHub again to start a job that is still waiting.
   async function retryBridgeExtraction() {
-    if (!bridgeJob || bridgeJob.status !== "failed") return;
+    if (!bridgeJob || (bridgeJob.status !== "failed" && !(bridgeJob.status === "pending" && dispatchError))) return;
     setRetryingBridge(true);
     setError("");
     try {
@@ -1074,6 +1078,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || t("Could not retry this extraction."));
       receiveBridgeJob(body.job as BridgeJobView);
+      setDispatchError(body.dispatchError ?? "");
       window.localStorage.setItem(bridgeJobStorageKey, bridgeJob.id);
     } catch (reason) {
       setError(reason instanceof Error ? reason.message : t("Could not retry this extraction."));
@@ -1098,6 +1103,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
       loadedBridgeJobId.current = undefined;
       setBridgeJob(undefined);
       setBridgeLoadFailed(false);
+      setDispatchError("");
       setRows([]);
       setWarnings([]);
       setFiles([]);
@@ -1204,11 +1210,12 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
           {ocrConfigured && <button className="button primary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={extract}>{busy ? t(files.length === 1 ? "Reading 1 frame…" : "Reading {count} frames…", { count: files.length }) : <><Sparkles size={16} /> {t("Extract with cloud API")}</>}</button>}
           {bridgeConfigured && <button className="button secondary wide" disabled={!files.length || busy || queueing || preparingVideo} onClick={queueForLocalCodex}>{queueing ? t("Uploading frames… {percent}%", { percent: bridgeProgress }) : <><Cloud size={16} /> {t("Extract with Claude")}</>}</button>}
           {queueing && <div className="bridge-progress" aria-label={t("Upload {percent}% complete", { percent: bridgeProgress })}><span style={{ width: `${bridgeProgress}%` }} /></div>}
-          {bridgeJob && <div className={`bridge-status ${bridgeJob.status}`}>
-            <strong>{bridgeJob.status === "pending" ? t("Waiting for Claude") : bridgeJob.status === "processing" ? t("Claude is reading the frames") : bridgeJob.status === "completed" ? t("{count} rows ready", { count: bridgeJob.rows?.length || 0 }) : t("Bridge extraction failed")}</strong>
-            <span>{bridgeJob.status === "pending" ? t("Extraction starts automatically, usually within a few minutes.") : bridgeJob.status === "processing" ? t("Attempt {count} · this page updates automatically.", { count: bridgeJob.attempts }) : bridgeJob.status === "completed" ? t("Loaded automatically below. Review the rows before publishing.") : bridgeJob.error}</span>
+          {bridgeJob && <div className={`bridge-status ${bridgeJob.status === "pending" && dispatchError ? "failed" : bridgeJob.status}`}>
+            <strong>{bridgeJob.status === "pending" ? t(dispatchError ? "Extraction did not start" : "Waiting for Claude") : bridgeJob.status === "processing" ? t("Claude is reading the frames") : bridgeJob.status === "completed" ? t("{count} rows ready", { count: bridgeJob.rows?.length || 0 }) : t("Bridge extraction failed")}</strong>
+            <span>{bridgeJob.status === "pending" ? (dispatchError ? `${dispatchError} ${t("The upload is kept. Start the extraction again once this is fixed.")}` : t("Extraction starts automatically, usually within a few minutes.")) : bridgeJob.status === "processing" ? t("Attempt {count} · this page updates automatically.", { count: bridgeJob.attempts }) : bridgeJob.status === "completed" ? t("Loaded automatically below. Review the rows before publishing.") : bridgeJob.error}</span>
             {bridgeJob.status === "completed" && bridgeLoadFailed && <button className="button secondary wide" onClick={loadBridgeResults}><FileJson size={16} /> {t("Retry loading rows")}</button>}
             {bridgeJob.status === "failed" && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {t(retryingBridge ? "Requeueing…" : "Retry retained upload")}</button>}
+            {bridgeJob.status === "pending" && dispatchError && <button className="button secondary wide" disabled={retryingBridge} onClick={retryBridgeExtraction}><Sparkles size={16} /> {t(retryingBridge ? "Starting…" : "Start extraction again")}</button>}
             {(bridgeJob.status === "pending" || bridgeJob.status === "failed") && <button className="button ghost wide" disabled={discardingBridge || retryingBridge} onClick={discardImport}><Trash2 size={16} /> {t(discardingBridge ? "Discarding…" : "Discard")}</button>}
           </div>}
           {!bridgeConfigured && <p className="bridge-unavailable">{t("Claude extraction appears after private Blob storage and a worker secret are configured.")}</p>}

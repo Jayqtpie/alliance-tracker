@@ -23,6 +23,13 @@ const createSchema = z.object({
 });
 const retrySchema = z.object({ id: z.string().uuid() });
 
+// The job is saved either way; the page shows why GitHub did not start the worker.
+async function dispatchFor(jobId: string) {
+  const { error } = await triggerBridgeExtraction();
+  if (error) console.error(`Bridge job ${jobId}: ${error}`);
+  return error;
+}
+
 export async function GET(request: Request) {
   if (!(await isAdmin())) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
   const queue = await getBridgeQueue();
@@ -65,8 +72,7 @@ export async function POST(request: Request) {
       if (jobs.some((item) => item.id === job.id)) throw new BridgeValidationError("This bridge job already exists.");
       jobs.push(job);
     });
-    await triggerBridgeExtraction();
-    return NextResponse.json({ job: bridgeJobView(job) });
+    return NextResponse.json({ job: bridgeJobView(job), dispatchError: await dispatchFor(job.id) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not queue this capture." }, { status: 409 });
   }
@@ -77,9 +83,10 @@ export async function PATCH(request: Request) {
   const parsed = retrySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0]?.message }, { status: 400 });
   try {
-    const job = await mutateBridgeQueue((jobs) => retryBridgeJob(jobs, parsed.data.id));
-    await triggerBridgeExtraction();
-    return NextResponse.json({ job: bridgeJobView(job) });
+    // A job still waiting only needs the worker started again; it keeps its place and files.
+    const waiting = (await getBridgeQueue()).jobs.find((item) => item.id === parsed.data.id && item.status === "pending");
+    const job = waiting ?? await mutateBridgeQueue((jobs) => retryBridgeJob(jobs, parsed.data.id));
+    return NextResponse.json({ job: bridgeJobView(job), dispatchError: await dispatchFor(job.id) });
   } catch (error) {
     return NextResponse.json({ error: error instanceof BridgeValidationError ? error.message : "Could not retry this bridge job." }, { status: 409 });
   }
