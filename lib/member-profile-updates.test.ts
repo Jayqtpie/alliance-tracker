@@ -1,12 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { INITIAL_STATE } from "./seed";
-import { importCapturedRoster } from "./roster-import";
+import { applyCapturedRoster, importCapturedRoster } from "./roster-import";
 import { applyMemberProfileUpdates } from "./member-profile-updates";
 import update from "./data/rscl-profile-updates-2026-09-10.json";
+import previousCapture from "./data/rscl-roster-2026-10-18.json";
+
+// JoccDoom (1543620585000927) left before the current capture. Importing the previous capture
+// first keeps them as a departed member with a profile, as on the live tracker.
+const importedState = () => importCapturedRoster(applyCapturedRoster(structuredClone(INITIAL_STATE),
+  previousCapture as unknown as Parameters<typeof applyCapturedRoster>[1], "lwservers-rscl-927-2026-10-18-v1"));
 
 describe("targeted LastRank identity updates", () => {
   it("retains merged identities, manual stats and history and applies only once", () => {
-    const before = importCapturedRoster(structuredClone(INITIAL_STATE));
+    const before = importedState();
     before.memberProfileUpdates = undefined;
     for (const row of update.members) {
       const member = before.members.find((member) => member.gameProfile?.uid === row.uid)!;
@@ -45,7 +51,7 @@ describe("targeted LastRank identity updates", () => {
     expect(applyMemberProfileUpdates(duplicate)).toBe(duplicate);
   });
   it("does not replay the older names or avatars after a newer roster capture", () => {
-    const state = importCapturedRoster(structuredClone(INITIAL_STATE));
+    const state = importedState();
     expect(applyMemberProfileUpdates(state)).toBe(state);
     expect(state.members.find((member) => member.gameProfile?.uid === "1543620585000927")?.canonicalName).toBe("JoccDoom");
   });
