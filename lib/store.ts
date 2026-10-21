@@ -3,7 +3,7 @@ import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
-import { readDocument, redisEnabled, setString, writeDocumentIfVersion } from "@/lib/redis";
+import { readDocument, readDocumentAndField, redisEnabled, setField, setString, writeDocumentIfVersion } from "@/lib/redis";
 import { createEmptyState } from "@/lib/alliance";
 import type { TrackerState } from "@/lib/types";
 import { hydrateOperations } from "@/lib/operations";
@@ -74,10 +74,23 @@ function assertVercelStorageConfigured() {
   }
 }
 
+/** What the Blob state file holds once the data has moved to Redis. */
+interface MovedMarker { movedTo: "redis"; movedAt: string; backup: string | null }
+
+export class StorageMovedError extends Error {
+  constructor(movedAt: string) {
+    const date = movedAt.slice(0, 10);
+    super(redisEnabled()
+      ? `The tracker's data moved to Redis on ${date}, but the connected Redis database is empty. Reconnect the original database, or restore a backup with scripts/restore-state.mjs.`
+      : `The tracker's data moved to Upstash Redis on ${date}, but this deployment has no Redis connection. Reconnect Upstash Redis in Vercel and redeploy.`);
+  }
+}
+
 async function getBlobState() {
   const result = await get(statePath, { access: "private", useCache: false, token: blobToken() });
   if (!result || result.statusCode !== 200) return null;
-  const stored = JSON.parse(await new Response(result.stream).text()) as TrackerState;
+  const stored = JSON.parse(await new Response(result.stream).text()) as TrackerState | MovedMarker;
+  if ("movedTo" in stored) throw new StorageMovedError(stored.movedAt);
   const payload = { ...stored, operations: hydrateOperations(stored.operations) };
   return { payload };
 }
@@ -86,16 +99,48 @@ export function storageMode() {
   return redisEnabled() ? "redis" : blobEnabled() ? "vercel-blob" : "local";
 }
 
+const blobRetiredField = "blobRetiredAt";
+
 // The first read after Redis is connected carries the Blob state over, so nothing is lost in the move.
-// The Blob copy is left as it was: it is the fallback if Redis is disconnected, and goes stale from here.
-async function getRedisState(initialState: TrackerState): Promise<TrackerState> {
-  const stored = await readDocument<TrackerState>(stateKey);
-  if (stored) return { ...stored, operations: hydrateOperations(stored.operations) };
+async function seedRedisState(initialState: TrackerState): Promise<TrackerState> {
   const seed = (blobEnabled() ? (await getBlobState())?.payload : null) ?? initialState;
   if (await writeDocumentIfVersion(stateKey, null, seed)) return seed;
   const seededByAnotherRequest = await readDocument<TrackerState>(stateKey);
-  if (seededByAnotherRequest) return { ...seededByAnotherRequest, operations: hydrateOperations(seededByAnotherRequest.operations) };
+  if (seededByAnotherRequest) return seededByAnotherRequest;
   throw new Error("Could not initialise Redis state.");
+}
+
+// Once Redis holds the data, the Blob copy is backed up and replaced by a marker. A deployment that
+// loses its Redis connection then refuses to load, instead of quietly serving and saving a frozen copy.
+async function retireBlobState() {
+  const movedAt = new Date().toISOString();
+  let backup: string | null = null;
+  try {
+    const current = await getBlobState();
+    if (current) {
+      backup = `${backupDir}/tracker-state-v${current.payload.version}-before-redis.json`;
+      await put(backup, JSON.stringify(current.payload), { access: "private", token: blobToken(), contentType: "application/json", addRandomSuffix: false, allowOverwrite: true });
+    }
+  } catch (error) {
+    // An earlier attempt already left the marker but could not record it.
+    if (!(error instanceof StorageMovedError)) throw error;
+    await setField(stateKey, blobRetiredField, movedAt);
+    return;
+  }
+  const marker: MovedMarker = { movedTo: "redis", movedAt, backup };
+  await put(statePath, JSON.stringify(marker), { access: "private", token: blobToken(), contentType: "application/json", addRandomSuffix: false, allowOverwrite: true });
+  await setField(stateKey, blobRetiredField, movedAt);
+}
+
+async function getRedisState(initialState: TrackerState): Promise<TrackerState> {
+  const { value: stored, field: retired } = await readDocumentAndField<TrackerState>(stateKey, blobRetiredField);
+  const state = stored ?? await seedRedisState(initialState);
+  if (!retired && blobEnabled()) {
+    // Redis already has the data, so a failure here (Blob blocked, say) must not take the app down.
+    try { await retireBlobState(); }
+    catch (error) { console.error("Could not retire the Blob copy of the tracker state; retrying on the next load.", error); }
+  }
+  return { ...state, operations: hydrateOperations(state.operations) };
 }
 
 async function getStoredState(): Promise<TrackerState> {
@@ -197,7 +242,7 @@ async function saveState(state: TrackerState) {
 export async function getState(): Promise<TrackerState> {
   try { return await loadState(); }
   catch (error) {
-    if (error instanceof StateConflictError) throw error;
+    if (error instanceof StateConflictError || error instanceof StorageMovedError) throw error;
     throw new Error("Could not load shared tracker data. Please try again.");
   }
 }
@@ -205,7 +250,7 @@ export async function getState(): Promise<TrackerState> {
 export async function setState(state: TrackerState) {
   try { return await saveState(state); }
   catch (error) {
-    if (error instanceof StateConflictError) throw error;
+    if (error instanceof StateConflictError || error instanceof StorageMovedError) throw error;
     throw new Error("Could not save shared tracker data. Please try again.");
   }
 }

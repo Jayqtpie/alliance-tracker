@@ -40,6 +40,16 @@ export async function readDocument<T>(key: string): Promise<T | null> {
   return json === null ? null : JSON.parse(json) as T;
 }
 
+/** The document and one other field of its hash, in a single command. */
+export async function readDocumentAndField<T>(key: string, field: string): Promise<{ value: T | null; field: string | null }> {
+  const [json, extra] = await command<[string | null, string | null]>(["HMGET", key, "json", field]);
+  return { value: json === null ? null : JSON.parse(json) as T, field: extra };
+}
+
+export async function setField(key: string, field: string, value: string) {
+  await command(["HSET", key, field, value]);
+}
+
 /** False when the stored version is not `expected` (null: when the document already exists). */
 export async function writeDocumentIfVersion(key: string, expected: number | null, value: { version: number }) {
   const written = await command<number>(["EVAL", WRITE_IF_VERSION, "1", key, expected === null ? "" : String(expected), JSON.stringify(value), String(value.version)]);

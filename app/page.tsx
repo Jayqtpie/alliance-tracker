@@ -4,7 +4,7 @@ import { TrackerApp } from "@/components/tracker-app";
 import { getAccessRole } from "@/lib/auth";
 import { bridgeConfigured } from "@/lib/bridge-auth";
 import { openAiExtractionEnabled } from "@/lib/extract";
-import { getState, storageMode } from "@/lib/store";
+import { getState, storageMode, StorageMovedError } from "@/lib/store";
 
 import { stateForRole } from "@/lib/state-view";
 
@@ -16,7 +16,7 @@ export default async function Home() {
   let state;
   try {
     state = await getState();
-  } catch {
+  } catch (error) {
     return (
       <main className="login-shell">
         <section className="login-panel storage-error-panel">
@@ -24,7 +24,7 @@ export default async function Home() {
           <p className="eyebrow">TEMPORARILY UNAVAILABLE</p>
           <h1>Shared storage could not load</h1>
           <p className="muted">
-            Your login succeeded, but the tracker could not load its data. Please try again shortly.
+            {error instanceof StorageMovedError ? error.message : "Your login succeeded, but the tracker could not load its data. Please try again shortly."}
           </p>
           <p className="login-note">
             Contact the alliance administrator if the problem continues.

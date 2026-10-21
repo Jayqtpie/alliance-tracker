@@ -87,6 +87,14 @@ describe("private Blob state writes", () => {
     expect(statePuts()).toHaveLength(1);
   });
 
+  it("refuses to load or save a Blob copy retired by the move to Redis", async () => {
+    const marker = { movedTo: "redis", movedAt: "2026-10-21T00:00:00.000Z", backup: null };
+    vi.mocked(get).mockImplementation(async () => ({ statusCode: 200, stream: new Response(JSON.stringify(marker)).body! }) as Awaited<ReturnType<typeof get>>);
+    await expect(getState()).rejects.toThrow("no Redis connection");
+    await expect(setState(stored)).rejects.toThrow("no Redis connection");
+    expect(put).not.toHaveBeenCalled();
+  });
+
   it("rejects a stale officer save without overwriting newer content", async () => {
     const stale = structuredClone(stored);
     stored.version += 1;
