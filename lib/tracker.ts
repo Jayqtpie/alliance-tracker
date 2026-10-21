@@ -2,6 +2,7 @@ import type { ExtractedRow, Member, RankingEntry, Snapshot, SvsAttendance, Track
 
 import { rankGaps } from "./rank-gaps";
 import { translate, type Translator } from "./i18n";
+import { mergeStormMember, removeMember } from "./storms";
 
 // Warnings default to English so server code and tests read plainly; the UI passes its translator.
 const englishTranslator: Translator = (phrase, values) => translate("en", phrase, values);
@@ -228,6 +229,7 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
       attendance[primaryId] = kept && SVS_RANK[kept] >= SVS_RANK[moved] ? kept : moved;
       return { ...event, attendance };
     }) } : {}),
+    ...(state.stormWeeks ? { stormWeeks: mergeStormMember(state.stormWeeks, duplicateId, primaryId) } : {}),
   };
 }
 
@@ -241,6 +243,7 @@ export function removeMemberFromRoster(state: TrackerState, memberId: string): T
       ...event,
       attendance: Object.fromEntries(Object.entries(event.attendance).filter(([id]) => id !== memberId)),
     })) } : {}),
+    ...(state.stormWeeks ? { stormWeeks: state.stormWeeks.map((week) => removeMember(week, memberId)) } : {}),
   };
 }
 

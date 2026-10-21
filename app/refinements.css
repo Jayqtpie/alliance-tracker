@@ -334,3 +334,5 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 .reports-tabs-wrap { max-width: 1600px; padding-inline: 30px; }
 @media (min-width: 761px) and (max-width: 1200px) { .reports-tabs-wrap { padding-inline: 24px; } }
 @media (max-width: 760px) { .reports-tabs-wrap { padding-inline: 16px; } }
+/* Four Members tabs don't fit side by side on a narrow phone: icon above label instead. */
+@media (max-width: 440px) { .members-tabs button { flex-direction: column; gap: 3px; min-height: 48px; padding: 4px 2px; } }

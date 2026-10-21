@@ -1,0 +1,58 @@
+.alliance-total[data-stat="storm-starters"] { --total-colour: var(--green); }
+.alliance-total[data-stat="storm-parked"] { --total-colour: var(--orange); }
+
+.storm-new { grid-template-columns: 170px minmax(0, 200px) auto; }
+.storm-new select { min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+
+/* Two teams side by side on wide screens; each lists its starters, then its subs. */
+.storm-teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+.storm-team { min-width: 0; }
+.storm-team + .storm-team { border-left: 1px solid var(--line); }
+.storm-team h4, .storm-bench h4 { display: flex; align-items: center; gap: 7px; margin: 0; padding: 12px 16px 4px; font-size: 14px; }
+.storm-group h5 { display: flex; align-items: center; gap: 7px; margin: 0; padding: 8px 16px 6px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+.storm-bench { border-top: 1px solid var(--line); }
+.storm-bench h4 { padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+
+.storm-week .svs-member-list > li { flex-wrap: wrap; row-gap: 6px; }
+.storm-week .svs-member { flex: 1 1 120px; flex-wrap: wrap; }
+.storm-power { flex-shrink: 0; min-width: 44px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+/* Inline beside the name when the column has room, a second line of their own when it doesn't. */
+.storm-controls { display: flex; flex: 0 1 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; margin-left: auto; }
+.storm-controls .svs-toggle button { padding: 5px 8px; }
+/* Fixed: a select otherwise sizes to its longest option, "Remove from lineup". */
+.storm-controls select { width: 104px; }
+.storm-week select { max-width: 100%; padding: 5px 7px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 11px; }
+
+.storm-toggle button[aria-pressed="true"][data-option="played"] { background: var(--green); color: #fff; }
+.storm-toggle button[aria-pressed="true"][data-option="missed"] { background: var(--red); color: #fff; }
+.storm-toggle button[aria-pressed="true"][data-option="excused"] { background: var(--orange); color: #fff; }
+.storm-pill[data-option="played"] { color: var(--green); }
+.storm-pill[data-option="missed"] { color: var(--red); }
+.storm-pill[data-option="excused"] { color: var(--orange); }
+.storm-pill[data-option="unrecorded"] { color: var(--muted); }
+
+.storm-park { display: inline-flex; align-items: center; justify-content: center; padding: 5px 7px; border: 1px solid var(--panel-border); border-radius: 8px; background: var(--surface); color: var(--muted); font-size: 11px; font-weight: 600; }
+.storm-park:hover { background: var(--row-hover); color: var(--ink); }
+.storm-park[aria-pressed="true"] { border-color: var(--orange); background: var(--orange); color: #fff; }
+
+.storm-flag { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border: 1px solid currentColor; border-radius: 999px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.storm-flag[data-flag="parked"] { color: var(--orange); }
+.storm-flag[data-flag="due"] { color: var(--cyan); }
+.storm-bench li[data-state="parked"] .alliance-avatar, .storm-bench li[data-state="parked"] .member-nameplate { opacity: .55; }
+
+@media (max-width: 760px) {
+  .storm-new { grid-template-columns: minmax(0, 1fr); }
+  .storm-teams { grid-template-columns: minmax(0, 1fr); }
+  .storm-team + .storm-team { border-top: 1px solid var(--line); border-left: 0; }
+  .storm-team h4, .storm-bench h4 { padding-inline: 12px; }
+  .storm-group h5 { padding-inline: 12px; }
+  /* Name on one line, every control on the next: toggle, park and seat side by side. */
+  .storm-controls { flex: 1 1 100%; flex-wrap: nowrap; }
+  .storm-controls .storm-toggle { flex: 1 1 auto; width: auto; }
+  .storm-controls .svs-toggle button { padding: 9px 4px; }
+  .storm-controls select { flex: 0 0 96px; width: 96px; }
+  .storm-park { align-self: stretch; }
+  /* Seven columns leave no room for names: drop Picked and Excused, keep what decides next week. */
+  .storm-summary th:nth-child(2), .storm-summary td:nth-child(2), .storm-summary th:nth-child(5), .storm-summary td:nth-child(5) { display: none; }
+  .storm-summary th:last-child, .storm-summary td:last-child { width: 76px; }
+}

@@ -83,6 +83,13 @@ describe("roster duplicate cleanup", () => {
     state.svsEvents = [{ id: "e", date: "2026-09-01", attendance: { keep: "present", duplicate: "absent" } }];
     expect(removeMemberFromRoster(state, "duplicate").svsEvents![0].attendance).toEqual({ keep: "present" });
   });
+
+  it("moves storm slots to the kept member and drops a removed member's slots", () => {
+    const state = fixture();
+    state.stormWeeks = [{ id: "w", kind: "desert", date: "2026-10-02", slots: [{ memberId: "duplicate", team: "B", role: "sub", result: "played" }] }];
+    expect(mergeMemberIdentities(state, "keep", "duplicate").stormWeeks![0].slots).toEqual([{ memberId: "keep", team: "B", role: "sub", result: "played" }]);
+    expect(removeMemberFromRoster(state, "duplicate").stormWeeks![0].slots).toEqual([]);
+  });
 });
 
 describe("multilingual identity matching", () => {

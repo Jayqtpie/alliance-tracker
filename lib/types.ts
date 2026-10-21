@@ -152,6 +152,31 @@ export interface SvsEvent {
   attendance: Record<string, SvsAttendance>;
 }
 
+export type StormTeam = "A" | "B";
+export type StormSlotRole = "starter" | "sub";
+export type StormResult = "played" | "missed" | "excused";
+
+export interface StormSlot {
+  memberId: string;
+  team: StormTeam;
+  role: StormSlotRole;
+  /** Unset until an officer records it. */
+  result?: StormResult;
+  /** Officer override of the parking rule for the next week; unset follows the rule. */
+  park?: boolean;
+}
+
+/** One weekly Desert Storm or Canyon Storm: the lineup across both teams and how each slot went. */
+export interface StormWeek {
+  id: string;
+  kind: StormType;
+  /** Battle date, YYYY-MM-DD. */
+  date: string;
+  /** Final: the week can be unlocked, but not edited or deleted while locked. */
+  locked?: boolean;
+  slots: StormSlot[];
+}
+
 export interface TrackerState {
   version: number;
   rosterImport?: string;
@@ -169,6 +194,7 @@ export interface TrackerState {
   operations?: OperationsState;
   pairings?: PairingRow[];
   svsEvents?: SvsEvent[];
+  stormWeeks?: StormWeek[];
   updatedAt: string;
 }
 
