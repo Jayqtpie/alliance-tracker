@@ -77,14 +77,16 @@ A PC can still act as the queue worker instead of GitHub Actions. Put `BRIDGE_UR
 
 OpenAI screenshot extraction is still in the code but switched off (`openAiExtractionEnabled` in `lib/extract.ts`).
 
-## Vercel Blob setup
+## Storage setup
 
 1. Create or import this GitHub repository as a Vercel project.
-2. Open the project's **Storage** tab and create a **private Blob store**.
-3. Connect the store to the project. Vercel adds a read-write token automatically; depending on the store name this may be `BLOB_READ_WRITE_TOKEN` or `BLOB1_READ_WRITE_TOKEN`.
+2. Open the project's **Storage** tab, add **Upstash Redis** from the Marketplace (the free plan is enough) and connect it to the project. Vercel adds `KV_REST_API_URL` and `KV_REST_API_TOKEN`.
+3. In the same tab, create a **private Blob store** and connect it. Vercel adds `BLOB_READ_WRITE_TOKEN` (or `BLOB1_READ_WRITE_TOKEN`, depending on the store name).
 4. Add the remaining environment variables below and deploy.
 
-The tracker uses one small private JSON blob for shared alliance data and the same store for five-day screenshot retention. There is no database schema or separate Supabase project to maintain. Writes use the blob ETag to detect conflicting officer edits instead of silently overwriting them.
+Redis holds the shared alliance data, the screenshot queue and the backups taken before each data import. Each document is saved with a version check, so a conflicting officer edit is refused instead of silently overwriting another. Blob holds only screenshots, for five days. Without Redis the tracker falls back to keeping its data in Blob as well, which uses up Blob's monthly operation allowance quickly. When Redis is first connected, the first page load copies the Blob data into Redis. The Blob copy is then left untouched and goes out of date.
+
+To undo a data import, run `node scripts/restore-state.mjs` with the two `KV_*` variables set to list the backups, then pass the backup key to restore it.
 
 ## Vercel environment variables
 
@@ -95,6 +97,7 @@ The tracker uses one small private JSON blob for shared alliance data and the sa
 | `SESSION_SECRET` | Required random signing secret, at least 32 characters; no default |
 | `OPENAI_API_KEY` | Unused while OpenAI extraction is switched off |
 | `OPENAI_VISION_MODEL` | Unused while OpenAI extraction is switched off |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Added by Vercel when Upstash Redis is connected (`UPSTASH_REDIS_REST_*` also work) |
 | `BLOB_READ_WRITE_TOKEN` / `BLOB1_READ_WRITE_TOKEN` | Added by Vercel when the private Blob store is connected |
 | `CRON_SECRET` | Protects the scheduled cleanup endpoint |
 | `BRIDGE_SECRET` | Authenticates the queue worker (GitHub Actions or PC); falls back to `OFFICER_PASSCODE` |

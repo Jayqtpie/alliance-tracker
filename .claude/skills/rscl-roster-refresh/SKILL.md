@@ -80,9 +80,9 @@ Members created by name first (by the screenshot import, or an officer) have no 
 
 ## Undoing a refresh
 
-The tracker is one private Blob, `app-data/tracker-state.json`, and the first production load after a deploy applies the new capture to it in place. Reverting the commit alone does **not** undo that. Before any import writes, `lib/store.ts` copies the current state to `app-data/backups/tracker-state-v<version>-before-<marker>.json`; if that copy fails, the import is skipped. Imports run only on the production deployment (or a local server), never on previews, since a preview may share the store.
+The tracker is one Redis document, `tracker-state` (Upstash, since 2026-10-21; before that the private Blob `app-data/tracker-state.json`). The first production load after a deploy applies the new capture to it in place. Reverting the commit alone does **not** undo that. Before any import writes, `lib/store.ts` copies the current state to the Redis key `tracker-state:backup:tracker-state-v<version>-before-<marker>.json`. If that copy fails, the import is skipped. Backups taken before the move are still in Blob under `app-data/backups/`. Imports run only on the production deployment (or a local server), never on previews, since a preview may share the store.
 
-To roll back: revert the refresh commit on main first (otherwise the next load re-applies it), then replace `app-data/tracker-state.json` in the project's Blob store with the matching backup (download it from Vercel → Storage and upload it under that pathname, or copy it with the Vercel CLI). Officer edits made after the refresh are lost, so check the backup's version first.
+To roll back: revert the refresh commit on main first (otherwise the next load re-applies it), then restore the matching backup with `node scripts/restore-state.mjs <backup-key>`, with `KV_REST_API_URL` and `KV_REST_API_TOKEN` set from the Upstash console. Run it with no argument to list the backups. Officer edits made after the refresh are lost, so check the backup's version first.
 
 ## Tests that need new facts each refresh
 

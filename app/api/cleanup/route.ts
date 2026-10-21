@@ -16,10 +16,11 @@ export async function GET(request: Request) {
   const now = Date.now();
   const expired = state.uploads.filter((upload) => new Date(upload.expiresAt).getTime() <= now);
   await removeUploads(expired);
-  const next = await setState({
+  // Most days nothing has expired; skip the write rather than spend a storage operation on it.
+  const next = expired.length ? await setState({
     ...state,
     uploads: state.uploads.filter((upload) => !expired.some((item) => item.id === upload.id)),
-  });
+  }) : state;
   const bridgeJobsDeleted = await removeExpiredBridgeJobs(now);
   return NextResponse.json({ deleted: expired.length, remaining: next.uploads.length, bridgeJobsDeleted });
 }

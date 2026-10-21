@@ -3,6 +3,7 @@ import { BlobPreconditionFailedError, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
+import { readDocument, redisEnabled, setString, writeDocumentIfVersion } from "@/lib/redis";
 import { createEmptyState } from "@/lib/alliance";
 import type { TrackerState } from "@/lib/types";
 import { hydrateOperations } from "@/lib/operations";
@@ -17,6 +18,7 @@ import { applyPairingImport } from "@/lib/pairings-import";
 const stateFile = path.join(process.cwd(), ".data", "tracker-state.json");
 const statePath = "app-data/tracker-state.json";
 const backupDir = "app-data/backups";
+const stateKey = "tracker-state";
 
 // Every one-shot data import, in the order each one's guards expect. Each returns
 // the state unchanged once it has been applied, so an unchanged result is the
@@ -39,6 +41,10 @@ function importsAllowed() {
 // request may already have imported, and copying then would back up the imported state.
 async function backupState(state: TrackerState, incoming: string | undefined) {
   const name = `tracker-state-v${state.version}-before-${incoming ?? "import"}.json`;
+  if (redisEnabled()) {
+    await setString(`${stateKey}:backup:${name}`, JSON.stringify(state));
+    return;
+  }
   if (blobEnabled()) {
     await put(`${backupDir}/${name}`, JSON.stringify(state), {
       access: "private",
@@ -61,9 +67,9 @@ export class StateConflictError extends Error {
 }
 
 function assertVercelStorageConfigured() {
-  if (process.env.VERCEL && !blobEnabled()) {
+  if (process.env.VERCEL && !redisEnabled() && !blobEnabled()) {
     throw new Error(
-      "No Vercel Blob read-write token is available in this deployment. Connect a private Blob store to the project and redeploy.",
+      "No shared storage is configured in this deployment. Connect Upstash Redis (or a private Blob store) to the project and redeploy.",
     );
   }
 }
@@ -77,12 +83,25 @@ async function getBlobState() {
 }
 
 export function storageMode() {
-  return blobEnabled() ? "vercel-blob" : "local";
+  return redisEnabled() ? "redis" : blobEnabled() ? "vercel-blob" : "local";
+}
+
+// The first read after Redis is connected carries the Blob state over, so nothing is lost in the move.
+// The Blob copy is left as it was: it is the fallback if Redis is disconnected, and goes stale from here.
+async function getRedisState(initialState: TrackerState): Promise<TrackerState> {
+  const stored = await readDocument<TrackerState>(stateKey);
+  if (stored) return { ...stored, operations: hydrateOperations(stored.operations) };
+  const seed = (blobEnabled() ? (await getBlobState())?.payload : null) ?? initialState;
+  if (await writeDocumentIfVersion(stateKey, null, seed)) return seed;
+  const seededByAnotherRequest = await readDocument<TrackerState>(stateKey);
+  if (seededByAnotherRequest) return { ...seededByAnotherRequest, operations: hydrateOperations(seededByAnotherRequest.operations) };
+  throw new Error("Could not initialise Redis state.");
 }
 
 async function getStoredState(): Promise<TrackerState> {
   assertVercelStorageConfigured();
   const initialState = createEmptyState();
+  if (redisEnabled()) return getRedisState(initialState);
   if (blobEnabled()) {
     const current = await getBlobState();
     if (current) return current.payload;
@@ -142,6 +161,10 @@ async function loadState(): Promise<TrackerState> {
 async function saveState(state: TrackerState) {
   assertVercelStorageConfigured();
   const next = { ...state, version: state.version + 1, updatedAt: new Date().toISOString() };
+  if (redisEnabled()) {
+    if (!(await writeDocumentIfVersion(stateKey, state.version, next))) throw new StateConflictError();
+    return next;
+  }
   if (blobEnabled()) {
     // The delivery response's ETag is not the control-plane write token.
     // Read metadata BEFORE content so a write during/after the read cannot

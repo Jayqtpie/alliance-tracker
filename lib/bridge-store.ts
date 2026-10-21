@@ -3,9 +3,11 @@ import { del, get, head, put } from "@vercel/blob";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { blobEnabled, blobToken } from "@/lib/blob";
+import { readDocument, redisEnabled, writeDocumentIfVersion } from "@/lib/redis";
 import type { BridgeJob, BridgeQueue } from "@/lib/bridge-types";
 
 const queuePath = "app-data/bridge-queue.json";
+const queueKey = "bridge-queue";
 const queueFile = path.join(process.cwd(), ".data", "bridge-queue.json");
 const emptyQueue = (): BridgeQueue => ({ version: 1, jobs: [], updatedAt: new Date(0).toISOString() });
 
@@ -26,13 +28,30 @@ async function getLocalQueue() {
   }
 }
 
+// A queue still in Blob when Redis is connected carries over, so a job in flight is not lost.
+async function getRedisQueue() {
+  const stored = await readDocument<BridgeQueue>(queueKey);
+  if (stored) return { queue: stored, exists: true };
+  return { queue: (blobEnabled() ? (await getBlobQueue())?.payload : null) || emptyQueue(), exists: false };
+}
+
 export async function getBridgeQueue(): Promise<BridgeQueue> {
+  if (redisEnabled()) return (await getRedisQueue()).queue;
   if (blobEnabled()) return (await getBlobQueue())?.payload || emptyQueue();
   return getLocalQueue();
 }
 
 export async function mutateBridgeQueue<T>(mutator: (jobs: BridgeJob[]) => T): Promise<T> {
   for (let attempt = 0; attempt < 5; attempt += 1) {
+    if (redisEnabled()) {
+      const { queue, exists } = await getRedisQueue();
+      const jobs = structuredClone(queue.jobs);
+      const value = mutator(jobs);
+      if (JSON.stringify(jobs) === JSON.stringify(queue.jobs)) return value;
+      const next: BridgeQueue = { version: queue.version + 1, jobs, updatedAt: new Date().toISOString() };
+      if (await writeDocumentIfVersion(queueKey, exists ? queue.version : null, next)) return value;
+      continue;
+    }
     const current = blobEnabled() ? await getBlobQueue() : null;
     const queue = current?.payload || (blobEnabled() ? emptyQueue() : await getLocalQueue());
     const jobs = structuredClone(queue.jobs);

@@ -530,8 +530,8 @@ export function TrackerApp({
           ))}
         </nav>
         <div className="sidebar-foot">
-          <div className={`system-chip ${storageMode === "vercel-blob" ? "online" : "local"}`}>
-            <Cloud size={14} /> {t(storageMode === "vercel-blob" ? "Shared data online" : "Local preview data")}
+          <div className={`system-chip ${storageMode !== "local" ? "online" : "local"}`}>
+            <Cloud size={14} /> {t(storageMode !== "local" ? "Shared data online" : "Local preview data")}
           </div>
           <button className="nav-item" onClick={logout}><LogOut size={18} /> {t("Sign out")}</button>
           <LanguageSelector />
