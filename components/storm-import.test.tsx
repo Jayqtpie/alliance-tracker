@@ -38,6 +38,17 @@ describe("StormImportReview", () => {
   });
 });
 
+describe("StormImportReview rebuild option", () => {
+  it("points at the rebuild when most of the mail sits outside the team's lineup", () => {
+    const mostlyOutside = review([row(1, "Kael"), row(2, "Tamsin"), row(3, "Zed")]);
+    expect(mostlyOutside).toMatch(/<label class="storm-import-rebuild" data-suggested="">/);
+    expect(mostlyOutside).toContain("Most of these players aren&#x27;t in team B&#x27;s lineup here.");
+    const mostlyIn = review([row(1, "Kael"), row(2, "Roen")]);
+    expect(mostlyIn).toMatch(/<label class="storm-import-rebuild">/);
+    expect(mostlyIn).toContain("Rebuild team B from these results");
+  });
+});
+
 describe("StormLineupsView screenshot import", () => {
   const state: TrackerState = { version: 1, alliance: { name: "Test", tag: "TST", server: "S1" }, members, snapshots: [], uploads: [], stormWeeks: [week], updatedAt: "2026-10-18T00:00:00Z" };
   const render = (canManage: boolean, bridgeConfigured: boolean, override: Partial<TrackerState> = {}) =>
@@ -48,5 +59,11 @@ describe("StormLineupsView screenshot import", () => {
     expect(render(false, true)).not.toContain("Import results from screenshots");
     expect(render(true, false)).not.toContain("Import results from screenshots");
     expect(render(true, true, { stormWeeks: [{ ...week, locked: true }] })).not.toContain("Import results from screenshots");
+  });
+
+  it("says where the import appears before the first week exists", () => {
+    expect(render(true, true, { stormWeeks: [] })).toContain("Add a week above, then import its results from screenshots there.");
+    expect(render(false, true, { stormWeeks: [] })).not.toContain("import its results");
+    expect(render(true, false, { stormWeeks: [] })).not.toContain("import its results");
   });
 });

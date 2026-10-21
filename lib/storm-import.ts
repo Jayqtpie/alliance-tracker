@@ -59,6 +59,29 @@ export function planStormImport(week: StormWeek, team: StormTeam, rows: Extracte
 }
 
 /**
+ * For a week whose lineup was not the one played (a battle from before the app had a lineup, say):
+ * the team becomes exactly the members in the results, all played, the top 20 by points starting.
+ * Anyone listed who sits elsewhere moves over; the team's other members leave the week unrecorded,
+ * since with no real lineup there is no telling who missed. More than 30 listed comes back in `unplaced`.
+ */
+export function rebuildTeamFromResults(week: StormWeek, team: StormTeam, plan: StormImportPlan) {
+  if (plan.blocked) throw new Error("Match or leave out every row before applying the results.");
+  const listed = plan.rows
+    .filter((entry) => entry.member && entry.status !== "skipped")
+    .sort((a, b) => b.row.points - a.row.points || a.row.rank - b.row.rank)
+    .map((entry) => entry.member!.id);
+  const leaving = new Set(listed);
+  let next: StormWeek = { ...week, slots: week.slots.filter((slot) => slot.team !== team && !leaving.has(slot.memberId)) };
+  const unplaced: string[] = [];
+  for (const memberId of listed) {
+    const role = seatsTaken(next, team, "starter") < STORM_CAPACITY.starter ? "starter" : seatsTaken(next, team, "sub") < STORM_CAPACITY.sub ? "sub" : undefined;
+    if (!role) { unplaced.push(memberId); continue; }
+    next = setResult(placeMember(next, memberId, team, role), memberId, "played");
+  }
+  return { week: next, unplaced };
+}
+
+/**
  * Records the plan on the week. `add` holds the members from outside this team that an officer
  * confirmed fought for it: each moves into the team, as a sub when there is room, and is played.
  * `remove` holds missing starters who were never in the game's lineup (it differed from the app's):

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyStormImport, planStormImport } from "./storm-import";
+import { applyStormImport, planStormImport, rebuildTeamFromResults } from "./storm-import";
 import type { ExtractedRow, Member, StormSlot, StormWeek } from "./types";
 
 const member = (id: string, name = id, extra: Partial<Member> = {}): Member => ({ id, canonicalName: name, aliases: [], active: true, ...extra });
@@ -110,5 +110,38 @@ describe("applying a storm import", () => {
     const { week: next, unplaced } = applyStormImport(full, "B", plan, ["bench"]);
     expect(unplaced).toEqual(["bench"]);
     expect(next.slots.some((item) => item.memberId === "bench")).toBe(false);
+  });
+});
+
+describe("rebuilding a team from its results", () => {
+  const pointsRow = (rank: number, displayName: string, points: number): ExtractedRow => ({ rank, displayName, points, confidence: 0.98 });
+
+  it("makes the team exactly the listed members, all played, the higher scorers starting", () => {
+    const lineup = week([slot("zoth", "sub"), slot("parrot"), slot("goblin", "sub"), slot("other", "starter", "A"), slot("bench", "starter", "A")]);
+    const plan = planStormImport(lineup, "B", [pointsRow(1, "Zothargirl", 900), pointsRow(2, "Team A starter", 800)], members);
+    const { week: next, unplaced } = rebuildTeamFromResults(lineup, "B", plan);
+    expect(unplaced).toEqual([]);
+    expect(next.slots).toEqual([
+      slot("bench", "starter", "A"),
+      slot("zoth", "starter", "B", { result: "played" }),
+      slot("other", "starter", "B", { result: "played" }),
+    ]);
+  });
+
+  it("fills 20 starters by points, then 10 subs, and reports anyone past 30", () => {
+    const many = Array.from({ length: 31 }, (_, index) => member(`p${index}`));
+    const rows = many.map((value, index) => pointsRow(index + 1, value.id, 1000 - index));
+    const plan = planStormImport(week([]), "A", rows, many);
+    const { week: next, unplaced } = rebuildTeamFromResults(week([]), "A", plan);
+    expect(next.slots.filter((value) => value.role === "starter").map((value) => value.memberId)).toEqual(many.slice(0, 20).map((value) => value.id));
+    expect(next.slots.filter((value) => value.role === "sub")).toHaveLength(10);
+    expect(unplaced).toEqual(["p30"]);
+  });
+
+  it("leaves out skipped rows and refuses while a row is unmatched", () => {
+    const rows = [pointsRow(1, "Zothargirl", 900), pointsRow(2, "Nobody we know", 800)];
+    expect(() => rebuildTeamFromResults(week([]), "B", planStormImport(week([]), "B", rows, members))).toThrow();
+    const { week: next } = rebuildTeamFromResults(week([]), "B", planStormImport(week([]), "B", rows, members, { 2: null }));
+    expect(next.slots.map((value) => value.memberId)).toEqual(["zoth"]);
   });
 });

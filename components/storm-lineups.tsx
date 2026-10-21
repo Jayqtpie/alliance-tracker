@@ -202,7 +202,9 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
               </button>
             </li>;
           })}
-        </ul> : <p className="svs-empty">{t("No weeks recorded yet.")}</p>}
+        </ul> : <p className="svs-empty">{t("No weeks recorded yet.")}
+          {/* The screenshot import lives inside a week, so say where it will appear. */}
+          {canManage && bridgeConfigured && <> {t("Add a week above, then import its results from screenshots there.")}</>}</p>}
       </section>
 
       {selected && counts && <section className="panel svs-checklist storm-week">

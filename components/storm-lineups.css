@@ -57,6 +57,13 @@
 .storm-import-review { display: grid; gap: 10px; padding: 10px 12px; border: 1px solid var(--panel-border); border-radius: 8px; }
 .storm-import-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; }
 .storm-import-summary span { color: var(--muted); font-size: 12px; }
+.storm-import-rebuild { display: flex; align-items: flex-start; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 7px; font-size: 12px; }
+/* Fixed: the long description beside it otherwise squeezes the box to a sliver. */
+.storm-import-rebuild input { flex: 0 0 auto; margin-top: 2px; }
+.storm-import-rebuild span { display: grid; gap: 2px; min-width: 0; }
+.storm-import-rebuild small { color: var(--muted); font-size: 11px; }
+/* The mail mostly sits outside the lineup: point the officer at the rebuild. */
+.storm-import-rebuild[data-suggested] { border-color: var(--orange); background: color-mix(in srgb, var(--orange) 8%, transparent); }
 .storm-import-rows { display: grid; margin: 0; padding: 0; list-style: none; }
 .storm-import-rows > li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 7px 0; border-top: 1px solid var(--line); }
 .storm-import-rank { flex: 0 0 22px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }

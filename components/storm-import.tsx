@@ -4,7 +4,7 @@ import { Check, Cloud, LoaderCircle, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { uploadBridgeFrames } from "@/lib/bridge-upload";
-import { applyStormImport, planStormImport, type StormImportRow, type StormRowChoices, type StormRowStatus } from "@/lib/storm-import";
+import { applyStormImport, planStormImport, rebuildTeamFromResults, type StormImportRow, type StormRowChoices, type StormRowStatus } from "@/lib/storm-import";
 import { STORM_TEAMS } from "@/lib/storms";
 import type { Member, StormTeam, StormWeek } from "@/lib/types";
 import { useLanguage } from "./language-selector";
@@ -142,15 +142,21 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
   const [choices, setChoices] = useState<StormRowChoices>({});
   const [add, setAdd] = useState<Set<string>>(() => new Set());
   const [remove, setRemove] = useState<Set<string>>(() => new Set());
+  // For a week whose lineup here wasn't the one played: the team becomes the results instead.
+  const [rebuild, setRebuild] = useState(false);
   const plan = planStormImport(week, team, job.rows ?? [], members, choices);
   // Worked out on every change, so Apply is only offered when everyone ticked has a seat.
-  const preview = plan.blocked ? undefined : applyStormImport(week, team, plan, add, remove);
+  const preview = plan.blocked ? undefined : rebuild ? rebuildTeamFromResults(week, team, plan) : applyStormImport(week, team, plan, add, remove);
   const unplaced = preview?.unplaced ?? [];
   const byId = new Map(members.map((member) => [member.id, member]));
   const roster = [...members].sort((a, b) => Number(b.active) - Number(a.active) || a.canonicalName.localeCompare(b.canonicalName));
   const names = (ids: string[]) => ids.map((id) => byId.get(id)?.canonicalName ?? id).join(", ");
   const otherTeam = STORM_TEAMS.find((value) => value !== team)!;
-  const adding = plan.rows.filter((entry) => (entry.status === "other-team" || entry.status === "not-in-lineup") && add.has(entry.member!.id)).length;
+  const outsiders = plan.rows.filter((entry) => entry.status === "other-team" || entry.status === "not-in-lineup");
+  const adding = outsiders.filter((entry) => add.has(entry.member!.id)).length;
+  // Most of the mail outside the lineup means the lineup here was probably not the one played.
+  const suggestRebuild = outsiders.length > plan.played.length;
+  const seated = (role: "starter" | "sub") => preview?.week.slots.filter((slot) => slot.team === team && slot.role === role).length ?? 0;
 
   function choose(rank: number, value: string) {
     setChoices((current) => ({ ...current, [rank]: value === "skip" ? null : value }));
@@ -168,8 +174,10 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
 
   function rowItem({ row, status, member, suggestion }: StormImportRow) {
     const value = status === "skipped" ? "skip" : member?.id ?? "";
-    const outside = (status === "other-team" || status === "not-in-lineup") && member;
-    return <li key={row.rank} data-status={status}>
+    const outside = !rebuild && (status === "other-team" || status === "not-in-lineup") && member;
+    // A rebuild seats everyone matched, so where the lineup had them no longer matters.
+    const shown: StormRowStatus = rebuild && (status === "other-team" || status === "not-in-lineup") ? "team" : status;
+    return <li key={row.rank} data-status={shown}>
       <span className="storm-import-rank">{row.rank}</span>
       <span className="storm-import-read"><strong>{row.displayName}</strong><small>{row.points.toLocaleString()}</small></span>
       <span className="storm-import-match">
@@ -179,7 +187,7 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
           {roster.map((candidate) => <option key={candidate.id} value={candidate.id}>{candidate.active ? candidate.canonicalName : t("{name} (left)", { name: candidate.canonicalName })}</option>)}
           <option value="skip">{t("Leave this row out")}</option>
         </select>
-        <span className="storm-flag" data-flag={status}>{t(STATUS_LABELS[status], { team: otherTeam })}</span>
+        <span className="storm-flag" data-flag={shown}>{t(STATUS_LABELS[shown], { team: otherTeam })}</span>
         {member && !member.active && <span className="storm-flag" data-flag="left">{t("Left the alliance")}</span>}
         {outside && <label className="storm-import-add"><input type="checkbox" checked={add.has(member.id)} onChange={() => toggle(setAdd, member.id)} />{t("Add to team {team} as played", { team })}</label>}
       </span>
@@ -189,10 +197,19 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
   return <div className="storm-import-review">
     <div className="storm-import-summary">
       <strong>{t("Team {team} results", { team })}</strong>
-      <span>{t("{rows} in the results · {played} played · {missed} starters missed", { rows: plan.rows.length, played: plan.played.length + adding, missed: plan.missed.filter((memberId) => !remove.has(memberId)).length })}</span>
+      <span>{rebuild
+        ? t("{rows} in the results · {starters} starters and {subs} subs, all played · nobody missed", { rows: plan.rows.length, starters: seated("starter"), subs: seated("sub") })
+        : t("{rows} in the results · {played} played · {missed} starters missed", { rows: plan.rows.length, played: plan.played.length + adding, missed: plan.missed.filter((memberId) => !remove.has(memberId)).length })}</span>
     </div>
+    <label className="storm-import-rebuild" data-suggested={suggestRebuild && !rebuild ? "" : undefined}>
+      <input type="checkbox" checked={rebuild} onChange={(event) => setRebuild(event.target.checked)} />
+      <span><strong>{t("Rebuild team {team} from these results", { team })}</strong>
+        <small>{t(suggestRebuild
+          ? "Most of these players aren't in team {team}'s lineup here. If this lineup wasn't the one played, rebuild it: everyone listed plays, the top 20 by points start, the team's other members go back to the bench, and nobody is marked missed."
+          : "For a week whose lineup here wasn't the one played: everyone listed plays, the top 20 by points start, the team's other members go back to the bench, and nobody is marked missed.", { team })}</small></span>
+    </label>
     <ol className="storm-import-rows">{plan.rows.map(rowItem)}</ol>
-    {plan.missed.length > 0 && <div className="storm-import-missed">
+    {!rebuild && plan.missed.length > 0 && <div className="storm-import-missed">
       <h5>{t("Team {team} starters not in the results", { team })}</h5>
       <p>{t("They are marked missed and parked next week. Tick anyone who was never in the game's lineup: they leave this week instead, and free their seat.")}</p>
       <ul>{plan.missed.map((memberId) => <li key={memberId}>
@@ -201,7 +218,9 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
       </li>)}</ul>
     </div>}
     {plan.blocked && <p className="form-error-box" role="alert">{t("Pick a member, or leave the row out, for every row marked No match or Matched twice.")}</p>}
-    {unplaced.length > 0 && <p className="form-error-box" role="alert">{t("No free seat in team {team} for: {names}. Tick a starter who was never in the game lineup, or remove someone from the team.", { team, names: names(unplaced) })}</p>}
+    {unplaced.length > 0 && <p className="form-error-box" role="alert">{rebuild
+      ? t("A team has 30 seats. Leave out a row to make room for: {names}.", { names: names(unplaced) })
+      : t("No free seat in team {team} for: {names}. Tick a starter who was never in the game lineup, or remove someone from the team.", { team, names: names(unplaced) })}</p>}
     <div className="storm-import-actions">
       <button type="button" className="button ghost" onClick={onDiscard}><Trash2 size={14} />{t("Discard")}</button>
       <button type="button" className="button primary" disabled={!preview || unplaced.length > 0} onClick={apply}><Check size={14} />{t("Apply to lineup")}</button>
