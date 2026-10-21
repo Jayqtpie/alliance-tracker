@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  createStormWeek, lineupProblem, lockedWeekViolation, markStartersPlayed, mergeStormMember, parkedFor, parksNextWeek,
-  placeMember, previousWeek, removeMember, setPark, setResult, STORM_SLOTS, stormSummary, suggestLineup, weekCounts,
+  createStormWeek, lineupProblem, lockedWeekViolation, markStartersPlayed, mergeStormMember, nextStormDate, parkedFor,
+  parksNextWeek, placeMember, previousWeek, removeMember, setPark, setResult, STORM_SLOTS, stormDateInWeek, stormDayProblem,
+  stormKindOn, stormSummary, suggestLineup, weekCounts,
 } from "./storms";
 import type { Member, StormSlot, StormWeek } from "./types";
 
@@ -112,6 +113,32 @@ describe("lineup edits", () => {
     expect(lineupProblem(week("w", "2026-10-02", [slot("a"), slot("a", "sub")]))).toMatch(/twice/);
     const subs = Array.from({ length: 11 }, (_, index) => slot(`s${index}`, "sub", "B"));
     expect(lineupProblem(week("w", "2026-10-02", subs))).toBe("Team B has more than 10 subs.");
+  });
+});
+
+describe("battle days", () => {
+  it("runs Canyon Storm on Thursdays and Desert Storm on Fridays", () => {
+    expect(stormKindOn("2026-10-22")).toBe("canyon");
+    expect(stormKindOn("2026-10-23")).toBe("desert");
+    expect(stormKindOn("2026-10-21")).toBeUndefined();
+    expect(stormDayProblem("canyon", "2026-10-22")).toBeUndefined();
+    expect(stormDayProblem("canyon", "2026-10-23")).toBe("Canyon Storm runs on Thursdays.");
+    expect(lineupProblem(week("w", "2026-10-22", []))).toBe("Desert Storm runs on Fridays.");
+    expect(lineupProblem(week("w", "2026-10-22", [], { kind: "canyon" }))).toBeUndefined();
+  });
+
+  it("swaps a date to the other battlefield's day in the same Monday-to-Sunday week", () => {
+    expect(stormDateInWeek("canyon", "2026-10-23")).toBe("2026-10-22");
+    expect(stormDateInWeek("desert", "2026-10-22")).toBe("2026-10-23");
+    expect(stormDateInWeek("canyon", "2026-10-25")).toBe("2026-10-22");
+    expect(stormDateInWeek("desert", "2026-10-19")).toBe("2026-10-23");
+    expect(stormDateInWeek("canyon", "2026-12-31")).toBe("2026-12-31");
+  });
+
+  it("finds the next battle on or after a date", () => {
+    expect(nextStormDate("2026-10-21")).toBe("2026-10-22");
+    expect(nextStormDate("2026-10-23")).toBe("2026-10-23");
+    expect(nextStormDate("2026-10-24")).toBe("2026-10-29");
   });
 });
 

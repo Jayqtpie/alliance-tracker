@@ -3,6 +3,9 @@
 
 .storm-new { grid-template-columns: 170px minmax(0, 200px) auto; }
 .storm-new select { min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+.storm-new input[aria-invalid="true"] { border-color: var(--red); }
+.storm-new-day { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 11px; }
+.storm-new-day[data-problem] { color: var(--red); font-weight: 600; }
 
 /* Two teams side by side on wide screens; each lists its starters, then its subs. */
 .storm-teams { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }

@@ -6,7 +6,8 @@ import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormTyp
 import { memberStats } from "@/lib/member-stats";
 import {
   createStormWeek, markStartersPlayed, parkedFor, parksNextWeek, placeMember, previousWeek, removeMember, seatsTaken,
-  setPark, setResult, STORM_CAPACITY, STORM_KINDS, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, stormSummary, weekCounts,
+  setPark, setResult, STORM_CAPACITY, STORM_KINDS, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDateInWeek,
+  stormDayProblem, stormKindOn, stormSummary, weekCounts,
 } from "@/lib/storms";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
@@ -44,8 +45,9 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
   const [mode, setMode] = useState<"weeks" | "summary">("weeks");
   const [selectedId, setSelectedId] = useState<string>();
   const [query, setQuery] = useState("");
-  const [newDate, setNewDate] = useState(() => new Date().toLocaleDateString("en-CA"));
-  const [newKind, setNewKind] = useState<StormType>(() => [...(state.stormWeeks ?? [])].sort((a, b) => b.date.localeCompare(a.date))[0]?.kind ?? "desert");
+  const [newDate, setNewDate] = useState(() => nextStormDate(new Date().toLocaleDateString("en-CA")));
+  const [newKind, setNewKind] = useState<StormType>(() => stormKindOn(newDate) ?? "desert");
+  const newDateProblem = newDate ? stormDayProblem(newKind, newDate) : undefined;
   const [confirm, setConfirm] = useState<"delete" | "unlock" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -185,11 +187,24 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
       <section className="panel svs-fights">
         <div className="panel-head"><h3>{t("Weeks")} <span className="count-chip">{allWeeks.length}</span></h3></div>
         {canManage && <form className="svs-new storm-new" onSubmit={(event) => { event.preventDefault(); addWeek(); }}>
-          <input type="date" aria-label={t("Battle date")} required value={newDate} onChange={(event) => setNewDate(event.target.value)} />
-          <select aria-label={t("Battlefield")} value={newKind} onChange={(event) => setNewKind(event.target.value as StormType)}>
+          <input type="date" aria-label={t("Battle date")} required value={newDate} aria-invalid={Boolean(newDateProblem)} aria-describedby="storm-new-day"
+            onChange={(event) => {
+              const date = event.target.value;
+              setNewDate(date);
+              const kind = date ? stormKindOn(date) : undefined;
+              if (kind) setNewKind(kind);
+            }} />
+          <select aria-label={t("Battlefield")} value={newKind} onChange={(event) => {
+            const kind = event.target.value as StormType;
+            setNewKind(kind);
+            if (newDate) setNewDate(stormDateInWeek(kind, newDate));
+          }}>
             {STORM_KINDS.map((kind) => <option key={kind} value={kind}>{t(KIND_LABELS[kind])}</option>)}
           </select>
-          <button type="submit" className="button secondary" disabled={!newDate}><Shuffle size={14} />{t("Suggest lineup")}</button>
+          <button type="submit" className="button secondary" disabled={!newDate || Boolean(newDateProblem)}><Shuffle size={14} />{t("Suggest lineup")}</button>
+          <p id="storm-new-day" className="storm-new-day" data-problem={newDateProblem ? "" : undefined}>
+            {newDateProblem ? t(newDateProblem) : t("Canyon Storm runs on Thursdays, Desert Storm on Fridays.")}
+          </p>
         </form>}
         {sorted.length ? <ul className="svs-fight-list">
           {sorted.map((week) => {

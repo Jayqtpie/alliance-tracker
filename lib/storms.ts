@@ -8,6 +8,36 @@ export const STORM_RESULTS: StormResult[] = ["played", "missed", "excused"];
 /** Per team. Two teams, so 40 starters and 20 subs a week. */
 export const STORM_CAPACITY: Record<StormSlotRole, number> = { starter: 20, sub: 10 };
 export const STORM_SLOTS = STORM_TEAMS.length * (STORM_CAPACITY.starter + STORM_CAPACITY.sub);
+/** The day each battlefield runs, as `getUTCDay()`: Canyon Storm on Thursdays, Desert Storm on Fridays. */
+export const STORM_WEEKDAY: Record<StormType, number> = { canyon: 4, desert: 5 };
+const WEEKDAY_NAMES = ["Sundays", "Mondays", "Tuesdays", "Wednesdays", "Thursdays", "Fridays", "Saturdays"];
+
+const weekday = (date: string) => new Date(`${date}T00:00:00Z`).getUTCDay();
+const shiftDays = (date: string, days: number) => new Date(Date.parse(`${date}T00:00:00Z`) + days * 86_400_000).toISOString().slice(0, 10);
+
+/** The battlefield that runs on `date`, or undefined on any other day. */
+export function stormKindOn(date: string): StormType | undefined {
+  return STORM_KINDS.find((kind) => STORM_WEEKDAY[kind] === weekday(date));
+}
+
+/** `kind`'s battle day in the Monday-to-Sunday week holding `date`, so Thursday and Friday swap in place. */
+export function stormDateInWeek(kind: StormType, date: string) {
+  const monday = shiftDays(date, -((weekday(date) + 6) % 7));
+  return shiftDays(monday, (STORM_WEEKDAY[kind] + 6) % 7);
+}
+
+/** The first battle of either kind on or after `date`. */
+export function nextStormDate(date: string) {
+  let day = date;
+  while (!stormKindOn(day)) day = shiftDays(day, 1);
+  return day;
+}
+
+/** "Canyon Storm runs on Thursdays." when `date` is the wrong day for `kind`, else undefined. */
+export function stormDayProblem(kind: StormType, date: string): string | undefined {
+  if (weekday(date) === STORM_WEEKDAY[kind]) return undefined;
+  return `${kind === "canyon" ? "Canyon" : "Desert"} Storm runs on ${WEEKDAY_NAMES[STORM_WEEKDAY[kind]]}.`;
+}
 
 /**
  * Whether this slot keeps its member out of the next week. A starter who missed is parked; a sub is
@@ -123,6 +153,8 @@ export function weekCounts(week: StormWeek) {
 
 /** What is wrong with a lineup, or undefined. The server checks this on every save. */
 export function lineupProblem(week: StormWeek): string | undefined {
+  const dayProblem = stormDayProblem(week.kind, week.date);
+  if (dayProblem) return dayProblem;
   if (new Set(week.slots.map((slot) => slot.memberId)).size !== week.slots.length) return "A member is in a lineup twice.";
   for (const team of STORM_TEAMS) {
     for (const role of STORM_ROLES) {
