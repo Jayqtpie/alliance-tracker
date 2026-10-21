@@ -9,8 +9,8 @@ import { StormLineupsView } from "./storm-lineups";
 import { SvsAttendanceView } from "./svs-attendance";
 import { useLanguage } from "./language-selector";
 
-export function MembersView({ canManage = false, state, onSaved, onOpenMember, onMergeMember, onDeleteMember }: {
-  canManage?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void;
+export function MembersView({ canManage = false, bridgeConfigured = false, state, onSaved, onOpenMember, onMergeMember, onDeleteMember }: {
+  canManage?: boolean; bridgeConfigured?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void;
   onOpenMember: (id: string) => void; onMergeMember: (id: string) => void; onDeleteMember: (id: string) => void;
 }) {
   const { t } = useLanguage();
@@ -28,6 +28,6 @@ export function MembersView({ canManage = false, state, onSaved, onOpenMember, o
         ? <PairingBoard canManage={canManage} state={state} onSaved={onSaved} />
         : tab === "svs"
           ? <SvsAttendanceView canManage={canManage} state={state} onSaved={onSaved} />
-          : <StormLineupsView canManage={canManage} state={state} onSaved={onSaved} />}
+          : <StormLineupsView canManage={canManage} bridgeConfigured={bridgeConfigured} state={state} onSaved={onSaved} />}
   </>;
 }

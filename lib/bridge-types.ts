@@ -1,6 +1,14 @@
-import type { ExtractedRow } from "@/lib/types";
+import type { ExtractedRow, StormTeam } from "@/lib/types";
 
 export type BridgeJobStatus = "pending" | "processing" | "completed" | "failed";
+/** Which screen the worker reads. A job saved without a kind is an Alliance Duel ranking. */
+export type BridgeJobKind = "duel" | "storm";
+
+/** The week and team a storm results mail belongs to; the mail itself names neither. */
+export interface BridgeStormTarget {
+  weekId: string;
+  team: StormTeam;
+}
 
 export interface BridgeFile {
   id: string;
@@ -13,6 +21,8 @@ export interface BridgeFile {
 export interface BridgeJob {
   id: string;
   status: BridgeJobStatus;
+  kind?: BridgeJobKind;
+  storm?: BridgeStormTarget;
   files: BridgeFile[];
   createdAt: string;
   updatedAt: string;
@@ -28,6 +38,8 @@ export interface BridgeJob {
 export interface BridgeJobView {
   id: string;
   status: BridgeJobStatus;
+  kind: BridgeJobKind;
+  storm?: BridgeStormTarget;
   fileCount: number;
   fileNames: string[];
   createdAt: string;

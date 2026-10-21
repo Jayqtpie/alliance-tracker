@@ -40,7 +40,51 @@
 .storm-flag[data-flag="due"] { color: var(--cyan); }
 .storm-bench li[data-state="parked"] .alliance-avatar, .storm-bench li[data-state="parked"] .member-nameplate { opacity: .55; }
 
+/* Screenshot import: upload one team's results mail, review the read, apply it to the draft. */
+.storm-import { display: grid; gap: 10px; padding: 12px 16px 14px; border-top: 1px solid var(--line); }
+.storm-import h4 { margin: 0; font-size: 14px; }
+.storm-import-help { margin: 0; color: var(--muted); font-size: 12px; }
+.storm-import-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.storm-import-form input[type="file"] { flex: 1 1 200px; min-width: 0; font-size: 12px; }
+.storm-import-status { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0; font-size: 12px; }
+.storm-import-status > span { display: inline-flex; align-items: center; gap: 6px; }
+.storm-import-status[data-state="applied"] { color: var(--green); }
+.storm-import-status[data-state="failed"] { color: var(--red); }
+.storm-import .spin { animation: storm-spin 1s linear infinite; }
+@keyframes storm-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .storm-import .spin { animation: none; } }
+
+.storm-import-review { display: grid; gap: 10px; padding: 10px 12px; border: 1px solid var(--panel-border); border-radius: 8px; }
+.storm-import-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; font-size: 13px; }
+.storm-import-summary span { color: var(--muted); font-size: 12px; }
+.storm-import-rows { display: grid; margin: 0; padding: 0; list-style: none; }
+.storm-import-rows > li { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 7px 0; border-top: 1px solid var(--line); }
+.storm-import-rank { flex: 0 0 22px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
+.storm-import-read { display: grid; flex: 1 1 140px; min-width: 0; }
+.storm-import-read strong { overflow-wrap: anywhere; font-size: 13px; }
+.storm-import-read small { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.storm-import-match { display: flex; flex: 0 1 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; margin-left: auto; }
+.storm-import-match select { width: 170px; }
+.storm-import-add { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; }
+.storm-flag[data-flag="team"] { color: var(--green); }
+.storm-flag[data-flag="other-team"], .storm-flag[data-flag="not-in-lineup"] { color: var(--cyan); }
+.storm-flag[data-flag="unmatched"], .storm-flag[data-flag="duplicate"] { color: var(--red); }
+.storm-flag[data-flag="skipped"], .storm-flag[data-flag="left"] { color: var(--muted); }
+.storm-import-rows > li[data-status="unmatched"], .storm-import-rows > li[data-status="duplicate"] { background: color-mix(in srgb, var(--red) 6%, transparent); }
+.storm-import-rows > li[data-status="skipped"] .storm-import-read { opacity: .55; }
+.storm-import-missed { display: grid; gap: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
+.storm-import-missed h5 { margin: 0; color: var(--red); font-size: 12px; }
+.storm-import-missed p { margin: 0; color: var(--muted); font-size: 11px; }
+.storm-import-missed ul { display: grid; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.storm-import-missed li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; font-size: 12px; }
+.storm-import-missed li > span { min-width: 0; overflow-wrap: anywhere; }
+.storm-import-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+
 @media (max-width: 760px) {
+  .storm-import { padding-inline: 12px; }
+  /* Rank and the read name on one line, the member pick on the next. */
+  .storm-import-match { flex: 1 1 100%; justify-content: flex-start; margin-left: 32px; }
+  .storm-import-match select { flex: 1 1 150px; width: auto; min-width: 0; }
   .storm-new { grid-template-columns: minmax(0, 1fr); }
   .storm-teams { grid-template-columns: minmax(0, 1fr); }
   .storm-team + .storm-team { border-top: 1px solid var(--line); border-left: 0; }

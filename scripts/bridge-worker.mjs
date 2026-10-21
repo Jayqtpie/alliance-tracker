@@ -80,7 +80,7 @@ async function processJob(job) {
     // Async so the event loop keeps servicing pooled connections; a blocking run
     // leaves stale sockets that reset the "complete" request (ECONNRESET).
     const status = await new Promise((resolvePromise) => {
-      const extraction = spawn(process.execPath, [extractor, "--out", output, ...images], { stdio: "inherit" });
+      const extraction = spawn(process.execPath, [extractor, "--kind", job.kind || "duel", "--out", output, ...images], { stdio: "inherit" });
       extraction.on("error", () => resolvePromise(-1));
       extraction.on("exit", (code) => resolvePromise(code));
     });

@@ -10,6 +10,7 @@ import {
 } from "@/lib/storms";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
+import { StormImport } from "./storm-import";
 import { useLanguage } from "./language-selector";
 import type { Language } from "@/lib/i18n";
 import "./svs-attendance.css";
@@ -35,9 +36,11 @@ function togglePark(week: StormWeek, slot: StormSlot) {
   return setPark(week, slot.memberId, next === rule ? undefined : next);
 }
 
-export function StormLineupsView({ canManage, state, onSaved }: { canManage: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
+export function StormLineupsView({ canManage, bridgeConfigured = false, state, onSaved }: { canManage: boolean; bridgeConfigured?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
   const { language, t } = useLanguage();
   const [draft, setDraft] = useState<StormWeek[] | undefined>(undefined);
+  // Screenshot imports applied to the draft. Saving deletes them; discarding the draft brings them back.
+  const [appliedJobIds, setAppliedJobIds] = useState<string[]>([]);
   const [mode, setMode] = useState<"weeks" | "summary">("weeks");
   const [selectedId, setSelectedId] = useState<string>();
   const [query, setQuery] = useState("");
@@ -88,6 +91,9 @@ export function StormLineupsView({ canManage, state, onSaved }: { canManage: boo
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || t("Could not save the lineup."));
+      // The results are saved, so their uploads can go. A job left behind expires on its own.
+      await Promise.all(appliedJobIds.map((id) => fetch(`/api/bridge/jobs?id=${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => undefined)));
+      setAppliedJobIds([]);
       onSaved(body);
       setDraft(undefined);
     } catch (reason) {
@@ -209,6 +215,9 @@ export function StormLineupsView({ canManage, state, onSaved }: { canManage: boo
             <div className="search-box"><Search size={16} /><input aria-label={t("Filter lineup members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
         </div>
+        {editable && bridgeConfigured && <StormImport key={selected.id} week={selected} members={state.members} appliedJobIds={appliedJobIds} refreshKey={state.version}
+          onApply={(jobId, next) => { change(() => next); setAppliedJobIds((ids) => [...ids, jobId]); }} />}
+
         <div className="storm-teams">
           {STORM_TEAMS.map((team) => <section key={team} className="storm-team" aria-label={t("Team {team}", { team })}>
             <h4>{t("Team {team}", { team })}</h4>
@@ -280,7 +289,7 @@ export function StormLineupsView({ canManage, state, onSaved }: { canManage: boo
 
     {canManage && <div className="svs-actions">
       {dirty && <span className="svs-dirty-note">{t("Unsaved changes")}</span>}
-      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setError(""); setConfirm(null); }}>{t("Discard")}</button>
+      <button type="button" className="button secondary" disabled={busy || !dirty} onClick={() => { setDraft(undefined); setAppliedJobIds([]); setError(""); setConfirm(null); }}>{t("Discard")}</button>
       <button type="button" className="button primary" disabled={busy || !dirty} onClick={() => { if (draft) void persist(draft); }}>{t(busy ? "Saving…" : "Save lineup")}</button>
     </div>}
     {error && <p className="form-error-box" role="alert">{error}</p>}

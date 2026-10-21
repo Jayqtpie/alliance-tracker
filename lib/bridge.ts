@@ -8,6 +8,8 @@ export function bridgeJobView(job: BridgeJob): BridgeJobView {
   return {
     id: job.id,
     status: job.status,
+    kind: job.kind ?? "duel",
+    storm: job.storm,
     fileCount: job.files.length,
     fileNames: job.files.map((file) => file.name),
     createdAt: job.createdAt,

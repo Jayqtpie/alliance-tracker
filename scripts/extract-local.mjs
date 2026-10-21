@@ -18,6 +18,7 @@ Usage:
 Options:
   --out <path>       Output JSON path (defaults to local-extractions/)
   --model <name>     Claude model override (default: opus)
+  --kind <kind>      duel (default) or storm (Desert/Canyon Storm battle results mail)
   --help             Show this help
 
 Extraction uses high effort, including retries, and reads each screenshot
@@ -36,7 +37,7 @@ function parseArguments(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
     if (value === "--help" || value === "-h") return { help: true, images: [] };
-    if (value === "--out" || value === "--model") {
+    if (value === "--out" || value === "--model" || value === "--kind") {
       const next = argv[index + 1];
       if (!next) fail(`${value} needs a value.`);
       options[value.slice(2)] = next;
@@ -117,6 +118,8 @@ if (!options.images.length) {
   fail("Add at least one screenshot path.");
 }
 if (options.images.length > 25) fail("A maximum of 25 screenshots can be processed at once.");
+const kind = options.kind || "duel";
+if (kind !== "duel" && kind !== "storm") fail(`Unknown --kind: ${kind}. Use duel or storm.`);
 if (!existsSync(schemaPath)) fail(`Output schema was not found at ${schemaPath}.`);
 const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
 delete schema.$schema;
@@ -164,11 +167,29 @@ async function prepareBatch(batch, folder) {
   return lines.join("\n");
 }
 
+// The Desert/Canyon Storm "Battle Results!" mail: one team's players who entered, ranked by points.
+// Scrolled screenshots overlap; the tracker de-duplicates by rank.
+function stormPrompt(fileList, focusedRetry) {
+  const retryInstruction = focusedRetry
+    ? "The first pass returned no rows. Inspect the full image carefully. Each row is a rank (a medal for 1 to 3, a plain number after that), an avatar, then the name with the score on the line beneath it. Extract a row whenever rank, name and score are readable. Return an empty rows array only when no such row exists anywhere in any attached image. "
+    : "";
+  return "Read the listed Last War Desert Storm or Canyon Storm \"Battle Results!\" mail screenshots as OCR only. Open every listed file with the Read tool; they are in the current directory. " +
+    retryInstruction +
+    "Each screenshot comes with overlapping zoomed strips of the same screenshot, top to bottom. Use the full screenshot to locate each row; use the zoomed strips to read every name character by character. When the full screenshot and a strip disagree about a name, trust the strip. A row can appear in two strips: report it once per screenshot. " +
+    "Each row shows a rank at the left (ranks 1, 2 and 3 are medals with the number on them), an avatar, the player's name, and their score on the line under the name. Return rank, the name as displayName, and the score as points. " +
+    "Names start with an alliance tag in square brackets, such as [RSCL]. Leave the tag off displayName and return the rest of the name exactly, including Unicode, spacing, punctuation and case. " +
+    "Transcribe Korean Hangul, Chinese characters, Japanese kana/kanji, Cyrillic, Arabic, Thai, accented letters, and decorative symbols in their original form. Keep superscript and small-capital letters as they appear and count repeated characters exactly. Never translate, romanize, substitute Latin lookalikes, or drop combining marks. " +
+    "If any name character remains uncertain, use the best visible transcription, set needsReview=true and confidence below 0.86; never invent missing characters. " +
+    "Return points as integers without commas. Set isPinned=false on every row. Ignore the mail title, the scrolling announcement banner across the top, the date at the bottom, the buttons, and rows cut off at the top or bottom edge so that rank, name or score is not readable. " +
+    "Keep overlapping duplicate observations across different screenshots; the tracker will reconcile them. Before returning, revisit every screenshot and check that each visible rank is represented and each score belongs to the name directly above it. " +
+    "Do not edit files or add commentary. Return only the structured output.\n\n" + fileList;
+}
+
 function readBatch(fileList, folder, batchIndex, focusedRetry = false) {
   const retryInstruction = focusedRetry
     ? "The first pass returned no rows. Inspect the full image carefully, including any inset or padded area. Look for a leaderboard with rank at left, commander name in the middle, and points at right. Extract a row whenever those three values are readable, even if decorative panel edges or the alliance subtitle are cropped. Return an empty rows array only when no such leaderboard row exists anywhere in any attached image. "
     : "";
-  const prompt =
+  const prompt = kind === "storm" ? stormPrompt(fileList, focusedRetry) :
     "Read the listed Last War Alliance Duel Weekly Rank screenshots as OCR only. Open every listed file with the Read tool; they are in the current directory. " +
     retryInstruction +
     "Each screenshot comes with overlapping zoomed strips of the same screenshot, top to bottom. Use the full screenshot to locate each row and pair its rank, name and points; use the zoomed strips to read every commander name character by character. When the full screenshot and a strip disagree about a name, trust the strip. Each strip overlaps its neighbours, so a row can appear in two strips: report it once. " +

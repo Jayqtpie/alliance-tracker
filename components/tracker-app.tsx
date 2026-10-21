@@ -1,7 +1,6 @@
 "use client";
 
 import { csvCell } from "@/lib/csv";
-import { upload } from "@vercel/blob/client";
 import NextImage from "next/image";
 import {
   Activity,
@@ -57,6 +56,7 @@ import { LanguageSelector, useLanguage } from "@/components/language-selector";
 import { languageDirection } from "@/lib/i18n";
 import { WeeklyPerformance } from "@/components/weekly-performance";
 import type { BridgeJobView } from "@/lib/bridge-types";
+import { uploadBridgeFrames } from "@/lib/bridge-upload";
 import { parseLocalExtractionText } from "@/lib/local-import";
 import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, captureCoverage, dedupeRows, memberPerformance, snapshotComparison } from "@/lib/tracker";
@@ -599,7 +599,7 @@ export function TrackerApp({
           />}
         </>}
         {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice(t("Alliance settings saved.")); router.refresh(); }} />}
-        {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        {view === "members" && <MembersView canManage={canManage} bridgeConfigured={bridgeConfigured} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>
       {selectedMember && <CommanderProfile canManage={canManage} member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}
@@ -1022,30 +1022,7 @@ function Importer({ state, setState, ocrConfigured, bridgeConfigured, editingSna
     setQueueing(true); setError(""); setBridgeProgress(0);
     try {
       const jobId = crypto.randomUUID();
-      const totalBytes = files.reduce((total, file) => total + file.size, 0);
-      const uploadedBytes = new Map<number, number>();
-      const uploadedFiles: Array<{ id: string; name: string; pathname: string; contentType: string; size: number }> = [];
-      for (let start = 0; start < files.length; start += 5) {
-        const batch = files.slice(start, start + 5);
-        const results = await Promise.all(batch.map(async (file, batchIndex) => {
-          const index = start + batchIndex;
-          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-          const id = `frame-${String(index + 1).padStart(2, "0")}`;
-          const pathname = `bridge-uploads/${jobId}/${id}-${safeName}`;
-          const blob = await upload(pathname, file, {
-            access: "private",
-            handleUploadUrl: "/api/bridge/upload",
-            clientPayload: JSON.stringify({ jobId }),
-            onUploadProgress: (progress) => {
-              uploadedBytes.set(index, progress.loaded);
-              const loaded = [...uploadedBytes.values()].reduce((total, value) => total + value, 0);
-              setBridgeProgress(Math.min(99, Math.round((loaded / totalBytes) * 100)));
-            },
-          });
-          return { id, name: file.name, pathname: blob.pathname, contentType: blob.contentType, size: file.size };
-        }));
-        uploadedFiles.push(...results);
-      }
+      const uploadedFiles = await uploadBridgeFrames(jobId, files, setBridgeProgress);
       const response = await fetch("/api/bridge/jobs", {
         method: "POST",
         headers: { "content-type": "application/json" },
