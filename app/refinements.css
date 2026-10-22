@@ -65,10 +65,8 @@
 .sidebar .nav-item > span:first-of-type { min-width: 0; overflow-wrap: anywhere; }
 .sidebar .nav-item.active { box-shadow: none; border-color: #334960; background: var(--sidebar-active); font-weight: 600; }
 .sidebar .nav-item.active svg { color: var(--sidebar-accent); }
-.sidebar nav .nav-item:disabled { margin-top: 20px; border-top: 1px solid var(--sidebar-line); border-radius: 0; padding-top: 19px; opacity: .52; background: transparent; box-shadow: none; }
-.nav-count, .nav-disabled-note { margin-left: 0; margin-inline-start: auto; }
+.nav-count { margin-left: 0; margin-inline-start: auto; }
 .sidebar .nav-count { border-radius: 5px; font-size: 10px; padding: 3px 6px; background: #2c4058; }
-.sidebar .nav-disabled-note { font-size: 9px; padding: 3px 5px; }
 .sidebar-foot { padding-top: 16px; gap: 5px; flex-shrink: 0; }
 .sidebar .leadership-access { padding: 17px 9px; margin-bottom: 5px; gap: 10px; }
 .sidebar .leadership-access strong { font-size: 11px; }
@@ -215,11 +213,10 @@ html { scrollbar-gutter: stable; }
   .sidebar .brand-lockup { padding-bottom: 18px; margin-bottom: 14px; }
   .sidebar-alliance { margin-bottom: 20px; }
   .sidebar .leadership-access { padding-block: 12px; }
-  .sidebar nav .nav-item:disabled { margin-top: 16px; }
   .sidebar .nav-item { font-size: 15px; }
   .sidebar .nav-caption, .sidebar .brand-lockup span, .sidebar .system-chip, .sidebar .leadership-access span { font-size: 11px; }
   .sidebar .leadership-access strong, .workspace-breadcrumb, .language-control select { font-size: 13px; }
-  .sidebar .nav-count, .sidebar .nav-disabled-note { font-size: 11px; }
+  .sidebar .nav-count { font-size: 11px; }
   .dashboard-heading h1 { font-size: 36px; }
   .dashboard-heading p:last-child { font-size: 14px; }
   .metric-card span { font-size: 13px; }
@@ -277,7 +274,6 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
   .sidebar-alliance { display: none; }
   .sidebar nav { width: 100%; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 3px; overflow: visible; }
   .sidebar .nav-item { min-height: 49px; padding: 5px 2px; font-size: 9px; gap: 3px; line-height: 1.25; text-align: center; }
-  .sidebar nav .nav-item:disabled { margin: 0; padding: 5px 2px; border: 0; }
   .sidebar-foot { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 9px; min-height: 32px; padding: 0 11px; margin: 0; background: transparent; }
   .sidebar-foot > :not(.language-selector):not(.creator-credit) { display: none; }
   .language-selector { grid-column: 2; border: 0; padding: 0; margin: 0; display: block; min-width: 0; }
@@ -327,7 +323,7 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 /* Report history actions wrap on narrow screens. */
 .snapshot-actions { flex-wrap: wrap; justify-content: flex-end; }
 @media (max-width: 760px) {
-  .app-shell.viewer .sidebar nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .app-shell.viewer .sidebar nav { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
 /* Align the roster/pairings and reports/snapshots switchers with the page heading below them. */
@@ -336,3 +332,14 @@ html[dir="rtl"] .score-value, html[dir="rtl"] .alliance-stat { text-align: end; 
 @media (max-width: 760px) { .reports-tabs-wrap { padding-inline: 16px; } }
 /* Four Members tabs don't fit side by side on a narrow phone: icon above label instead. */
 @media (max-width: 440px) { .members-tabs button { flex-direction: column; gap: 3px; min-height: 48px; padding: 4px 2px; } }
+/* Operations' storm pages sit indented under it in the sidebar; the phone bar has no room, so they become a tab strip on the page. */
+.sidebar .nav-item.nav-sub { min-height: 36px; padding-block: 7px; padding-inline-start: 40px; font-size: 12px; }
+.sidebar .nav-item.nav-sub svg { width: 15px; flex-basis: 15px; }
+.operations-subnav { display: none; }
+.workspace-breadcrumb .breadcrumb-parent { color: inherit; font-weight: inherit; }
+@media (min-width: 761px) { .sidebar .nav-item.nav-parent.active { border-color: transparent; background: transparent; box-shadow: none; } }
+@media (max-width: 760px) {
+  .sidebar .nav-item.nav-sub { display: none; }
+  .operations-subnav { display: block; padding: 16px 16px 0; }
+  .operations-subnav + .page-stack { padding-top: 12px; }
+}

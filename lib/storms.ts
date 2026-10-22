@@ -20,23 +20,22 @@ export function stormKindOn(date: string): StormType | undefined {
   return STORM_KINDS.find((kind) => STORM_WEEKDAY[kind] === weekday(date));
 }
 
-/** `kind`'s battle day in the Monday-to-Sunday week holding `date`, so Thursday and Friday swap in place. */
-export function stormDateInWeek(kind: StormType, date: string) {
-  const monday = shiftDays(date, -((weekday(date) + 6) % 7));
-  return shiftDays(monday, (STORM_WEEKDAY[kind] + 6) % 7);
-}
-
-/** The first battle of either kind on or after `date`. */
-export function nextStormDate(date: string) {
+/** The first battle on or after `date`: of `kind` when given, else of either kind. */
+export function nextStormDate(date: string, kind?: StormType) {
   let day = date;
-  while (!stormKindOn(day)) day = shiftDays(day, 1);
+  while (kind ? stormKindOn(day) !== kind : !stormKindOn(day)) day = shiftDays(day, 1);
   return day;
 }
 
-/** "Canyon Storm runs on Thursdays." when `date` is the wrong day for `kind`, else undefined. */
+/** "Canyon Storm runs on Thursdays." */
+export function stormDayRule(kind: StormType) {
+  return `${kind === "canyon" ? "Canyon" : "Desert"} Storm runs on ${WEEKDAY_NAMES[STORM_WEEKDAY[kind]]}.`;
+}
+
+/** `kind`'s day rule when `date` is the wrong day for it, else undefined. */
 export function stormDayProblem(kind: StormType, date: string): string | undefined {
   if (weekday(date) === STORM_WEEKDAY[kind]) return undefined;
-  return `${kind === "canyon" ? "Canyon" : "Desert"} Storm runs on ${WEEKDAY_NAMES[STORM_WEEKDAY[kind]]}.`;
+  return stormDayRule(kind);
 }
 
 /**

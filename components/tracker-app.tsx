@@ -26,6 +26,7 @@ import {
   LockKeyhole,
   LockKeyholeOpen,
   LogOut,
+  Mountain,
   PencilLine,
   Search,
   Settings,
@@ -34,13 +35,14 @@ import {
   ShieldCheck,
   Swords,
   Sparkles,
+  Tornado,
   Trash2,
   UploadCloud,
   UserPlus,
   Users,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AllianceSettings } from "@/components/alliance-settings";
 import { allianceNeedsSetup, allianceFilePrefix } from "@/lib/alliance";
@@ -48,6 +50,7 @@ import { AllianceMark } from "@/components/alliance-mark";
 import { MemberAvatar } from "@/components/alliance-roster";
 import { MembersView } from "@/components/members-view";
 import { MergeMemberDialog } from "@/components/merge-member-dialog";
+import { StormLineupsView } from "@/components/storm-lineups";
 import { DeleteMemberDialog } from "./delete-member-dialog";
 import { memberServers, memberStats, serverLabel } from "@/lib/member-stats";
 import { CommanderIdentity, ScoreRows } from "@/components/score-rows";
@@ -58,7 +61,7 @@ import { WeeklyPerformance } from "@/components/weekly-performance";
 import type { BridgeJobView } from "@/lib/bridge-types";
 import { uploadBridgeFrames } from "@/lib/bridge-upload";
 import { parseLocalExtractionText } from "@/lib/local-import";
-import type { ExtractedRow, Member, RankingEntry, Snapshot, TrackerState } from "@/lib/types";
+import type { ExtractedRow, Member, RankingEntry, Snapshot, StormType, TrackerState } from "@/lib/types";
 import { analyzeImport, analyzeLargeChanges, captureCoverage, dedupeRows, memberPerformance, snapshotComparison } from "@/lib/tracker";
 
 import { analyzeReview, missingRanks, requiresHumanReview, type ReviewRow } from "@/lib/review";
@@ -431,6 +434,7 @@ export function TrackerApp({
   setDisplayLocale(language);
   const [state, setState] = useState(initialState);
   const [view, setView] = useState<View>("overview");
+  const [stormKind, setStormKind] = useState<StormType>("desert");
   const [reportsTab, setReportsTab] = useState<"reports" | "snapshots">("reports");
   const [editingSnapshot, setEditingSnapshot] = useState<Snapshot>();
   const [selectedSnapshotId, setSelectedSnapshotId] = useState(
@@ -499,9 +503,19 @@ export function TrackerApp({
     ["import", "New Import", UploadCloud],
     ["operations", "Operations", Swords],
   ] as const;
+  const operationsNav = [
+    ["desert", "Desert Storm", Tornado],
+    ["canyon", "Canyon Storm", Mountain],
+  ] as const;
+  const stormLabel = operationsNav.find(([kind]) => kind === stormKind)![1];
+
+  function openStorm(kind: StormType) {
+    setStormKind(kind);
+    navigate("operations");
+  }
 
   function navigate(next: View) {
-    if (!canManage && (next === "import" || next === "settings" || next === "operations")) return;
+    if (!canManage && (next === "import" || next === "settings")) return;
     if (next === "import") setEditingSnapshot(undefined);
     setView(next);
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -523,11 +537,20 @@ export function TrackerApp({
         <div className="sidebar-alliance"><span className="alliance-online-dot" /><span>{state.alliance.name}</span><ShieldCheck size={15} /></div>
         <p className="nav-caption">{t("Workspace")}</p>
         <nav aria-label={t("Main navigation")}>
-          {nav.filter(([id]) => canManage || id === "overview" || id === "members" || id === "reports").map(([id, label, Icon]) => (
-            <button key={id} disabled={id === "operations"} title={id === "operations" ? t("Operations are managed on the alliance’s other website") : undefined} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
-              <Icon size={18} /> <span>{t(label)}</span>{id === "operations" && <span className="nav-disabled-note">{t("Paused")}</span>}{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
-            </button>
-          ))}
+          {nav.filter(([id]) => canManage || id !== "import").map(([id, label, Icon]) => id === "operations"
+            // Operations is a parent: its storm pages sit under it here, and become a tab strip on the phone bar.
+            ? <Fragment key={id}>
+              <button aria-current={view === id ? "true" : undefined} className={view === id ? "nav-item nav-parent active" : "nav-item nav-parent"} onClick={() => navigate(id)}>
+                <Icon size={18} /> <span>{t(label)}</span>
+              </button>
+              {operationsNav.map(([kind, subLabel, SubIcon]) => <button key={kind} aria-current={view === id && stormKind === kind ? "page" : undefined}
+                className={view === id && stormKind === kind ? "nav-item nav-sub active" : "nav-item nav-sub"} onClick={() => openStorm(kind)}>
+                <SubIcon size={16} /> <span>{t(subLabel)}</span>
+              </button>)}
+            </Fragment>
+            : <button key={id} aria-current={view === id ? "page" : undefined} className={view === id ? "nav-item active" : "nav-item"} onClick={() => navigate(id)}>
+              <Icon size={18} /> <span>{t(label)}</span>{id === "members" && <span className="nav-count">{state.members.filter((member) => member.active).length}</span>}
+            </button>)}
         </nav>
         <div className="sidebar-foot">
           <div className={`system-chip ${storageMode !== "local" ? "online" : "local"}`}>
@@ -542,8 +565,10 @@ export function TrackerApp({
       <main className="workspace" id="workspace" tabIndex={-1}>
         <header className="topbar">
           <div>
-            <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span></p>
-            {view !== "overview" && view !== "members" && <h1 className="sr-only">{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</h1>}
+            <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> {view === "operations"
+              ? <><span className="breadcrumb-parent">{t("Operations")}</span> <ChevronRight size={13} /> <span>{t(stormLabel)}</span></>
+              : <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span>}</p>
+            {view !== "overview" && view !== "members" && view !== "operations" && <h1 className="sr-only">{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</h1>}
           </div>
           <div className="topbar-actions"><div className="topbar-meta"><ShieldCheck size={15} /> {canManage ? t("Admin") : t("Viewer")} <span className="officer-avatar">{canManage ? "R4/5" : <Users size={15} />}</span></div>{canManage && <button className="button ghost settings-button" aria-label={t("Alliance settings")} title={t("Alliance settings")} aria-pressed={view === "settings"} onClick={() => navigate("settings")}><Settings size={18} /><span>{t("Settings")}</span></button>}<ThemeToggle /><button className="mobile-signout icon-button" aria-label={t("Sign out")} onClick={logout}><LogOut size={18} /></button></div>
         </header>
@@ -599,7 +624,11 @@ export function TrackerApp({
           />}
         </>}
         {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice(t("Alliance settings saved.")); router.refresh(); }} />}
-        {view === "members" && <MembersView canManage={canManage} bridgeConfigured={bridgeConfigured} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
+        {view === "operations" && <div className="operations-subnav"><div className="operations-tabs reports-tabs">
+          {operationsNav.map(([kind, label, Icon]) => <button key={kind} className={stormKind === kind ? "active" : ""} onClick={() => setStormKind(kind)}><Icon size={16} />{t(label)}</button>)}
+        </div></div>}
+        {view === "operations" && <StormLineupsView kind={stormKind} canManage={canManage} bridgeConfigured={bridgeConfigured} state={state} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} />}
+        {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>
       {selectedMember && <CommanderProfile canManage={canManage} member={selectedMember} state={state} onClose={() => setSelectedMemberId(undefined)} onMerge={() => setMergeMemberId(selectedMember.id)} onDelete={() => setDeleteMemberId(selectedMember.id)} />}

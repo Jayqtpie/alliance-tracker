@@ -1,8 +1,7 @@
 .alliance-total[data-stat="storm-starters"] { --total-colour: var(--green); }
 .alliance-total[data-stat="storm-parked"] { --total-colour: var(--orange); }
 
-.storm-new { grid-template-columns: 170px minmax(0, 200px) auto; }
-.storm-new select { min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+.storm-new { grid-template-columns: 170px auto; justify-content: start; }
 .storm-new input[aria-invalid="true"] { border-color: var(--red); }
 .storm-new-day { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 11px; }
 .storm-new-day[data-problem] { color: var(--red); font-weight: 600; }

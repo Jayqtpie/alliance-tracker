@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { StormLineupsView } from "./storm-lineups";
-import type { Member, TrackerState } from "@/lib/types";
+import type { Member, StormType, TrackerState } from "@/lib/types";
 
 const member = (id: string, power: number, active = true): Member => ({ id, canonicalName: id, aliases: [], active, manualStats: { power, updatedAt: "2026-10-01" } });
 
@@ -24,9 +24,20 @@ const state: TrackerState = {
   ],
   updatedAt: "2026-10-18T00:00:00Z",
 };
-const render = (canManage: boolean, override: Partial<TrackerState> = {}) => renderToStaticMarkup(<StormLineupsView canManage={canManage} state={{ ...state, ...override }} onSaved={() => {}} />);
+const render = (canManage: boolean, override: Partial<TrackerState> = {}, kind: StormType = "canyon") =>
+  renderToStaticMarkup(<StormLineupsView kind={kind} canManage={canManage} state={{ ...state, ...override }} onSaved={() => {}} />);
 
 describe("StormLineupsView", () => {
+  it("shows only its own battlefield's weeks", () => {
+    const desert = render(true, {}, "desert");
+    expect(desert).toContain("Desert Storm");
+    expect(desert).not.toContain("Canyon Storm");
+    expect(desert).toContain("Desert Storm runs on Fridays.");
+    // The 9 Oct week is the only Desert one, so it opens even though the Canyon week is newer.
+    expect(desert.match(/data-stat="storm-starters".*?<\/dd>/)![0]).toContain(">1 / 2<");
+    expect(desert).not.toContain('aria-label="Park Vex next week"');
+  });
+
   it("opens the newest week with its kind and counts", () => {
     const html = render(false);
     expect(html).toContain("Canyon Storm");
@@ -38,7 +49,7 @@ describe("StormLineupsView", () => {
 
   it("shows who is parked from the week before and who sat out", () => {
     const html = render(true);
-    // Roen missed as a starter on 9 Oct: parked for 16 Oct, and offered no way back in.
+    // Roen missed as a Desert starter on 9 Oct: parked for the 16 Oct Canyon week, and offered no way back in.
     const roen = html.match(/<li data-state="parked">.*?<\/li>/)![0];
     expect(roen).toContain("Roen");
     expect(roen).toContain("Parked · from");

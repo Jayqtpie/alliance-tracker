@@ -52,7 +52,7 @@ describe("StormImportReview rebuild option", () => {
 describe("StormLineupsView screenshot import", () => {
   const state: TrackerState = { version: 1, alliance: { name: "Test", tag: "TST", server: "S1" }, members, snapshots: [], uploads: [], stormWeeks: [week], updatedAt: "2026-10-18T00:00:00Z" };
   const render = (canManage: boolean, bridgeConfigured: boolean, override: Partial<TrackerState> = {}) =>
-    renderToStaticMarkup(<StormLineupsView canManage={canManage} bridgeConfigured={bridgeConfigured} state={{ ...state, ...override }} onSaved={() => {}} />);
+    renderToStaticMarkup(<StormLineupsView kind="desert" canManage={canManage} bridgeConfigured={bridgeConfigured} state={{ ...state, ...override }} onSaved={() => {}} />);
 
   it("is offered to officers on an open week when the extraction bridge is set up", () => {
     expect(render(true, true)).toContain("Import results from screenshots");

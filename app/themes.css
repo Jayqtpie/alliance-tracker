@@ -181,9 +181,7 @@ input::placeholder, textarea::placeholder { color: var(--muted); opacity: .85; }
 .sidebar .nav-item:hover { color: var(--sidebar-ink); background: var(--sidebar-hover); }
 .sidebar .nav-item.active { color: var(--sidebar-ink); background: var(--sidebar-active); border-color: var(--sidebar-line); box-shadow: inset 2px 0 var(--sidebar-accent); }
 .sidebar .nav-item.active svg { color: var(--sidebar-accent); }
-.sidebar .nav-item:disabled { color: var(--sidebar-muted); }
 .sidebar .nav-count { background: var(--sidebar-hover); color: var(--sidebar-ink); }
-.sidebar .nav-disabled-note { border-color: var(--sidebar-line); }
 .sidebar .system-chip.online svg { color: var(--sidebar-accent); }
 .sidebar .system-chip.local svg { color: var(--sidebar-accent); }
 .sidebar button:focus-visible { outline-color: var(--sidebar-accent); }
@@ -245,7 +243,7 @@ input:focus, textarea:focus, select:focus { box-shadow: none; border-color: var(
 @media (min-width: 1024px) {
   .nav-item { font-size: 15px; }
   .brand-lockup span, .nav-caption, .leadership-access span, .system-chip { font-size: 11px; }
-  .nav-count, .nav-disabled-note, .officer-avatar { font-size: 11px; }
+  .nav-count, .officer-avatar { font-size: 11px; }
   .leadership-access strong, .workspace-breadcrumb, .topbar-meta, .theme-toggle { font-size: 13px; }
   .eyebrow { font-size: 11px; }
   .dashboard-heading p:last-child, .section-heading p, .alliance-settings-form label { font-size: 14px; }

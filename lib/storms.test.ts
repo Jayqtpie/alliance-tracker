@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createStormWeek, lineupProblem, lockedWeekViolation, markStartersPlayed, mergeStormMember, nextStormDate, parkedFor,
-  parksNextWeek, placeMember, previousWeek, removeMember, setPark, setResult, STORM_SLOTS, stormDateInWeek, stormDayProblem,
+  parksNextWeek, placeMember, previousWeek, removeMember, setPark, setResult, STORM_SLOTS, stormDayProblem,
   stormKindOn, stormSummary, suggestLineup, weekCounts,
 } from "./storms";
 import type { Member, StormSlot, StormWeek } from "./types";
@@ -127,18 +127,16 @@ describe("battle days", () => {
     expect(lineupProblem(week("w", "2026-10-22", [], { kind: "canyon" }))).toBeUndefined();
   });
 
-  it("swaps a date to the other battlefield's day in the same Monday-to-Sunday week", () => {
-    expect(stormDateInWeek("canyon", "2026-10-23")).toBe("2026-10-22");
-    expect(stormDateInWeek("desert", "2026-10-22")).toBe("2026-10-23");
-    expect(stormDateInWeek("canyon", "2026-10-25")).toBe("2026-10-22");
-    expect(stormDateInWeek("desert", "2026-10-19")).toBe("2026-10-23");
-    expect(stormDateInWeek("canyon", "2026-12-31")).toBe("2026-12-31");
-  });
-
   it("finds the next battle on or after a date", () => {
     expect(nextStormDate("2026-10-21")).toBe("2026-10-22");
     expect(nextStormDate("2026-10-23")).toBe("2026-10-23");
     expect(nextStormDate("2026-10-24")).toBe("2026-10-29");
+  });
+
+  it("finds the next battle of one kind", () => {
+    expect(nextStormDate("2026-10-22", "desert")).toBe("2026-10-23");
+    expect(nextStormDate("2026-10-23", "canyon")).toBe("2026-10-29");
+    expect(nextStormDate("2026-10-22", "canyon")).toBe("2026-10-22");
   });
 });
 

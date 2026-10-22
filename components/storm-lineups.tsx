@@ -6,8 +6,8 @@ import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormTyp
 import { memberStats } from "@/lib/member-stats";
 import {
   createStormWeek, markStartersPlayed, parkedFor, parksNextWeek, placeMember, previousWeek, removeMember, seatsTaken,
-  setPark, setResult, STORM_CAPACITY, STORM_KINDS, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDateInWeek,
-  stormDayProblem, stormKindOn, stormSummary, weekCounts,
+  setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
+  stormSummary, weekCounts,
 } from "@/lib/storms";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
@@ -18,6 +18,7 @@ import "./svs-attendance.css";
 import "./storm-lineups.css";
 
 const KIND_LABELS: Record<StormType, string> = { desert: "Desert Storm", canyon: "Canyon Storm" };
+const KIND_DAYS: Record<StormType, string> = { desert: "Friday", canyon: "Thursday" };
 const RESULT_LABELS: Record<StormResult, string> = { played: "Played", missed: "Missed", excused: "Excused" };
 const ROLE_LABELS: Record<StormSlotRole, string> = { starter: "Starters", sub: "Subs" };
 const SEATS = STORM_TEAMS.flatMap((team) => STORM_ROLES.map((role) => ({ team, role, value: `${team}-${role}` })));
@@ -37,7 +38,11 @@ function togglePark(week: StormWeek, slot: StormSlot) {
   return setPark(week, slot.memberId, next === rule ? undefined : next);
 }
 
-export function StormLineupsView({ canManage, bridgeConfigured = false, state, onSaved }: { canManage: boolean; bridgeConfigured?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
+/**
+ * One battlefield's page. The draft holds both kinds, so switching pages keeps unsaved edits, and parking
+ * still reads every week: a starter who misses Canyon on Thursday sits out Desert on Friday.
+ */
+export function StormLineupsView({ kind, canManage, bridgeConfigured = false, state, onSaved }: { kind: StormType; canManage: boolean; bridgeConfigured?: boolean; state: TrackerState; onSaved: (state: TrackerState) => void }) {
   const { language, t } = useLanguage();
   const [draft, setDraft] = useState<StormWeek[] | undefined>(undefined);
   // Screenshot imports applied to the draft. Saving deletes them; discarding the draft brings them back.
@@ -45,16 +50,24 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
   const [mode, setMode] = useState<"weeks" | "summary">("weeks");
   const [selectedId, setSelectedId] = useState<string>();
   const [query, setQuery] = useState("");
-  const [newDate, setNewDate] = useState(() => nextStormDate(new Date().toLocaleDateString("en-CA")));
-  const [newKind, setNewKind] = useState<StormType>(() => stormKindOn(newDate) ?? "desert");
-  const newDateProblem = newDate ? stormDayProblem(newKind, newDate) : undefined;
+  const [newDate, setNewDate] = useState(() => nextStormDate(new Date().toLocaleDateString("en-CA"), kind));
+  const [shownKind, setShownKind] = useState(kind);
+  const newDateProblem = newDate ? stormDayProblem(kind, newDate) : undefined;
   const [confirm, setConfirm] = useState<"delete" | "unlock" | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
+  // Opening the other battlefield moves the add-week date to its day and drops a half-asked question.
+  if (shownKind !== kind) {
+    setShownKind(kind);
+    setNewDate(nextStormDate(new Date().toLocaleDateString("en-CA"), kind));
+    setConfirm(null);
+  }
+
   const dirty = draft !== undefined;
   const allWeeks = draft ?? state.stormWeeks ?? [];
-  const sorted = [...allWeeks].sort((a, b) => b.date.localeCompare(a.date));
+  const kindWeeks = allWeeks.filter((week) => week.kind === kind);
+  const sorted = [...kindWeeks].sort((a, b) => b.date.localeCompare(a.date));
   const selected = sorted.find((week) => week.id === selectedId) ?? sorted[0];
   const memberById = new Map(state.members.map((member) => [member.id, member]));
 
@@ -66,7 +79,7 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
   }
 
   function addWeek() {
-    const week = createStormWeek(state.members, allWeeks, newDate, newKind);
+    const week = createStormWeek(state.members, allWeeks, newDate, kind);
     setDraft([...allWeeks, week]);
     select(week.id);
   }
@@ -123,7 +136,7 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
   const bench = selected ? state.members.filter((member) => member.active && !picked.has(member.id) && matches(member))
     .sort((a, b) => Number(parked.has(a.id)) - Number(parked.has(b.id)) || Number(playedBefore.has(a.id)) - Number(playedBefore.has(b.id)) || power(b) - power(a)) : [];
 
-  const summary = stormSummary(allWeeks, state.members).filter((row) => row.member.active || row.picked > 0);
+  const summary = stormSummary(kindWeeks, state.members).filter((row) => row.member.active || row.picked > 0);
   const parkedNext = parkedFor(allWeeks, "9999-12-31");
 
   function seatOptions(week: StormWeek, memberId: string) {
@@ -163,14 +176,14 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
 
   return <div className="page-stack svs-page storm-page">
     <section className="dashboard-heading">
-      <div><p className="eyebrow">{t("WEEKLY BATTLEFIELD")}</p><h1>{t("Storm lineups")}<span>.</span></h1>
+      <div><p className="eyebrow">{t("OPERATIONS")} · {t(KIND_DAYS[kind]).toLocaleUpperCase()}</p><h1>{t(KIND_LABELS[kind])}<span>.</span></h1>
         <p>{t(canManage
-          ? "Suggest a lineup, adjust it, then record who played. Starters who miss sit out the next week."
-          : "Who was picked for each Desert Storm and Canyon Storm, and who played. Starters who miss sit out the next week.")}</p></div>
+          ? "Suggest a lineup, adjust it, then record who played. Starters who miss sit out the next storm, Desert or Canyon."
+          : "Who was picked for each week and who played. Starters who miss sit out the next storm, Desert or Canyon.")}</p></div>
       <dl className="alliance-totals svs-totals" aria-label={t("Selected week")}>
         <div className="alliance-total" data-stat="storm-starters">
           <dt><Users size={14} aria-hidden="true" />{t("Starters played")}</dt>
-          <dd><strong>{counts ? `${counts.startersPlayed} / ${counts.starters}` : "—"}</strong><span>{selected ? `${shortDate(language, selected.date)} · ${t(KIND_LABELS[selected.kind])}` : t("no weeks recorded yet")}</span></dd>
+          <dd><strong>{counts ? `${counts.startersPlayed} / ${counts.starters}` : "—"}</strong><span>{selected ? shortDate(language, selected.date) : t("no weeks recorded yet")}</span></dd>
         </div>
         <div className="alliance-total" data-stat="storm-parked">
           <dt><CircleParking size={14} aria-hidden="true" />{t("Parked next week")}</dt>
@@ -185,26 +198,12 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
 
     {mode === "weeks" ? <div className="svs-layout">
       <section className="panel svs-fights">
-        <div className="panel-head"><h3>{t("Weeks")} <span className="count-chip">{allWeeks.length}</span></h3></div>
+        <div className="panel-head"><h3>{t("Weeks")} <span className="count-chip">{kindWeeks.length}</span></h3></div>
         {canManage && <form className="svs-new storm-new" onSubmit={(event) => { event.preventDefault(); addWeek(); }}>
           <input type="date" aria-label={t("Battle date")} required value={newDate} aria-invalid={Boolean(newDateProblem)} aria-describedby="storm-new-day"
-            onChange={(event) => {
-              const date = event.target.value;
-              setNewDate(date);
-              const kind = date ? stormKindOn(date) : undefined;
-              if (kind) setNewKind(kind);
-            }} />
-          <select aria-label={t("Battlefield")} value={newKind} onChange={(event) => {
-            const kind = event.target.value as StormType;
-            setNewKind(kind);
-            if (newDate) setNewDate(stormDateInWeek(kind, newDate));
-          }}>
-            {STORM_KINDS.map((kind) => <option key={kind} value={kind}>{t(KIND_LABELS[kind])}</option>)}
-          </select>
+            onChange={(event) => setNewDate(event.target.value)} />
           <button type="submit" className="button secondary" disabled={!newDate || Boolean(newDateProblem)}><Shuffle size={14} />{t("Suggest lineup")}</button>
-          <p id="storm-new-day" className="storm-new-day" data-problem={newDateProblem ? "" : undefined}>
-            {newDateProblem ? t(newDateProblem) : t("Canyon Storm runs on Thursdays, Desert Storm on Fridays.")}
-          </p>
+          <p id="storm-new-day" className="storm-new-day" data-problem={newDateProblem ? "" : undefined}>{t(stormDayRule(kind))}</p>
         </form>}
         {sorted.length ? <ul className="svs-fight-list">
           {sorted.map((week) => {
@@ -212,7 +211,6 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
             return <li key={week.id}>
               <button type="button" aria-pressed={week.id === selected?.id} onClick={() => select(week.id)}>
                 <strong>{battleDate(language, week.date)}{week.locked && <Lock size={11} role="img" aria-label={t("Locked")} />}</strong>
-                <span>{t(KIND_LABELS[week.kind])}</span>
                 <small>{t("{played}/{starters} starters played · {parked} parked", { played: weekly.startersPlayed, starters: weekly.starters, parked: weekly.parked })}</small>
               </button>
             </li>;
@@ -224,7 +222,7 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
 
       {selected && counts && <section className="panel svs-checklist storm-week">
         <div className="panel-head">
-          <div><h3>{battleDate(language, selected.date)} · {t(KIND_LABELS[selected.kind])}{selected.locked && <Lock size={14} role="img" aria-label={t("Locked")} />}</h3>
+          <div><h3>{battleDate(language, selected.date)}{selected.locked && <Lock size={14} role="img" aria-label={t("Locked")} />}</h3>
             <p className="svs-counts">{t("{starters}/40 starters · {subs}/20 subs · {played} played · {missed} missed · {unrecorded} not recorded", { starters: counts.starters, subs: counts.subs, played: counts.played, missed: counts.missed, unrecorded: counts.unrecorded })}</p></div>
           <div className="svs-checklist-tools">
             {editable && <button type="button" className="button secondary" disabled={!selected.slots.some((slot) => slot.role === "starter" && !slot.result)}
@@ -292,7 +290,7 @@ export function StormLineupsView({ canManage, bridgeConfigured = false, state, o
         </div>}
       </section>}
     </div> : <section className="panel svs-summary storm-summary">
-      <div className="panel-head"><h3>{t("Storm record")} <span className="count-chip">{t(allWeeks.length === 1 ? "1 week" : "{count} weeks", { count: allWeeks.length })}</span></h3></div>
+      <div className="panel-head"><h3>{t("Storm record")} <span className="count-chip">{t(kindWeeks.length === 1 ? "1 week" : "{count} weeks", { count: kindWeeks.length })}</span></h3></div>
       <div className="table-scroll"><table>
         <thead><tr><th>{t("Member")}</th><th>{t("Picked")}</th><th>{t("Played")}</th><th>{t("Missed")}</th><th>{t("Excused")}</th><th>{t("Rate")}</th><th>{t("Next week")}</th></tr></thead>
         <tbody>{summary.map((row) => <tr key={row.member.id} className={row.member.active ? undefined : "svs-left"}>
