@@ -41,8 +41,8 @@ describe("captured RSCL roster", () => {
     const active = state.members.filter((member) => member.active);
     expect(active).toHaveLength(100);
     expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(100);
-    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(95);
-    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(89);
+    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(97);
+    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(91);
     expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(0);
     for (const member of active) expect(existsSync(path.join(process.cwd(), "public", member.gameProfile!.avatarPath))).toBe(true);
     expect(active.find((member) => member.canonicalName === "MjQ8")?.gameProfile?.heroPower).toBeNull();

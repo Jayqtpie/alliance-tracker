@@ -79,9 +79,19 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
         const seenMs = Date.parse(/(Z|[+-]\d\d:\d\d)$/i.test(seen) ? seen : seen + 'Z');
         if (withinDay || e.lwatlasUid !== uid || e.lwatlasAllianceAbbr !== 'RSCL' || e.lastRankAlliance !== 'RSCL' || !(seenMs > confirmedMs)) throw new Error('New member ' + uid + ' is in ' + p.alliance + ' per lwservers, without newer RSCL evidence from lwatlas and LastRank');
       }
-      // A stale reading is not used: the row carries the verified identity with empty stats for the next refresh to fill.
-      const fresh = withinDay && anyMeasured, stale = !withinDay ? 'source record older than 24 hours' : 'no dated stat reading within 24 hours';
-      if (!fresh) Object.keys(measured).forEach(key => { measured[key] = null; });
+      // A stale reading is not used: the row carries the verified identity with empty stats for the next refresh to fill,
+      // unless the entry carries the player's LastRank profile, saved as collected and enriched within 24 hours.
+      const fromLwservers = withinDay && anyMeasured, stale = !withinDay ? 'source record older than 24 hours' : 'no dated stat reading within 24 hours';
+      if (!fromLwservers) Object.keys(measured).forEach(key => { measured[key] = null; });
+      const lr = fromLwservers ? null : added.lastRankProfile?.data ?? null;
+      if (lr) {
+        const age = Date.now() - Date.parse(lr.last_enriched_at ?? '');
+        if (String(lr.public_id) !== publicId || lr.name !== added.name || lr.alliance_id !== ALLIANCE || !(age >= -60_000 && age <= DAY)) throw new Error('New member ' + uid + ': lastRankProfile is not an RSCL profile for ' + publicId + ' enriched within 24 hours');
+        Object.assign(measured, { heroPower: reading(lr.hero_power), power: reading(lr.power), kills: reading(lr.army_kill) });
+      }
+      const fromLastRank = !!lr && Object.values(measured).some(v => v !== null), fresh = fromLwservers || fromLastRank;
+      const statSource = key => (fromLastRank && measured[key] !== null ? 'LastRank profile enriched ' + lr.last_enriched_at : fieldSource(key));
+      const professionNow = fromLastRank ? PROFESSIONS[lr.career_type] ?? null : fromLwservers ? PROFESSIONS[p.pf?.[1]] ?? null : null;
       if (p.name !== added.name) throw new Error('New member ' + uid + ' is named ' + p.name + ' on lwservers, not ' + added.name);
       if (!/^\d+$/.test(publicId) || live.members.some(m => m.gameProfile?.lastRankPublicId === publicId)) throw new Error('New member ' + uid + ' needs a LastRank public ID that is not already on the tracker');
       if (Number(uid.slice(-3)) !== added.evidence?.lastRankOriginServerId) throw new Error('New member ' + uid + ': UID server suffix does not match LastRank origin_server_id');
@@ -97,17 +107,18 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
         identityEvidence: { basis: 'new member; game UID verified outside LastRank', initialSourceName: p.name, previousTrackerName: owners[0]?.canonicalName ?? null, avatarCorroborated: !!added.evidence?.lwserversAvatarMatchesLastRank, external: added.evidence ?? null },
         avatarUrl: asset.url, avatarFile: asset.file, avatarStatus: asset.status,
         sourceMembership: { allianceId: p.allianceId, allianceTag: p.alliance, allianceName: p.allianceName, homeServerId: p.warzone },
-        freshness: { status: fresh ? 'fresh' : 'retained', maxAgeHours: 24, retrievedAt: raw.retrievedAt, previousSourceUpdatedAt: null, sourceUpdatedAt: new Date(confirmedMs).toISOString(), refreshRequested: false, refreshResult: fresh ? 'lwservers-daily-reading' : stale },
+        freshness: { status: fresh ? 'fresh' : 'retained', maxAgeHours: 24, retrievedAt: fromLastRank ? added.lastRankProfile.retrievedAt : raw.retrievedAt, previousSourceUpdatedAt: null, sourceUpdatedAt: fromLastRank ? lr.last_enriched_at : new Date(confirmedMs).toISOString(), refreshRequested: fromLastRank, refreshResult: fromLwservers ? 'lwservers-daily-reading' : fromLastRank ? 'lastrank-profile-enriched' : stale },
         profile: {
-          source: raw.source, capturedOn: DATE,
+          source: fromLastRank ? 'https://lastrank.fun/a/' + ALLIANCE : raw.source, capturedOn: DATE,
           heroPower: measured.heroPower, heroPowerDisplay: display(measured.heroPower), heroPowerLegacy: false,
           power: measured.power, powerDisplay: display(measured.power),
-          profession: fresh ? PROFESSIONS[p.pf?.[1]] ?? null : null,
+          profession: professionNow,
           killsApproximate: measured.kills, killsDisplay: display(measured.kills),
           killsStatus: measured.kills !== null ? 'exact source value; compact display' : 'not read by lwservers within 24 hours',
           activityDate: null,
-          heroPowerMeasuredAt: measured.heroPower !== null ? d.date : null,
-          fieldSources: { heroPower: fieldSource('heroPower'), power: fieldSource('power'), kills: fieldSource('kills'), profession: fresh && PROFESSIONS[p.pf?.[1]] ? 'lwservers pf confirmed ' + isoDate(confirmedMs) : 'not read by lwservers within 24 hours', rank: lwatlasRank ? 'lwatlas map scan ' + (added.evidence?.lwatlasLastSeenAt ?? 'undated') : 'none' },
+          // As build-capture.cjs: LastRank dates hero power only through its hero-power ranking (rank_type 13).
+          heroPowerMeasuredAt: measured.heroPower === null ? null : fromLastRank ? lr.rankings?.find(x => x.rank_type === 13)?.captured_at ?? null : d.date,
+          fieldSources: { heroPower: statSource('heroPower'), power: statSource('power'), kills: statSource('kills'), profession: !professionNow ? 'not read by lwservers within 24 hours' : fromLastRank ? 'LastRank profile career_type, enriched ' + lr.last_enriched_at : 'lwservers pf confirmed ' + isoDate(confirmedMs), rank: lwatlasRank ? 'lwatlas map scan ' + (added.evidence?.lwatlasLastSeenAt ?? 'undated') : 'none' },
         },
         _changedAvatar: asset.changed, _added: true, _owner: owners[0]?.id ?? null,
       });
@@ -205,14 +216,15 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
   };
   const addedUids = new Set(addedRows.map(x => x.uid));
   const staleAlliance = addedRows.filter(x => x.sourceMembership.allianceId !== ALLIANCE);
+  const fromLastRank = addedRows.filter(x => x.freshness.refreshResult === 'lastrank-profile-enriched');
   const fresh = capture.members.filter(x => x.freshness.status === 'fresh');
   const count = key => fresh.filter(x => x.profile.fieldSources[key].startsWith('lwservers')).length;
   const retainedNames = capture.members.filter(x => x.freshness.status === 'retained');
   capture.notes = [
     `Backup source: LastRank's alliance list was stale, so this export reads lwservers.com's public warzone 927 snapshot (generated ${raw.snapshotGeneratedAt}).`,
     `lwservers lists ${listedRows.length} RSCL players; ${existingRows.length} mapped to existing tracker records by game UID, not by name. lwservers' own roster sweep counts ${raw.allianceMemberCount ?? 'unknown'} members (${raw.allianceMemberCountDate ?? 'undated'}).`,
-    `${addedRows.length} new members added at the user's request, each game UID verified outside LastRank (lwservers and lwatlas agree on name, UID and RSCL; LastRank's avatar and origin server agree; see identityEvidence.external)${addedRows.length ? ': ' + addedRows.map(x => x.name).join(', ') : ''}.${staleAlliance.length ? ` For ${staleAlliance.map(x => x.name).join(', ')}, lwservers' row was older than 24 hours and still showed their previous alliance (${[...new Set(staleAlliance.map(x => x.sourceMembership.allianceTag))].join(', ')}); RSCL membership comes from lwatlas and LastRank, both dated later.` : ''}`,
-    `${fresh.length} profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for ${count('heroPower')}, power for ${count('power')}, kills for ${count('kills')}; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession comes from lwservers' career type (pf) for ${count('profession')}; alliance rank is always kept, as lwservers leaves it empty or undated.`,
+    `${addedRows.length} new members added at the user's request, each game UID verified outside LastRank (lwservers and lwatlas agree on name, UID and RSCL; LastRank's avatar and origin server agree; see identityEvidence.external)${addedRows.length ? ': ' + addedRows.map(x => x.name).join(', ') : ''}.${staleAlliance.length ? ` For ${staleAlliance.map(x => x.name).join(', ')}, lwservers' row was older than 24 hours and still showed their previous alliance (${[...new Set(staleAlliance.map(x => x.sourceMembership.allianceTag))].join(', ')}); RSCL membership comes from lwatlas and LastRank, both dated later.` : ''}${fromLastRank.length ? ` Statistics and profession for ${fromLastRank.map(x => x.name).join(', ')} come from their LastRank profiles, enriched within 24 hours of this build (profile.fieldSources).` : ''}`,
+    `${fresh.length - fromLastRank.length} profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for ${count('heroPower')}, power for ${count('power')}, kills for ${count('kills')}; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession comes from lwservers' career type (pf) for ${count('profession')}; alliance rank is always kept, as lwservers leaves it empty or undated.`,
     `${capture.retainedProfileCount} rows keep their existing tracker name, rank, statistics and dates unaltered${retainedNames.length ? ': ' + retainedNames.map(x => x.name).join(', ') : ''}.`,
     `${unresolved.length} lwservers RSCL players have no tracker record with their game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
     `${absent.length} active tracker members are absent from the lwservers RSCL rows (${absent.map(m => m.canonicalName).join(', ') || 'none'}); they stay active with existing values unaltered.`,
