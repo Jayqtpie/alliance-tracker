@@ -103,6 +103,12 @@ describe("suggestLineup", () => {
     expect(created.slots.every((value) => value.result === undefined)).toBe(true);
   });
 
+  it("creates an empty week to fill from the game", () => {
+    const created = createStormWeek(roster(5), [], "2026-10-01", "canyon", false);
+    expect(created).toMatchObject({ kind: "canyon", date: "2026-10-01", slots: [] });
+    expect(lineupProblem(created)).toBeUndefined();
+  });
+
   it("only picks active members and copes with a short roster", () => {
     const members = roster(30).map((member, index) => index === 0 ? { ...member, active: false } : member);
     const slots = suggestLineup(members, [], "2026-10-02");

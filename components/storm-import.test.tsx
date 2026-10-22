@@ -69,8 +69,14 @@ describe("StormLineupsView screenshot import", () => {
   });
 
   it("says where the import appears before the first week exists", () => {
-    expect(render(true, true, { stormWeeks: [] })).toContain("Add a week above, then import its results from screenshots there.");
-    expect(render(false, true, { stormWeeks: [] })).not.toContain("import its results");
-    expect(render(true, false, { stormWeeks: [] })).not.toContain("import its results");
+    expect(render(true, true, { stormWeeks: [] })).toContain("Start a week from the game above, then upload each team&#x27;s lineup screenshots there.");
+    expect(render(false, true, { stormWeeks: [] })).not.toContain("lineup screenshots there");
+    expect(render(true, false, { stormWeeks: [] })).not.toContain("lineup screenshots there");
+  });
+
+  it("offers officers a week started from the game only when the bridge is set up", () => {
+    expect(render(true, true, { stormWeeks: [] })).toContain("Start from the game");
+    expect(render(true, false, { stormWeeks: [] })).not.toContain("Start from the game");
+    expect(render(false, true, { stormWeeks: [] })).not.toContain("Start from the game");
   });
 });

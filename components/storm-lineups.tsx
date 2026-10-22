@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCheck, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
+import { Check, CheckCheck, Cloud, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek, TrackerState } from "@/lib/types";
 import { memberStats, statDisplay } from "@/lib/member-stats";
@@ -84,6 +84,14 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
     select(week.id);
   }
 
+  // Saved straight away, since screenshots can only be uploaded to a saved week.
+  function startFromGame() {
+    if (dirty) return;
+    const week = createStormWeek(state.members, allWeeks, newDate, kind, false);
+    select(week.id);
+    void persist([...(state.stormWeeks ?? []), week]);
+  }
+
   function deleteWeek() {
     if (!selected) return;
     setDraft(allWeeks.filter((week) => week.id !== selected.id));
@@ -119,6 +127,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
   }
 
   const editable = canManage && !selected?.locked;
+  const saved = Boolean(selected && state.stormWeeks?.some((week) => week.id === selected.id));
   const counts = selected ? weekCounts(selected) : undefined;
   const parked = selected ? parkedFor(allWeeks, selected.date) : new Map<string, StormWeek>();
   const previous = selected ? previousWeek(allWeeks, selected.date) : undefined;
@@ -182,7 +191,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
     <section className="dashboard-heading">
       <div><p className="eyebrow">{t("OPERATIONS")} · {t(KIND_DAYS[kind]).toLocaleUpperCase()}</p><h1>{t(KIND_LABELS[kind])}<span>.</span></h1>
         <p>{t(canManage
-          ? "Suggest a lineup, adjust it, then record who played. Starters who miss sit out the next storm, Desert or Canyon."
+          ? "Start a week from the game's lineup or suggest one, then record who played. Starters who miss sit out the next storm, Desert or Canyon."
           : "Who was picked for each week and who played. Starters who miss sit out the next storm, Desert or Canyon.")}</p></div>
       <dl className="alliance-totals svs-totals" aria-label={t("Selected week")}>
         <div className="alliance-total" data-stat="storm-starters">
@@ -206,6 +215,9 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
         {canManage && <form className="svs-new storm-new" onSubmit={(event) => { event.preventDefault(); addWeek(); }}>
           <input type="date" aria-label={t("Battle date")} required value={newDate} aria-invalid={Boolean(newDateProblem)} aria-describedby="storm-new-day"
             onChange={(event) => setNewDate(event.target.value)} />
+          {bridgeConfigured && <button type="button" className="button primary" disabled={!newDate || Boolean(newDateProblem) || dirty || busy}
+            title={t(dirty ? "Save or discard your changes first." : "Add this week with empty teams, then upload the game's lineup screenshots for each team.")}
+            onClick={startFromGame}><Cloud size={14} />{t("Start from the game")}</button>}
           <button type="submit" className="button secondary" disabled={!newDate || Boolean(newDateProblem)}><Shuffle size={14} />{t("Suggest lineup")}</button>
           <p id="storm-new-day" className="storm-new-day" data-problem={newDateProblem ? "" : undefined}>{t(stormDayRule(kind))}</p>
         </form>}
@@ -221,7 +233,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
           })}
         </ul> : <p className="svs-empty">{t("No weeks recorded yet.")}
           {/* The screenshot import lives inside a week, so say where it will appear. */}
-          {canManage && bridgeConfigured && <> {t("Add a week above, then import its results from screenshots there.")}</>}</p>}
+          {canManage && bridgeConfigured && <> {t("Start a week from the game above, then upload each team's lineup screenshots there.")}</>}</p>}
       </section>
 
       {selected && counts && <section className="panel svs-checklist storm-week">
@@ -235,9 +247,12 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
           </div>
         </div>
         {/* Before the battle: make each team match the game. After it: record who played. */}
-        {editable && bridgeConfigured && (["storm-lineup", "storm"] as const).map((kind) => <StormImport key={`${selected.id}-${kind}`} kind={kind}
-          week={selected} members={state.members} appliedJobIds={appliedJobIds} refreshKey={state.version}
-          onApply={(jobId, next) => { change(() => next); setAppliedJobIds((ids) => [...ids, jobId]); }} />)}
+        {/* An upload for an unsaved week would be lost with the draft, so it waits for the save. */}
+        {editable && bridgeConfigured && (saved
+          ? (["storm-lineup", "storm"] as const).map((kind) => <StormImport key={`${selected.id}-${kind}`} kind={kind}
+            week={selected} members={state.members} appliedJobIds={appliedJobIds} refreshKey={state.version}
+            onApply={(jobId, next) => { change(() => next); setAppliedJobIds((ids) => [...ids, jobId]); }} />)
+          : <p className="storm-import-help">{t("Save the lineup to upload screenshots from the game for this week.")}</p>)}
 
         <div className="storm-teams">
           {STORM_TEAMS.map((team) => {

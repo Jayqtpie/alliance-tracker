@@ -117,8 +117,9 @@ function assignTeams(group: Member[], role: StormSlotRole, lastTeam: Map<string,
   return group.map((member) => ({ memberId: member.id, team: teamOf.get(member.id)!, role }));
 }
 
-export function createStormWeek(members: Member[], weeks: StormWeek[], date: string, kind: StormType): StormWeek {
-  return { id: crypto.randomUUID(), kind, date, slots: suggestLineup(members, weeks, date) };
+/** A new week, with the suggested lineup or, for a week to be filled from the game's screenshots, nobody. */
+export function createStormWeek(members: Member[], weeks: StormWeek[], date: string, kind: StormType, suggest = true): StormWeek {
+  return { id: crypto.randomUUID(), kind, date, slots: suggest ? suggestLineup(members, weeks, date) : [] };
 }
 
 function updateSlot(week: StormWeek, memberId: string, change: Partial<Pick<StormSlot, "result" | "park" | "team" | "role">>): StormWeek {
