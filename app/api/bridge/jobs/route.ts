@@ -20,9 +20,9 @@ const fileSchema = z.object({
 const createSchema = z.object({
   id: z.string().uuid(),
   files: z.array(fileSchema).min(1).max(25),
-  kind: z.enum(["duel", "storm"]).optional(),
+  kind: z.enum(["duel", "storm", "storm-lineup"]).optional(),
   storm: z.object({ weekId: z.string().min(1).max(100), team: z.enum(["A", "B"]) }).optional(),
-}).refine((value) => (value.kind === "storm") === Boolean(value.storm), "A storm import needs its week and team, and only a storm import takes them.");
+}).refine((value) => (value.kind === "storm" || value.kind === "storm-lineup") === Boolean(value.storm), "A storm import needs its week and team, and only a storm import takes them.");
 const retrySchema = z.object({ id: z.string().uuid() });
 
 // The job is saved either way; the page shows why GitHub did not start the worker.
@@ -64,7 +64,7 @@ export async function POST(request: Request) {
     const job: BridgeJob = {
       id: parsed.data.id,
       status: "pending",
-      ...(parsed.data.kind === "storm" ? { kind: "storm" as const, storm: parsed.data.storm } : {}),
+      ...(parsed.data.kind === "storm" || parsed.data.kind === "storm-lineup" ? { kind: parsed.data.kind, storm: parsed.data.storm } : {}),
       files: parsed.data.files,
       createdAt: now.toISOString(),
       updatedAt: now.toISOString(),

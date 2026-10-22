@@ -174,6 +174,13 @@ export interface StormWeek {
   date: string;
   /** Final: the week can be unlocked, but not edited or deleted while locked. */
   locked?: boolean;
+  /**
+   * Teams whose lineup here matches the one entered in the game. Only these have starters marked
+   * missed by a results import; changing a team's lineup takes it off this list.
+   */
+  confirmed?: StormTeam[];
+  /** Each team's battle time as the game showed it when the lineup was confirmed, e.g. "2026-10-23 02:00~02:30 (Local Time)". */
+  times?: Partial<Record<StormTeam, string>>;
   slots: StormSlot[];
 }
 
@@ -201,7 +208,10 @@ export interface TrackerState {
 export interface ExtractedRow {
   rank: number;
   displayName: string;
+  /** Score, or for a storm lineup screen (which has neither ranks nor scores) the player's hero power. */
   points: number;
+  /** Storm lineup screen only: where the game seats the player. */
+  role?: StormSlotRole;
   confidence: number;
   isPinned?: boolean;
   sourceFile?: string;

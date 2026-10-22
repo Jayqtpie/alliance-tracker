@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createStormWeek, lineupProblem, lockedWeekViolation, markStartersPlayed, mergeStormMember, nextStormDate, parkedFor,
-  parksNextWeek, placeMember, previousWeek, removeMember, setPark, setResult, STORM_SLOTS, stormDayProblem,
+  parksNextWeek, placeMember, previousWeek, removeMember, setConfirmed, setPark, setResult, STORM_SLOTS, stormDayProblem,
   stormKindOn, stormSummary, suggestLineup, weekCounts,
 } from "./storms";
 import type { Member, StormSlot, StormWeek } from "./types";
@@ -113,6 +113,22 @@ describe("suggestLineup", () => {
 });
 
 describe("lineup edits", () => {
+  it("takes a team off the confirmed list when its lineup changes, and only that team", () => {
+    const confirmed = week("w", "2026-10-02", [slot("a", "starter", "A"), slot("b", "starter", "B"), slot("c", "sub", "B")], { confirmed: ["A", "B"] });
+    expect(setConfirmed(confirmed, "A", false).confirmed).toEqual(["B"]);
+    expect(setConfirmed(setConfirmed(confirmed, "A", false), "B", false)).not.toHaveProperty("confirmed");
+    expect(setConfirmed(week("w", "2026-10-02", []), "B", true).confirmed).toEqual(["B"]);
+    // Recording a result, or "moving" someone to the seat they already have, changes no lineup.
+    expect(setResult(confirmed, "a", "played").confirmed).toEqual(["A", "B"]);
+    expect(placeMember(confirmed, "a", "A", "starter")).toBe(confirmed);
+    expect(placeMember(confirmed, "c", "B", "starter").confirmed).toEqual(["A"]);
+    expect(placeMember(confirmed, "b", "A", "starter").confirmed).toBeUndefined();
+    expect(placeMember(confirmed, "new", "A", "sub").confirmed).toEqual(["B"]);
+    expect(removeMember(confirmed, "c").confirmed).toEqual(["A"]);
+    expect(removeMember(confirmed, "nobody")).toBe(confirmed);
+  });
+
+
   it("refuses a move into a full group and keeps a result across a move", () => {
     let current = week("w", "2026-10-02", suggestLineup(roster(100), [], "2026-10-02"));
     const sub = current.slots.find((value) => value.role === "sub")!;
@@ -173,6 +189,8 @@ describe("locks, summary and merge", () => {
     expect(lockedWeekViolation([locked], [{ ...locked, locked: false }])).toBeUndefined();
     expect(lockedWeekViolation([locked], [setResult(locked, "a", "missed")])?.id).toBe("w");
     expect(lockedWeekViolation([locked], [])?.id).toBe("w");
+    expect(lockedWeekViolation([locked], [setConfirmed(locked, "A", true)])?.id).toBe("w");
+    expect(lockedWeekViolation([locked], [{ ...locked, times: { A: "02:00" } }])?.id).toBe("w");
   });
 
   it("summarises per member with excused left out of the rate", () => {

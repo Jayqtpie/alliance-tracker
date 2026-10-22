@@ -5,7 +5,8 @@ import type { ExtractedRow, Member, StormSlot, StormWeek } from "./types";
 const member = (id: string, name = id, extra: Partial<Member> = {}): Member => ({ id, canonicalName: name, aliases: [], active: true, ...extra });
 const slot = (memberId: string, role: StormSlot["role"] = "starter", team: StormSlot["team"] = "B", extra: Partial<StormSlot> = {}): StormSlot => ({ memberId, team, role, ...extra });
 const row = (rank: number, displayName: string): ExtractedRow => ({ rank, displayName, points: 1_000_000 - rank, confidence: 0.98 });
-const week = (slots: StormSlot[]): StormWeek => ({ id: "w1", kind: "desert", date: "2026-10-16", slots });
+// Both teams confirmed against the game, unless a test says otherwise: only then are starters missed.
+const week = (slots: StormSlot[], extra: Partial<StormWeek> = {}): StormWeek => ({ id: "w1", kind: "desert", date: "2026-10-16", confirmed: ["A", "B"], slots, ...extra });
 const resultOf = (value: StormWeek, memberId: string) => value.slots.find((item) => item.memberId === memberId)?.result;
 
 const members = [
@@ -21,6 +22,15 @@ describe("planning a storm import", () => {
     expect(plan.played).toEqual(["zoth", "monsta", "sorry"]);
     expect(plan.missed).toEqual(["parrot"]);
     expect(plan.blocked).toBe(false);
+  });
+
+  it("marks nobody missed on a team not confirmed against the game", () => {
+    const unconfirmed = { ...lineup, confirmed: ["A" as const] };
+    const plan = planStormImport(unconfirmed, "B", [row(1, "Zothargirl"), row(2, "monsta717")], members);
+    expect(plan.confirmed).toBe(false);
+    expect(plan.played).toEqual(["zoth", "monsta"]);
+    expect(plan.missed).toEqual([]);
+    expect(resultOf(applyStormImport(unconfirmed, "B", plan).week, "parrot")).toBeUndefined();
   });
 
   it("blocks on a misread name and suggests the closest member", () => {

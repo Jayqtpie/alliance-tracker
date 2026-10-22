@@ -23,8 +23,14 @@ export interface StormImportPlan {
   rows: StormImportRow[];
   /** This team's members in the results: they played. */
   played: string[];
-  /** This team's starters missing from the results, unless already excused. Missed parks them. */
+  /**
+   * This team's starters missing from the results, unless already excused. Missed parks them, so this
+   * stays empty until the team's lineup is confirmed against the game: a starter the game never seated
+   * did not miss anything.
+   */
   missed: string[];
+  /** Whether the team's lineup here was confirmed against the game. */
+  confirmed: boolean;
   /** Applying waits until every row is a member or left out, since a misread name would park someone who played. */
   blocked: boolean;
 }
@@ -52,10 +58,11 @@ export function planStormImport(week: StormWeek, team: StormTeam, rows: Extracte
 
   const played = planned.filter((entry) => entry.status === "team").map((entry) => entry.member!.id);
   const present = new Set(planned.flatMap((entry) => entry.member ? [entry.member.id] : []));
-  const missed = week.slots
+  const confirmed = week.confirmed?.includes(team) ?? false;
+  const missed = !confirmed ? [] : week.slots
     .filter((slot) => slot.team === team && slot.role === "starter" && !present.has(slot.memberId) && slot.result !== "excused")
     .map((slot) => slot.memberId);
-  return { rows: planned, played, missed, blocked: planned.some((entry) => entry.status === "unmatched" || entry.status === "duplicate") };
+  return { rows: planned, played, missed, confirmed, blocked: planned.some((entry) => entry.status === "unmatched" || entry.status === "duplicate") };
 }
 
 /**

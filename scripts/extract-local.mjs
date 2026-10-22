@@ -6,6 +6,7 @@ import sharp from "sharp";
 
 const imageExtensions = new Set([".png", ".jpg", ".jpeg", ".webp"]);
 const schemaPath = resolve("scripts", "leaderboard-output.schema.json");
+const lineupSchemaPath = resolve("scripts", "storm-lineup-output.schema.json");
 const batchSize = 3;
 const stripWidth = 1500;
 const usage = `
@@ -18,7 +19,8 @@ Usage:
 Options:
   --out <path>       Output JSON path (defaults to local-extractions/)
   --model <name>     Claude model override (default: opus)
-  --kind <kind>      duel (default) or storm (Desert/Canyon Storm battle results mail)
+  --kind <kind>      duel (default), storm (Desert/Canyon Storm battle results mail)
+                     or storm-lineup (a storm's View Participants list for one Task Force)
   --help             Show this help
 
 Extraction uses high effort, including retries, and reads each screenshot
@@ -85,6 +87,34 @@ function validateRows(value, batchLabel) {
   });
 }
 
+// A lineup screen's rows become the tracker's row shape: hero power rides in points, and rank is only
+// the order read (the tracker re-numbers after de-duplicating, since the screen has no ranks).
+function validateLineup(value, batchLabel) {
+  if (!value || typeof value !== "object" || !Array.isArray(value.rows)) {
+    fail(`Claude returned an invalid result for ${batchLabel}: expected an object containing rows.`);
+  }
+  const rows = value.rows.map((row, index) => {
+    if (
+      !row ||
+      typeof row !== "object" ||
+      typeof row.displayName !== "string" || !row.displayName.trim() ||
+      !Number.isInteger(row.heroPower) || row.heroPower < 0 ||
+      (row.role !== "starter" && row.role !== "sub") ||
+      typeof row.confidence !== "number" || row.confidence < 0 || row.confidence > 1 ||
+      typeof row.needsReview !== "boolean"
+    ) {
+      fail(`Claude returned an invalid row at position ${index + 1} for ${batchLabel}.`);
+    }
+    return { rank: index + 1, displayName: row.displayName.trim(), points: row.heroPower, role: row.role, confidence: row.confidence, isPinned: false, needsReview: row.needsReview };
+  });
+  const header = {};
+  if (value.taskForce === "A" || value.taskForce === "B") header.team = value.taskForce;
+  if (Number.isInteger(value.startersShown) && value.startersShown >= 0) header.starters = value.startersShown;
+  if (Number.isInteger(value.subsShown) && value.subsShown >= 0) header.subs = value.subsShown;
+  if (typeof value.battleTime === "string" && value.battleTime.trim()) header.battleTime = value.battleTime.trim().slice(0, 80);
+  return { rows, header };
+}
+
 // Overlapping horizontal strips, upscaled so each name is seen at full detail.
 async function writeStrips(image, folder, prefix) {
   const { width, height } = await sharp(image).metadata();
@@ -119,9 +149,10 @@ if (!options.images.length) {
 }
 if (options.images.length > 25) fail("A maximum of 25 screenshots can be processed at once.");
 const kind = options.kind || "duel";
-if (kind !== "duel" && kind !== "storm") fail(`Unknown --kind: ${kind}. Use duel or storm.`);
-if (!existsSync(schemaPath)) fail(`Output schema was not found at ${schemaPath}.`);
-const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+if (kind !== "duel" && kind !== "storm" && kind !== "storm-lineup") fail(`Unknown --kind: ${kind}. Use duel, storm or storm-lineup.`);
+const kindSchemaPath = kind === "storm-lineup" ? lineupSchemaPath : schemaPath;
+if (!existsSync(kindSchemaPath)) fail(`Output schema was not found at ${kindSchemaPath}.`);
+const schema = JSON.parse(readFileSync(kindSchemaPath, "utf8"));
 delete schema.$schema;
 
 const images = options.images.map((value) => resolve(value));
@@ -149,6 +180,7 @@ mkdirSync(dirname(outputPath), { recursive: true });
 const batches = [];
 for (let index = 0; index < images.length; index += batchSize) batches.push(images.slice(index, index + batchSize));
 const allRows = [];
+const lineupHeader = {};
 // fail() exits without running finally blocks, so copied screenshots are removed here too.
 const temporaryFolders = new Set();
 process.on("exit", () => {
@@ -185,11 +217,30 @@ function stormPrompt(fileList, focusedRetry) {
     "Do not edit files or add commentary. Return only the structured output.\n\n" + fileList;
 }
 
+// A storm's "View Participants" list for one Task Force: who the game seats as a starter or a sub.
+// Scrolled screenshots overlap; the tracker de-duplicates by name, or by hero power and seat.
+function lineupPrompt(fileList, focusedRetry) {
+  const retryInstruction = focusedRetry
+    ? "The first pass returned no rows. Inspect the full image carefully. Each member row is a white card with an avatar, the name, and \"Total Hero Power\" under it, then two columns of icons. Extract a row whenever the name, the hero power and the seat are readable. Return an empty rows array only when no such row exists anywhere in any attached image. "
+    : "";
+  return "Read the listed Last War Desert Storm or Canyon Storm \"View Participants\" screenshots as OCR only. Open every listed file with the Read tool; they are in the current directory. " +
+    retryInstruction +
+    "Each screenshot comes with overlapping zoomed strips of the same screenshot, top to bottom. Use the full screenshot to locate each row and see its icons; use the zoomed strips to read every name character by character. When the full screenshot and a strip disagree about a name, trust the strip. A row can appear in two strips: report it once per screenshot. " +
+    "The panel shows one Task Force. Under the faction banner, a dropdown names it, such as \"Task Force A\": return that letter as taskForce, or \"unknown\" if it can't be read. Below the dropdown are three counters. The middle one, a person with crossed swords, is the starters as \"n/20\"; the right one, a person with a circular arrow, is the substitutes as \"n/10\". Return the n of each as startersShown and subsShown, or -1 if unreadable. Ignore the left counter. " +
+    "Members are grouped under rank header bars (R5, R4, R3, R2, R1, each with its own counts): those bars are not members, so skip them. Each member card shows an avatar, the name in bold, \"Total Hero Power: 391.2M\" under it, a \"Strategist\" label, and then two icon columns. In one of the two columns there is a blue letter badge (A or B); the other column shows a red no-entry sign. The badge in the LEFT column means the player is a starter; the badge in the RIGHT column means a substitute. Return role \"starter\" or \"sub\" from which column holds the letter badge. " +
+    "Return heroPower as an integer number of hero power: \"391.2M\" is 391200000, \"1.02B\" is 1020000000. " +
+    "Return each name exactly, including Unicode, spacing, punctuation and case. Transcribe Korean Hangul, Chinese characters, Japanese kana/kanji, Cyrillic, Arabic, Thai, accented letters, and decorative symbols in their original form. Keep superscript and small-capital letters as they appear and count repeated characters exactly. Never translate, romanize, substitute Latin lookalikes, or drop combining marks. " +
+    "If any name character remains uncertain, use the best visible transcription, set needsReview=true and confidence below 0.86; never invent missing characters. Skip a card cut off at the top or bottom edge so that its name, hero power or icons are not all readable. " +
+    "At the bottom of the panel is the battle schedule, such as \"Battle Day : 2026-10-23\" and \"02:00~02:30\", under a \"Local Time\" or \"Server Time\" label. Return battleTime as the day, the time range and that label, for example \"2026-10-23 02:00~02:30 (Local Time)\", or an empty string if it can't be read. " +
+    "Keep overlapping duplicate observations across different screenshots; the tracker will reconcile them. Before returning, revisit every screenshot and check that every complete card is represented and each hero power and seat belongs to the name on the same card. " +
+    "Do not edit files or add commentary. Return only the structured output.\n\n" + fileList;
+}
+
 function readBatch(fileList, folder, batchIndex, focusedRetry = false) {
   const retryInstruction = focusedRetry
     ? "The first pass returned no rows. Inspect the full image carefully, including any inset or padded area. Look for a leaderboard with rank at left, commander name in the middle, and points at right. Extract a row whenever those three values are readable, even if decorative panel edges or the alliance subtitle are cropped. Return an empty rows array only when no such leaderboard row exists anywhere in any attached image. "
     : "";
-  const prompt = kind === "storm" ? stormPrompt(fileList, focusedRetry) :
+  const prompt = kind === "storm-lineup" ? lineupPrompt(fileList, focusedRetry) : kind === "storm" ? stormPrompt(fileList, focusedRetry) :
     "Read the listed Last War Alliance Duel Weekly Rank screenshots as OCR only. Open every listed file with the Read tool; they are in the current directory. " +
     retryInstruction +
     "Each screenshot comes with overlapping zoomed strips of the same screenshot, top to bottom. Use the full screenshot to locate each row and pair its rank, name and points; use the zoomed strips to read every commander name character by character. When the full screenshot and a strip disagree about a name, trust the strip. Each strip overlaps its neighbours, so a row can appear in two strips: report it once. " +
@@ -224,7 +275,11 @@ function readBatch(fileList, folder, batchIndex, focusedRetry = false) {
   if (result.status !== 0 || output.is_error || !output.structured_output) {
     fail(`Claude extraction failed for ${label} (${output.subtype || `exit ${result.status}`}).`);
   }
-  return validateRows(output.structured_output, `batch ${batchIndex + 1}`);
+  if (kind !== "storm-lineup") return validateRows(output.structured_output, `batch ${batchIndex + 1}`);
+  const { rows, header } = validateLineup(output.structured_output, `batch ${batchIndex + 1}`);
+  // Every screenshot shows the same header; keep the first reading of each part.
+  for (const [key, value] of Object.entries(header)) if (lineupHeader[key] === undefined) lineupHeader[key] = value;
+  return rows;
 }
 
 console.log(`Using Claude ${extractionModel} with high effort to read ${images.length} screenshot${images.length === 1 ? "" : "s"} in ${batches.length} batch${batches.length === 1 ? "" : "es"}.`);
@@ -252,6 +307,7 @@ const result = {
   source: "claude-code",
   sourceFiles: images.map((image) => basename(image)),
   rows: allRows,
+  ...(kind === "storm-lineup" ? { lineup: lineupHeader } : {}),
 };
 writeFileSync(outputPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
 console.log(`\nSaved ${allRows.length} extracted row${allRows.length === 1 ? "" : "s"} to:\n${outputPath}`);

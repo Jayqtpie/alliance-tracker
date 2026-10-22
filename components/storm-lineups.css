@@ -17,6 +17,11 @@
 
 .storm-week .svs-member-list > li { flex-wrap: wrap; row-gap: 6px; }
 .storm-week .svs-member { flex: 1 1 120px; flex-wrap: wrap; }
+/* Whether a team's lineup is the one entered in the game: a toggle for officers, a badge for everyone else. */
+.storm-confirm { margin-left: auto; display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border: 1px dashed var(--muted); border-radius: 999px; background: transparent; color: var(--muted); font-size: 11px; font-weight: 600; }
+.storm-confirm[aria-pressed="true"] { border-style: solid; border-color: var(--green); color: var(--green); background: color-mix(in srgb, var(--green) 8%, transparent); }
+.storm-team h4 .storm-flag { margin-left: auto; }
+.storm-team-time { margin: 0; padding: 0 16px 6px; color: var(--muted); font-size: 11px; }
 .storm-group-power { margin-left: auto; font-variant-numeric: tabular-nums; letter-spacing: 0; }
 .storm-power { flex-shrink: 0; min-width: 44px; color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; text-align: right; }
 /* Inline beside the name when the column has room, a second line of their own when it doesn't. */
@@ -80,6 +85,7 @@
 .storm-flag[data-flag="other-team"], .storm-flag[data-flag="not-in-lineup"] { color: var(--cyan); }
 .storm-flag[data-flag="unmatched"], .storm-flag[data-flag="duplicate"] { color: var(--red); }
 .storm-flag[data-flag="skipped"], .storm-flag[data-flag="left"] { color: var(--muted); }
+.storm-flag[data-flag="review"] { color: var(--orange); }
 .storm-import-rows > li[data-status="unmatched"], .storm-import-rows > li[data-status="duplicate"] { background: color-mix(in srgb, var(--red) 6%, transparent); }
 .storm-import-rows > li[data-status="skipped"] .storm-import-read { opacity: .55; }
 .storm-import-missed { display: grid; gap: 6px; padding-top: 8px; border-top: 1px solid var(--line); }
@@ -89,6 +95,7 @@
 .storm-import-missed li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px; font-size: 12px; }
 .storm-import-missed li > span { min-width: 0; overflow-wrap: anywhere; }
 .storm-import-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+.storm-import-unconfirmed { margin: 0; padding: 8px 10px; border: 1px solid var(--orange); border-radius: 7px; background: color-mix(in srgb, var(--orange) 8%, transparent); font-size: 12px; }
 
 @media (max-width: 760px) {
   .storm-import { padding-inline: 12px; }

@@ -7,7 +7,7 @@ import type { ExtractedRow, Member, StormWeek, TrackerState } from "@/lib/types"
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
 const members = [member("Kael"), member("Roen"), member("Tamsin"), member("Vex", false), member("Zed")];
-const week: StormWeek = { id: "w1", kind: "desert", date: "2026-10-16", slots: [
+const week: StormWeek = { id: "w1", kind: "desert", date: "2026-10-16", confirmed: ["A", "B"], slots: [
   { memberId: "Kael", team: "B", role: "starter" },
   { memberId: "Roen", team: "B", role: "starter" },
   { memberId: "Tamsin", team: "A", role: "starter" },
@@ -17,7 +17,7 @@ const job = (rows: ExtractedRow[]): BridgeJobView => ({
   id: "j1", status: "completed", kind: "storm", storm: { weekId: "w1", team: "B" }, fileCount: 2, fileNames: [],
   createdAt: "2026-10-21T00:00:00Z", updatedAt: "2026-10-21T00:00:00Z", expiresAt: "2026-10-26T00:00:00Z", attempts: 1, rows,
 });
-const review = (rows: ExtractedRow[]) => renderToStaticMarkup(<StormImportReview job={job(rows)} week={week} members={members} onApply={() => {}} onDiscard={() => {}} />);
+const review = (rows: ExtractedRow[], target: StormWeek = week) => renderToStaticMarkup(<StormImportReview job={job(rows)} week={target} members={members} onApply={() => {}} onDiscard={() => {}} />);
 
 describe("StormImportReview", () => {
   it("shows who played, who is missed and parked, and who needs a decision", () => {
@@ -28,6 +28,13 @@ describe("StormImportReview", () => {
     expect(html).toContain("Add to team B as played");
     expect(html).toContain("Left the alliance");
     expect(html).not.toContain('role="alert"');
+  });
+
+  it("warns instead of marking anyone missed when the team isn't confirmed against the game", () => {
+    const html = review([row(1, "Kael")], { ...week, confirmed: ["A"] });
+    expect(html).toContain("1 in the results · 1 played · nobody marked missed");
+    expect(html).toContain("Team B&#x27;s lineup isn&#x27;t confirmed against the game");
+    expect(html).not.toContain("storm-import-missed");
   });
 
   it("blocks applying while a row is unmatched, and offers the closest name", () => {

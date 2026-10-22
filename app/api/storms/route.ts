@@ -10,6 +10,8 @@ const schema = z.object({
     kind: z.enum(["desert", "canyon"]),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid battle date."),
     locked: z.boolean().optional(),
+    confirmed: z.array(z.enum(["A", "B"])).max(2).optional(),
+    times: z.object({ A: z.string().max(80).optional(), B: z.string().max(80).optional() }).optional(),
     slots: z.array(z.object({
       memberId: z.string().min(1),
       team: z.enum(["A", "B"]),

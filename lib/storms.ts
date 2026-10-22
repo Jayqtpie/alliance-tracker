@@ -145,16 +145,32 @@ export function seatsTaken(week: StormWeek, team: StormTeam, role: StormSlotRole
   return week.slots.filter((slot) => slot.team === team && slot.role === role && slot.memberId !== except).length;
 }
 
+/** Marks a team's lineup as matching the game, or not. */
+export function setConfirmed(week: StormWeek, team: StormTeam, confirmed: boolean): StormWeek {
+  const next: StormWeek = { ...week, confirmed: STORM_TEAMS.filter((value) => value === team ? confirmed : week.confirmed?.includes(value)) };
+  // Unset, not empty, so an unconfirmed week stores no key.
+  if (!next.confirmed!.length) delete next.confirmed;
+  return next;
+}
+
+/** A lineup change in a team means it no longer matches what was confirmed against the game. */
+function unconfirm(week: StormWeek, ...teams: StormTeam[]): StormWeek {
+  return teams.reduce((next, team) => next.confirmed?.includes(team) ? setConfirmed(next, team, false) : next, week);
+}
+
 /** Puts a member in a team and role, keeping a recorded result. Unchanged when that group is full. */
 export function placeMember(week: StormWeek, memberId: string, team: StormTeam, role: StormSlotRole): StormWeek {
   if (seatsTaken(week, team, role, memberId) >= STORM_CAPACITY[role]) return week;
   const current = week.slots.find((slot) => slot.memberId === memberId);
-  if (!current) return { ...week, slots: [...week.slots, { memberId, team, role }] };
-  return updateSlot(week, memberId, { team, role });
+  if (!current) return unconfirm({ ...week, slots: [...week.slots, { memberId, team, role }] }, team);
+  if (current.team === team && current.role === role) return week;
+  return unconfirm(updateSlot(week, memberId, { team, role }), current.team, team);
 }
 
 export function removeMember(week: StormWeek, memberId: string): StormWeek {
-  return { ...week, slots: week.slots.filter((slot) => slot.memberId !== memberId) };
+  const current = week.slots.find((slot) => slot.memberId === memberId);
+  if (!current) return week;
+  return unconfirm({ ...week, slots: week.slots.filter((slot) => slot.memberId !== memberId) }, current.team);
 }
 
 /** Records every unrecorded starter as played. Subs stay unrecorded: most are never called in. */
@@ -178,6 +194,7 @@ export function lineupProblem(week: StormWeek): string | undefined {
   const dayProblem = stormDayProblem(week.kind, week.date);
   if (dayProblem) return dayProblem;
   if (new Set(week.slots.map((slot) => slot.memberId)).size !== week.slots.length) return "A member is in a lineup twice.";
+  if (week.confirmed && new Set(week.confirmed).size !== week.confirmed.length) return "A team is confirmed twice.";
   for (const team of STORM_TEAMS) {
     for (const role of STORM_ROLES) {
       if (seatsTaken(week, team, role) > STORM_CAPACITY[role]) return `Team ${team} has more than ${STORM_CAPACITY[role]} ${role}s.`;
@@ -188,7 +205,8 @@ export function lineupProblem(week: StormWeek): string | undefined {
 
 function sameWeek(a: StormWeek, b: StormWeek) {
   const slot = (value: StormSlot) => [value.memberId, value.team, value.role, value.result ?? "", value.park ?? ""].join("|");
-  return a.kind === b.kind && a.date === b.date && a.slots.length === b.slots.length
+  const teams = (value: StormWeek) => JSON.stringify([value.confirmed ?? [], STORM_TEAMS.map((team) => value.times?.[team] ?? "")]);
+  return a.kind === b.kind && a.date === b.date && teams(a) === teams(b) && a.slots.length === b.slots.length
     && a.slots.every((value, index) => slot(value) === slot(b.slots[index]));
 }
 

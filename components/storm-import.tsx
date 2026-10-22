@@ -2,12 +2,13 @@
 
 import { Check, Cloud, LoaderCircle, RotateCcw, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
-import type { BridgeJobView } from "@/lib/bridge-types";
+import type { BridgeJobKind, BridgeJobView } from "@/lib/bridge-types";
 import { uploadBridgeFrames } from "@/lib/bridge-upload";
 import { applyStormImport, planStormImport, rebuildTeamFromResults, type StormImportRow, type StormRowChoices, type StormRowStatus } from "@/lib/storm-import";
 import { STORM_TEAMS } from "@/lib/storms";
 import type { Member, StormTeam, StormWeek } from "@/lib/types";
 import { useLanguage } from "./language-selector";
+import { StormLineupReview } from "./storm-lineup-review";
 
 const STATUS_LABELS: Record<StormRowStatus, string> = {
   team: "Played",
@@ -18,16 +19,35 @@ const STATUS_LABELS: Record<StormRowStatus, string> = {
   skipped: "Left out",
 };
 
-/** This week's storm imports. The job list is the newest ten of every kind. */
-async function weekJobs(weekId: string) {
+type StormImportKind = Extract<BridgeJobKind, "storm" | "storm-lineup">;
+
+/** What each import says. The lineup import confirms a team against the game; the results import records who played. */
+const COPY: Record<StormImportKind, { title: string; help: string; files: string; applied: string }> = {
+  "storm-lineup": {
+    title: "Confirm a team from the game",
+    help: "Before the battle, upload one Task Force's \"View Participants\" screenshots, scrolled from top to bottom. The team here becomes exactly the game's list, and only a confirmed team has starters marked missed by its results.",
+    files: "Lineup screenshots",
+    applied: "Team {team} confirmed from the game. Save the lineup to keep it.",
+  },
+  storm: {
+    title: "Import results from screenshots",
+    help: "Upload one team's \"Battle Results!\" mail. Everyone listed played; if the team's lineup is confirmed against the game, its starters who aren't listed are marked missed.",
+    files: "Results screenshots",
+    applied: "Team {team} results applied. Save the lineup to keep them.",
+  },
+};
+
+/** This week's storm imports of one kind. The job list is the newest ten of every kind. */
+async function weekJobs(weekId: string, kind: StormImportKind) {
   const response = await fetch("/api/bridge/jobs");
   if (!response.ok) throw new Error(`Job list failed (${response.status}).`);
   const body = await response.json() as { jobs: BridgeJobView[] };
-  return body.jobs.filter((job) => job.kind === "storm" && job.storm?.weekId === weekId);
+  return body.jobs.filter((job) => job.kind === kind && job.storm?.weekId === weekId);
 }
 
-/** Officers' screenshot import for one week: upload a team's results mail, review the read, apply it to the draft. */
-export function StormImport({ week, members, appliedJobIds, refreshKey, onApply }: {
+/** Officers' screenshot import for one week: upload a team's screens, review the read, apply it to the draft. */
+export function StormImport({ kind, week, members, appliedJobIds, refreshKey, onApply }: {
+  kind: StormImportKind;
   week: StormWeek;
   members: Member[];
   /** Jobs already applied to the unsaved draft: they wait for the save, which deletes them. */
@@ -47,18 +67,18 @@ export function StormImport({ week, members, appliedJobIds, refreshKey, onApply 
   // Not keyed on t: useLanguage hands out a new one every render, which would refetch on every render.
   useEffect(() => {
     let active = true;
-    weekJobs(week.id)
+    weekJobs(week.id, kind)
       .then((found) => { if (active) setJobs(found); })
       .catch(() => { if (active) setError("Could not load the screenshot imports."); });
     return () => { active = false; };
-  }, [week.id, refreshKey]);
+  }, [week.id, kind, refreshKey]);
 
   const reading = jobs.some((job) => job.status === "pending" || job.status === "processing");
   useEffect(() => {
     if (!reading) return;
-    const timer = window.setInterval(() => { weekJobs(week.id).then(setJobs).catch(() => {}); }, 10_000);
+    const timer = window.setInterval(() => { weekJobs(week.id, kind).then(setJobs).catch(() => {}); }, 10_000);
     return () => window.clearInterval(timer);
-  }, [reading, week.id]);
+  }, [reading, week.id, kind]);
 
   async function queue() {
     if (!files.length) return;
@@ -68,7 +88,7 @@ export function StormImport({ week, members, appliedJobIds, refreshKey, onApply 
       const uploaded = await uploadBridgeFrames(jobId, files, setProgress);
       const response = await fetch("/api/bridge/jobs", {
         method: "POST", headers: { "content-type": "application/json" },
-        body: JSON.stringify({ id: jobId, files: uploaded, kind: "storm", storm: { weekId: week.id, team } }),
+        body: JSON.stringify({ id: jobId, files: uploaded, kind, storm: { weekId: week.id, team } }),
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.error || t("Could not create the extraction job."));
@@ -99,14 +119,15 @@ export function StormImport({ week, members, appliedJobIds, refreshKey, onApply 
     setJobs((current) => current.filter((item) => item.id !== job.id));
   }
 
-  return <section className="storm-import" aria-label={t("Import results from screenshots")}>
-    <h4>{t("Import results from screenshots")}</h4>
-    <p className="storm-import-help">{t("Upload one team's \"Battle Results!\" mail. Everyone listed played; that team's starters who aren't listed are marked missed.")}</p>
+  const copy = COPY[kind];
+  return <section className="storm-import" aria-label={t(copy.title)}>
+    <h4>{t(copy.title)}</h4>
+    <p className="storm-import-help">{t(copy.help)}</p>
     <form className="storm-import-form" onSubmit={(event) => { event.preventDefault(); void queue(); }}>
       <select aria-label={t("Team")} value={team} onChange={(event) => setTeam(event.target.value as StormTeam)}>
         {STORM_TEAMS.map((value) => <option key={value} value={value}>{t("Team {team}", { team: value })}</option>)}
       </select>
-      <input type="file" aria-label={t("Results screenshots")} multiple accept="image/png,image/jpeg,image/webp"
+      <input type="file" aria-label={t(copy.files)} multiple accept="image/png,image/jpeg,image/webp"
         onChange={(event) => setFiles(Array.from(event.target.files ?? []))} />
       <button type="submit" className="button secondary" disabled={!files.length || progress !== undefined}>
         {progress !== undefined ? t("Uploading… {percent}%", { percent: progress }) : <><Cloud size={14} />{t("Read with Claude")}</>}
@@ -118,10 +139,12 @@ export function StormImport({ week, members, appliedJobIds, refreshKey, onApply 
     {jobs.map((job) => {
       const jobTeam = job.storm!.team;
       if (appliedJobIds.includes(job.id)) {
-        return <p key={job.id} className="storm-import-status" data-state="applied"><Check size={14} aria-hidden="true" />{t("Team {team} results applied. Save the lineup to keep them.", { team: jobTeam })}</p>;
+        return <p key={job.id} className="storm-import-status" data-state="applied"><Check size={14} aria-hidden="true" />{t(copy.applied, { team: jobTeam })}</p>;
       }
       if (job.status === "completed") {
-        return <StormImportReview key={job.id} job={job} week={week} members={members} onApply={(next) => onApply(job.id, next)} onDiscard={() => void discard(job)} />;
+        return kind === "storm-lineup"
+          ? <StormLineupReview key={job.id} job={job} week={week} members={members} onApply={(next) => onApply(job.id, next)} onDiscard={() => void discard(job)} />
+          : <StormImportReview key={job.id} job={job} week={week} members={members} onApply={(next) => onApply(job.id, next)} onDiscard={() => void discard(job)} />;
       }
       return <div key={job.id} className="storm-import-status" data-state={job.status}>
         {job.status === "failed"
@@ -199,8 +222,11 @@ export function StormImportReview({ job, week, members, onApply, onDiscard }: {
       <strong>{t("Team {team} results", { team })}</strong>
       <span>{rebuild
         ? t("{rows} in the results · {starters} starters and {subs} subs, all played · nobody missed", { rows: plan.rows.length, starters: seated("starter"), subs: seated("sub") })
-        : t("{rows} in the results · {played} played · {missed} starters missed", { rows: plan.rows.length, played: plan.played.length + adding, missed: plan.missed.filter((memberId) => !remove.has(memberId)).length })}</span>
+        : plan.confirmed
+          ? t("{rows} in the results · {played} played · {missed} starters missed", { rows: plan.rows.length, played: plan.played.length + adding, missed: plan.missed.filter((memberId) => !remove.has(memberId)).length })
+          : t("{rows} in the results · {played} played · nobody marked missed", { rows: plan.rows.length, played: plan.played.length + adding })}</span>
     </div>
+    {!rebuild && !plan.confirmed && <p className="storm-import-unconfirmed">{t("Team {team}'s lineup isn't confirmed against the game, so starters who aren't listed stay unrecorded instead of being marked missed. Confirm the lineup from the game first to record who missed.", { team })}</p>}
     <label className="storm-import-rebuild" data-suggested={suggestRebuild && !rebuild ? "" : undefined}>
       <input type="checkbox" checked={rebuild} onChange={(event) => setRebuild(event.target.checked)} />
       <span><strong>{t("Rebuild team {team} from these results", { team })}</strong>

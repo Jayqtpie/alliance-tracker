@@ -1,12 +1,12 @@
 "use client";
 
-import { CheckCheck, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
+import { Check, CheckCheck, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek, TrackerState } from "@/lib/types";
 import { memberStats, statDisplay } from "@/lib/member-stats";
 import {
   createStormWeek, markStartersPlayed, parkedFor, parksNextWeek, placeMember, previousWeek, removeMember, seatsTaken,
-  setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
+  setConfirmed, setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
   stormSummary, weekCounts,
 } from "@/lib/storms";
 import { MemberAvatar } from "./alliance-roster";
@@ -234,12 +234,24 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
             <div className="search-box"><Search size={16} /><input aria-label={t("Filter lineup members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
         </div>
-        {editable && bridgeConfigured && <StormImport key={selected.id} week={selected} members={state.members} appliedJobIds={appliedJobIds} refreshKey={state.version}
-          onApply={(jobId, next) => { change(() => next); setAppliedJobIds((ids) => [...ids, jobId]); }} />}
+        {/* Before the battle: make each team match the game. After it: record who played. */}
+        {editable && bridgeConfigured && (["storm-lineup", "storm"] as const).map((kind) => <StormImport key={`${selected.id}-${kind}`} kind={kind}
+          week={selected} members={state.members} appliedJobIds={appliedJobIds} refreshKey={state.version}
+          onApply={(jobId, next) => { change(() => next); setAppliedJobIds((ids) => [...ids, jobId]); }} />)}
 
         <div className="storm-teams">
-          {STORM_TEAMS.map((team) => <section key={team} className="storm-team" aria-label={t("Team {team}", { team })}>
-            <h4>{t("Team {team}", { team })}</h4>
+          {STORM_TEAMS.map((team) => {
+            const confirmed = selected.confirmed?.includes(team) ?? false;
+            const time = selected.times?.[team];
+            return <section key={team} className="storm-team" aria-label={t("Team {team}", { team })}>
+            <h4>{t("Team {team}", { team })}
+              {editable
+                ? <button type="button" className="storm-confirm" aria-pressed={confirmed} onClick={() => change((week) => setConfirmed(week, team, !confirmed))}
+                  title={t(confirmed ? "This lineup matches the game. Changing it clears this." : "Mark this lineup as the one entered in the game, so missing starters count as missed.")}>
+                  {confirmed && <Check size={12} aria-hidden="true" />}{t(confirmed ? "Matches the game" : "Mark as matching the game")}</button>
+                : confirmed && <span className="storm-flag" data-flag="team"><Check size={11} aria-hidden="true" />{t("Matches the game")}</span>}
+            </h4>
+            {time && <p className="storm-team-time">{t("Battle: {time}", { time })}</p>}
             {STORM_ROLES.map((role) => {
               const rows = lineup.filter(({ slot }) => slot.team === team && slot.role === role);
               return <div key={role} className="storm-group">
@@ -251,7 +263,8 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
                 </ul>
               </div>;
             })}
-          </section>)}
+          </section>;
+          })}
         </div>
 
         <section className="storm-bench" aria-label={t("Not in this lineup")}>

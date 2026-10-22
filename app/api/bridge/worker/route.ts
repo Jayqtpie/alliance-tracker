@@ -3,6 +3,7 @@ import { z } from "zod";
 import { isBridgeWorker } from "@/lib/bridge-auth";
 import { claimNextBridgeJob, BridgeValidationError } from "@/lib/bridge";
 import { mutateBridgeQueue } from "@/lib/bridge-store";
+import { dedupeLineupRows } from "@/lib/storm-lineup-import";
 import { dedupeRows } from "@/lib/tracker";
 
 export const runtime = "nodejs";
@@ -15,10 +16,17 @@ const rowSchema = z.object({
   isPinned: z.boolean().optional(),
   sourceFile: z.string().max(180).optional(),
   needsReview: z.boolean().optional(),
+  role: z.enum(["starter", "sub"]).optional(),
+});
+const lineupSchema = z.object({
+  team: z.enum(["A", "B"]).optional(),
+  starters: z.number().int().nonnegative().max(100).optional(),
+  subs: z.number().int().nonnegative().max(100).optional(),
+  battleTime: z.string().min(1).max(80).optional(),
 });
 const actionSchema = z.discriminatedUnion("action", [
   z.object({ action: z.literal("claim"), workerId: z.string().min(1).max(100) }),
-  z.object({ action: z.literal("complete"), jobId: z.string().uuid(), workerId: z.string().min(1).max(100), rows: z.array(rowSchema).min(1).max(300) }),
+  z.object({ action: z.literal("complete"), jobId: z.string().uuid(), workerId: z.string().min(1).max(100), rows: z.array(rowSchema).min(1).max(300), lineup: lineupSchema.optional() }),
   z.object({ action: z.literal("fail"), jobId: z.string().uuid(), workerId: z.string().min(1).max(100), error: z.string().min(1).max(500) }),
 ]);
 
@@ -43,7 +51,11 @@ export async function POST(request: Request) {
         current.updatedAt = new Date().toISOString();
         current.leaseExpiresAt = undefined;
         current.completedAt = current.updatedAt;
-        current.rows = dedupeRows(action.rows).rows;
+        // A lineup screen has no ranks to de-duplicate by, so it is matched by name or power and seat.
+        if (current.kind === "storm-lineup") {
+          current.rows = dedupeLineupRows(action.rows);
+          current.lineup = action.lineup;
+        } else current.rows = dedupeRows(action.rows).rows;
         current.error = undefined;
         return current;
       });

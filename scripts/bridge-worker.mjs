@@ -93,7 +93,7 @@ async function processJob(job) {
     await request("/api/bridge/worker", {
       method: "POST",
       headers,
-      body: JSON.stringify({ action: "complete", jobId: job.id, workerId, rows: parsed.rows }),
+      body: JSON.stringify({ action: "complete", jobId: job.id, workerId, rows: parsed.rows, lineup: parsed.lineup }),
     });
     console.log(`Completed ${job.id}: ${parsed.rows.length} raw rows returned to Alliance Manager.`);
   } catch (error) {

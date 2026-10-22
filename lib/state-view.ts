@@ -26,7 +26,7 @@ export function stateForRole(state: TrackerState, role: AccessRole): TrackerStat
     })),
     svsEvents: state.svsEvents?.map((event) => ({ id: event.id, date: event.date, label: event.label, kind: event.kind, locked: event.locked, attendance: event.attendance })),
     stormWeeks: state.stormWeeks?.map((week) => ({
-      id: week.id, kind: week.kind, date: week.date, locked: week.locked,
+      id: week.id, kind: week.kind, date: week.date, locked: week.locked, confirmed: week.confirmed, times: week.times,
       slots: week.slots.map((slot) => ({ memberId: slot.memberId, team: slot.team, role: slot.role, result: slot.result, park: slot.park })),
     })),
   };

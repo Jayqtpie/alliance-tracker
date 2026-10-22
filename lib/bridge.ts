@@ -18,6 +18,7 @@ export function bridgeJobView(job: BridgeJob): BridgeJobView {
     attempts: job.attempts,
     error: job.error ? "Extraction failed. Retry, or check the latest Bridge extraction run on GitHub." : undefined,
     rows: job.status === "completed" ? job.rows : undefined,
+    lineup: job.status === "completed" ? job.lineup : undefined,
   };
 }
 
