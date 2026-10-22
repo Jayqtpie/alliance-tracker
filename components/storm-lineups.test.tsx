@@ -85,4 +85,28 @@ describe("StormLineupsView", () => {
     expect(html).toContain("No weeks recorded yet.");
     expect(html.match(/data-stat="storm-starters".*?<\/dd>/)![0]).toContain(">—<");
   });
+
+  it("lists each group by hero power and the bench by name", () => {
+    // Zed and Tamsin are the strongest here: first in their group, but Tamsin follows Roen on the bench.
+    const heroes: Record<string, number> = { Zed: 900, Tamsin: 800, Kael: 300, Roen: 200, Vex: 50 };
+    const members = state.members.map((value) => ({ ...value, manualStats: { ...value.manualStats!, heroPower: heroes[value.id] } }));
+    const html = render(true, { members, stormWeeks: [{ id: "w", kind: "canyon", date: "2026-10-22", slots: [
+      { memberId: "Zed", team: "A", role: "starter" },
+      { memberId: "Vex", team: "A", role: "starter" },
+      { memberId: "Kael", team: "A", role: "starter" },
+    ] }] });
+    const positions = (prefix: string, names: string[]) => names.map((name) => html.indexOf(`aria-label="${prefix} ${name}"`));
+    const starters = positions("Move", ["Zed", "Kael", "Vex"]);
+    expect(starters.every((position) => position >= 0)).toBe(true);
+    expect(starters).toEqual([...starters].sort((a, b) => a - b));
+    const bench = positions("Add", ["Roen", "Tamsin"]);
+    expect(bench[0]).toBeGreaterThanOrEqual(0);
+    expect(bench[0]).toBeLessThan(bench[1]);
+  });
+
+  it("starts with the bench collapsed behind its heading", () => {
+    const html = render(false);
+    expect(html).toMatch(/<button type="button" class="storm-bench-toggle" aria-expanded="false" aria-controls="storm-bench-list"/);
+    expect(html).toContain('<ul id="storm-bench-list" class="svs-member-list" hidden="">');
+  });
 });

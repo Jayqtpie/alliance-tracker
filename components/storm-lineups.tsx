@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, CheckCheck, Cloud, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
+import { Check, CheckCheck, ChevronRight, Cloud, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek, TrackerState } from "@/lib/types";
 import { memberStats, statDisplay } from "@/lib/member-stats";
@@ -50,6 +50,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
   const [mode, setMode] = useState<"weeks" | "summary">("weeks");
   const [selectedId, setSelectedId] = useState<string>();
   const [query, setQuery] = useState("");
+  const [benchOpen, setBenchOpen] = useState(false);
   const [newDate, setNewDate] = useState(() => nextStormDate(new Date().toLocaleDateString("en-CA"), kind));
   const [shownKind, setShownKind] = useState(kind);
   const newDateProblem = newDate ? stormDayProblem(kind, newDate) : undefined;
@@ -136,6 +137,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
   const matches = (member: Member) => !needle || member.canonicalName.toLocaleLowerCase().includes(needle);
   // Hero power, the measure the suggestion picks and balances by.
   const power = (member: Member) => memberStats(member).heroPower ?? 0;
+  const byName = (a: Member, b: Member) => a.canonicalName.localeCompare(b.canonicalName, "en", { sensitivity: "base" });
   const groupPower = (team: StormTeam, role: StormSlotRole) => selected!.slots
     .filter((slot) => slot.team === team && slot.role === role)
     .reduce((sum, slot) => sum + (memberById.has(slot.memberId) ? power(memberById.get(slot.memberId)!) : 0), 0);
@@ -145,9 +147,10 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
     .filter((row): row is { slot: StormSlot; member: Member } => Boolean(row.member) && matches(row.member!))
     .sort((a, b) => power(b.member) - power(a.member)) : [];
   const picked = new Set(selected?.slots.map((slot) => slot.memberId));
-  // Who sat out last week comes first: they are next in the rotation.
   const bench = selected ? state.members.filter((member) => member.active && !picked.has(member.id) && matches(member))
-    .sort((a, b) => Number(parked.has(a.id)) - Number(parked.has(b.id)) || Number(playedBefore.has(a.id)) - Number(playedBefore.has(b.id)) || power(b) - power(a)) : [];
+    .sort(byName) : [];
+  // Collapsed until opened, and always open while a search is filtering it.
+  const benchShown = benchOpen || Boolean(needle);
 
   const summary = stormSummary(kindWeeks, state.members).filter((row) => row.member.active || row.picked > 0);
   const parkedNext = parkedFor(allWeeks, "9999-12-31");
@@ -284,8 +287,10 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
         </div>
 
         <section className="storm-bench" aria-label={t("Not in this lineup")}>
-          <h4>{t("Not in this lineup")} <span className="count-chip">{bench.length}</span></h4>
-          <ul className="svs-member-list">
+          <h4 className="storm-bench-head"><button type="button" className="storm-bench-toggle" aria-expanded={benchShown} aria-controls="storm-bench-list"
+            disabled={Boolean(needle)} onClick={() => setBenchOpen((open) => !open)}>
+            <ChevronRight size={16} aria-hidden="true" />{t("Not in this lineup")} <span className="count-chip">{bench.length}</span></button></h4>
+          <ul id="storm-bench-list" className="svs-member-list" hidden={!benchShown}>
             {bench.map((member) => {
               const parkedFrom = parked.get(member.id);
               return <li key={member.id} data-state={parkedFrom ? "parked" : "bench"}>
