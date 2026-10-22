@@ -55,8 +55,11 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
 (async () => {
   const retrievedMs = Date.parse(raw.retrievedAt);
   const listedRows = raw.players.filter(p => p.allianceId === ALLIANCE);
+  // A joiner's lwservers row can be weeks old and still name their previous alliance, which is as stale as its stats.
+  // Such a row is taken only for an --identities entry, and only with newer RSCL evidence (checked below).
+  const staleJoinerRows = raw.players.filter(p => p.allianceId !== ALLIANCE && newIdentities.has(p.uid) && !live.members.some(m => m.gameProfile?.uid === p.uid));
   const unresolved = [], members = [], membershipMismatches = [], listedMarkedLeft = [];
-  for (const p of listedRows) {
+  for (const p of [...listedRows, ...staleJoinerRows]) {
     const confirmedMs = (p.lastConfirmedAt?.seconds ?? 0) * 1000, ageMs = retrievedMs - confirmedMs;
     const withinDay = ageMs >= -60_000 && ageMs <= DAY;
     // `daily` is lwservers' dated reading; each stat in it is either that day's value or null.
@@ -71,6 +74,11 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
     if (matches.length === 0 && added) {
       const uid = p.uid, publicId = String(added.publicId ?? '');
       if (p.warzone !== 927) throw new Error('New member ' + uid + ' is not on 927 per lwservers');
+      if (p.allianceId !== ALLIANCE) {
+        const e = added.evidence ?? {}, seen = e.lwatlasLastSeenAt ?? '';
+        const seenMs = Date.parse(/(Z|[+-]\d\d:\d\d)$/i.test(seen) ? seen : seen + 'Z');
+        if (withinDay || e.lwatlasUid !== uid || e.lwatlasAllianceAbbr !== 'RSCL' || e.lastRankAlliance !== 'RSCL' || !(seenMs > confirmedMs)) throw new Error('New member ' + uid + ' is in ' + p.alliance + ' per lwservers, without newer RSCL evidence from lwatlas and LastRank');
+      }
       // A stale reading is not used: the row carries the verified identity with empty stats for the next refresh to fill.
       const fresh = withinDay && anyMeasured, stale = !withinDay ? 'source record older than 24 hours' : 'no dated stat reading within 24 hours';
       if (!fresh) Object.keys(measured).forEach(key => { measured[key] = null; });
@@ -196,13 +204,14 @@ const retainedProfile = (gp, killsStatus) => ({ source: gp.source, capturedOn: g
     members: members.map(({ _changedAvatar, _added, _owner, ...x }) => x),
   };
   const addedUids = new Set(addedRows.map(x => x.uid));
+  const staleAlliance = addedRows.filter(x => x.sourceMembership.allianceId !== ALLIANCE);
   const fresh = capture.members.filter(x => x.freshness.status === 'fresh');
   const count = key => fresh.filter(x => x.profile.fieldSources[key].startsWith('lwservers')).length;
   const retainedNames = capture.members.filter(x => x.freshness.status === 'retained');
   capture.notes = [
     `Backup source: LastRank's alliance list was stale, so this export reads lwservers.com's public warzone 927 snapshot (generated ${raw.snapshotGeneratedAt}).`,
     `lwservers lists ${listedRows.length} RSCL players; ${existingRows.length} mapped to existing tracker records by game UID, not by name. lwservers' own roster sweep counts ${raw.allianceMemberCount ?? 'unknown'} members (${raw.allianceMemberCountDate ?? 'undated'}).`,
-    `${addedRows.length} new members added at the user's request, each game UID verified outside LastRank (lwservers and lwatlas agree on name, UID and RSCL; LastRank's avatar and origin server agree; see identityEvidence.external)${addedRows.length ? ': ' + addedRows.map(x => x.name).join(', ') : ''}.`,
+    `${addedRows.length} new members added at the user's request, each game UID verified outside LastRank (lwservers and lwatlas agree on name, UID and RSCL; LastRank's avatar and origin server agree; see identityEvidence.external)${addedRows.length ? ': ' + addedRows.map(x => x.name).join(', ') : ''}.${staleAlliance.length ? ` For ${staleAlliance.map(x => x.name).join(', ')}, lwservers' row was older than 24 hours and still showed their previous alliance (${[...new Set(staleAlliance.map(x => x.sourceMembership.allianceTag))].join(', ')}); RSCL membership comes from lwatlas and LastRank, both dated later.` : ''}`,
     `${fresh.length} profiles were confirmed by lwservers within 24 hours with a dated reading (user rule: data no more than 1 day old): hero power read for ${count('heroPower')}, power for ${count('power')}, kills for ${count('kills')}; any stat lwservers did not read keeps its tracker value, as each row's profile.fieldSources records. Profession comes from lwservers' career type (pf) for ${count('profession')}; alliance rank is always kept, as lwservers leaves it empty or undated.`,
     `${capture.retainedProfileCount} rows keep their existing tracker name, rank, statistics and dates unaltered${retainedNames.length ? ': ' + retainedNames.map(x => x.name).join(', ') : ''}.`,
     `${unresolved.length} lwservers RSCL players have no tracker record with their game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
