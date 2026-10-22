@@ -81,11 +81,14 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(otherAlliance)).toBe(otherAlliance);
   });
 
+  // The joiner is built here: a real capture may add nobody (the 2026-10-21 refresh stopped on that).
   it("attaches an added member's profile to the officer's name-only record for that player", () => {
-    const row = capture.changes.addedToThisExport[0];
+    const source = structuredClone(capture);
+    const row = { ...structuredClone(source.members[0]), uid: "1999999999000927", lastRankPublicId: "9999999", name: "A Test Joiner" };
+    source.members.push(row);
     const before = structuredClone(INITIAL_STATE);
     before.members.push({ id: "officer-added", canonicalName: row.name, aliases: [], active: true, joinedAt: "2026-10-18" });
-    const after = importCapturedRoster(before);
+    const after = applyCapturedRoster(before, source, ROSTER_IMPORT);
     expect(after.members.filter((member) => member.gameProfile?.uid === row.uid).map((member) => member.id)).toEqual(["officer-added"]);
     expect(after.members.find((member) => member.id === "officer-added")).toMatchObject({ active: true, joinedAt: "2026-10-18" });
   });
