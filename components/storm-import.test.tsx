@@ -79,4 +79,11 @@ describe("StormLineupsView screenshot import", () => {
     expect(render(true, false, { stormWeeks: [] })).not.toContain("Start from the game");
     expect(render(false, true, { stormWeeks: [] })).not.toContain("Start from the game");
   });
+
+  it("tells officers why screenshot uploads are missing when the bridge isn't set up", () => {
+    const note = "Claude extraction appears after private Blob storage and a worker secret are configured.";
+    expect(render(true, false, { stormWeeks: [] })).toContain(note);
+    expect(render(true, true, { stormWeeks: [] })).not.toContain(note);
+    expect(render(false, false, { stormWeeks: [] })).not.toContain(note);
+  });
 });

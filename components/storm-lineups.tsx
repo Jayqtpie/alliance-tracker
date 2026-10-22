@@ -220,6 +220,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
             onClick={startFromGame}><Cloud size={14} />{t("Start from the game")}</button>}
           <button type="submit" className="button secondary" disabled={!newDate || Boolean(newDateProblem)}><Shuffle size={14} />{t("Suggest lineup")}</button>
           <p id="storm-new-day" className="storm-new-day" data-problem={newDateProblem ? "" : undefined}>{t(stormDayRule(kind))}</p>
+          {!bridgeConfigured && <p className="bridge-unavailable">{t("Claude extraction appears after private Blob storage and a worker secret are configured.")}</p>}
         </form>}
         {sorted.length ? <ul className="svs-fight-list">
           {sorted.map((week) => {
