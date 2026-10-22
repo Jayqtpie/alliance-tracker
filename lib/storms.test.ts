@@ -6,11 +6,15 @@ import {
 } from "./storms";
 import type { Member, StormSlot, StormWeek } from "./types";
 
-// Power falls by index: m000 is the strongest.
-const roster = (count: number): Member[] => Array.from({ length: count }, (_, index) => ({
+// Hero power falls by index: m000 is the strongest. Total power runs the other way, so picking by it would show.
+const roster = (count: number, heroPowerAt = (index: number) => 1_000_000 - index * 1000): Member[] => Array.from({ length: count }, (_, index) => ({
   id: `m${String(index).padStart(3, "0")}`, canonicalName: `m${String(index).padStart(3, "0")}`, aliases: [], active: true,
-  manualStats: { power: 1_000_000 - index * 1000, updatedAt: "2026-10-01" },
+  manualStats: { power: 1000 + index * 1000, heroPower: heroPowerAt(index), updatedAt: "2026-10-01" },
 }));
+const heroOf = (members: Member[]) => new Map(members.map((member) => [member.id, member.manualStats!.heroPower!]));
+const teamGap = (slots: StormSlot[], hero: Map<string, number>, role: StormSlot["role"]) => slots
+  .filter((value) => value.role === role)
+  .reduce((gap, value) => gap + (value.team === "A" ? 1 : -1) * hero.get(value.memberId)!, 0);
 const week = (id: string, date: string, slots: StormSlot[], extra: Partial<StormWeek> = {}): StormWeek => ({ id, kind: "desert", date, slots, ...extra });
 const slot = (memberId: string, role: StormSlot["role"] = "starter", team: StormSlot["team"] = "A", extra: Partial<StormSlot> = {}): StormSlot => ({ memberId, team, role, ...extra });
 
@@ -68,6 +72,29 @@ describe("suggestLineup", () => {
     for (const member of members.slice(3)) expect(ids.has(member.id)).toBe(true);
     // m001 is now the strongest pick, so starts, and keeps last week's team B.
     expect(next.find((value) => value.memberId === "m001")).toEqual({ memberId: "m001", team: "B", role: "starter" });
+  });
+
+  it("splits each role so the teams' hero power is as even as it can be", () => {
+    // Evenly spaced: an exact split exists and is found.
+    const even = roster(100);
+    const evenSlots = suggestLineup(even, [], "2026-10-02");
+    expect(teamGap(evenSlots, heroOf(even), "starter")).toBe(0);
+    expect(teamGap(evenSlots, heroOf(even), "sub")).toBe(0);
+    // Uneven, with a few far stronger players: placing each on the lighter team alone leaves a 34M gap;
+    // the trades bring it within two steps of the spacing between starters.
+    const uneven = roster(100, (index) => [410e6, 395e6, 370e6][index] ?? 300e6 - index * 1_370_011);
+    const unevenSlots = suggestLineup(uneven, [], "2026-10-02");
+    expect(Math.abs(teamGap(unevenSlots, heroOf(uneven), "starter"))).toBeLessThan(1_370_011 * 2);
+  });
+
+  it("keeps returning players on last week's team and balances around them", () => {
+    // Last week the five strongest all played on A. With 60 members everyone is picked; those five stay
+    // on A and the rest even out the totals.
+    const members = roster(60);
+    const last = week("w1", "2026-10-02", members.slice(0, 5).map((member) => slot(member.id, "starter", "A", { result: "played" })));
+    const slots = suggestLineup(members, [last], "2026-10-09");
+    for (const member of members.slice(0, 5)) expect(slots.find((value) => value.memberId === member.id)?.team).toBe("A");
+    expect(teamGap(slots, heroOf(members), "starter")).toBe(0);
   });
 
   it("creates a week from the suggestion with nothing recorded", () => {

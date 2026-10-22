@@ -58,23 +58,23 @@ export function parkedFor(weeks: StormWeek[], date: string) {
   return new Map(previous ? previous.slots.filter(parksNextWeek).map((slot) => [slot.memberId, previous] as const) : []);
 }
 
-const power = (member: Member) => memberStats(member).power ?? 0;
-const byPower = (a: Member, b: Member) => power(b) - power(a) || a.canonicalName.localeCompare(b.canonicalName);
+// Hero power, not total power: total power swings with the troops a player has trained.
+const heroPower = (member: Member) => memberStats(member).heroPower ?? 0;
+const byHeroPower = (a: Member, b: Member) => heroPower(b) - heroPower(a) || a.canonicalName.localeCompare(b.canonicalName);
 
 /**
  * Next week's lineup. Parked members are left out. Of the rest, those who sat out the previous week
- * go first, then everyone else, each by power. The strongest 40 of the 60 start. A member keeps the
- * previous week's team when it has room in their role, since teams play at different times;
- * everyone else joins whichever team is weaker so far.
+ * go first, then everyone else, each by hero power. The strongest 40 of the 60 start. Each role is
+ * then split between the teams with their hero power as even as it can be (see assignTeams).
  */
 export function suggestLineup(members: Member[], weeks: StormWeek[], date: string): StormSlot[] {
   const previous = previousWeek(weeks, date);
   const parked = parkedFor(weeks, date);
   const lastTeam = new Map(previous?.slots.map((slot) => [slot.memberId, slot.team]));
   const eligible = members.filter((member) => member.active && !parked.has(member.id));
-  const satOut = eligible.filter((member) => !lastTeam.has(member.id)).sort(byPower);
-  const played = eligible.filter((member) => lastTeam.has(member.id)).sort(byPower);
-  const chosen = [...satOut, ...played].slice(0, STORM_SLOTS).sort(byPower);
+  const satOut = eligible.filter((member) => !lastTeam.has(member.id)).sort(byHeroPower);
+  const played = eligible.filter((member) => lastTeam.has(member.id)).sort(byHeroPower);
+  const chosen = [...satOut, ...played].slice(0, STORM_SLOTS).sort(byHeroPower);
   const starterCount = STORM_TEAMS.length * STORM_CAPACITY.starter;
   return [
     ...assignTeams(chosen.slice(0, starterCount), "starter", lastTeam),
@@ -82,16 +82,39 @@ export function suggestLineup(members: Member[], weeks: StormWeek[], date: strin
   ];
 }
 
+/**
+ * Splits one role between the teams. A returning member keeps last week's team while it has room, since
+ * the teams play at different times. Everyone else goes to the lighter team by hero power, strongest
+ * first; then one of them from each team trade places while a trade narrows the gap.
+ */
 function assignTeams(group: Member[], role: StormSlotRole, lastTeam: Map<string, StormTeam>): StormSlot[] {
+  const teamOf = new Map<string, StormTeam>();
+  const kept = new Set<string>();
   const count = { A: 0, B: 0 }, total = { A: 0, B: 0 };
   const room = (team: StormTeam) => count[team] < STORM_CAPACITY[role];
-  return group.map((member) => {
+  const place = (member: Member, team: StormTeam) => { teamOf.set(member.id, team); count[team] += 1; total[team] += heroPower(member); };
+  for (const member of group) {
     const preferred = lastTeam.get(member.id);
-    const team: StormTeam = preferred && room(preferred) ? preferred
-      : !room("B") || (room("A") && total.A <= total.B) ? "A" : "B";
-    count[team] += 1; total[team] += power(member);
-    return { memberId: member.id, team, role };
-  });
+    if (preferred && room(preferred)) { place(member, preferred); kept.add(member.id); }
+  }
+  for (const member of group) {
+    if (!teamOf.has(member.id)) place(member, !room("B") || (room("A") && total.A <= total.B) ? "A" : "B");
+  }
+  const movable = (team: StormTeam) => group.filter((member) => !kept.has(member.id) && teamOf.get(member.id) === team);
+  // Each trade strictly shrinks the gap, so this ends.
+  for (;;) {
+    const gap = total.A - total.B;
+    let best: [Member, Member] | undefined, bestGap = Math.abs(gap);
+    for (const a of movable("A")) for (const b of movable("B")) {
+      const next = Math.abs(gap - 2 * (heroPower(a) - heroPower(b)));
+      if (next < bestGap) { bestGap = next; best = [a, b]; }
+    }
+    if (!best) break;
+    const [a, b] = best;
+    teamOf.set(a.id, "B"); teamOf.set(b.id, "A");
+    total.A -= heroPower(a) - heroPower(b); total.B += heroPower(a) - heroPower(b);
+  }
+  return group.map((member) => ({ memberId: member.id, team: teamOf.get(member.id)!, role }));
 }
 
 export function createStormWeek(members: Member[], weeks: StormWeek[], date: string, kind: StormType): StormWeek {

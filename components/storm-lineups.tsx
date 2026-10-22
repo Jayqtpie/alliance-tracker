@@ -3,7 +3,7 @@
 import { CheckCheck, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek, TrackerState } from "@/lib/types";
-import { memberStats } from "@/lib/member-stats";
+import { memberStats, statDisplay } from "@/lib/member-stats";
 import {
   createStormWeek, markStartersPlayed, parkedFor, parksNextWeek, placeMember, previousWeek, removeMember, seatsTaken,
   setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
@@ -125,7 +125,11 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
   const playedBefore = new Set(previous?.slots.map((slot) => slot.memberId));
   const needle = query.trim().toLocaleLowerCase();
   const matches = (member: Member) => !needle || member.canonicalName.toLocaleLowerCase().includes(needle);
-  const power = (member: Member) => memberStats(member).power ?? 0;
+  // Hero power, the measure the suggestion picks and balances by.
+  const power = (member: Member) => memberStats(member).heroPower ?? 0;
+  const groupPower = (team: StormTeam, role: StormSlotRole) => selected!.slots
+    .filter((slot) => slot.team === team && slot.role === role)
+    .reduce((sum, slot) => sum + (memberById.has(slot.memberId) ? power(memberById.get(slot.memberId)!) : 0), 0);
 
   const lineup = selected ? selected.slots
     .map((slot) => ({ slot, member: memberById.get(slot.memberId) }))
@@ -156,7 +160,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
       <span className="svs-member"><MemberAvatar member={member} /><MemberName member={member} />
         {parks && <span className="storm-flag" data-flag="parked" title={t(slot.park ? "Parked by an officer" : "Missed as a starter")}><CircleParking size={11} aria-hidden="true" />{t("Parks next week")}</span>}
       </span>
-      <span className="storm-power">{memberStats(member).powerDisplay}</span>
+      <span className="storm-power">{memberStats(member).heroPowerDisplay}</span>
       {editable ? <span className="storm-controls">
         <span className="svs-toggle storm-toggle" role="group" aria-label={t("{name} result", { name: member.canonicalName })}>
           {STORM_RESULTS.map((option) => <button key={option} type="button" data-option={option} aria-pressed={slot.result === option}
@@ -239,7 +243,8 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
             {STORM_ROLES.map((role) => {
               const rows = lineup.filter(({ slot }) => slot.team === team && slot.role === role);
               return <div key={role} className="storm-group">
-                <h5>{t(ROLE_LABELS[role])} <span className="count-chip">{seatsTaken(selected, team, role)}/{STORM_CAPACITY[role]}</span></h5>
+                <h5>{t(ROLE_LABELS[role])} <span className="count-chip">{seatsTaken(selected, team, role)}/{STORM_CAPACITY[role]}</span>
+                  <span className="storm-group-power" title={t("Total hero power")}>{statDisplay(groupPower(team, role))}</span></h5>
                 <ul className="svs-member-list">
                   {rows.map(slotRow)}
                   {!rows.length && <li className="svs-empty">{t(needle ? "No one matches that name." : "No one here yet.")}</li>}
@@ -260,7 +265,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
                     ? <span className="storm-flag" data-flag="parked"><CircleParking size={11} aria-hidden="true" />{t("Parked · from {date}", { date: shortDate(language, parkedFrom.date) })}</span>
                     : previous && !playedBefore.has(member.id) && <span className="storm-flag" data-flag="due">{t("Sat out last week")}</span>}
                 </span>
-                <span className="storm-power">{memberStats(member).powerDisplay}</span>
+                <span className="storm-power">{memberStats(member).heroPowerDisplay}</span>
                 {editable && !parkedFrom && <select aria-label={t("Add {name}", { name: member.canonicalName })} value=""
                   onChange={(event) => change((week) => placeMember(week, member.id, seat(event.target.value).team, seat(event.target.value).role))}>
                   <option value="" disabled>{t("Add to…")}</option>

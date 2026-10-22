@@ -62,7 +62,7 @@ export function memberServers(member: Member) {
   return { origin: origin ?? null, transferredTo: member.transferredTo ?? null };
 }
 
-function statDisplay(value: number | null): string {
+export function statDisplay(value: number | null): string {
   if (value === null) return "—";
   for (const [unit, divisor] of [["B", 1e9], ["M", 1e6], ["K", 1e3]] as const) {
     if (value >= divisor) return `${Number((value / divisor).toFixed(2))}${unit}`;
