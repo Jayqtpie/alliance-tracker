@@ -11,6 +11,8 @@
 .storm-team { min-width: 0; }
 .storm-team + .storm-team { border-left: 1px solid var(--line); }
 .storm-team h4, .storm-bench h4 { display: flex; align-items: center; gap: 7px; margin: 0; padding: 12px 16px 4px; font-size: 14px; }
+/* A thinner band of page background above the subs, so they never read as more starters. */
+.storm-group + .storm-group::before { content: ""; display: block; height: 8px; border-block: 1px solid var(--line); background: var(--paper); }
 .storm-group h5 { display: flex; align-items: center; gap: 7px; margin: 0; padding: 8px 16px 6px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
 /* A band of page background between the teams and everyone left out of them. */
 .storm-bench::before { content: ""; display: block; height: 14px; border-block: 1px solid var(--line); background: var(--paper); }
@@ -112,7 +114,9 @@
   .storm-import-match select { flex: 1 1 150px; width: auto; min-width: 0; }
   .storm-new { grid-template-columns: minmax(0, 1fr); }
   .storm-teams { grid-template-columns: minmax(0, 1fr); }
-  .storm-team + .storm-team { border-top: 1px solid var(--line); border-left: 0; }
+  /* Stacked teams get the same band as the bench, or Team B's heading reads as one more row of Team A. */
+  .storm-team + .storm-team { border-left: 0; }
+  .storm-team + .storm-team::before { content: ""; display: block; height: 14px; border-block: 1px solid var(--line); background: var(--paper); }
   .storm-team h4, .storm-bench h4 { padding-inline: 12px; }
   .storm-bench-toggle { padding-inline: 12px; }
   .storm-group h5 { padding-inline: 12px; }
