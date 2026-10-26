@@ -45,7 +45,13 @@ describe("captured RSCL roster", () => {
     expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(91);
     expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(0);
     for (const member of active) expect(existsSync(path.join(process.cwd(), "public", member.gameProfile!.avatarPath))).toBe(true);
-    expect(active.find((member) => member.canonicalName === "MjQ8")?.gameProfile?.heroPower).toBeNull();
+    // The missing reading is built here: the 2026-10-26 refresh stopped when the player pinned by
+    // name was renamed and measured. Object.assign, since a capture with no gaps types it as number.
+    const source = structuredClone(capture);
+    const unmeasured = source.members.find((row) => row.freshness.status !== "retained")!;
+    Object.assign(unmeasured.profile, { heroPower: null });
+    const withGap = applyCapturedRoster(structuredClone(INITIAL_STATE), source, ROSTER_IMPORT);
+    expect(withGap.members.find((member) => member.gameProfile?.uid === unmeasured.uid)?.gameProfile?.heroPower).toBeNull();
     expect(parseDisplayedPower("168MLEGACY")).toBe(168_000_000);
     expect(parseDisplayedPower("—")).toBeNull();
   });
