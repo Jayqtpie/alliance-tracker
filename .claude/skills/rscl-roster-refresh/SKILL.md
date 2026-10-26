@@ -31,7 +31,7 @@ These are the owner's rules. Breaking one silently corrupts the roster.
 2. **Collect** — **dispatch a Sonnet subagent for this step; do not run it in the main session.** The owner asked for this split: Sonnet does the slow pull, the main session re-derives every number from the raw capture. This overrides any default about not spawning agents. Scope the subagent to collection only — no writes to tracked files, no tests, no git — and have it report the `--check` JSON verbatim rather than summarising it.
    ~100 profiles, 1 req/sec, several minutes; resumable — rerun the same command if it is cut off:
    `node .claude/skills/rscl-roster-refresh/scripts/collect.mjs --collect --out .data/lastrank-refresh-<date>`
-   then `--check` instead of `--collect` to confirm coverage. Hard errors (HTTP status, non-JSON, identity mismatch) mean stop and report — never edit the script around them.
+   then `--check` instead of `--collect` to confirm coverage. Hard errors (HTTP status, non-JSON, identity mismatch) mean stop and report — never edit the script around them. The script already retries a 502, 503 or 504 three times (15s, 30s, 60s); one that still fails is a hard error.
 3. **Build the export**:
    `node .claude/skills/rscl-roster-refresh/scripts/build-capture.cjs --date <date>`
    Writes `lib/data/rscl-roster-<date>.json` plus any changed avatars under `public/avatars/rscl/`.

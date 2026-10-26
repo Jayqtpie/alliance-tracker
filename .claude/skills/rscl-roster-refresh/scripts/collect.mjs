@@ -67,14 +67,28 @@ async function main(args) {
   await mkdir(dir, { recursive: true });
   let lastRequest = 0;
   let consecutiveTimeouts = 0;
+  // A lone gateway error is retried: one 502 after 32 of 99 profiles stopped the 2026-10-25
+  // scheduled run, and the same endpoint answered normally the next day. Any other status, or a
+  // gateway error that outlasts the retries, still stops the run.
+  const gatewayRetryWaits = [15_000, 30_000, 60_000];
   async function request(endpoint, method = 'GET') {
-    await new Promise(resolve => setTimeout(resolve, Math.max(0, 1050 - (Date.now() - lastRequest))));
-    lastRequest = Date.now();
-    const response = await fetch('https://lastrank.fun' + endpoint, {
-      method,
-      headers: { Accept: 'application/json', 'User-Agent': 'RSCL-roster-refresh/1.0' },
-      signal: AbortSignal.timeout(45_000),
-    });
+    for (let attempt = 0; ; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, Math.max(0, 1050 - (Date.now() - lastRequest))));
+      lastRequest = Date.now();
+      const response = await fetch('https://lastrank.fun' + endpoint, {
+        method,
+        headers: { Accept: 'application/json', 'User-Agent': 'RSCL-roster-refresh/1.0' },
+        signal: AbortSignal.timeout(45_000),
+      });
+      if ([502, 503, 504].includes(response.status) && attempt < gatewayRetryWaits.length) {
+        console.error(`HTTP ${response.status} for ${endpoint}; retrying in ${gatewayRetryWaits[attempt] / 1000}s.`);
+        await new Promise(resolve => setTimeout(resolve, gatewayRetryWaits[attempt]));
+        continue;
+      }
+      return readResponse(response, endpoint);
+    }
+  }
+  async function readResponse(response, endpoint) {
     if (!response.ok) throw new Error(`Stopped on HTTP ${response.status} for ${endpoint}; resolve access, throttling or service failure before resuming.`);
     if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('Non-JSON response; possible challenge. Capture preserved.');
     return response.json();

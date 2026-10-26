@@ -72,6 +72,9 @@ jobs:
           # Claude's final message goes to the job summary so a run that stops without a commit says
           # why. The prompt limits that message to counts and a reason, with no player names.
           node -e 'const r = require(process.argv[1]); console.log("### Claude\n\n" + (r.result ?? "(no result text)"))' "$RUNNER_TEMP/claude.json" >> "$GITHUB_STEP_SUMMARY" || true
+          # The same message as an annotation: the API does not serve job summaries, but annotations
+          # come back from `gh api repos/<repo>/check-runs/<job id>/annotations`.
+          node -e 'const r = require(process.argv[1]); const text = String(r.result ?? "(no result text)").slice(0, 4000); console.log("::notice title=Claude::" + text.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A"))' "$RUNNER_TEMP/claude.json" || true
           exit $status
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -85,7 +88,7 @@ jobs:
           before="${{ steps.claude.outputs.before }}"
           # The probe found changes, so no commit means Claude stopped on a failed condition. Fail the
           # run so GitHub emails the owner: the 2026-10-04 and 10-07 runs stopped and still showed green.
-          if [ "$(git rev-parse HEAD)" = "$before" ]; then echo "::error::The probe found changes but Claude made no commit; its reason is in the job summary."; exit 1; fi
+          if [ "$(git rev-parse HEAD)" = "$before" ]; then echo "::error::The probe found changes but Claude made no commit; its reason is in the job summary and the Claude annotation."; exit 1; fi
           unexpected=$(git diff --name-only "$before" HEAD | grep -v -E '^(lib/data/rscl-roster-[0-9]{4}-[0-9]{2}-[0-9]{2}\.json|public/avatars/rscl/[^/]+|lib/roster-import\.ts|lib/[a-z-]+\.test\.ts)$' || true)
           if [ -n "$unexpected" ]; then echo "Commit touches files a refresh should not:"; echo "$unexpected"; exit 1; fi
           git diff --name-only --diff-filter=A "$before" HEAD | grep -q -E '^lib/data/rscl-roster-' || { echo "No new roster export in the commit."; exit 1; }
