@@ -86,7 +86,7 @@ To roll back: revert the refresh commit on main first (otherwise the next load r
 
 ## Tests that need new facts each refresh
 
-`lib/roster-import.test.ts`: the export it imports at the top, the parrot record's `capturedOn`, JayQT's `heroPower`, the marker dates in "does not downgrade a newer capture" and the `it.each` list (all must be ≥ the new capture date), the public ID used for the retained-profile test, and the UID used for the absent-from-source test — **the retained and absent members change from run to run**; read the new export's `retainedProfileCount`, `changes.absentFromSourceRoster` and `notes` to find them.
+`lib/roster-import.test.ts`: the export it imports at the top, JayQT's `heroPower`, the marker dates in "does not downgrade a newer capture" and the `it.each` list (all must be ≥ the new capture date), the public ID used for the retained-profile test, and the UID used for the absent-from-source test — **the retained and absent members change from run to run**; read the new export's `retainedProfileCount`, `changes.absentFromSourceRoster` and `notes` to find them.
 
 `lib/profile-stats.test.ts`: the hardcoded power/profession for Zothargirl.
 

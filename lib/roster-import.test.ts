@@ -10,21 +10,24 @@ describe("captured RSCL roster", () => {
   it("refreshes an older capture by UID while preserving corrections, history and previous names", () => {
     const before = importCapturedRoster(structuredClone(INITIAL_STATE));
     before.rosterImport = "lwservers-rscl-927-2026-09-05-v1";
-    const parrot = before.members.find((member) => member.gameProfile?.uid === "1601085524000862")!;
-    parrot.id = "officer-retained-identity";
-    parrot.canonicalName = "war parrot";
-    parrot.aliases = ["An OCR alias"];
-    parrot.previousNames = ["A verified earlier name"];
-    parrot.notes = "Preserve this note";
-    before.snapshots[0].entries[0] = { ...before.snapshots[0].entries[0], memberId: parrot.id, reviewed: true, needsReview: false };
+    // Any fresh row will do. A pinned player can rename or leave between captures, and either stops
+    // a scheduled refresh on a test it may not edit.
+    const row = capture.members.find((entry) => entry.freshness.status === "fresh")!;
+    const officerEdited = before.members.find((member) => member.gameProfile?.uid === row.uid)!;
+    officerEdited.id = "officer-retained-identity";
+    officerEdited.canonicalName = "An older in-game name";
+    officerEdited.aliases = ["An OCR alias"];
+    officerEdited.previousNames = ["A verified earlier name"];
+    officerEdited.notes = "Preserve this note";
+    before.snapshots[0].entries[0] = { ...before.snapshots[0].entries[0], memberId: officerEdited.id, reviewed: true, needsReview: false };
     const after = importCapturedRoster(before);
-    const refreshed = after.members.find((member) => member.id === parrot.id)!;
-    expect(refreshed.canonicalName).toBe("dr parrot");
-    expect(refreshed.aliases).toContain("war parrot");
-    expect(refreshed.previousNames).toEqual(expect.arrayContaining(["war parrot", "A verified earlier name"]));
+    const refreshed = after.members.find((member) => member.id === officerEdited.id)!;
+    expect(refreshed.canonicalName).toBe(row.name);
+    expect(refreshed.aliases).toContain("An older in-game name");
+    expect(refreshed.previousNames).toEqual(expect.arrayContaining(["An older in-game name", "A verified earlier name"]));
     expect(refreshed.previousNames).not.toContain("An OCR alias");
-    expect(refreshed.notes).toBe(parrot.notes);
-    expect(refreshed.gameProfile).toMatchObject({ capturedOn: "2026-10-26", lastRankPublicId: "1186935", refreshStatus: "fresh" });
+    expect(refreshed.notes).toBe(officerEdited.notes);
+    expect(refreshed.gameProfile).toMatchObject({ capturedOn: capture.capturedOn, lastRankPublicId: row.lastRankPublicId, refreshStatus: "fresh" });
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
