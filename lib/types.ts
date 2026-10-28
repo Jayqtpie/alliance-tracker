@@ -184,6 +184,23 @@ export interface StormWeek {
   slots: StormSlot[];
 }
 
+export type RallyMode = "balanced" | "tiered";
+
+/** One rally: `slots[0]` is the leader, who must be a War Leader; the other four are joiners. Null is an empty slot. */
+export interface RallySquad {
+  id: string;
+  slots: (string | null)[];
+}
+
+export interface RallyBoard {
+  mode: RallyMode;
+  squads: RallySquad[];
+  /** Members a suggestion leaves where they are. */
+  pinned: string[];
+  /** Members who are not online for this event, so a suggestion skips them. */
+  unavailable: string[];
+}
+
 export interface TrackerState {
   version: number;
   rosterImport?: string;
@@ -202,6 +219,7 @@ export interface TrackerState {
   pairings?: PairingRow[];
   svsEvents?: SvsEvent[];
   stormWeeks?: StormWeek[];
+  rallyBoard?: RallyBoard;
   updatedAt: string;
 }
 

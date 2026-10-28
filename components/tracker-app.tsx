@@ -4,6 +4,7 @@ import { csvCell } from "@/lib/csv";
 import NextImage from "next/image";
 import {
   Activity,
+  Crosshair,
   ArrowRight,
   ArrowDownRight,
   ArrowUpRight,
@@ -50,6 +51,7 @@ import { AllianceMark } from "@/components/alliance-mark";
 import { MemberAvatar } from "@/components/alliance-roster";
 import { MembersView } from "@/components/members-view";
 import { MergeMemberDialog } from "@/components/merge-member-dialog";
+import { RallySquadsView } from "@/components/rally-squads";
 import { StormLineupsView } from "@/components/storm-lineups";
 import { DeleteMemberDialog } from "./delete-member-dialog";
 import { memberServers, memberStats, serverLabel } from "@/lib/member-stats";
@@ -70,6 +72,7 @@ import { RankingReview } from "./ranking-review";
 import { accurateAsOf } from "@/lib/display-date";
 
 type View = "overview" | "import" | "reports" | "operations" | "members" | "settings";
+type OperationsPage = StormType | "rally";
 const bridgeJobStorageKey = "alliance-manager:active-bridge-job";
 
 // compact/full/signed/dateLabel are shared with the canvas export helpers, which are plain
@@ -434,7 +437,7 @@ export function TrackerApp({
   setDisplayLocale(language);
   const [state, setState] = useState(initialState);
   const [view, setView] = useState<View>("overview");
-  const [stormKind, setStormKind] = useState<StormType>("desert");
+  const [operationsPage, setOperationsPage] = useState<OperationsPage>("desert");
   const [reportsTab, setReportsTab] = useState<"reports" | "snapshots">("reports");
   const [editingSnapshot, setEditingSnapshot] = useState<Snapshot>();
   const [selectedSnapshotId, setSelectedSnapshotId] = useState(
@@ -506,11 +509,12 @@ export function TrackerApp({
   const operationsNav = [
     ["desert", "Desert Storm", Tornado],
     ["canyon", "Canyon Storm", Mountain],
+    ["rally", "Rally Squads", Crosshair],
   ] as const;
-  const stormLabel = operationsNav.find(([kind]) => kind === stormKind)![1];
+  const operationsLabel = operationsNav.find(([page]) => page === operationsPage)![1];
 
-  function openStorm(kind: StormType) {
-    setStormKind(kind);
+  function openOperationsPage(page: OperationsPage) {
+    setOperationsPage(page);
     navigate("operations");
   }
 
@@ -538,13 +542,13 @@ export function TrackerApp({
         <p className="nav-caption">{t("Workspace")}</p>
         <nav aria-label={t("Main navigation")}>
           {nav.filter(([id]) => canManage || id !== "import").map(([id, label, Icon]) => id === "operations"
-            // Operations is a parent: its storm pages sit under it here, and become a tab strip on the phone bar.
+            // Operations is a parent: its storm and rally pages sit under it here, and become a tab strip on the phone bar.
             ? <Fragment key={id}>
               <button aria-current={view === id ? "true" : undefined} className={view === id ? "nav-item nav-parent active" : "nav-item nav-parent"} onClick={() => navigate(id)}>
                 <Icon size={18} /> <span>{t(label)}</span>
               </button>
-              {operationsNav.map(([kind, subLabel, SubIcon]) => <button key={kind} aria-current={view === id && stormKind === kind ? "page" : undefined}
-                className={view === id && stormKind === kind ? "nav-item nav-sub active" : "nav-item nav-sub"} onClick={() => openStorm(kind)}>
+              {operationsNav.map(([kind, subLabel, SubIcon]) => <button key={kind} aria-current={view === id && operationsPage === kind ? "page" : undefined}
+                className={view === id && operationsPage === kind ? "nav-item nav-sub active" : "nav-item nav-sub"} onClick={() => openOperationsPage(kind)}>
                 <SubIcon size={16} /> <span>{t(subLabel)}</span>
               </button>)}
             </Fragment>
@@ -566,7 +570,7 @@ export function TrackerApp({
         <header className="topbar">
           <div>
             <p className="workspace-breadcrumb">{state.alliance.name} <ChevronRight size={13} /> {view === "operations"
-              ? <><span className="breadcrumb-parent">{t("Operations")}</span> <ChevronRight size={13} /> <span>{t(stormLabel)}</span></>
+              ? <><span className="breadcrumb-parent">{t("Operations")}</span> <ChevronRight size={13} /> <span>{t(operationsLabel)}</span></>
               : <span>{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</span>}</p>
             {view !== "overview" && view !== "members" && view !== "operations" && <h1 className="sr-only">{t(view === "settings" ? "Alliance settings" : nav.find(([id]) => id === view)?.[1] || "Overview")}</h1>}
           </div>
@@ -625,9 +629,11 @@ export function TrackerApp({
         </>}
         {canManage && view === "settings" && <AllianceSettings key={state.version} state={state} onSaved={(next) => { setState(next); showNotice(t("Alliance settings saved.")); router.refresh(); }} />}
         {view === "operations" && <div className="operations-subnav"><div className="operations-tabs reports-tabs">
-          {operationsNav.map(([kind, label, Icon]) => <button key={kind} className={stormKind === kind ? "active" : ""} onClick={() => setStormKind(kind)}><Icon size={16} />{t(label)}</button>)}
+          {operationsNav.map(([kind, label, Icon]) => <button key={kind} className={operationsPage === kind ? "active" : ""} onClick={() => setOperationsPage(kind)}><Icon size={16} />{t(label)}</button>)}
         </div></div>}
-        {view === "operations" && <StormLineupsView kind={stormKind} canManage={canManage} bridgeConfigured={bridgeConfigured} state={state} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} />}
+        {view === "operations" && (operationsPage === "rally"
+          ? <RallySquadsView canManage={canManage} state={state} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} />
+          : <StormLineupsView kind={operationsPage} canManage={canManage} bridgeConfigured={bridgeConfigured} state={state} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} />)}
         {view === "members" && <MembersView canManage={canManage} onSaved={(next) => { setState(next); showNotice(t("Player changes saved.")); router.refresh(); }} state={state} onOpenMember={setSelectedMemberId} onMergeMember={setMergeMemberId} onDeleteMember={setDeleteMemberId} />}
         </div>
       </main>

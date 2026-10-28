@@ -29,5 +29,9 @@ export function stateForRole(state: TrackerState, role: AccessRole): TrackerStat
       id: week.id, kind: week.kind, date: week.date, locked: week.locked, confirmed: week.confirmed, times: week.times,
       slots: week.slots.map((slot) => ({ memberId: slot.memberId, team: slot.team, role: slot.role, result: slot.result, park: slot.park })),
     })),
+    rallyBoard: state.rallyBoard && {
+      mode: state.rallyBoard.mode, pinned: state.rallyBoard.pinned, unavailable: state.rallyBoard.unavailable,
+      squads: state.rallyBoard.squads.map((squad) => ({ id: squad.id, slots: squad.slots })),
+    },
   };
 }

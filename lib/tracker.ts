@@ -3,6 +3,7 @@ import type { ExtractedRow, Member, RankingEntry, Snapshot, SvsAttendance, Track
 import { rankGaps } from "./rank-gaps";
 import { translate, type Translator } from "./i18n";
 import { mergeStormMember, removeMember } from "./storms";
+import { mergeRallyMember, removeRallyMember } from "./rally-squads";
 
 // Warnings default to English so server code and tests read plainly; the UI passes its translator.
 const englishTranslator: Translator = (phrase, values) => translate("en", phrase, values);
@@ -230,6 +231,7 @@ export function mergeMemberIdentities(state: TrackerState, primaryId: string, du
       return { ...event, attendance };
     }) } : {}),
     ...(state.stormWeeks ? { stormWeeks: mergeStormMember(state.stormWeeks, duplicateId, primaryId) } : {}),
+    ...(state.rallyBoard ? { rallyBoard: mergeRallyMember(state.rallyBoard, duplicateId, primaryId) } : {}),
   };
 }
 
@@ -244,6 +246,7 @@ export function removeMemberFromRoster(state: TrackerState, memberId: string): T
       attendance: Object.fromEntries(Object.entries(event.attendance).filter(([id]) => id !== memberId)),
     })) } : {}),
     ...(state.stormWeeks ? { stormWeeks: state.stormWeeks.map((week) => removeMember(week, memberId)) } : {}),
+    ...(state.rallyBoard ? { rallyBoard: removeRallyMember(state.rallyBoard, memberId) } : {}),
   };
 }
 

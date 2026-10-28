@@ -90,6 +90,15 @@ describe("roster duplicate cleanup", () => {
     expect(mergeMemberIdentities(state, "keep", "duplicate").stormWeeks![0].slots).toEqual([{ memberId: "keep", team: "B", role: "sub", result: "played" }]);
     expect(removeMemberFromRoster(state, "duplicate").stormWeeks![0].slots).toEqual([]);
   });
+
+  it("moves a rally slot to the kept member and clears a removed member's slot", () => {
+    const state = fixture();
+    state.rallyBoard = { mode: "balanced", squads: [{ id: "squad-1", slots: [null, "duplicate", null, null, null] }], pinned: ["duplicate"], unavailable: [] };
+    const merged = mergeMemberIdentities(state, "keep", "duplicate").rallyBoard!;
+    expect(merged.squads[0].slots).toEqual([null, "keep", null, null, null]);
+    expect(merged.pinned).toEqual(["keep"]);
+    expect(removeMemberFromRoster(state, "duplicate").rallyBoard!.squads[0].slots).toEqual([null, null, null, null, null]);
+  });
 });
 
 describe("multilingual identity matching", () => {
