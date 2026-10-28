@@ -22,7 +22,7 @@ describe("LastRank power and profession", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     const row = capture.members.find((row) => row.name === "Zothargirl")!;
     const member = state.members.find((m) => m.gameProfile?.uid === row.uid)!;
-    expect(member.gameProfile).toMatchObject({ power: 620209730, powerDisplay: "620.21M", profession: "War Leader" });
+    expect(member.gameProfile).toMatchObject({ power: 619972562, powerDisplay: "619.97M", profession: "War Leader" });
   });
 
   it("adds stats once to fresh profiles, leaving retained profiles and officer edits unaltered", () => {
