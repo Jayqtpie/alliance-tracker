@@ -1,4 +1,5 @@
 import type { Member, RallyBoard, RallyMode, RallySquad } from "./types";
+import { csvCell } from "./csv";
 import { memberStats, statDisplay } from "./member-stats";
 
 /** A rally is its leader plus four joiners. */
@@ -268,6 +269,22 @@ export function rallyBoardText(board: RallyBoard, memberById: Map<string, Member
       `Joiners: ${filled.length ? filled.map(label).join(", ") : "—"}`,
     ].join("\n");
   }).join("\n\n");
+}
+
+/** One row per filled slot, for Excel or Sheets. Hero power is a plain number so it sorts and sums. */
+export function rallyBoardCsv(board: RallyBoard, memberById: Map<string, Member>): string {
+  const rows = [["Squad", "Role", "Name", "Profession", "Hero power", "Squad total"].map(csvCell).join(",")];
+  board.squads.forEach((squad, index) => {
+    const total = squadTotal(squad, memberById);
+    squad.slots.forEach((id, slot) => {
+      const member = id ? memberById.get(id) : undefined;
+      if (!member) return;
+      const stats = memberStats(member);
+      rows.push([index + 1, slot === LEADER_SLOT ? "Leader" : "Joiner", member.canonicalName, stats.profession ?? "", stats.heroPower ?? "", total]
+        .map((value) => csvCell(value)).join(","));
+    });
+  });
+  return rows.join("\r\n");
 }
 
 /** The kept identity takes the duplicate's slot, pin and availability, unless it already has a place. */

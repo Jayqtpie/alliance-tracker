@@ -1,11 +1,13 @@
 "use client";
 
-import { Check, Copy, Crown, Pin, Scale, Shuffle, UserCheck, UserX, Users } from "lucide-react";
+import { Check, Copy, Crown, Download, Pin, Scale, Shuffle, UserCheck, UserX, Users } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import type { Member, RallyBoard, RallyMode, TrackerState } from "@/lib/types";
+import { allianceFilePrefix } from "@/lib/alliance";
+import { csvBlob } from "@/lib/csv";
 import { memberStats, statDisplay } from "@/lib/member-stats";
 import {
-  canLead, defaultRallyBoard, LEADER_SLOT, MAX_SQUADS, moveRallyMember, rallyBoardText, resolveRallyBoard, setSquadCount, setUnavailable,
+  canLead, defaultRallyBoard, LEADER_SLOT, MAX_SQUADS, moveRallyMember, rallyBoardCsv, rallyBoardText, resolveRallyBoard, setSquadCount, setUnavailable,
   squadGap, squadTotal, suggestRallyBoard, suggestedSquadCount, togglePin, type RallyTarget,
 } from "@/lib/rally-squads";
 import { MemberAvatar } from "./alliance-roster";
@@ -120,6 +122,15 @@ export function RallySquadsView({ canManage, state, onSaved }: { canManage: bool
     }
   }
 
+  function exportCsv() {
+    const url = URL.createObjectURL(csvBlob(rallyBoardCsv(board, memberById)));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${allianceFilePrefix(state.alliance)}-rally-squads-${new Date().toLocaleDateString("en-CA")}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function save() {
     setBusy(true); setError("");
     try {
@@ -200,6 +211,7 @@ export function RallySquadsView({ canManage, state, onSaved }: { canManage: bool
         <button type="button" className="button secondary" onClick={() => suggest()}><Shuffle size={14} />{t("Suggest squads")}</button>
       </>}
       <button type="button" className="button ghost rally-copy" onClick={copy}>{copied ? <Check size={14} /> : <Copy size={14} />}{t(copied ? "Copied" : "Copy as text")}</button>
+      <button type="button" className="button ghost" onClick={exportCsv}><Download size={14} />{t("Export CSV")}</button>
       {canManage && <p className="rally-notice" role="status">{notice || (heldMember ? "" : t("Click a member, then a slot. Strength is total hero power."))}</p>}
     </section>
 

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createEmptyState } from "./alliance";
-import { csvCell } from "./csv";
+import { csvBlob, csvCell } from "./csv";
 import { rankGaps } from "./rank-gaps";
 import { dedupeRows, analyzeImport } from "./tracker";
 import { allowedRequestOrigin } from "./request-security";
@@ -35,6 +35,11 @@ describe("security boundaries", () => {
   it("preserves Unicode, CSV quoting and numeric deltas", () => {
     expect(csvCell('雨, "Cloud"')).toBe('"雨, ""Cloud"""');
     expect(csvCell(-12)).toBe("-12");
+  });
+  it("starts every CSV download with a UTF-8 byte-order mark so Excel keeps non-Latin names", async () => {
+    const bytes = new Uint8Array(await csvBlob('"雨"').arrayBuffer());
+    expect([...bytes.slice(0, 3)]).toEqual([0xef, 0xbb, 0xbf]);
+    expect(new TextDecoder().decode(bytes.slice(3))).toBe('"雨"');
   });
   it.each([1_000_000_000, Number.MAX_SAFE_INTEGER])("bounds both processing paths at rank %s", (rank) => {
     const rows = [{ rank, displayName: "Alpha", points: 1, confidence: 1 }];

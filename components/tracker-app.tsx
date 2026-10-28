@@ -1,6 +1,6 @@
 "use client";
 
-import { csvCell } from "@/lib/csv";
+import { csvBlob, csvCell } from "@/lib/csv";
 import NextImage from "next/image";
 import {
   Activity,
@@ -118,8 +118,7 @@ function exportSnapshot(snapshot: Snapshot, alliance: TrackerState["alliance"]) 
     const safe = csvCell(entry.displayName);
     lines.push(`${entry.rank},${safe},${entry.points}`);
   });
-  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
+  const url = URL.createObjectURL(csvBlob(lines.join("\n")));
   const link = document.createElement("a");
   link.href = url;
   link.download = `${allianceFilePrefix(alliance)}-${snapshot.capturedAt.slice(0, 10)}-${snapshot.status}.csv`;
@@ -155,7 +154,7 @@ function exportDetailedSnapshot(snapshot: Snapshot, state: TrackerState) {
     ];
     lines.push(values.map(csvCell).join(","));
   });
-  downloadBlob(new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" }), `${allianceFilePrefix(state.alliance)}-report-${snapshot.capturedAt.slice(0, 10)}.csv`);
+  downloadBlob(csvBlob(lines.join("\n")), `${allianceFilePrefix(state.alliance)}-report-${snapshot.capturedAt.slice(0, 10)}.csv`);
 }
 
 function roundedCanvasRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {

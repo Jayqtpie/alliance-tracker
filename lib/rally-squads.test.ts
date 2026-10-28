@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  canLead, defaultRallyBoard, emptyRallyBoard, mergeRallyMember, moveRallyMember, rallyBoardText, removeRallyMember, resolveRallyBoard,
+  canLead, defaultRallyBoard, emptyRallyBoard, mergeRallyMember, moveRallyMember, rallyBoardCsv, rallyBoardText, removeRallyMember, resolveRallyBoard,
   setSquadCount, setUnavailable, squadGap, squadTotal, suggestRallyBoard, suggestedSquadCount, togglePin,
 } from "./rally-squads";
 import type { Member, RallyBoard } from "./types";
@@ -173,6 +173,16 @@ describe("pins, availability, text and roster changes", () => {
   it("writes each squad as plain text", () => {
     expect(rallyBoardText(start, byId(roster))).toBe("Squad 1 · 690M\nLeader: wl400 (400M)\nJoiners: e290 (290M)");
     expect(rallyBoardText(board([[null, null, null, null, null]]), byId(roster))).toBe("Squad 1 · 0\nLeader: —\nJoiners: —");
+  });
+
+  it("exports one CSV row per filled slot with raw hero power and the squad total", () => {
+    const withName = [...roster, member("=SUM(A1)", ENG, 100)];
+    const csv = rallyBoardCsv(board([["wl400", null, "=SUM(A1)", null, null]]), byId(withName)).split("\r\n");
+    expect(csv).toEqual([
+      '"Squad","Role","Name","Profession","Hero power","Squad total"',
+      '1,"Leader","wl400","War Leader",400000000,500000000',
+      `1,"Joiner","'=SUM(A1)","Engineer",100000000,500000000`,
+    ]);
   });
 
   it("a merge moves the duplicate's slot to the kept identity unless it already has one; a removal clears it", () => {
