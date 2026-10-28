@@ -4,6 +4,8 @@ import { isAdmin } from "@/lib/auth";
 import { getState, setState, StateConflictError } from "@/lib/store";
 import { lineupProblem, lockedWeekViolation } from "@/lib/storms";
 
+const outcome = z.object({ result: z.enum(["win", "loss"]), opponent: z.string().trim().max(80).optional() }).optional();
+
 const schema = z.object({
   weeks: z.array(z.object({
     id: z.string().min(1),
@@ -12,6 +14,7 @@ const schema = z.object({
     locked: z.boolean().optional(),
     confirmed: z.array(z.enum(["A", "B"])).max(2).optional(),
     times: z.object({ A: z.string().max(80).optional(), B: z.string().max(80).optional() }).optional(),
+    outcomes: z.object({ A: outcome, B: outcome }).optional(),
     slots: z.array(z.object({
       memberId: z.string().min(1),
       team: z.enum(["A", "B"]),

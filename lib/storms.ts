@@ -1,5 +1,5 @@
 import { memberStats } from "./member-stats";
-import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek } from "./types";
+import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormTeamOutcome, StormType, StormWeek } from "./types";
 
 export const STORM_KINDS: StormType[] = ["desert", "canyon"];
 export const STORM_TEAMS: StormTeam[] = ["A", "B"];
@@ -154,6 +154,19 @@ export function setConfirmed(week: StormWeek, team: StormTeam, confirmed: boolea
   return next;
 }
 
+/** Records how a team's battle went, or clears it. A blank opponent is not stored. */
+export function setOutcome(week: StormWeek, team: StormTeam, outcome: StormTeamOutcome | undefined): StormWeek {
+  const outcomes = { ...week.outcomes };
+  if (outcome) {
+    const opponent = outcome.opponent?.trim();
+    outcomes[team] = opponent ? { result: outcome.result, opponent: outcome.opponent } : { result: outcome.result };
+  } else delete outcomes[team];
+  const next: StormWeek = { ...week, outcomes };
+  // Unset, not empty, so a week with no results stores no key.
+  if (!Object.keys(outcomes).length) delete next.outcomes;
+  return next;
+}
+
 /** A lineup change in a team means it no longer matches what was confirmed against the game. */
 function unconfirm(week: StormWeek, ...teams: StormTeam[]): StormWeek {
   return teams.reduce((next, team) => next.confirmed?.includes(team) ? setConfirmed(next, team, false) : next, week);
@@ -206,7 +219,7 @@ export function lineupProblem(week: StormWeek): string | undefined {
 
 function sameWeek(a: StormWeek, b: StormWeek) {
   const slot = (value: StormSlot) => [value.memberId, value.team, value.role, value.result ?? "", value.park ?? ""].join("|");
-  const teams = (value: StormWeek) => JSON.stringify([value.confirmed ?? [], STORM_TEAMS.map((team) => value.times?.[team] ?? "")]);
+  const teams = (value: StormWeek) => JSON.stringify([value.confirmed ?? [], STORM_TEAMS.map((team) => [value.times?.[team] ?? "", value.outcomes?.[team]?.result ?? "", value.outcomes?.[team]?.opponent ?? ""])]);
   return a.kind === b.kind && a.date === b.date && teams(a) === teams(b) && a.slots.length === b.slots.length
     && a.slots.every((value, index) => slot(value) === slot(b.slots[index]));
 }

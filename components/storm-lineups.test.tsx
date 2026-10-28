@@ -74,6 +74,19 @@ describe("StormLineupsView", () => {
     expect(viewer).toContain("Not recorded");
   });
 
+  it("lets officers record each team's result and shows viewers who they won or lost to", () => {
+    const outcomes = { A: { result: "win" as const, opponent: "[XYZ] Rivals" }, B: { result: "loss" as const } };
+    const stormWeeks = state.stormWeeks!.map((week) => week.id === "new" ? { ...week, outcomes } : week);
+    const officer = render(true, { stormWeeks });
+    expect(officer).toContain('aria-label="Team A result"');
+    expect(officer).toContain('value="[XYZ] Rivals"');
+    const viewer = render(false, { stormWeeks });
+    expect(viewer).not.toContain('aria-label="Team A result"');
+    expect(viewer).toContain("Won vs [XYZ] Rivals");
+    expect(viewer).toContain("A: Won vs [XYZ] Rivals");
+    expect(viewer).toContain("B: Lost");
+  });
+
   it("locks the controls on a locked week", () => {
     const html = render(true, { stormWeeks: state.stormWeeks!.map((week) => ({ ...week, locked: true })) });
     expect(html).not.toContain('aria-label="Mark Kael missed"');

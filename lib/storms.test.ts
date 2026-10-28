@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   createStormWeek, lineupProblem, lockedWeekViolation, markStartersPlayed, mergeStormMember, nextStormDate, parkedFor,
-  parksNextWeek, placeMember, previousWeek, removeMember, setConfirmed, setPark, setResult, STORM_SLOTS, stormDayProblem,
+  parksNextWeek, placeMember, previousWeek, removeMember, setConfirmed, setOutcome, setPark, setResult, STORM_SLOTS, stormDayProblem,
   stormKindOn, stormSummary, suggestLineup, weekCounts,
 } from "./storms";
 import type { Member, StormSlot, StormWeek } from "./types";
@@ -197,6 +197,16 @@ describe("locks, summary and merge", () => {
     expect(lockedWeekViolation([locked], [])?.id).toBe("w");
     expect(lockedWeekViolation([locked], [setConfirmed(locked, "A", true)])?.id).toBe("w");
     expect(lockedWeekViolation([locked], [{ ...locked, times: { A: "02:00" } }])?.id).toBe("w");
+    expect(lockedWeekViolation([locked], [setOutcome(locked, "B", { result: "win", opponent: "[XYZ] Rivals" })])?.id).toBe("w");
+    const won = setOutcome(locked, "A", { result: "win" });
+    expect(lockedWeekViolation([won], [setOutcome(won, "A", { result: "win", opponent: "[XYZ]" })])?.id).toBe("w");
+  });
+
+  it("records each team's win or loss and opponent, dropping a blank opponent and an empty result set", () => {
+    const base = week("w", "2026-10-02", []);
+    const both = setOutcome(setOutcome(base, "A", { result: "win", opponent: "[XYZ] Rivals" }), "B", { result: "loss", opponent: "  " });
+    expect(both.outcomes).toEqual({ A: { result: "win", opponent: "[XYZ] Rivals" }, B: { result: "loss" } });
+    expect(setOutcome(setOutcome(both, "A", undefined), "B", undefined)).not.toHaveProperty("outcomes");
   });
 
   it("summarises per member with excused left out of the rate", () => {

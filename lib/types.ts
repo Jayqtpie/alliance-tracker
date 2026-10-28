@@ -155,6 +155,13 @@ export interface SvsEvent {
 export type StormTeam = "A" | "B";
 export type StormSlotRole = "starter" | "sub";
 export type StormResult = "played" | "missed" | "excused";
+export type StormOutcome = "win" | "loss";
+
+export interface StormTeamOutcome {
+  result: StormOutcome;
+  /** The opposing alliance as the officer typed it, e.g. "[ABC] Alliance Name". */
+  opponent?: string;
+}
 
 export interface StormSlot {
   memberId: string;
@@ -181,6 +188,8 @@ export interface StormWeek {
   confirmed?: StormTeam[];
   /** Each team's battle time as the game showed it when the lineup was confirmed, e.g. "2026-10-23 02:00~02:30 (Local Time)". */
   times?: Partial<Record<StormTeam, string>>;
+  /** How each team's battle went and who it was against. */
+  outcomes?: Partial<Record<StormTeam, StormTeamOutcome>>;
   slots: StormSlot[];
 }
 

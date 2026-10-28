@@ -43,6 +43,13 @@ describe("Storm lineup API", () => {
     expect(vi.mocked(setState).mock.calls[0][0].stormWeeks).toEqual([week()]);
   });
 
+  it("saves each team's result, trimming the opponent, and refuses an unknown result", async () => {
+    const outcomes = { A: { result: "win" as const, opponent: " [XYZ] Rivals " }, B: { result: "loss" as const } };
+    expect((await PUT(request({ weeks: [week({ outcomes })], version: 1 }))).status).toBe(200);
+    expect(vi.mocked(setState).mock.calls[0][0].stormWeeks![0].outcomes).toEqual({ A: { result: "win", opponent: "[XYZ] Rivals" }, B: { result: "loss" } });
+    expect((await PUT(request({ weeks: [week({ outcomes: { A: { result: "draw" } } as never })], version: 1 }))).status).toBe(400);
+  });
+
   it("refuses an over-full group, a duplicate member and an unknown member", async () => {
     const subs = Array.from({ length: 11 }, () => ({ memberId: "a", team: "A", role: "sub" }));
     expect((await PUT(request({ weeks: [week({ slots: subs as StormWeek["slots"] })], version: 1 }))).status).toBe(400);

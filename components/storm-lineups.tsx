@@ -1,19 +1,19 @@
 "use client";
 
-import { Check, CheckCheck, ChevronRight, Cloud, CircleParking, Lock, LockOpen, Search, Shuffle, Trash2, Users, X } from "lucide-react";
+import { Check, CheckCheck, ChevronRight, Cloud, CircleParking, Flag, Lock, LockOpen, Search, Shuffle, Trash2, Trophy, Users, X } from "lucide-react";
 import { useState } from "react";
-import type { Member, StormResult, StormSlot, StormSlotRole, StormTeam, StormType, StormWeek, TrackerState } from "@/lib/types";
+import type { Member, StormOutcome, StormResult, StormSlot, StormSlotRole, StormTeam, StormTeamOutcome, StormType, StormWeek, TrackerState } from "@/lib/types";
 import { memberStats, statDisplay } from "@/lib/member-stats";
 import {
   createStormWeek, markStartersPlayed, parkedFor, parksNextWeek, placeMember, previousWeek, removeMember, seatsTaken,
-  setConfirmed, setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
+  setConfirmed, setOutcome, setPark, setResult, STORM_CAPACITY, STORM_RESULTS, STORM_ROLES, STORM_TEAMS, nextStormDate, stormDayProblem, stormDayRule,
   stormSummary, weekCounts,
 } from "@/lib/storms";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { StormImport } from "./storm-import";
 import { useLanguage } from "./language-selector";
-import type { Language } from "@/lib/i18n";
+import type { Language, Translator } from "@/lib/i18n";
 import "./svs-attendance.css";
 import "./storm-lineups.css";
 
@@ -29,6 +29,14 @@ function battleDate(language: Language, date: string) {
 
 function shortDate(language: Language, date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { day: "numeric", month: "short" });
+}
+
+const OUTCOME_LABELS: Record<StormOutcome, string> = { win: "Win", loss: "Loss" };
+
+function outcomeLabel(t: Translator, outcome: StormTeamOutcome) {
+  const opponent = outcome.opponent?.trim();
+  if (outcome.result === "win") return opponent ? t("Won vs {opponent}", { opponent }) : t("Won");
+  return opponent ? t("Lost to {opponent}", { opponent }) : t("Lost");
 }
 
 /** The park toggle flips what the slot does now; landing back on the rule clears the override. */
@@ -232,6 +240,8 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
               <button type="button" aria-pressed={week.id === selected?.id} onClick={() => select(week.id)}>
                 <strong>{battleDate(language, week.date)}{week.locked && <Lock size={11} role="img" aria-label={t("Locked")} />}</strong>
                 <small>{t("{played}/{starters} starters played · {parked} parked", { played: weekly.startersPlayed, starters: weekly.starters, parked: weekly.parked })}</small>
+                {week.outcomes && <small className="storm-week-outcomes">{STORM_TEAMS.filter((team) => week.outcomes?.[team]).map((team) => <span key={team} data-result={week.outcomes![team]!.result}>
+                  {t("{team}: {outcome}", { team, outcome: outcomeLabel(t, week.outcomes![team]!) })}</span>)}</small>}
               </button>
             </li>;
           })}
@@ -262,6 +272,7 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
           {STORM_TEAMS.map((team) => {
             const confirmed = selected.confirmed?.includes(team) ?? false;
             const time = selected.times?.[team];
+            const outcome = selected.outcomes?.[team];
             return <section key={team} className="storm-team" aria-label={t("Team {team}", { team })}>
             <h4>{t("Team {team}", { team })}
               {editable
@@ -271,6 +282,18 @@ export function StormLineupsView({ kind, canManage, bridgeConfigured = false, st
                 : confirmed && <span className="storm-flag" data-flag="team"><Check size={11} aria-hidden="true" />{t("Matches the game")}</span>}
             </h4>
             {time && <p className="storm-team-time">{t("Battle: {time}", { time })}</p>}
+            {editable
+              ? <div className="storm-outcome-edit" role="group" aria-label={t("Team {team} result", { team })}>
+                <span className="svs-toggle">
+                  {(["win", "loss"] as const).map((result) => <button key={result} type="button" data-option={result} aria-pressed={outcome?.result === result}
+                    onClick={() => change((week) => setOutcome(week, team, outcome?.result === result ? undefined : { result, opponent: outcome?.opponent }))}>{t(OUTCOME_LABELS[result])}</button>)}
+                </span>
+                <input type="text" maxLength={80} value={outcome?.opponent ?? ""} disabled={!outcome} aria-label={t("Team {team} opponent", { team })}
+                  placeholder={t(outcome ? "Opponent alliance" : "Pick win or loss first")}
+                  onChange={(event) => outcome && change((week) => setOutcome(week, team, { result: outcome.result, opponent: event.target.value }))} />
+              </div>
+              : outcome && <p className="storm-outcome" data-result={outcome.result}>
+                {outcome.result === "win" ? <Trophy size={13} aria-hidden="true" /> : <Flag size={13} aria-hidden="true" />}{outcomeLabel(t, outcome)}</p>}
             {STORM_ROLES.map((role) => {
               const rows = lineup.filter(({ slot }) => slot.team === team && slot.role === role);
               return <div key={role} className="storm-group">
