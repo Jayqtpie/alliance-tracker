@@ -1,0 +1,4711 @@
+{
+  "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+  "warzone": 927,
+  "allianceTag": "RSCL",
+  "allianceName": "The Rascals",
+  "capturedOn": "2026-10-30",
+  "exportedAt": "2026-10-30T19:48:27.472Z",
+  "sourceRosterUpdatedAt": "2026-10-30T08:16:14.024189+01:00",
+  "sourceListedMemberCount": 96,
+  "memberCount": 95,
+  "profileCount": 96,
+  "freshProfileCount": 95,
+  "retainedProfileCount": 0,
+  "leader": "NotDoom",
+  "officerCount": 10,
+  "supersedesProfileUpdates": [
+    "lastrank-rscl-profiles-2026-09-10-v1",
+    "lastrank-rscl-profile-retry-2026-09-13-v1",
+    "lastrank-rscl-power-profession-2026-09-14-v1"
+  ],
+  "notes": [
+    "LastRank alliance list read 96 players; 95 mapped to existing game UIDs through the stored LastRank public ID link, not by name.",
+    "95 profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). 0 were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered.",
+    "0 listed players have no verified game UID and were skipped at the user's request: none.",
+    "0 active tracker members are absent from the LastRank alliance list (none); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.",
+    "0 listed players have a fresh LastRank profile outside RSCL: none.",
+    "1 listed players were marked left by an officer and are not exported: CubeWorld.",
+    "LastRank profile update timestamps are distinct from ranking measurement timestamps. Missing values are unavailable, not zero."
+  ],
+  "unresolvedIdentities": [],
+  "changes": {
+    "addedToThisExport": [],
+    "absentFromSourceRoster": [],
+    "leftPerSourceProfile": [],
+    "listedButMarkedLeft": [
+      {
+        "publicId": "1186910",
+        "uid": "1345061146000927",
+        "name": "CubeWorld",
+        "trackerName": "CubeWorld",
+        "basis": "Listed in RSCL, but an officer marked them left; not exported, so the import keeps them left"
+      }
+    ],
+    "markedInactive": [],
+    "renamed": [],
+    "rankChanged": [],
+    "changedStatistics": [
+      "1604759675000843",
+      "1311513210000927",
+      "1644943893000856",
+      "1500145514000927",
+      "2118929520000856",
+      "1276396135000866",
+      "1032469361000927",
+      "1312967191000927",
+      "1529582961000843",
+      "1867036308000905",
+      "1398298916000863",
+      "1360939579000863",
+      "1303662525000863",
+      "1905736613000844",
+      "1436417874000866",
+      "1426415525000863",
+      "1689415806000891",
+      "1346884246000830",
+      "1400285347000866",
+      "1435629411000844",
+      "1164257150000927",
+      "1583897883000843",
+      "1803857351000863",
+      "1650522690000856",
+      "1327568165000927",
+      "1666146601000931",
+      "1087497222000923",
+      "1433711278000862",
+      "1415256998000915",
+      "1354432303000927",
+      "1651568712000863",
+      "1320072346000907",
+      "1511068813000844",
+      "2029779485000856",
+      "1417138315000843",
+      "1432984853000841",
+      "1855357023000922",
+      "1119083581000856",
+      "1205420305000866",
+      "1223276182000862",
+      "1619063466000856",
+      "1432949252000866",
+      "1257131454000866",
+      "1110998471000866",
+      "1263825980000906",
+      "1945917207000844",
+      "1199403914000927",
+      "1492937533000866",
+      "1383342090000862",
+      "1001286443000927",
+      "1916028325000844",
+      "1666840305000844",
+      "1056579044000915",
+      "2425046400000844",
+      "3195437630000844",
+      "2655899837000856",
+      "2944135611000844",
+      "1080182622000927",
+      "1055557385000931",
+      "2101680014000844",
+      "1544524091000927",
+      "1044133159000908",
+      "1007911659000844",
+      "1157942274000844",
+      "1201605079000922",
+      "2655842506000856",
+      "1794888799000844",
+      "1153137664000856",
+      "2480441935000856",
+      "1476079594000927",
+      "1004904998000910",
+      "1045906174000919",
+      "1543033399000841",
+      "1880039573000844",
+      "1584396710000844",
+      "2157490861000844",
+      "1170729008000866",
+      "1501336387000866",
+      "3174283120000844",
+      "1291563187000927",
+      "1136632270000866",
+      "1666124342000844",
+      "1512437426000927",
+      "3197215313000844",
+      "1810478589000863",
+      "2043162570000844",
+      "2655813878000856",
+      "2044381976000844",
+      "3198251769000844",
+      "1036648524000927",
+      "3021584716000844",
+      "1290070340000927",
+      "1445201149000927",
+      "2857110336000836",
+      "1290641233000927"
+    ],
+    "changedAvatars": [
+      "2118929520000856",
+      "1164257150000927"
+    ]
+  },
+  "members": [
+    {
+      "position": 1,
+      "uid": "1604759675000843",
+      "lastRankPublicId": "1186874",
+      "name": "Zothargirl",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 843,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Zothargirl",
+        "previousTrackerName": "Zothargirl",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/a26b09da7deee7da75d3f21a1eef0a1f.jpg",
+      "avatarFile": "avatars/rscl/1604759675000843.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:38:41.275Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:47:34.131127+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:38:40.138001+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 405604416,
+        "heroPowerDisplay": "405.6M",
+        "heroPowerLegacy": false,
+        "power": 623175870,
+        "powerDisplay": "623.18M",
+        "profession": "War Leader",
+        "killsApproximate": 64621127,
+        "killsDisplay": "64.62M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 2,
+      "uid": "1311513210000927",
+      "lastRankPublicId": "1186873",
+      "name": "NotDoom",
+      "active": true,
+      "rank": "R5",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "NotDoom",
+        "previousTrackerName": "NotDoom",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/071884a7d5477f20980ee751836d5e77.jpg",
+      "avatarFile": "avatars/rscl/1311513210000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:38:46.729Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:47:39.520560+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:38:45.586235+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 394401213,
+        "heroPowerDisplay": "394.4M",
+        "heroPowerLegacy": false,
+        "power": 613966551,
+        "powerDisplay": "613.97M",
+        "profession": "War Leader",
+        "killsApproximate": 79418051,
+        "killsDisplay": "79.42M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 3,
+      "uid": "1644943893000856",
+      "lastRankPublicId": "1171770",
+      "name": "MJQ8",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "MJQ8",
+        "previousTrackerName": "MJQ8",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/0a83289af7745458c52d5b46e88a63b9.jpg",
+      "avatarFile": "avatars/rscl/1644943893000856-lastrank-2026-09-23.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:38:52.204Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:47:44.881136+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:38:51.028588+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 408018379,
+        "heroPowerDisplay": "408.02M",
+        "heroPowerLegacy": false,
+        "power": 576148941,
+        "powerDisplay": "576.15M",
+        "profession": "War Leader",
+        "killsApproximate": 102146115,
+        "killsDisplay": "102.15M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 4,
+      "uid": "1500145514000927",
+      "lastRankPublicId": "1186948",
+      "name": "NotPetros",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "NotPetros",
+        "previousTrackerName": "NotPetros",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/8d73cb0a76d2a5cf14ada3447e0b7d97.jpg",
+      "avatarFile": "avatars/rscl/1500145514000927-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:38:57.657Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:47:52.660234+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:38:56.530818+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 299602296,
+        "heroPowerDisplay": "299.6M",
+        "heroPowerLegacy": false,
+        "power": 465604067,
+        "powerDisplay": "465.6M",
+        "profession": "War Leader",
+        "killsApproximate": 62126135,
+        "killsDisplay": "62.13M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 5,
+      "uid": "2118929520000856",
+      "lastRankPublicId": "1171838",
+      "name": "Abu Mosaed",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Abu Mosaed",
+        "previousTrackerName": "Abu Mosaed",
+        "avatarCorroborated": false
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/b38697e9b331d74b54a40447918a1fbd.jpg",
+      "avatarFile": "avatars/rscl/2118929520000856-lastrank-2026-10-30.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:04.302Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:08.290242+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:02.284765+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 271154000,
+        "heroPowerDisplay": "271.15M",
+        "heroPowerLegacy": false,
+        "power": 455812854,
+        "powerDisplay": "455.81M",
+        "profession": "War Leader",
+        "killsApproximate": 33365557,
+        "killsDisplay": "33.37M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 6,
+      "uid": "1276396135000866",
+      "lastRankPublicId": "1171768",
+      "name": "Fоg",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Fоg",
+        "previousTrackerName": "Fоg",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/ef9775dd9e240bbf001efd138585b9bc.jpg",
+      "avatarFile": "avatars/rscl/1276396135000866.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:09.213Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:47:58.097395+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:08.055104+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 269350613,
+        "heroPowerDisplay": "269.35M",
+        "heroPowerLegacy": false,
+        "power": 437709771,
+        "powerDisplay": "437.71M",
+        "profession": "War Leader",
+        "killsApproximate": 32502020,
+        "killsDisplay": "32.5M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 7,
+      "uid": "1032469361000927",
+      "lastRankPublicId": "1186856",
+      "name": "InfernoBlaze",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "InfernoBlaze",
+        "previousTrackerName": "InfernoBlaze",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/01b650d7cab6a6478bad953750a66d53.jpg",
+      "avatarFile": "avatars/rscl/1032469361000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:14.751Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:06.349230+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:13.605662+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 278059630,
+        "heroPowerDisplay": "278.06M",
+        "heroPowerLegacy": false,
+        "power": 450129589,
+        "powerDisplay": "450.13M",
+        "profession": "War Leader",
+        "killsApproximate": 82923936,
+        "killsDisplay": "82.92M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 8,
+      "uid": "1312967191000927",
+      "lastRankPublicId": "1186904",
+      "name": "Motion Lotion",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Motion Lotion",
+        "previousTrackerName": "Motion Lotion",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/ca678270065ac01ed02db2645ff35324.jpg",
+      "avatarFile": "avatars/rscl/1312967191000927-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:20.187Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:11.730843+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:19.069108+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 294477941,
+        "heroPowerDisplay": "294.48M",
+        "heroPowerLegacy": false,
+        "power": 433276007,
+        "powerDisplay": "433.28M",
+        "profession": "War Leader",
+        "killsApproximate": 46949743,
+        "killsDisplay": "46.95M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 9,
+      "uid": "1529582961000843",
+      "lastRankPublicId": "1186929",
+      "name": "War Sgt",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 843,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "War Sgt",
+        "previousTrackerName": "War Sgt",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/6853920e9087e80a2fc3e68978b809c2.jpg",
+      "avatarFile": "avatars/rscl/1529582961000843.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:25.731Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:17.119697+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:24.564121+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 250516027,
+        "heroPowerDisplay": "250.52M",
+        "heroPowerLegacy": false,
+        "power": 422902408,
+        "powerDisplay": "422.9M",
+        "profession": "War Leader",
+        "killsApproximate": 11346478,
+        "killsDisplay": "11.35M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 10,
+      "uid": "1867036308000905",
+      "lastRankPublicId": "1186951",
+      "name": "Dọc404",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 905,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Dọc404",
+        "previousTrackerName": "Dọc404",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000905/5551c0bb716ba44fa5450f0514f3a5aa.jpg",
+      "avatarFile": "avatars/rscl/1867036308000905-lastrank-2026-10-18.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:31.146Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:22.507688+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:30.041569+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 262268712,
+        "heroPowerDisplay": "262.27M",
+        "heroPowerLegacy": false,
+        "power": 453429260,
+        "powerDisplay": "453.43M",
+        "profession": "War Leader",
+        "killsApproximate": 74085079,
+        "killsDisplay": "74.09M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 11,
+      "uid": "1398298916000863",
+      "lastRankPublicId": "1171806",
+      "name": "LacKa",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "LacKa",
+        "previousTrackerName": "LacKa",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/6963efcb340440c698e31b0c0003fbde.jpg",
+      "avatarFile": "avatars/rscl/1398298916000863-lastrank-2026-10-04.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:36.672Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:24.504572+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:35.534348+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 245440336,
+        "heroPowerDisplay": "245.44M",
+        "heroPowerLegacy": false,
+        "power": 421372616,
+        "powerDisplay": "421.37M",
+        "profession": "War Leader",
+        "killsApproximate": 15344857,
+        "killsDisplay": "15.34M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 12,
+      "uid": "1360939579000863",
+      "lastRankPublicId": "1171805",
+      "name": "Cheesy016",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Cheesy016",
+        "previousTrackerName": "Cheesy016",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/726f24238017fa34299db2409d8f2419.jpg",
+      "avatarFile": "avatars/rscl/1360939579000863.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:44.966Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:54.973912+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:43.833608+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 221849706,
+        "heroPowerDisplay": "221.85M",
+        "heroPowerLegacy": false,
+        "power": 409049823,
+        "powerDisplay": "409.05M",
+        "profession": "War Leader",
+        "killsApproximate": 8824938,
+        "killsDisplay": "8.82M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 13,
+      "uid": "1303662525000863",
+      "lastRankPublicId": "1171803",
+      "name": "Goli90",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Goli90",
+        "previousTrackerName": "Goli90",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/a61e33ccd74a62e1fb7f70025db24d39.jpg",
+      "avatarFile": "avatars/rscl/1303662525000863.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:50.460Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:44.190402+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:49.334191+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 216747005,
+        "heroPowerDisplay": "216.75M",
+        "heroPowerLegacy": false,
+        "power": 403779816,
+        "powerDisplay": "403.78M",
+        "profession": "War Leader",
+        "killsApproximate": 10622921,
+        "killsDisplay": "10.62M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 14,
+      "uid": "1905736613000844",
+      "lastRankPublicId": "658765",
+      "name": "Hyperstream",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Hyperstream",
+        "previousTrackerName": "Hyperstream",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/745fbef3f9a8c0d09dd574d3412a5910.jpg",
+      "avatarFile": "avatars/rscl/1905736613000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:39:55.887Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:00.346950+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:39:54.787067+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 227698296,
+        "heroPowerDisplay": "227.7M",
+        "heroPowerLegacy": false,
+        "power": 402692326,
+        "powerDisplay": "402.69M",
+        "profession": "War Leader",
+        "killsApproximate": 10819427,
+        "killsDisplay": "10.82M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 15,
+      "uid": "1436417874000866",
+      "lastRankPublicId": "1171812",
+      "name": "ღMBღ Gíxxìe",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ღMBღ Gíxxìe",
+        "previousTrackerName": "ღMBღ Gíxxìe",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/3dbf8acc47e1df13894cb8f15c1848f5.jpg",
+      "avatarFile": "avatars/rscl/1436417874000866.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:01.561Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:38.797644+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:00.348165+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 234545033,
+        "heroPowerDisplay": "234.55M",
+        "heroPowerLegacy": false,
+        "power": 399382132,
+        "powerDisplay": "399.38M",
+        "profession": "War Leader",
+        "killsApproximate": 26020022,
+        "killsDisplay": "26.02M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 16,
+      "uid": "1426415525000863",
+      "lastRankPublicId": "1171808",
+      "name": "Baby Bee ie FAFO",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Baby Bee ie FAFO",
+        "previousTrackerName": "Baby Bee ie FAFO",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/e8f586e30cdc345be20e81723e01edfb.jpg",
+      "avatarFile": "avatars/rscl/1426415525000863-lwservers-2026-09-27.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:07.078Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:48:49.569669+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:05.934664+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 220468881,
+        "heroPowerDisplay": "220.47M",
+        "heroPowerLegacy": false,
+        "power": 399937942,
+        "powerDisplay": "399.94M",
+        "profession": "War Leader",
+        "killsApproximate": 27043732,
+        "killsDisplay": "27.04M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 17,
+      "uid": "1689415806000891",
+      "lastRankPublicId": "1186940",
+      "name": "BananaFade",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 891,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "BananaFade",
+        "previousTrackerName": "BananaFade",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000891/19da71c06b6d97fb3efdcb83ae1ca3c8.jpg",
+      "avatarFile": "avatars/rscl/1689415806000891.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:12.531Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:13.678190+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:11.435112+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 211115774,
+        "heroPowerDisplay": "211.12M",
+        "heroPowerLegacy": false,
+        "power": 389309583,
+        "powerDisplay": "389.31M",
+        "profession": "War Leader",
+        "killsApproximate": 33271683,
+        "killsDisplay": "33.27M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 18,
+      "uid": "1346884246000830",
+      "lastRankPublicId": "1186911",
+      "name": "천사star",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 830,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "천사star",
+        "previousTrackerName": "천사star",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000830/71d304e23602dc89a58210abee816f45.jpg",
+      "avatarFile": "avatars/rscl/1346884246000830.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:18.067Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:19.080173+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:16.923570+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 214879074,
+        "heroPowerDisplay": "214.88M",
+        "heroPowerLegacy": false,
+        "power": 388916941,
+        "powerDisplay": "388.92M",
+        "profession": "Engineer",
+        "killsApproximate": 12741598,
+        "killsDisplay": "12.74M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 19,
+      "uid": "1400285347000866",
+      "lastRankPublicId": "1171807",
+      "name": "Mark Anderr",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mark Anderr",
+        "previousTrackerName": "Mark Anderr",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/922af7e64f3cbe0611d2a7d7f19bc01d.jpg",
+      "avatarFile": "avatars/rscl/1400285347000866.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:23.597Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:00.911304+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:22.414794+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 230993624,
+        "heroPowerDisplay": "230.99M",
+        "heroPowerLegacy": false,
+        "power": 381329350,
+        "powerDisplay": "381.33M",
+        "profession": "War Leader",
+        "killsApproximate": 31163633,
+        "killsDisplay": "31.16M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 20,
+      "uid": "1435629411000844",
+      "lastRankPublicId": "1171811",
+      "name": "Obaid56",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Obaid56",
+        "previousTrackerName": "Obaid56",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/2734a30fc5b9325dea63436a07716d5b.jpg",
+      "avatarFile": "avatars/rscl/1435629411000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:29.128Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:47.424015+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:27.972512+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 215878907,
+        "heroPowerDisplay": "215.88M",
+        "heroPowerLegacy": false,
+        "power": 376888508,
+        "powerDisplay": "376.89M",
+        "profession": "War Leader",
+        "killsApproximate": 14063129,
+        "killsDisplay": "14.06M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 21,
+      "uid": "1164257150000927",
+      "lastRankPublicId": "1186855",
+      "name": "Retired Goblin",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Retired Goblin",
+        "previousTrackerName": "Retired Goblin",
+        "avatarCorroborated": false
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/cfffe974cfecba8b51f4ef052db9560c.jpg",
+      "avatarFile": "avatars/rscl/1164257150000927-lastrank-2026-10-30.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:34.725Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:17.986081+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:33.533976+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 228421171,
+        "heroPowerDisplay": "228.42M",
+        "heroPowerLegacy": false,
+        "power": 374755871,
+        "powerDisplay": "374.76M",
+        "profession": "Engineer",
+        "killsApproximate": 32546394,
+        "killsDisplay": "32.55M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 22,
+      "uid": "1583897883000843",
+      "lastRankPublicId": "1186872",
+      "name": "monsta717",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 843,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "monsta717",
+        "previousTrackerName": "monsta717",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/9fa89ae32fa1da58f4af622184f96afd.jpg",
+      "avatarFile": "avatars/rscl/1583897883000843.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:40.219Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:43.558328+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:39.052754+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 229393492,
+        "heroPowerDisplay": "229.39M",
+        "heroPowerLegacy": false,
+        "power": 375671986,
+        "powerDisplay": "375.67M",
+        "profession": "War Leader",
+        "killsApproximate": 14017546,
+        "killsDisplay": "14.02M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 23,
+      "uid": "1803857351000863",
+      "lastRankPublicId": "1171828",
+      "name": "S I M A",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "S I M A",
+        "previousTrackerName": "S I M A",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/415aeb2c4d136bb0f540d554df9d629b.jpg",
+      "avatarFile": "avatars/rscl/1803857351000863.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:47.755Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:38.132393+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:46.632882+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 204867844,
+        "heroPowerDisplay": "204.87M",
+        "heroPowerLegacy": false,
+        "power": 370715906,
+        "powerDisplay": "370.72M",
+        "profession": "War Leader",
+        "killsApproximate": 7233253,
+        "killsDisplay": "7.23M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 24,
+      "uid": "1650522690000856",
+      "lastRankPublicId": "1171826",
+      "name": "WuGy",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "WuGy",
+        "previousTrackerName": "WuGy",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/ba3ec01c177ad4c38c9195afe60375e1.jpg",
+      "avatarFile": "avatars/rscl/1650522690000856.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:53.207Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:32.748899+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:52.083396+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 201716684,
+        "heroPowerDisplay": "201.72M",
+        "heroPowerLegacy": false,
+        "power": 379782513,
+        "powerDisplay": "379.78M",
+        "profession": "War Leader",
+        "killsApproximate": 14469473,
+        "killsDisplay": "14.47M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 25,
+      "uid": "1327568165000927",
+      "lastRankPublicId": "1186908",
+      "name": "Pauly Provolone",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Pauly Provolone",
+        "previousTrackerName": "Pauly Provolone",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/87d2fa595c2d4273e049be61f304e6fb.jpg",
+      "avatarFile": "avatars/rscl/1327568165000927-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:40:58.664Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:49:53.379032+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:40:57.552071+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 199085597,
+        "heroPowerDisplay": "199.09M",
+        "heroPowerLegacy": false,
+        "power": 372735922,
+        "powerDisplay": "372.74M",
+        "profession": "War Leader",
+        "killsApproximate": 7472638,
+        "killsDisplay": "7.47M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 26,
+      "uid": "1666146601000931",
+      "lastRankPublicId": "1186938",
+      "name": "JayQT",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 931,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "JayQT",
+        "previousTrackerName": "JayQT",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000931/52327ec706aaa17894d4f0ef25fa669b.jpg",
+      "avatarFile": "avatars/rscl/1666146601000931-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:04.335Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:36.623919+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:03.095747+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 206066604,
+        "heroPowerDisplay": "206.07M",
+        "heroPowerLegacy": false,
+        "power": 361618113,
+        "powerDisplay": "361.62M",
+        "profession": "Engineer",
+        "killsApproximate": 32501735,
+        "killsDisplay": "32.5M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 27,
+      "uid": "1087497222000923",
+      "lastRankPublicId": "1186879",
+      "name": "Trash010",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 923,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Trash010",
+        "previousTrackerName": "Trash010",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000923/d4fd6f352e6e746185df509ee8b99ec1.jpg",
+      "avatarFile": "avatars/rscl/1087497222000923.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:09.859Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:54.250470+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:08.713432+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 249860390,
+        "heroPowerDisplay": "249.86M",
+        "heroPowerLegacy": false,
+        "power": 368438451,
+        "powerDisplay": "368.44M",
+        "profession": "War Leader",
+        "killsApproximate": 40890554,
+        "killsDisplay": "40.89M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 28,
+      "uid": "1433711278000862",
+      "lastRankPublicId": "1186921",
+      "name": "The Grooch",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 862,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "The Grooch",
+        "previousTrackerName": "The Grooch",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/cc941289e36583db1daa4fec243b4b33.jpg",
+      "avatarFile": "avatars/rscl/1433711278000862-lastrank-2026-09-13.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:15.354Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:06.339347+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:14.174537+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 226858485,
+        "heroPowerDisplay": "226.86M",
+        "heroPowerLegacy": false,
+        "power": 366687236,
+        "powerDisplay": "366.69M",
+        "profession": "Engineer",
+        "killsApproximate": 9435386,
+        "killsDisplay": "9.44M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 29,
+      "uid": "1415256998000915",
+      "lastRankPublicId": "1186918",
+      "name": "l  Orion  l",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 915,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "l  Orion  l",
+        "previousTrackerName": "l  Orion  l",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000915/fa8122d06a8872b209b2225d96606f98.jpg",
+      "avatarFile": "avatars/rscl/1415256998000915.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:21.062Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:31.211789+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:19.708604+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 219737180,
+        "heroPowerDisplay": "219.74M",
+        "heroPowerLegacy": false,
+        "power": 367909791,
+        "powerDisplay": "367.91M",
+        "profession": "Engineer",
+        "killsApproximate": 15330567,
+        "killsDisplay": "15.33M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 30,
+      "uid": "1354432303000927",
+      "lastRankPublicId": "1186912",
+      "name": "RezzZz",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "RezzZz",
+        "previousTrackerName": "RezzZz",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/cfd12091e83f5214acbd54bf20210fd8.jpg",
+      "avatarFile": "avatars/rscl/1354432303000927-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:26.515Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:23.366895+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:25.375445+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 207667817,
+        "heroPowerDisplay": "207.67M",
+        "heroPowerLegacy": false,
+        "power": 366743271,
+        "powerDisplay": "366.74M",
+        "profession": "War Leader",
+        "killsApproximate": 17853253,
+        "killsDisplay": "17.85M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 31,
+      "uid": "1651568712000863",
+      "lastRankPublicId": "1171933",
+      "name": "Snedvriden2",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Snedvriden2",
+        "previousTrackerName": "Snedvriden2",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/c2ca218332eec1e945776b275052ad0f.jpg",
+      "avatarFile": "avatars/rscl/1651568712000863-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:32.537Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:11.781346+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:31.378597+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 197230343,
+        "heroPowerDisplay": "197.23M",
+        "heroPowerLegacy": false,
+        "power": 362512078,
+        "powerDisplay": "362.51M",
+        "profession": "War Leader",
+        "killsApproximate": 16751941,
+        "killsDisplay": "16.75M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 32,
+      "uid": "1320072346000907",
+      "lastRankPublicId": "1186906",
+      "name": "MaveriC",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 907,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "MaveriC",
+        "previousTrackerName": "MaveriC",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000907/64765202efa1e7bc4d7227e4c928f98e.jpg",
+      "avatarFile": "avatars/rscl/1320072346000907.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:38.025Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:41.525193+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:36.848352+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 212957113,
+        "heroPowerDisplay": "212.96M",
+        "heroPowerLegacy": false,
+        "power": 372223234,
+        "powerDisplay": "372.22M",
+        "profession": "War Leader",
+        "killsApproximate": 22832848,
+        "killsDisplay": "22.83M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 33,
+      "uid": "1511068813000844",
+      "lastRankPublicId": "658750",
+      "name": "ᏠᎾᏦᎬᏒ",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ᏠᎾᏦᎬᏒ",
+        "previousTrackerName": "ᏠᎾᏦᎬᏒ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/240fd5cd277dea8236c55cc9914d5506.jpg",
+      "avatarFile": "avatars/rscl/1511068813000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:43.538Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:17.614674+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:42.344961+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 208171682,
+        "heroPowerDisplay": "208.17M",
+        "heroPowerLegacy": false,
+        "power": 377741248,
+        "powerDisplay": "377.74M",
+        "profession": "War Leader",
+        "killsApproximate": 43736082,
+        "killsDisplay": "43.74M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 34,
+      "uid": "2029779485000856",
+      "lastRankPublicId": "1171833",
+      "name": "Abo Hussain",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Abo Hussain",
+        "previousTrackerName": "Abo Hussain",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/0a670de7156f6bc17df2f9b60de435b6.jpg",
+      "avatarFile": "avatars/rscl/2029779485000856-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:49.121Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:12.230885+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:47.965990+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 198763227,
+        "heroPowerDisplay": "198.76M",
+        "heroPowerLegacy": false,
+        "power": 364002431,
+        "powerDisplay": "364M",
+        "profession": "War Leader",
+        "killsApproximate": 7300036,
+        "killsDisplay": "7.3M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 35,
+      "uid": "1417138315000843",
+      "lastRankPublicId": "1186866",
+      "name": "Abbaqq",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 843,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Abbaqq",
+        "previousTrackerName": "Abbaqq",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000843/6bfe2f53257854feae01c0b5213bbc58.jpg",
+      "avatarFile": "avatars/rscl/1417138315000843.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:41:54.661Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:36.016481+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:53.515898+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 236280370,
+        "heroPowerDisplay": "236.28M",
+        "heroPowerLegacy": false,
+        "power": 364142314,
+        "powerDisplay": "364.14M",
+        "profession": "War Leader",
+        "killsApproximate": 25146290,
+        "killsDisplay": "25.15M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 36,
+      "uid": "1432984853000841",
+      "lastRankPublicId": "1186920",
+      "name": "WARBLVCK",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 841,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "WARBLVCK",
+        "previousTrackerName": "WARBLVCK",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000841/b846614081ed507d4f517217e1c6a198.jpg",
+      "avatarFile": "avatars/rscl/1432984853000841-lastrank-2026-10-14.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:00.183Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:23.557989+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:41:59.006275+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 185611832,
+        "heroPowerDisplay": "185.61M",
+        "heroPowerLegacy": false,
+        "power": 358606276,
+        "powerDisplay": "358.61M",
+        "profession": "War Leader",
+        "killsApproximate": 39958105,
+        "killsDisplay": "39.96M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 37,
+      "uid": "1855357023000922",
+      "lastRankPublicId": "1186942",
+      "name": "琳蜜露",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 922,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "琳蜜露",
+        "previousTrackerName": "琳蜜露",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/c8c1e5e4036e8c874a3f0d519f2a147d.jpg",
+      "avatarFile": "avatars/rscl/1855357023000922.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:07.490Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:59.635648+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:06.287447+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 200503669,
+        "heroPowerDisplay": "200.5M",
+        "heroPowerLegacy": false,
+        "power": 357865488,
+        "powerDisplay": "357.87M",
+        "profession": "Engineer",
+        "killsApproximate": 32542828,
+        "killsDisplay": "32.54M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 38,
+      "uid": "1119083581000856",
+      "lastRankPublicId": "1171782",
+      "name": "Ammarito",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Ammarito",
+        "previousTrackerName": "Ammarito",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/25fc232ca64f134cf698ff010b22bbb7.jpg",
+      "avatarFile": "avatars/rscl/1119083581000856-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:12.973Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:55.481700+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:11.870550+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 219611528,
+        "heroPowerDisplay": "219.61M",
+        "heroPowerLegacy": false,
+        "power": 372076059,
+        "powerDisplay": "372.08M",
+        "profession": "War Leader",
+        "killsApproximate": 22714557,
+        "killsDisplay": "22.71M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 39,
+      "uid": "1205420305000866",
+      "lastRankPublicId": "1171797",
+      "name": "Uncle Irøh",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Uncle Irøh",
+        "previousTrackerName": "Uncle Irøh",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/2d497e49a1204acf025682630d4d722a.jpg",
+      "avatarFile": "avatars/rscl/1205420305000866-lastrank-2026-09-14.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:18.545Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:28.755370+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:17.390982+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 210291832,
+        "heroPowerDisplay": "210.29M",
+        "heroPowerLegacy": false,
+        "power": 384874271,
+        "powerDisplay": "384.87M",
+        "profession": "Engineer",
+        "killsApproximate": 15249921,
+        "killsDisplay": "15.25M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 40,
+      "uid": "1223276182000862",
+      "lastRankPublicId": "1186861",
+      "name": "WAR6DOG",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 862,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "WAR6DOG",
+        "previousTrackerName": "WAR6DOG",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/799c5e0ee52f5801bda0c8e7ca091bc6.jpg",
+      "avatarFile": "avatars/rscl/1223276182000862.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:24.036Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:48.863569+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:22.880822+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 236489503,
+        "heroPowerDisplay": "236.49M",
+        "heroPowerLegacy": false,
+        "power": 373222679,
+        "powerDisplay": "373.22M",
+        "profession": "Engineer",
+        "killsApproximate": 13996630,
+        "killsDisplay": "14M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 41,
+      "uid": "1619063466000856",
+      "lastRankPublicId": "1171823",
+      "name": "ĐŘΔǤØŇ",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ĐŘΔǤØŇ",
+        "previousTrackerName": "ĐŘΔǤØŇ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/b8e2501531383ff9ed3f34114241d14a.jpg",
+      "avatarFile": "avatars/rscl/1619063466000856.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:29.571Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:41.997273+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:28.426291+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 195485690,
+        "heroPowerDisplay": "195.49M",
+        "heroPowerLegacy": false,
+        "power": 363222599,
+        "powerDisplay": "363.22M",
+        "profession": "War Leader",
+        "killsApproximate": 16880331,
+        "killsDisplay": "16.88M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 42,
+      "uid": "1432949252000866",
+      "lastRankPublicId": "1171810",
+      "name": "순수한 PureX",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "순수한 PureX",
+        "previousTrackerName": "순수한 PureX",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/87c5682c17090f9e6f722475a3e2885d.jpg",
+      "avatarFile": "avatars/rscl/1432949252000866-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:35.052Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:50:06.336533+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:33.892139+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 203932197,
+        "heroPowerDisplay": "203.93M",
+        "heroPowerLegacy": false,
+        "power": 348582773,
+        "powerDisplay": "348.58M",
+        "profession": "Engineer",
+        "killsApproximate": 10358107,
+        "killsDisplay": "10.36M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 43,
+      "uid": "1257131454000866",
+      "lastRankPublicId": "1171800",
+      "name": "Bąbą Yąga",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Bąbą Yąga",
+        "previousTrackerName": "Bąbą Yąga",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/a22e1fea0a5f1fd93f76eea7e13e2164.jpg",
+      "avatarFile": "avatars/rscl/1257131454000866.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:40.561Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:22.996646+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:39.416721+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 225419147,
+        "heroPowerDisplay": "225.42M",
+        "heroPowerLegacy": false,
+        "power": 352877615,
+        "powerDisplay": "352.88M",
+        "profession": "War Leader",
+        "killsApproximate": 24235314,
+        "killsDisplay": "24.24M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 44,
+      "uid": "1110998471000866",
+      "lastRankPublicId": "1171759",
+      "name": "JoJoDaClown",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "JoJoDaClown",
+        "previousTrackerName": "JoJoDaClown",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/ed0813514425d4c3523c72edf5bc92f4.jpg",
+      "avatarFile": "avatars/rscl/1110998471000866-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:46.122Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:51:05.075638+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:44.926788+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 203028557,
+        "heroPowerDisplay": "203.03M",
+        "heroPowerLegacy": false,
+        "power": 353455659,
+        "powerDisplay": "353.46M",
+        "profession": "War Leader",
+        "killsApproximate": 7888918,
+        "killsDisplay": "7.89M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 45,
+      "uid": "1263825980000906",
+      "lastRankPublicId": "1186864",
+      "name": "Lawsishet",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 906,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Lawsishet",
+        "previousTrackerName": "Lawsishet",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000906/014c2d5d1585b4ec8ee818b033f030e0.jpg",
+      "avatarFile": "avatars/rscl/1263825980000906.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:51.631Z",
+        "previousSourceUpdatedAt": "2026-10-27T23:33:14.350253+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:50.447324+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 217301814,
+        "heroPowerDisplay": "217.3M",
+        "heroPowerLegacy": false,
+        "power": 349558789,
+        "powerDisplay": "349.56M",
+        "profession": "Engineer",
+        "killsApproximate": 10596749,
+        "killsDisplay": "10.6M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 46,
+      "uid": "1945917207000844",
+      "lastRankPublicId": "1930569",
+      "name": "Bella Ciaooo",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Bella Ciaooo",
+        "previousTrackerName": "Bella Ciaooo",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/a420103c33738d10cab5123fd80da5ee.jpg",
+      "avatarFile": "avatars/rscl/1945917207000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:42:57.823Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:00.958021+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:42:56.680226+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 233586358,
+        "heroPowerDisplay": "233.59M",
+        "heroPowerLegacy": false,
+        "power": 369340646,
+        "powerDisplay": "369.34M",
+        "profession": "War Leader",
+        "killsApproximate": 63886315,
+        "killsDisplay": "63.89M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 47,
+      "uid": "1199403914000927",
+      "lastRankPublicId": "1186894",
+      "name": "구름DongJa",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "구름DongJa",
+        "previousTrackerName": "구름DongJa",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/2d92ab79ab68059bfe913d0fbefb1ad8.jpg",
+      "avatarFile": "avatars/rscl/1199403914000927-lastrank-2026-10-14.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:03.414Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:34.034811+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:02.191391+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 187840284,
+        "heroPowerDisplay": "187.84M",
+        "heroPowerLegacy": false,
+        "power": 346912125,
+        "powerDisplay": "346.91M",
+        "profession": "Engineer",
+        "killsApproximate": 12872956,
+        "killsDisplay": "12.87M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 48,
+      "uid": "1492937533000866",
+      "lastRankPublicId": "1171816",
+      "name": "RICK M F NASTY",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "RICK M F NASTY",
+        "previousTrackerName": "RICK M F NASTY",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/39472b95d867709e7caf1963d31e9681.jpg",
+      "avatarFile": "avatars/rscl/1492937533000866-lastrank-2026-09-13.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:08.978Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:11.726616+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:07.820371+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 204961853,
+        "heroPowerDisplay": "204.96M",
+        "heroPowerLegacy": false,
+        "power": 357166088,
+        "powerDisplay": "357.17M",
+        "profession": "Engineer",
+        "killsApproximate": 8631392,
+        "killsDisplay": "8.63M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 49,
+      "uid": "1383342090000862",
+      "lastRankPublicId": "1788398",
+      "name": "NikeFiend ÆV",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 862,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "NikeFiend ÆV",
+        "previousTrackerName": "NikeFiend ÆV",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000862/ac9b34cc560b150c80151ddfb3f10f40.jpg",
+      "avatarFile": "avatars/rscl/1383342090000862-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:14.515Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:18.169106+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:13.304230+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 253488527,
+        "heroPowerDisplay": "253.49M",
+        "heroPowerLegacy": false,
+        "power": 345731652,
+        "powerDisplay": "345.73M",
+        "profession": "War Leader",
+        "killsApproximate": 22504309,
+        "killsDisplay": "22.5M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 50,
+      "uid": "1001286443000927",
+      "lastRankPublicId": "1186881",
+      "name": "이힛 IHit",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "이힛 IHit",
+        "previousTrackerName": "이힛 IHit",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/8d684b969cb2217ab8cd29a76e83a9f7.jpg",
+      "avatarFile": "avatars/rscl/1001286443000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:20.086Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:19.241757+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:18.950460+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 193330815,
+        "heroPowerDisplay": "193.33M",
+        "heroPowerLegacy": false,
+        "power": 364689408,
+        "powerDisplay": "364.69M",
+        "profession": "Engineer",
+        "killsApproximate": 18261921,
+        "killsDisplay": "18.26M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 51,
+      "uid": "1916028325000844",
+      "lastRankPublicId": "1171831",
+      "name": "н ΣΔGLΣ н",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "н ΣΔGLΣ н",
+        "previousTrackerName": "н ΣΔGLΣ н",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/4439d6edc79871135ad8db2b4ab0d417.jpg",
+      "avatarFile": "avatars/rscl/1916028325000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:25.701Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:31.674352+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:24.512609+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 186945161,
+        "heroPowerDisplay": "186.95M",
+        "heroPowerLegacy": false,
+        "power": 344452070,
+        "powerDisplay": "344.45M",
+        "profession": "Engineer",
+        "killsApproximate": 3285808,
+        "killsDisplay": "3.29M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 52,
+      "uid": "1666840305000844",
+      "lastRankPublicId": "658710",
+      "name": "ᴬᵇᵈᵘˡᵃʰ",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ᴬᵇᵈᵘˡᵃʰ",
+        "previousTrackerName": "ᴬᵇᵈᵘˡᵃʰ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/faf09588add3eec56a34258fcd2e08a9.jpg",
+      "avatarFile": "avatars/rscl/1666840305000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:31.129Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:10.697830+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:30.012615+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 216737736,
+        "heroPowerDisplay": "216.74M",
+        "heroPowerLegacy": false,
+        "power": 358118829,
+        "powerDisplay": "358.12M",
+        "profession": "War Leader",
+        "killsApproximate": 23190488,
+        "killsDisplay": "23.19M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 53,
+      "uid": "1056579044000915",
+      "lastRankPublicId": "1186888",
+      "name": "NACHÓ",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 915,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "NACHÓ",
+        "previousTrackerName": "NACHÓ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000915/af99a12c4be85d1d5e9c1281233c82b2.jpg",
+      "avatarFile": "avatars/rscl/1056579044000915.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:37.001Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:59.864894+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:35.846639+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 179045135,
+        "heroPowerDisplay": "179.05M",
+        "heroPowerLegacy": false,
+        "power": 341441650,
+        "powerDisplay": "341.44M",
+        "profession": "Engineer",
+        "killsApproximate": 9571090,
+        "killsDisplay": "9.57M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 54,
+      "uid": "2425046400000844",
+      "lastRankPublicId": "1171843",
+      "name": "PLiiiJI JIjJj",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "PLiiiJI JIjJj",
+        "previousTrackerName": "PLiiiJI JIjJj",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/a6d11217ea18bb9307582b4fe5484ffd.jpg",
+      "avatarFile": "avatars/rscl/2425046400000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:42.536Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:05.308329+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:41.373840+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 211767631,
+        "heroPowerDisplay": "211.77M",
+        "heroPowerLegacy": false,
+        "power": 366463175,
+        "powerDisplay": "366.46M",
+        "profession": "War Leader",
+        "killsApproximate": 13290585,
+        "killsDisplay": "13.29M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 55,
+      "uid": "3195437630000844",
+      "lastRankPublicId": "658797",
+      "name": "GÈñÈRÄL Baqdonis",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "GÈñÈRÄL Baqdonis",
+        "previousTrackerName": "GÈñÈRÄL Baqdonis",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/7b72aa2cd501618f65169c404ade3e75.jpg",
+      "avatarFile": "avatars/rscl/3195437630000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:48.064Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:47.775617+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:46.934888+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 201622305,
+        "heroPowerDisplay": "201.62M",
+        "heroPowerLegacy": false,
+        "power": 349188848,
+        "powerDisplay": "349.19M",
+        "profession": "War Leader",
+        "killsApproximate": 14889623,
+        "killsDisplay": "14.89M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 56,
+      "uid": "2655899837000856",
+      "lastRankPublicId": "1171847",
+      "name": "oMRADY",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "oMRADY",
+        "previousTrackerName": "oMRADY",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/e503ceb521705f0593ee61508a844012.jpg",
+      "avatarFile": "avatars/rscl/2655899837000856.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:53.604Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:37.037180+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:52.480051+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 210947506,
+        "heroPowerDisplay": "210.95M",
+        "heroPowerLegacy": false,
+        "power": 367993048,
+        "powerDisplay": "367.99M",
+        "profession": "War Leader",
+        "killsApproximate": 28635732,
+        "killsDisplay": "28.64M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 57,
+      "uid": "2944135611000844",
+      "lastRankPublicId": "1171855",
+      "name": "Mustafa6586",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mustafa6586",
+        "previousTrackerName": "Mustafa6586",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/4a9fe3fe9a68bd659dcfb98dbdc5cb90.jpg",
+      "avatarFile": "avatars/rscl/2944135611000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:43:59.147Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:42.416056+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:43:58.000191+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 207019111,
+        "heroPowerDisplay": "207.02M",
+        "heroPowerLegacy": false,
+        "power": 343020125,
+        "powerDisplay": "343.02M",
+        "profession": "War Leader",
+        "killsApproximate": 11216312,
+        "killsDisplay": "11.22M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 58,
+      "uid": "1080182622000927",
+      "lastRankPublicId": "1186857",
+      "name": "notFiiSSSHHHH",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "notFiiSSSHHHH",
+        "previousTrackerName": "notFiiSSSHHHH",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/997667ee8f78a8f5e587e096f400c11e.jpg",
+      "avatarFile": "avatars/rscl/1080182622000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:04.677Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:28.637560+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:03.554371+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 190065999,
+        "heroPowerDisplay": "190.07M",
+        "heroPowerLegacy": false,
+        "power": 346812640,
+        "powerDisplay": "346.81M",
+        "profession": "Engineer",
+        "killsApproximate": 29581207,
+        "killsDisplay": "29.58M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 59,
+      "uid": "1055557385000931",
+      "lastRankPublicId": "1186887",
+      "name": "AlvaAlva",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 931,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "AlvaAlva",
+        "previousTrackerName": "AlvaAlva",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000931/243066052698e3aad3b936457ff14784.jpg",
+      "avatarFile": "avatars/rscl/1055557385000931.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:10.395Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:52:54.470333+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:09.039429+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 199896236,
+        "heroPowerDisplay": "199.9M",
+        "heroPowerLegacy": false,
+        "power": 336600210,
+        "powerDisplay": "336.6M",
+        "profession": "Engineer",
+        "killsApproximate": 32835470,
+        "killsDisplay": "32.84M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 60,
+      "uid": "2101680014000844",
+      "lastRankPublicId": "1171837",
+      "name": "Zyzom",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Zyzom",
+        "previousTrackerName": "Zyzom",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/6230feb3ff33961f516ee1307c75c2e1.jpg",
+      "avatarFile": "avatars/rscl/2101680014000844-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:15.778Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:02.041020+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:14.636665+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 200173549,
+        "heroPowerDisplay": "200.17M",
+        "heroPowerLegacy": false,
+        "power": 332507812,
+        "powerDisplay": "332.51M",
+        "profession": "War Leader",
+        "killsApproximate": 20025754,
+        "killsDisplay": "20.03M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 61,
+      "uid": "1544524091000927",
+      "lastRankPublicId": "1186870",
+      "name": "Sappy Chappy",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Sappy Chappy",
+        "previousTrackerName": "Sappy Chappy",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/b9d66907794af1e254575f0543a2137a.jpg",
+      "avatarFile": "avatars/rscl/1544524091000927-lastrank-2026-09-18.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:21.324Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:39.441099+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:20.165995+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 184204357,
+        "heroPowerDisplay": "184.2M",
+        "heroPowerLegacy": false,
+        "power": 326880286,
+        "powerDisplay": "326.88M",
+        "profession": "Engineer",
+        "killsApproximate": 13671106,
+        "killsDisplay": "13.67M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 62,
+      "uid": "1044133159000908",
+      "lastRankPublicId": "1186875",
+      "name": "Stoops Visor",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 908,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Stoops Visor",
+        "previousTrackerName": "Stoops Visor",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000908/12c3cbc5e3f9d8407c66eebf970a8bb5.jpg",
+      "avatarFile": "avatars/rscl/1044133159000908-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:26.784Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:59.897521+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:25.654986+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 202896514,
+        "heroPowerDisplay": "202.9M",
+        "heroPowerLegacy": false,
+        "power": 326241093,
+        "powerDisplay": "326.24M",
+        "profession": "Engineer",
+        "killsApproximate": 9741084,
+        "killsDisplay": "9.74M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 63,
+      "uid": "1007911659000844",
+      "lastRankPublicId": "658727",
+      "name": "ᴹᵀ CROCODILE",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ᴹᵀ CROCODILE",
+        "previousTrackerName": "ᴹᵀ CROCODILE",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/2166e09cdb0a16365269e2db7be862b9.jpg",
+      "avatarFile": "avatars/rscl/1007911659000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:32.248Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:21.486405+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:31.121762+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 179870626,
+        "heroPowerDisplay": "179.87M",
+        "heroPowerLegacy": false,
+        "power": 326592040,
+        "powerDisplay": "326.59M",
+        "profession": "Engineer",
+        "killsApproximate": 12483132,
+        "killsDisplay": "12.48M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 64,
+      "uid": "1157942274000844",
+      "lastRankPublicId": "1171790",
+      "name": "ＨＩＳＯＫΛ ss",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ＨＩＳＯＫΛ ss",
+        "previousTrackerName": "ＨＩＳＯＫΛ ss",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/540efad0e2d6827e65fb6aeaf801cbc2.jpg",
+      "avatarFile": "avatars/rscl/1157942274000844-lastrank-2026-10-28.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:37.742Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:27.476042+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:36.608241+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 205587047,
+        "heroPowerDisplay": "205.59M",
+        "heroPowerLegacy": false,
+        "power": 330085405,
+        "powerDisplay": "330.09M",
+        "profession": "Engineer",
+        "killsApproximate": 11779820,
+        "killsDisplay": "11.78M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 65,
+      "uid": "1201605079000922",
+      "lastRankPublicId": "1186895",
+      "name": "琳密露",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 922,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "琳密露",
+        "previousTrackerName": "琳密露",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000922/64b5dbc2eef74fa8b79007b0fa84b0f8.jpg",
+      "avatarFile": "avatars/rscl/1201605079000922-lastrank-2026-10-01.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:43.320Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:45.720631+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:42.174093+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 196267574,
+        "heroPowerDisplay": "196.27M",
+        "heroPowerLegacy": false,
+        "power": 342876455,
+        "powerDisplay": "342.88M",
+        "profession": "Engineer",
+        "killsApproximate": 16396242,
+        "killsDisplay": "16.4M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 66,
+      "uid": "2655842506000856",
+      "lastRankPublicId": "1171846",
+      "name": "VHM7",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "VHM7",
+        "previousTrackerName": "VHM7",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/eb0eaa20af74b2baf182ebba964baa9e.jpg",
+      "avatarFile": "avatars/rscl/2655842506000856-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:48.889Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:16.102652+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:47.773791+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 183222966,
+        "heroPowerDisplay": "183.22M",
+        "heroPowerLegacy": false,
+        "power": 350189664,
+        "powerDisplay": "350.19M",
+        "profession": "Engineer",
+        "killsApproximate": 7984181,
+        "killsDisplay": "7.98M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 67,
+      "uid": "1794888799000844",
+      "lastRankPublicId": "1171853",
+      "name": "ᏗᏝᎥ ᏗᏦ47",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ᏗᏝᎥ ᏗᏦ47",
+        "previousTrackerName": "ᏗᏝᎥ ᏗᏦ47",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/f5c028dbe6aa39b994cb69dd2ee40e42.jpg",
+      "avatarFile": "avatars/rscl/1794888799000844.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:54.357Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:51.259675+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:53.230181+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 209021088,
+        "heroPowerDisplay": "209.02M",
+        "heroPowerLegacy": false,
+        "power": 345645862,
+        "powerDisplay": "345.65M",
+        "profession": "War Leader",
+        "killsApproximate": 19958126,
+        "killsDisplay": "19.96M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 68,
+      "uid": "1153137664000856",
+      "lastRankPublicId": "1171788",
+      "name": "abood201440",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "abood201440",
+        "previousTrackerName": "abood201440",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/e2e18b0146fe06e35a7ae5f7bbe418f9.jpg",
+      "avatarFile": "avatars/rscl/1153137664000856-lastrank-2026-09-30.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:44:59.864Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:12.866988+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:44:58.721490+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 195721007,
+        "heroPowerDisplay": "195.72M",
+        "heroPowerLegacy": false,
+        "power": 345639639,
+        "powerDisplay": "345.64M",
+        "profession": "Engineer",
+        "killsApproximate": 13805045,
+        "killsDisplay": "13.81M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 69,
+      "uid": "2480441935000856",
+      "lastRankPublicId": "1171844",
+      "name": "abo hana ammar",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "abo hana ammar",
+        "previousTrackerName": "abo hana ammar",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/95bc0db7840a06d3375a6baa04849ea6.jpg",
+      "avatarFile": "avatars/rscl/2480441935000856-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:05.460Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:07.470705+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:04.307590+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 188443154,
+        "heroPowerDisplay": "188.44M",
+        "heroPowerLegacy": false,
+        "power": 328286834,
+        "powerDisplay": "328.29M",
+        "profession": "Engineer",
+        "killsApproximate": 7613989,
+        "killsDisplay": "7.61M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 70,
+      "uid": "1476079594000927",
+      "lastRankPublicId": "1186925",
+      "name": "ApacheJohn",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ApacheJohn",
+        "previousTrackerName": "ApacheJohn",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/6e0ea6e035550a2a24d5a560f08dae9f.jpg",
+      "avatarFile": "avatars/rscl/1476079594000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:10.946Z",
+        "previousSourceUpdatedAt": "2026-10-27T11:07:12.678097+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:09.793536+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 165545891,
+        "heroPowerDisplay": "165.55M",
+        "heroPowerLegacy": false,
+        "power": 322674738,
+        "powerDisplay": "322.67M",
+        "profession": "Engineer",
+        "killsApproximate": 3030712,
+        "killsDisplay": "3.03M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": null
+      }
+    },
+    {
+      "position": 71,
+      "uid": "1004904998000910",
+      "lastRankPublicId": "1171773",
+      "name": "Saralalaa",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 910,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Saralalaa",
+        "previousTrackerName": "Saralalaa",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000910/4af9baf553ddf9196e27d84de137aa15.jpg",
+      "avatarFile": "avatars/rscl/1004904998000910-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:16.517Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:53:56.657930+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:15.365237+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 159336990,
+        "heroPowerDisplay": "159.34M",
+        "heroPowerLegacy": false,
+        "power": 327367816,
+        "powerDisplay": "327.37M",
+        "profession": "Engineer",
+        "killsApproximate": 12151512,
+        "killsDisplay": "12.15M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": null
+      }
+    },
+    {
+      "position": 72,
+      "uid": "1045906174000919",
+      "lastRankPublicId": "1186876",
+      "name": "Mothropocene",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 919,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mothropocene",
+        "previousTrackerName": "Mothropocene",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/c7d01d1df9c780f211988b725593cc8c.jpg",
+      "avatarFile": "avatars/rscl/1045906174000919-lastrank-2026-10-18.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:22.039Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:47.366567+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:20.878977+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 184758252,
+        "heroPowerDisplay": "184.76M",
+        "heroPowerLegacy": false,
+        "power": 321661773,
+        "powerDisplay": "321.66M",
+        "profession": "Engineer",
+        "killsApproximate": 11133644,
+        "killsDisplay": "11.13M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 73,
+      "uid": "1543033399000841",
+      "lastRankPublicId": "1186931",
+      "name": "FRIJOLERO",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 841,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "FRIJOLERO",
+        "previousTrackerName": "FRIJOLERO",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000841/6acd90f04a7efa329b764f9fe75560f7.jpg",
+      "avatarFile": "avatars/rscl/1543033399000841.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:27.773Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:22.025564+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:26.527427+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 217508798,
+        "heroPowerDisplay": "217.51M",
+        "heroPowerLegacy": false,
+        "power": 319131500,
+        "powerDisplay": "319.13M",
+        "profession": "War Leader",
+        "killsApproximate": 43166140,
+        "killsDisplay": "43.17M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 74,
+      "uid": "1880039573000844",
+      "lastRankPublicId": "658764",
+      "name": "Fa12ha",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Fa12ha",
+        "previousTrackerName": "Fa12ha",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/6d8539008a813631e9a48dd15b7ceac5.jpg",
+      "avatarFile": "avatars/rscl/1880039573000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:33.762Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:49.157464+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:32.638237+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 192654578,
+        "heroPowerDisplay": "192.65M",
+        "heroPowerLegacy": false,
+        "power": 328194230,
+        "powerDisplay": "328.19M",
+        "profession": "War Leader",
+        "killsApproximate": 14768419,
+        "killsDisplay": "14.77M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 75,
+      "uid": "1584396710000844",
+      "lastRankPublicId": "658752",
+      "name": "Mustafa س",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mustafa س",
+        "previousTrackerName": "Mustafa س",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/6478247a963d5c22091094a793c6301a.jpg",
+      "avatarFile": "avatars/rscl/1584396710000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:42.210Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:16.641792+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:41.049626+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 184862518,
+        "heroPowerDisplay": "184.86M",
+        "heroPowerLegacy": false,
+        "power": 318046875,
+        "powerDisplay": "318.05M",
+        "profession": "Engineer",
+        "killsApproximate": 11302507,
+        "killsDisplay": "11.3M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 76,
+      "uid": "2157490861000844",
+      "lastRankPublicId": "658778",
+      "name": "bilal83",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "bilal83",
+        "previousTrackerName": "bilal83",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/990062d735be1789dd997847fa2cbc17.jpg",
+      "avatarFile": "avatars/rscl/2157490861000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:47.690Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:49.852189+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:46.546391+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 180459380,
+        "heroPowerDisplay": "180.46M",
+        "heroPowerLegacy": false,
+        "power": 333189222,
+        "powerDisplay": "333.19M",
+        "profession": "Engineer",
+        "killsApproximate": 6676698,
+        "killsDisplay": "6.68M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 77,
+      "uid": "1170729008000866",
+      "lastRankPublicId": "1171908",
+      "name": "Mąrk0o",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mąrk0o",
+        "previousTrackerName": "Mąrk0o",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/34f380afbf0edf66232af9dcd6118a23.jpg",
+      "avatarFile": "avatars/rscl/1170729008000866-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:53.231Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:35.369736+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:52.037102+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 180453216,
+        "heroPowerDisplay": "180.45M",
+        "heroPowerLegacy": false,
+        "power": 337157787,
+        "powerDisplay": "337.16M",
+        "profession": "Engineer",
+        "killsApproximate": 15839055,
+        "killsDisplay": "15.84M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 78,
+      "uid": "1501336387000866",
+      "lastRankPublicId": "1171928",
+      "name": "Private Drax",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Private Drax",
+        "previousTrackerName": "Private Drax",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/a5a7ceb46ed7c5e5fd4472a61559b246.jpg",
+      "avatarFile": "avatars/rscl/1501336387000866-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:45:58.740Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:43.284910+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:45:57.591317+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 184996924,
+        "heroPowerDisplay": "185M",
+        "heroPowerLegacy": false,
+        "power": 323204863,
+        "powerDisplay": "323.2M",
+        "profession": "Engineer",
+        "killsApproximate": 7757620,
+        "killsDisplay": "7.76M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 79,
+      "uid": "3174283120000844",
+      "lastRankPublicId": "658796",
+      "name": "Mr CORONA Vi PRO MaX",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mr CORONA Vi PRO MaX",
+        "previousTrackerName": "Mr CORONA Vi PRO MaX",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/d98b37ff0150dd6a671f0a230821773c.jpg",
+      "avatarFile": "avatars/rscl/3174283120000844-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:04.553Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:24.033576+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:03.133255+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 194391373,
+        "heroPowerDisplay": "194.39M",
+        "heroPowerLegacy": false,
+        "power": 315642768,
+        "powerDisplay": "315.64M",
+        "profession": "War Leader",
+        "killsApproximate": 88601703,
+        "killsDisplay": "88.6M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 80,
+      "uid": "1291563187000927",
+      "lastRankPublicId": "1186952",
+      "name": "Sleddy Blas",
+      "active": true,
+      "rank": "R4",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Sleddy Blas",
+        "previousTrackerName": "Sleddy Blas",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/5b9434371f2612d0a5c33b6679df6bfb.jpg",
+      "avatarFile": "avatars/rscl/1291563187000927-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:09.746Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:08.823074+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:08.621182+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 193095677,
+        "heroPowerDisplay": "193.1M",
+        "heroPowerLegacy": false,
+        "power": 309522904,
+        "powerDisplay": "309.52M",
+        "profession": "Engineer",
+        "killsApproximate": 17432914,
+        "killsDisplay": "17.43M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 81,
+      "uid": "1136632270000866",
+      "lastRankPublicId": "1171785",
+      "name": "Draxulas Bee",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 866,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Draxulas Bee",
+        "previousTrackerName": "Draxulas Bee",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000866/0a5458b694510a19b0f9862a32a571c2.jpg",
+      "avatarFile": "avatars/rscl/1136632270000866-lastrank-2026-09-30.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:15.223Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:54:54.522987+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:14.089953+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 207078017,
+        "heroPowerDisplay": "207.08M",
+        "heroPowerLegacy": false,
+        "power": 310131894,
+        "powerDisplay": "310.13M",
+        "profession": "War Leader",
+        "killsApproximate": 15175080,
+        "killsDisplay": "15.18M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 82,
+      "uid": "1666124342000844",
+      "lastRankPublicId": "658758",
+      "name": "SAUĎ",
+      "active": true,
+      "rank": "R3",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "SAUĎ",
+        "previousTrackerName": "SAUĎ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/ee2acaf7065b8abf198a16c75202eca1.jpg",
+      "avatarFile": "avatars/rscl/1666124342000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:20.684Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:30.432752+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:19.571241+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 181761065,
+        "heroPowerDisplay": "181.76M",
+        "heroPowerLegacy": false,
+        "power": 319185011,
+        "powerDisplay": "319.19M",
+        "profession": "War Leader",
+        "killsApproximate": 20281097,
+        "killsDisplay": "20.28M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 83,
+      "uid": "1512437426000927",
+      "lastRankPublicId": "1186868",
+      "name": "moefo",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "moefo",
+        "previousTrackerName": "moefo",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/861873dd84f94f41f025d6fbcf0b1c57.jpg",
+      "avatarFile": "avatars/rscl/1512437426000927-lastrank-2026-10-04.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:26.146Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:36.871533+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:25.017672+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 199379976,
+        "heroPowerDisplay": "199.38M",
+        "heroPowerLegacy": false,
+        "power": 328392548,
+        "powerDisplay": "328.39M",
+        "profession": "Engineer",
+        "killsApproximate": 11675734,
+        "killsDisplay": "11.68M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 84,
+      "uid": "3197215313000844",
+      "lastRankPublicId": "658798",
+      "name": "Hashim 99",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Hashim 99",
+        "previousTrackerName": "Hashim 99",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/dd2256dc502e994fa2d295c390a4545e.jpg",
+      "avatarFile": "avatars/rscl/3197215313000844-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:37.148Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:06.062714+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:35.980039+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 163101957,
+        "heroPowerDisplay": "163.1M",
+        "heroPowerLegacy": false,
+        "power": 321671554,
+        "powerDisplay": "321.67M",
+        "profession": "Engineer",
+        "killsApproximate": 3693848,
+        "killsDisplay": "3.69M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-08-28T08:52:10.717805+02:00"
+      }
+    },
+    {
+      "position": 85,
+      "uid": "1810478589000863",
+      "lastRankPublicId": "1171936",
+      "name": "brucgjk",
+      "active": true,
+      "rank": "R2",
+      "originServerId": 863,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "brucgjk",
+        "previousTrackerName": "brucgjk",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000863/b258f74d1262d6f3462037dcacb15234.jpg",
+      "avatarFile": "avatars/rscl/1810478589000863-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:42.643Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:42.279346+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:41.508332+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 183390929,
+        "heroPowerDisplay": "183.39M",
+        "heroPowerLegacy": false,
+        "power": 305321076,
+        "powerDisplay": "305.32M",
+        "profession": "War Leader",
+        "killsApproximate": 6898081,
+        "killsDisplay": "6.9M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 86,
+      "uid": "2043162570000844",
+      "lastRankPublicId": "1171834",
+      "name": "MAD HAiDAR",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "MAD HAiDAR",
+        "previousTrackerName": "MAD HAiDAR",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/01d0306c0c3d2b0fda334a8446b24871.jpg",
+      "avatarFile": "avatars/rscl/2043162570000844-lastrank-2026-10-10.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:48.172Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:16.935079+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:47.000301+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 184815932,
+        "heroPowerDisplay": "184.82M",
+        "heroPowerLegacy": false,
+        "power": 333088568,
+        "powerDisplay": "333.09M",
+        "profession": "Engineer",
+        "killsApproximate": 8957195,
+        "killsDisplay": "8.96M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 87,
+      "uid": "2655813878000856",
+      "lastRankPublicId": "1171845",
+      "name": "ŁひƑƑɎ",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 856,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "ŁひƑƑɎ",
+        "previousTrackerName": "ŁひƑƑɎ",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000856/e601dcfe4c5c4d2a75adf522011a0cf2.jpg",
+      "avatarFile": "avatars/rscl/2655813878000856-lastrank-2026-09-13.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:53.750Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:00.664901+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:52.567893+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 189361999,
+        "heroPowerDisplay": "189.36M",
+        "heroPowerLegacy": false,
+        "power": 307244663,
+        "powerDisplay": "307.24M",
+        "profession": "Engineer",
+        "killsApproximate": 12128532,
+        "killsDisplay": "12.13M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 88,
+      "uid": "2044381976000844",
+      "lastRankPublicId": "1171835",
+      "name": "Khaled 098",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Khaled 098",
+        "previousTrackerName": "Khaled 098",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/b8b1d30aae8a9753119d38f5d5f7f439.jpg",
+      "avatarFile": "avatars/rscl/2044381976000844-lwservers-2026-10-22.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:46:59.253Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:55:55.248059+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:46:58.047238+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 161409822,
+        "heroPowerDisplay": "161.41M",
+        "heroPowerLegacy": false,
+        "power": 289680649,
+        "powerDisplay": "289.68M",
+        "profession": "Engineer",
+        "killsApproximate": 4098011,
+        "killsDisplay": "4.1M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-08-28T08:38:24.230725+02:00"
+      }
+    },
+    {
+      "position": 89,
+      "uid": "3198251769000844",
+      "lastRankPublicId": "658799",
+      "name": "Msayter",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Msayter",
+        "previousTrackerName": "Msayter",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/b1ab4e6fa5ca6fcadd96707b514a84be.jpg",
+      "avatarFile": "avatars/rscl/3198251769000844-lwservers-2026-10-19.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:04.960Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:11.508530+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:03.585922+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 160204424,
+        "heroPowerDisplay": "160.2M",
+        "heroPowerLegacy": false,
+        "power": 300919679,
+        "powerDisplay": "300.92M",
+        "profession": "Engineer",
+        "killsApproximate": 6457502,
+        "killsDisplay": "6.46M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-08-28T08:52:10.717805+02:00"
+      }
+    },
+    {
+      "position": 90,
+      "uid": "1036648524000927",
+      "lastRankPublicId": "1186884",
+      "name": "SᵒᵒᵒᵒʳʳʳY",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "SᵒᵒᵒᵒʳʳʳY",
+        "previousTrackerName": "SᵒᵒᵒᵒʳʳʳY",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/1dc21c921aed12ec7f8b309c469a6d87.jpg",
+      "avatarFile": "avatars/rscl/1036648524000927-lastrank-2026-10-18.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:10.585Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:34.827592+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:09.304125+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 188148355,
+        "heroPowerDisplay": "188.15M",
+        "heroPowerLegacy": false,
+        "power": 275347801,
+        "powerDisplay": "275.35M",
+        "profession": "Engineer",
+        "killsApproximate": 7573777,
+        "killsDisplay": "7.57M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 91,
+      "uid": "3021584716000844",
+      "lastRankPublicId": "1171849",
+      "name": "art 1",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 844,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "art 1",
+        "previousTrackerName": "art 1",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000844/0b92f254d8cb820dba0db3cf8e4aa6e3.jpg",
+      "avatarFile": "avatars/rscl/3021584716000844.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:16.098Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:29.439848+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:14.894994+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 163547663,
+        "heroPowerDisplay": "163.55M",
+        "heroPowerLegacy": false,
+        "power": 291996906,
+        "powerDisplay": "292M",
+        "profession": "Engineer",
+        "killsApproximate": 4321672,
+        "killsDisplay": "4.32M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-08-28T08:38:24.230725+02:00"
+      }
+    },
+    {
+      "position": 92,
+      "uid": "1290070340000927",
+      "lastRankPublicId": "1186901",
+      "name": "Obsius",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Obsius",
+        "previousTrackerName": "Obsius",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/a869def94591058170e391ce92c20177.jpg",
+      "avatarFile": "avatars/rscl/1290070340000927-lastrank-2026-10-26.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:21.595Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:41.048053+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:20.443694+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 179293144,
+        "heroPowerDisplay": "179.29M",
+        "heroPowerLegacy": false,
+        "power": 324834093,
+        "powerDisplay": "324.83M",
+        "profession": "Engineer",
+        "killsApproximate": 4783552,
+        "killsDisplay": "4.78M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 93,
+      "uid": "1445201149000927",
+      "lastRankPublicId": "1186922",
+      "name": "I  Mystery  l",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "I  Mystery  l",
+        "previousTrackerName": "I  Mystery  l",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/5ef4e8052952fd5390c687f5ba79eafc.jpg",
+      "avatarFile": "avatars/rscl/1445201149000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:27.068Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:56:56.917033+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:25.923427+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": null,
+        "heroPowerDisplay": "—",
+        "heroPowerLegacy": false,
+        "power": 268730778,
+        "powerDisplay": "268.73M",
+        "profession": "Engineer",
+        "killsApproximate": 6710884,
+        "killsDisplay": "6.71M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": null
+      }
+    },
+    {
+      "position": 94,
+      "uid": "2857110336000836",
+      "lastRankPublicId": "1187243",
+      "name": "Maroush łŘ1ł",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 836,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Maroush łŘ1ł",
+        "previousTrackerName": "Maroush łŘ1ł",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000836/3349a8a0f8f0bc169407e421407ffc84.jpg",
+      "avatarFile": "avatars/rscl/2857110336000836-lastrank-2026-10-18.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:32.621Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:57:02.306181+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:31.468469+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 181000080,
+        "heroPowerDisplay": "181M",
+        "heroPowerLegacy": false,
+        "power": 269844043,
+        "powerDisplay": "269.84M",
+        "profession": "Engineer",
+        "killsApproximate": 9353263,
+        "killsDisplay": "9.35M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    },
+    {
+      "position": 95,
+      "uid": "1290641233000927",
+      "lastRankPublicId": "1186902",
+      "name": "PAYOBER",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "PAYOBER",
+        "previousTrackerName": "PAYOBER",
+        "avatarCorroborated": true
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/32fb379859873ee9cd1d95428730851b.jpg",
+      "avatarFile": "avatars/rscl/1290641233000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-10-30T19:47:38.260Z",
+        "previousSourceUpdatedAt": "2026-10-28T03:57:12.191817+01:00",
+        "sourceUpdatedAt": "2026-10-30T20:47:37.093948+01:00",
+        "refreshRequested": true,
+        "refreshResult": "fetched"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-10-30",
+        "heroPower": 181200786,
+        "heroPowerDisplay": "181.2M",
+        "heroPowerLegacy": false,
+        "power": 260660387,
+        "powerDisplay": "260.66M",
+        "profession": "Engineer",
+        "killsApproximate": 31194548,
+        "killsDisplay": "31.19M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-10-30T08:16:54.536546+01:00"
+      }
+    }
+  ]
+}
