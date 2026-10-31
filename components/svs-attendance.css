@@ -23,6 +23,20 @@
 .svs-fight-list strong { font-size: 12px; }
 .svs-fight-list span { color: var(--accent-text); font-size: 11px; }
 .svs-fight-list small { color: var(--muted); font-size: 11px; }
+.svs-fight-list .svs-fight-opponent { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; overflow-wrap: anywhere; }
+
+/* Win or loss: a coloured word with an icon in the list and the fight heading. */
+.svs-result { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; letter-spacing: 0; white-space: nowrap; }
+.svs-fight-list .svs-result[data-result="win"], .svs-checklist .svs-result[data-result="win"] { color: var(--green); }
+.svs-fight-list .svs-result[data-result="loss"], .svs-checklist .svs-result[data-result="loss"] { color: var(--red); }
+.svs-checklist h3 .svs-result { margin-left: 10px; vertical-align: 1px; }
+.svs-checklist h3 .svs-result svg { margin-left: 0; color: inherit; }
+
+.svs-outcome-edit { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--line); }
+.svs-outcome-edit input { flex: 0 1 320px; min-width: 0; padding: 7px 9px; border: 1px solid var(--panel-border); border-radius: 7px; background: var(--surface); color: var(--ink); font-size: 12px; }
+.svs-outcome-edit .svs-toggle button { padding: 7px 14px; }
+.svs-outcome-edit .svs-toggle button[aria-pressed="true"][data-option="win"] { background: var(--green); color: #fff; }
+.svs-outcome-edit .svs-toggle button[aria-pressed="true"][data-option="loss"] { background: var(--red); color: #fff; }
 .svs-empty { margin: 0; padding: 16px 20px; color: var(--muted); font-size: 12px; }
 
 .svs-checklist-tools { display: flex; align-items: center; gap: 10px; }
@@ -78,4 +92,9 @@
   .svs-summary th:last-child, .svs-summary td:last-child { padding-right: 12px; width: 54px; }
   .svs-summary td:first-child .alliance-avatar { display: none; }
   .svs-toggle button { flex: 1; padding: 9px 4px; }
+  /* The full-width attendance toggle would push the opponent box off the row. */
+  .svs-outcome-edit { padding-inline: 12px; }
+  .svs-outcome-edit input { flex: 1 1 auto; }
+  .svs-outcome-edit .svs-toggle { width: auto; }
+  .svs-outcome-edit .svs-toggle button { flex: none; padding: 8px 12px; }
 }

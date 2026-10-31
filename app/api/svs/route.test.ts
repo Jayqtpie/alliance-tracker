@@ -52,6 +52,21 @@ describe("SvS attendance API", () => {
     expect((await response.json()).svsEvents).toEqual(events);
   });
 
+  it("keeps a fight's result and drops a blank opponent", async () => {
+    const events = [{ id: "e1", date: "2026-09-19", label: "  vs #931 ", outcome: "loss", attendance: { a: "present" } }, { id: "e2", date: "2026-09-26", label: "   ", outcome: "win", attendance: { a: "absent" } }];
+    const response = await PUT(request({ events, version: 1 }));
+    expect(response.status).toBe(200);
+    const saved = (await response.json()).svsEvents;
+    expect(saved[0]).toEqual({ ...events[0], label: "vs #931" });
+    expect(saved[1]).toEqual({ id: "e2", date: "2026-09-26", outcome: "win", attendance: { a: "absent" } });
+  });
+
+  it("rejects an unknown result", async () => {
+    const response = await PUT(request({ events: [{ id: "e1", date: "2026-09-19", outcome: "draw", attendance: {} }], version: 1 }));
+    expect(response.status).toBe(400);
+    expect(setState).not.toHaveBeenCalled();
+  });
+
   describe("locked fights", () => {
     const locked = { id: "e1", date: "2026-09-19", locked: true, attendance: { a: "present" as const } };
     beforeEach(() => {

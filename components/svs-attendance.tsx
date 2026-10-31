@@ -1,9 +1,9 @@
 "use client";
 
-import { AlertTriangle, CheckCheck, Lock, LockOpen, Percent, Plus, RefreshCw, Search, Trash2, Users, X } from "lucide-react";
+import { AlertTriangle, CheckCheck, Flag, Lock, LockOpen, Percent, Plus, RefreshCw, Search, Trash2, Trophy, Users, X } from "lucide-react";
 import { useState } from "react";
 import type { AttendanceEventKind, Member, SvsAttendance, SvsEvent, TrackerState } from "@/lib/types";
-import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, rosterDrift, setAttendance, SVS_ATTENDANCE, syncRoster } from "@/lib/svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, EVENT_KINDS, eventKind, markAllPresent, overallAttendance, REPEAT_STREAK, repeatAbsences, rosterDrift, setAttendance, setOpponent, setOutcome, SVS_ATTENDANCE, syncRoster } from "@/lib/svs";
 import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { useLanguage } from "./language-selector";
@@ -15,8 +15,8 @@ type SummarySort = "rate" | "absent" | "present" | "name";
 const LABELS: Record<SvsAttendance, string> = { present: "Present", absent: "Absent", excused: "Excused" };
 
 const KINDS: Record<AttendanceEventKind, { tab: string; eyebrow: string; title: string; placeholder: string }> = {
-  svs: { tab: "SvS", eyebrow: "SERVER VS SERVER", title: "SvS attendance", placeholder: "Label, e.g. vs #931" },
-  goldvein: { tab: "Goldvein", eyebrow: "ALLIANCE EVENT", title: "Goldvein attendance", placeholder: "Label (optional)" },
+  svs: { tab: "SvS", eyebrow: "SERVER VS SERVER", title: "SvS attendance", placeholder: "Opponent, e.g. vs #931" },
+  goldvein: { tab: "Goldvein", eyebrow: "ALLIANCE EVENT", title: "Goldvein attendance", placeholder: "Opponent (optional)" },
 };
 
 function fightDate(language: Language, date: string) {
@@ -25,6 +25,16 @@ function fightDate(language: Language, date: string) {
 
 function shortDate(language: Language, date: string) {
   return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { day: "numeric", month: "short" });
+}
+
+type FightOutcome = NonNullable<SvsEvent["outcome"]>;
+const OUTCOMES: FightOutcome[] = ["win", "loss"];
+const OUTCOME_LABELS: Record<FightOutcome, string> = { win: "Win", loss: "Loss" };
+
+function OutcomeBadge({ outcome }: { outcome: FightOutcome }) {
+  const { t } = useLanguage();
+  return <span className="svs-result" data-result={outcome}>
+    {outcome === "win" ? <Trophy size={12} aria-hidden="true" /> : <Flag size={12} aria-hidden="true" />}{t(outcome === "win" ? "Won" : "Lost")}</span>;
 }
 
 function countLine(t: Translator, event: SvsEvent) {
@@ -91,6 +101,11 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
   function mark(memberId: string, value: SvsAttendance) {
     if (!selected) return;
     setDraft(allEvents.map((event) => event.id === selected.id ? setAttendance(event, memberId, value) : event));
+  }
+
+  function editSelected(change: (event: SvsEvent) => SvsEvent) {
+    if (!selected) return;
+    setDraft(allEvents.map((event) => event.id === selected.id ? change(event) : event));
   }
 
   function syncFight() {
@@ -188,14 +203,14 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
         <div className="panel-head"><h3>{t("Fights")} <span className="count-chip">{events.length}</span></h3></div>
         {canManage && <form className="svs-new" onSubmit={(event) => { event.preventDefault(); addFight(); }}>
           <input type="date" aria-label={t("Fight date")} required value={newDate} onChange={(event) => setNewDate(event.target.value)} />
-          <input type="text" aria-label={t("Fight label")} placeholder={t(KINDS[kind].placeholder)} maxLength={80} value={newLabel} onChange={(event) => setNewLabel(event.target.value)} />
+          <input type="text" aria-label={t("Opponent")} placeholder={t(KINDS[kind].placeholder)} maxLength={80} value={newLabel} onChange={(event) => setNewLabel(event.target.value)} />
           <button type="submit" className="button secondary" disabled={!newDate}><Plus size={14} />{t("Add fight")}</button>
         </form>}
         {sorted.length ? <ul className="svs-fight-list">
           {sorted.map((event) => <li key={event.id}>
             <button type="button" aria-pressed={event.id === selected?.id} onClick={() => select(event.id)}>
               <strong>{fightDate(language, event.date)}{event.locked && <Lock size={11} role="img" aria-label={t("Locked")} />}</strong>
-              {event.label && <span>{event.label}</span>}
+              {(event.label || event.outcome) && <span className="svs-fight-opponent">{event.label}{event.outcome && <OutcomeBadge outcome={event.outcome} />}</span>}
               <small>{countLine(t, event)}</small>
             </button>
           </li>)}
@@ -204,7 +219,7 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
 
       {selected && <section className="panel svs-checklist">
         <div className="panel-head">
-          <div><h3>{fightDate(language, selected.date)}{selected.label ? ` · ${selected.label}` : ""}{selected.locked && <Lock size={14} role="img" aria-label={t("Locked")} />}</h3><p className="svs-counts">{countLine(t, selected)}</p></div>
+          <div><h3>{fightDate(language, selected.date)}{selected.label ? ` · ${selected.label}` : ""}{selected.locked && <Lock size={14} role="img" aria-label={t("Locked")} />}{selected.outcome && <OutcomeBadge outcome={selected.outcome} />}</h3><p className="svs-counts">{countLine(t, selected)}</p></div>
           <div className="svs-checklist-tools">
           {editable && <button type="button" className="button secondary" disabled={!Object.values(selected.attendance).includes("absent")}
             onClick={() => setDraft(allEvents.map((event) => event.id === selected.id ? markAllPresent(event) : event))}><CheckCheck size={14} />{t("Mark all present")}</button>}
@@ -212,6 +227,14 @@ export function SvsAttendanceView({ canManage, state, onSaved }: { canManage: bo
           <div className="search-box"><Search size={16} /><input aria-label={t("Filter fight members")} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("Find a commander…")} />{query && <button className="search-clear" aria-label={t("Clear member filter")} onClick={() => setQuery("")}><X size={14} /></button>}</div>
           </div>
         </div>
+        {editable && <div className="svs-outcome-edit" role="group" aria-label={t("Fight result")}>
+          <input type="text" maxLength={80} value={selected.label ?? ""} aria-label={t("Opponent")} placeholder={t(KINDS[kind].placeholder)}
+            onChange={(event) => editSelected((fight) => setOpponent(fight, event.target.value))} />
+          <span className="svs-toggle">
+            {OUTCOMES.map((outcome) => <button key={outcome} type="button" data-option={outcome} aria-pressed={selected.outcome === outcome}
+              onClick={() => editSelected((fight) => setOutcome(fight, fight.outcome === outcome ? undefined : outcome))}>{t(OUTCOME_LABELS[outcome])}</button>)}
+          </span>
+        </div>}
         <ul className="svs-member-list">
           {checklist.map(({ member, value }) => <li key={member.id} data-state={value}>
             <span className="svs-member"><MemberAvatar member={member} /><MemberName member={member} /></span>

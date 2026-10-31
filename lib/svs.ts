@@ -20,7 +20,7 @@ export function createSvsEvent(members: Member[], date: string, label?: string, 
 
 function sameFight(a: SvsEvent, b: SvsEvent) {
   const ids = Object.keys(a.attendance);
-  return a.date === b.date && (a.label ?? "") === (b.label ?? "") && eventKind(a) === eventKind(b)
+  return a.date === b.date && (a.label ?? "") === (b.label ?? "") && (a.outcome ?? "") === (b.outcome ?? "") && eventKind(a) === eventKind(b)
     && ids.length === Object.keys(b.attendance).length && ids.every((id) => a.attendance[id] === b.attendance[id]);
 }
 
@@ -35,6 +35,20 @@ export function lockedFightViolation(stored: SvsEvent[], incoming: SvsEvent[]): 
     const next = byId.get(event.id);
     return !next || !sameFight(event, next);
   });
+}
+
+/** Renames who the fight was against. Kept as typed so editing isn't fought; a blank opponent is not stored. */
+export function setOpponent(event: SvsEvent, opponent: string): SvsEvent {
+  const next: SvsEvent = { ...event, label: opponent };
+  if (!opponent.trim()) delete next.label;
+  return next;
+}
+
+/** Records a win or loss, or clears it with undefined. */
+export function setOutcome(event: SvsEvent, outcome: SvsEvent["outcome"]): SvsEvent {
+  const next: SvsEvent = { ...event, outcome };
+  if (!outcome) delete next.outcome;
+  return next;
 }
 
 export function setAttendance(event: SvsEvent, memberId: string, value: SvsAttendance): SvsEvent {

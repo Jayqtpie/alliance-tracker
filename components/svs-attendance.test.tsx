@@ -79,6 +79,30 @@ describe("SvsAttendanceView", () => {
     expect(renderToStaticMarkup(<SvsAttendanceView canManage={false} state={joined} onSaved={() => {}} />)).not.toContain("Sync roster");
   });
 
+  it("lets officers edit the open fight's opponent and record a win or loss", () => {
+    const html = renderToStaticMarkup(<SvsAttendanceView canManage state={state} onSaved={() => {}} />);
+    const edit = html.match(/<div class="svs-outcome-edit".*?<\/div>/)![0];
+    expect(edit).toContain('value="vs #931"');
+    expect(edit).toContain('aria-label="Opponent"');
+    expect(edit).toContain('data-option="win" aria-pressed="false">Win<');
+    expect(edit).toContain('data-option="loss" aria-pressed="false">Loss<');
+  });
+
+  it("shows a recorded result to everyone, and no result editor on a locked fight or for viewers", () => {
+    const won: TrackerState = { ...state, svsEvents: state.svsEvents!.map((event) => event.id === "new" ? { ...event, outcome: "win" } : event.id === "old" ? { ...event, outcome: "loss" } : event) };
+    const viewer = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={won} onSaved={() => {}} />);
+    expect(viewer).not.toContain("svs-outcome-edit");
+    expect(viewer.match(/data-result="win"/g)).toHaveLength(2); // the list entry and the fight heading
+    expect(viewer).toContain('data-result="loss"');
+    expect(viewer).toContain("Won<");
+    expect(viewer).toContain("Lost<");
+    const officer = renderToStaticMarkup(<SvsAttendanceView canManage state={won} onSaved={() => {}} />);
+    expect(officer).toContain('data-option="win" aria-pressed="true">Win<');
+    const locked = renderToStaticMarkup(<SvsAttendanceView canManage state={{ ...won, svsEvents: won.svsEvents!.map((event) => ({ ...event, locked: true })) }} onSaved={() => {}} />);
+    expect(locked).not.toContain("svs-outcome-edit");
+    expect(locked).toContain("Won<");
+  });
+
   it("is read-only for viewers", () => {
     const html = renderToStaticMarkup(<SvsAttendanceView canManage={false} state={state} onSaved={() => {}} />);
     expect(html).toContain("Tamsin");

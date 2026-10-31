@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, lockedFightViolation, markAllPresent, overallAttendance, repeatAbsences, rosterDrift, setAttendance, syncRoster } from "./svs";
+import { attendanceCounts, attendanceSummary, createSvsEvent, eventKind, lockedFightViolation, markAllPresent, overallAttendance, repeatAbsences, rosterDrift, setAttendance, setOpponent, setOutcome, syncRoster } from "./svs";
 import type { Member, SvsEvent } from "./types";
 
 const member = (id: string, active = true): Member => ({ id, canonicalName: id, aliases: [], active });
@@ -42,10 +42,28 @@ describe("lockedFightViolation", () => {
       [{ ...locked, label: "vs #940" }],
       [{ ...locked, date: "2026-09-20" }],
       [{ ...locked, kind: "goldvein" as const }],
+      [{ ...locked, outcome: "win" as const }],
       [{ ...locked, attendance: { a: "present" as const } }],
       [{ ...setAttendance(locked, "b", "present"), locked: false }],
       [],
     ]) expect(lockedFightViolation([locked], next)?.id).toBe("l");
+  });
+});
+
+describe("setOpponent and setOutcome", () => {
+  const fight: SvsEvent = { id: "f", date: "2026-10-31", kind: "svs", attendance: { a: "present" } };
+
+  it("keeps the opponent as typed while editing, and drops a blank one", () => {
+    expect(setOpponent(fight, "vs #9").label).toBe("vs #9");
+    expect(setOpponent(fight, "vs #9 ").label).toBe("vs #9 ");
+    expect("label" in setOpponent({ ...fight, label: "vs #9" }, "  ")).toBe(false);
+  });
+
+  it("records a win or loss and clears it without leaving the key behind", () => {
+    expect(setOutcome(fight, "win").outcome).toBe("win");
+    expect(setOutcome({ ...fight, outcome: "win" }, "loss").outcome).toBe("loss");
+    expect("outcome" in setOutcome({ ...fight, outcome: "loss" }, undefined)).toBe(false);
+    expect(setOutcome(fight, "win").attendance).toBe(fight.attendance);
   });
 });
 

@@ -143,7 +143,10 @@ export interface SvsEvent {
   id: string;
   /** Fight date, YYYY-MM-DD. */
   date: string;
+  /** Who the fight was against, as the officer typed it, e.g. "vs #931". */
   label?: string;
+  /** How the fight went; unset until an officer records it. */
+  outcome?: "win" | "loss";
   /** Missing on fights recorded before Goldvein existed; those are SvS. */
   kind?: AttendanceEventKind;
   /** Attendance is final: the fight can be unlocked, but not edited or deleted while locked. */

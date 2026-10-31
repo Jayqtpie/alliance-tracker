@@ -8,7 +8,9 @@ const schema = z.object({
   events: z.array(z.object({
     id: z.string().min(1),
     date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use a valid fight date."),
-    label: z.string().trim().max(80).optional(),
+    // Blank after trimming is the same as no opponent, so it isn't stored as "".
+    label: z.string().trim().max(80).optional().transform((label) => label || undefined),
+    outcome: z.enum(["win", "loss"]).optional(),
     kind: z.enum(["svs", "goldvein"]).optional(),
     locked: z.boolean().optional(),
     attendance: z.record(z.string().min(1), z.enum(["present", "absent", "excused"])),
