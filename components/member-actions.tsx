@@ -20,26 +20,50 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
   const focusLast = useRef(false);
   const [open, setOpen] = useState(false);
 
+  // iOS Safari hid the menu between touching an item and the tap landing, so the
+  // item never ran. The menu is a manual popover: it closes only on a completed
+  // click outside it, Escape, focus leaving it, or its row scrolling off screen.
   useEffect(() => {
-    if (!open || !trigger.current) return;
-    // Mobile browsers fire scroll and resize as their toolbars show or hide,
-    // often mid-tap, so close only once the row the menu points at has moved.
-    const start = trigger.current.getBoundingClientRect();
-    const close = () => {
-      const now = trigger.current?.getBoundingClientRect();
-      if (!now || Math.abs(now.top - start.top) > 4 || Math.abs(now.left - start.left) > 4) menu.current?.hidePopover();
+    if (!open) return;
+    const follow = () => {
+      const anchor = trigger.current?.getBoundingClientRect();
+      if (!anchor || anchor.bottom < 0 || anchor.top > window.innerHeight) hide();
+      else place();
     };
-    window.addEventListener("resize", close);
-    window.addEventListener("scroll", close, true);
+    const dismiss = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (!menu.current?.contains(target) && !trigger.current?.contains(target)) hide();
+    };
+    window.addEventListener("resize", follow);
+    window.addEventListener("scroll", follow, true);
+    document.addEventListener("click", dismiss, true);
     return () => {
-      window.removeEventListener("resize", close);
-      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", follow);
+      window.removeEventListener("scroll", follow, true);
+      document.removeEventListener("click", dismiss, true);
     };
   }, [open]);
 
+  function hide() {
+    if (menu.current?.matches(":popover-open")) menu.current.hidePopover();
+  }
+
+  function place() {
+    const panel = menu.current;
+    if (!panel || !trigger.current) return;
+    const anchor = trigger.current.getBoundingClientRect();
+    const width = panel.offsetWidth;
+    const height = panel.offsetHeight;
+    const bottomInset = window.innerWidth <= 760 ? 128 : 12;
+    const below = anchor.bottom + 8;
+    const top = below + height <= window.innerHeight - bottomInset ? below : anchor.top - height - 8;
+    panel.style.left = `${Math.max(12, Math.min(anchor.right - width, window.innerWidth - width - 12))}px`;
+    panel.style.top = `${Math.max(12, top)}px`;
+  }
+
   function run(action: () => void) {
     action();
-    if (menu.current?.matches(":popover-open")) menu.current.hidePopover();
+    hide();
   }
 
   return <div className="member-actions">
@@ -49,25 +73,24 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
       focusLast.current = event.key === "ArrowUp";
       menu.current?.showPopover();
     }}><MoreHorizontal size={20} aria-hidden="true" /></button>
-    <div ref={menu} id={id} popover="auto" role="menu" aria-label={t("Actions for {name}", { name })} className="member-actions-menu" onToggle={(event) => {
+    <div ref={menu} id={id} popover="manual" role="menu" aria-label={t("Actions for {name}", { name })} className="member-actions-menu" onToggle={(event) => {
       const panel = event.currentTarget;
       const isOpen = panel.matches(":popover-open");
       setOpen(isOpen);
-      if (!isOpen || !trigger.current) return;
-      const anchor = trigger.current.getBoundingClientRect();
-      const width = panel.offsetWidth;
-      const height = panel.offsetHeight;
-      const bottomInset = window.innerWidth <= 760 ? 128 : 12;
-      const below = anchor.bottom + 8;
-      const top = below + height <= window.innerHeight - bottomInset ? below : anchor.top - height - 8;
-      panel.style.left = `${Math.max(12, Math.min(anchor.right - width, window.innerWidth - width - 12))}px`;
-      panel.style.top = `${Math.max(12, top)}px`;
+      if (!isOpen) return;
+      place();
       const buttons = panel.querySelectorAll<HTMLButtonElement>("button:not(:disabled)");
       buttons[focusLast.current ? buttons.length - 1 : 0]?.focus({ preventScroll: true });
       focusLast.current = false;
     }} onBlur={(event) => {
-      if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget) && event.relatedTarget !== trigger.current) menu.current?.hidePopover();
+      if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget) && event.relatedTarget !== trigger.current) hide();
     }} onKeyDown={(event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        hide();
+        trigger.current?.focus();
+        return;
+      }
       if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
       event.preventDefault();
       const buttons = [...event.currentTarget.querySelectorAll<HTMLButtonElement>("button:not(:disabled)")];
