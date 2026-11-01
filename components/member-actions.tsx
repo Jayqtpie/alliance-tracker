@@ -21,8 +21,14 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!open) return;
-    const close = () => menu.current?.hidePopover();
+    if (!open || !trigger.current) return;
+    // Mobile browsers fire scroll and resize as their toolbars show or hide,
+    // often mid-tap, so close only once the row the menu points at has moved.
+    const start = trigger.current.getBoundingClientRect();
+    const close = () => {
+      const now = trigger.current?.getBoundingClientRect();
+      if (!now || Math.abs(now.top - start.top) > 4 || Math.abs(now.left - start.left) > 4) menu.current?.hidePopover();
+    };
     window.addEventListener("resize", close);
     window.addEventListener("scroll", close, true);
     return () => {
@@ -32,8 +38,8 @@ export function MemberActions({ name, canMerge, active, onEdit, onMerge, onToggl
   }, [open]);
 
   function run(action: () => void) {
-    menu.current?.hidePopover();
     action();
+    if (menu.current?.matches(":popover-open")) menu.current.hidePopover();
   }
 
   return <div className="member-actions">
