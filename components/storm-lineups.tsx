@@ -14,6 +14,7 @@ import { MemberName } from "./member-name";
 import { StormImport } from "./storm-import";
 import { useLanguage } from "./language-selector";
 import type { Language, Translator } from "@/lib/i18n";
+import { weekdayDate } from "@/lib/display-date";
 import "./svs-attendance.css";
 import "./storm-lineups.css";
 
@@ -24,7 +25,7 @@ const ROLE_LABELS: Record<StormSlotRole, string> = { starter: "Starters", sub: "
 const SEATS = STORM_TEAMS.flatMap((team) => STORM_ROLES.map((role) => ({ team, role, value: `${team}-${role}` })));
 
 function battleDate(language: Language, date: string) {
-  return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  return weekdayDate(date, language, "short");
 }
 
 function shortDate(language: Language, date: string) {

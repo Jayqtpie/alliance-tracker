@@ -8,6 +8,7 @@ import { MemberAvatar } from "./alliance-roster";
 import { MemberName } from "./member-name";
 import { useLanguage } from "./language-selector";
 import type { Language, Translator } from "@/lib/i18n";
+import { weekdayDate } from "@/lib/display-date";
 import "./svs-attendance.css";
 
 type SummarySort = "rate" | "absent" | "present" | "name";
@@ -20,7 +21,7 @@ const KINDS: Record<AttendanceEventKind, { tab: string; eyebrow: string; title: 
 };
 
 function fightDate(language: Language, date: string) {
-  return new Date(`${date}T00:00:00`).toLocaleDateString(language === "en" ? undefined : language, { weekday: "short", day: "numeric", month: "short", year: "numeric" });
+  return weekdayDate(date, language, "short");
 }
 
 function shortDate(language: Language, date: string) {

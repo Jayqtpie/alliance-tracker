@@ -69,7 +69,7 @@ import { analyzeImport, analyzeLargeChanges, captureCoverage, dedupeRows, member
 import { analyzeReview, missingRanks, requiresHumanReview, type ReviewRow } from "@/lib/review";
 import "./review-controls.css";
 import { RankingReview } from "./ranking-review";
-import { accurateAsOf } from "@/lib/display-date";
+import { accurateAsOf, weekdayDate } from "@/lib/display-date";
 
 type View = "overview" | "import" | "reports" | "operations" | "members" | "settings";
 type OperationsPage = StormType | "rally";
@@ -690,7 +690,7 @@ function Overview({
   canManage: boolean;
 }) {
   const { language, t } = useLanguage();
-  const captureDate = (value: string) => new Intl.DateTimeFormat(language === "en" ? "en-GB" : language, { weekday: "long", day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(value));
+  const captureDate = (value: string) => weekdayDate(value, language);
   const [filter, setFilter] = useState<"all" | "top" | "review">("all");
   const [page, setPage] = useState(0);
   const total = selected.entries.reduce((sum, entry) => sum + entry.points, 0);
