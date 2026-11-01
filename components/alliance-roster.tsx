@@ -7,7 +7,6 @@ import type { Member, TrackerState } from "@/lib/types";
 import { MemberName } from "./member-name";
 import { MemberActions } from "./member-actions";
 import { useLanguage } from "./language-selector";
-import { menuDebug } from "@/lib/menu-debug";
 
 import { EditMemberDialog } from "./edit-member-dialog";
 import { allianceStatTotals, memberServers, memberStats, serverHuePalette, serverLabel } from "@/lib/member-stats";
@@ -94,11 +93,9 @@ export function AllianceRoster({ canManage = false, state, onOpenMember, onMerge
         body: JSON.stringify({ action: "set-active", memberId: member.id, active: !member.active, version: state.version }),
       });
       const body = await response.json();
-      menuDebug(`set-active response ${response.status}`);
       if (!response.ok) throw new Error(body.error || t("Could not update roster membership."));
       onSaved(body);
     } catch (reason) {
-      menuDebug(`set-active failed: ${reason instanceof Error ? reason.message : String(reason)}`);
       setMembershipError(reason instanceof Error ? reason.message : t("Could not update roster membership."));
     }
   }

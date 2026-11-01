@@ -6,7 +6,6 @@ import type { Member, TrackerState } from "@/lib/types";
 import "./merge-member.css";
 import { memberServers, memberStats, parseMemberStat, parseServerId, PROFESSIONS } from "@/lib/member-stats";
 import { useLanguage } from "./language-selector";
-import { menuDebug } from "@/lib/menu-debug";
 
 export function EditMemberDialog({ member, version, onSaved, onClose }: {
   member: Member; version: number; onSaved: (state: TrackerState) => void; onClose: () => void;
@@ -28,7 +27,6 @@ export function EditMemberDialog({ member, version, onSaved, onClose }: {
   useEffect(() => {
     const element = dialog.current;
     element?.showModal();
-    menuDebug(`edit dialog mounted, open=${element?.open}`);
     return () => element?.close();
   }, []);
 
