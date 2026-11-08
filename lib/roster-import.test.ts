@@ -3,7 +3,7 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import { INITIAL_STATE } from "./seed";
 import { applyCapturedRoster, importCapturedRoster, parseDisplayedPower, ROSTER_IMPORT } from "./roster-import";
-import capture from "./data/rscl-roster-2026-11-04.json";
+import capture from "./data/rscl-roster-2026-11-08.json";
 import { mergeMemberIdentities } from "./tracker";
 
 describe("captured RSCL roster", () => {
@@ -36,7 +36,7 @@ describe("captured RSCL roster", () => {
     expect(importCapturedRoster(after)).toBe(after);
   });
   it("does not downgrade a newer roster capture", () => {
-    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-11-05-v1" };
+    const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-11-09-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
   it("imports 96 active members and local avatars without treating missing stats as zero", () => {
@@ -69,7 +69,7 @@ describe("captured RSCL roster", () => {
     expect(importedJay.id).toBe(jay.id);
     expect(importedJay.notes).toBe(jay.notes);
     expect(importedJay.aliases).toContain("Previous Jay");
-    expect(importedJay.gameProfile?.heroPower).toBe(206_535_708);
+    expect(importedJay.gameProfile?.heroPower).toBe(207_257_693);
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(before.members.every((member) => after.members.some((entry) => entry.id === member.id))).toBe(true);
@@ -110,10 +110,10 @@ describe("captured RSCL roster", () => {
     expect(merged.members.find((member) => member.id === historical.id)?.gameProfile).toEqual(imported.gameProfile);
   });
   it.each([
-    "lastrank-rscl-927-2026-11-04-v1",
-    "lwservers-rscl-927-2026-11-04-v10",
-    "lastrank-rscl-927-2026-11-04-v3",
-    "lastrank-rscl-927-2026-11-04-v4",
+    "lastrank-rscl-927-2026-11-08-v1",
+    "lwservers-rscl-927-2026-11-08-v10",
+    "lastrank-rscl-927-2026-11-08-v3",
+    "lastrank-rscl-927-2026-11-08-v4",
   ])("retains an equal or newer capture across sources: %s", (rosterImport) => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport };
     expect(importCapturedRoster(state)).toBe(state);
