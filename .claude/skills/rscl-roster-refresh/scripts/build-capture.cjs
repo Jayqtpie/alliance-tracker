@@ -12,10 +12,11 @@ const raw = JSON.parse(fs.readFileSync(dir + '/capture.json', 'utf8'));
 const prior = JSON.parse(fs.readFileSync('lib/data/' + priorFile, 'utf8'));
 const live = JSON.parse(fs.readFileSync(dir + '/live-before.json', 'utf8'));
 // Optional: --identities <file>, a JSON array of { publicId, uid, name, evidence } for listed players
-// with no tracker record yet. LastRank has no game UIDs, so each UID must be verified elsewhere
-// (lwservers and lwatlas agreeing, avatar and origin server matching) before it goes in this file.
+// with no tracker record yet. LastRank has no game UIDs, so each UID is checked below against
+// that date's lwservers snapshot (collect-lwservers.mjs, which must have run first).
 const identitiesFile = args.includes('--identities') ? args[args.indexOf('--identities') + 1] : null;
 const newIdentities = new Map((identitiesFile ? JSON.parse(fs.readFileSync(identitiesFile, 'utf8')) : []).map(x => [String(x.publicId), x]));
+const lwservers = newIdentities.size ? JSON.parse(fs.readFileSync('.data/lwservers-refresh-' + DATE + '/capture.json', 'utf8')).players : [];
 // LastRank career_type codes, verified from LastRank's own front-end bundle.
 const PROFESSIONS = { 101: 'Engineer', 102: 'War Leader' };
 const profession = p => PROFESSIONS[p.career_type] ?? null;
@@ -53,12 +54,15 @@ async function avatar(p, uid, currentPath) {
       if (!r.freshnessPassed || p.alliance_id !== ALLIANCE || p.home_server_id !== 927) throw new Error('New member ' + publicId + ' needs a fresh RSCL profile on 927');
       if (!/^\d+$/.test(uid) || Number(uid.slice(-3)) !== p.origin_server_id) throw new Error('New member ' + publicId + ': UID server suffix does not match origin_server_id');
       if (live.members.some(m => m.gameProfile?.uid === uid)) throw new Error('New member UID ' + uid + ' is already on the tracker');
+      const avatarPath = pathname(p.photo_url), sameName = lwservers.filter(x => x.name === p.name), sameAvatar = lwservers.filter(x => pathname(x.avatarUrl) === avatarPath);
+      if (sameName.length !== 1 || sameName[0].uid !== uid || sameName[0].allianceId !== ALLIANCE) throw new Error('New member ' + publicId + ': lwservers needs exactly one RSCL row named ' + p.name + ', with UID ' + uid);
+      if (!avatarPath || sameAvatar.length !== 1 || sameAvatar[0].uid !== uid) throw new Error('New member ' + publicId + ': LastRank avatar must match that lwservers row and no other');
       const asset = await avatar(p, uid, null);
       members.push({
         position: members.length + 1, uid, lastRankPublicId: publicId, name: p.name, active: true,
         rank: p.alliance_rank >= 1 && p.alliance_rank <= 5 ? 'R' + p.alliance_rank : null,
         originServerId: p.origin_server_id ?? null,
-        identityEvidence: { basis: 'new member; game UID verified outside LastRank', initialSourceName: raw.initialProfiles[publicId].data.name, previousTrackerName: null, avatarCorroborated: !!added.evidence?.lwserversAvatarMatchesLastRank, external: added.evidence ?? null },
+        identityEvidence: { basis: 'new member; game UID verified outside LastRank', initialSourceName: raw.initialProfiles[publicId].data.name, previousTrackerName: null, avatarCorroborated: true, external: added.evidence ?? null },
         avatarUrl: asset.url, avatarFile: asset.file, avatarStatus: asset.status,
         sourceMembership: { allianceId: p.alliance_id, allianceTag: p.alliance_abbr, allianceName: p.alliance_name, homeServerId: p.home_server_id },
         freshness: { status: 'fresh', maxAgeHours: 24, retrievedAt: r.retrievedAt, previousSourceUpdatedAt: r.beforeLastEnrichedAt, sourceUpdatedAt: p.last_enriched_at, refreshRequested: r.refreshRequested, refreshResult: r.refreshResponse?.enrich_status ?? r.refreshError ?? (r.refreshRequested ? 'unverified' : 'already-fresh') },
@@ -154,7 +158,7 @@ async function avatar(p, uid, currentPath) {
   const retainedNames = capture.members.filter(x => x.freshness.status === 'retained');
   capture.notes = [
     `LastRank alliance list read ${raw.alliance.members.length} players${raw.alliance.members.length === raw.alliance.cur_member ? '' : ` (its header count said ${raw.alliance.cur_member}; the list is used)`}; ${existingRows.length} mapped to existing game UIDs through the stored LastRank public ID link, not by name.`,
-    ...(addedRows.length ? [`${addedRows.length} new members added with game UIDs verified outside LastRank (lwservers and lwatlas agreeing, avatar and origin server matching): ${addedRows.map(x => x.name).join(', ')}.`] : []),
+    ...(addedRows.length ? [`${addedRows.length} new members added with game UIDs verified outside LastRank (one RSCL row on lwservers with that exact name and LastRank's avatar, origin server matching): ${addedRows.map(x => x.name).join(', ')}.`] : []),
     `${capture.freshProfileCount} profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). ${capture.retainedProfileCount} were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered${retainedNames.length ? ': ' + retainedNames.map(x => x.name).join(', ') : ''}.`,
     `${unresolved.length} listed players have no verified game UID and were skipped at the user's request: ${unresolved.map(x => x.sourceName).join(', ') || 'none'}.`,
     `${absent.length} active tracker members are absent from the LastRank alliance list (${absent.map(m => m.canonicalName).join(', ') || 'none'}); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.`,
