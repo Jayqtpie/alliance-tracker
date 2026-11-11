@@ -31,7 +31,7 @@ describe("captured RSCL roster", () => {
     expect(after.snapshots).toEqual(before.snapshots);
     expect(after.operations).toEqual(before.operations);
     expect(after.members.map((member) => member.id).sort()).toEqual(before.members.map((member) => member.id).sort());
-    expect(after.members.filter((member) => member.active)).toHaveLength(93);
+    expect(after.members.filter((member) => member.active)).toHaveLength(96);
     expect(after.rosterImport).toBe(ROSTER_IMPORT);
     expect(importCapturedRoster(after)).toBe(after);
   });
@@ -39,13 +39,13 @@ describe("captured RSCL roster", () => {
     const state = { ...structuredClone(INITIAL_STATE), rosterImport: "lwservers-rscl-927-2026-11-12-v1" };
     expect(importCapturedRoster(state)).toBe(state);
   });
-  it("imports 93 active members and local avatars without treating missing stats as zero", () => {
+  it("imports 96 active members and local avatars without treating missing stats as zero", () => {
     const state = importCapturedRoster(structuredClone(INITIAL_STATE));
     const active = state.members.filter((member) => member.active);
-    expect(active).toHaveLength(93);
-    expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(93);
-    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(91);
-    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(93);
+    expect(active).toHaveLength(96);
+    expect(new Set(active.map((member) => member.gameProfile?.uid)).size).toBe(96);
+    expect(active.filter((member) => member.gameProfile?.heroPower !== null)).toHaveLength(92);
+    expect(active.filter((member) => member.gameProfile?.kills !== null)).toHaveLength(96);
     expect(active.filter((member) => member.gameProfile?.heroPowerLegacy)).toHaveLength(0);
     for (const member of active) expect(existsSync(path.join(process.cwd(), "public", member.gameProfile!.avatarPath))).toBe(true);
     // The missing reading is built here: the 2026-10-26 refresh stopped when the player pinned by
@@ -110,7 +110,7 @@ describe("captured RSCL roster", () => {
     expect(merged.members.find((member) => member.id === historical.id)?.gameProfile).toEqual(imported.gameProfile);
   });
   it.each([
-    "lastrank-rscl-927-2026-11-11-v1",
+    "lastrank-rscl-927-2026-11-11-v4",
     "lwservers-rscl-927-2026-11-11-v10",
     "lastrank-rscl-927-2026-11-11-v2",
     "lastrank-rscl-927-2026-11-11-v3",
@@ -150,7 +150,7 @@ describe("captured RSCL roster", () => {
     expect(retained.gameProfile?.capturedOn).toBe("2026-09-12");
     expect(after.snapshots).toBe(before.snapshots);
     expect(after.operations).toBe(before.operations);
-    expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(93);
+    expect(new Set(after.members.filter((entry) => entry.gameProfile?.lastRankPublicId).map((entry) => entry.gameProfile!.lastRankPublicId)).size).toBe(96);
   });
 
   it("carries the starting server onto fresh and retained profiles alike", () => {

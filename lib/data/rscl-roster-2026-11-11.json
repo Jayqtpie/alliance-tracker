@@ -4,12 +4,12 @@
   "allianceTag": "RSCL",
   "allianceName": "The Rascals",
   "capturedOn": "2026-11-11",
-  "exportedAt": "2026-11-11T12:24:11.197Z",
+  "exportedAt": "2026-11-11T21:38:09.798Z",
   "sourceRosterUpdatedAt": "2026-11-11T07:43:52.841130+01:00",
   "sourceListedMemberCount": 98,
-  "memberCount": 93,
+  "memberCount": 96,
   "profileCount": 98,
-  "freshProfileCount": 93,
+  "freshProfileCount": 96,
   "retainedProfileCount": 0,
   "leader": "NotDoom",
   "officerCount": 10,
@@ -19,12 +19,12 @@
     "lastrank-rscl-power-profession-2026-09-14-v1"
   ],
   "notes": [
-    "LastRank alliance list read 98 players (its header count said 96; the list is used); 93 mapped to existing game UIDs through the stored LastRank public ID link, not by name.",
-    "93 profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). 0 were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered.",
+    "LastRank alliance list read 98 players (its header count said 96; the list is used); 96 mapped to existing game UIDs through the stored LastRank public ID link, not by name.",
+    "96 profiles have update timestamps within 24 hours (user rule: data no more than 1 day old). 0 were older than 24 hours after a refresh attempt and keep their existing tracker name, rank, statistics and dates unaltered.",
     "1 listed players have no verified game UID and were skipped at the user's request: SmashleyRaedium.",
     "0 active tracker members are absent from the LastRank alliance list (none); the user confirmed they are still in RSCL, so they stay active with existing values unaltered.",
     "1 listed players have a fresh LastRank profile outside RSCL: Tommytubbie (no alliance; already marked left, not exported).",
-    "3 listed players were marked left by an officer and are not exported: BadLui, Shan Baratheon, Maroush łŘ1ł.",
+    "0 listed players were marked left by an officer and are not exported: none.",
     "LastRank profile update timestamps are distinct from ranking measurement timestamps. Missing values are unavailable, not zero."
   ],
   "unresolvedIdentities": [
@@ -48,136 +48,30 @@
         "basis": "Listed, but their LastRank profile is outside RSCL and an officer already marked them left; not exported"
       }
     ],
-    "listedButMarkedLeft": [
-      {
-        "publicId": "1186900",
-        "uid": "1269262662000927",
-        "name": "BadLui",
-        "trackerName": "BadLui",
-        "basis": "Listed in RSCL, but an officer marked them left; not exported, so the import keeps them left"
-      },
-      {
-        "publicId": "1186896",
-        "uid": "1212993895000900",
-        "name": "Shan Baratheon",
-        "trackerName": "Shan Baratheon",
-        "basis": "Listed in RSCL, but an officer marked them left; not exported, so the import keeps them left"
-      },
-      {
-        "publicId": "1187243",
-        "uid": "2857110336000836",
-        "name": "Mãṛøúșĥ",
-        "trackerName": "Maroush łŘ1ł",
-        "basis": "Listed in RSCL, but an officer marked them left; not exported, so the import keeps them left"
-      }
-    ],
+    "listedButMarkedLeft": [],
     "markedInactive": [],
     "renamed": [
       {
-        "uid": "1045906174000919",
-        "previous": "Mothropocene",
-        "current": "SixConsoles"
+        "uid": "2857110336000836",
+        "previous": "Maroush łŘ1ł",
+        "current": "Mãṛøúșĥ"
       }
     ],
-    "rankChanged": [],
+    "rankChanged": [
+      {
+        "uid": "1212993895000900",
+        "name": "Shan Baratheon",
+        "previous": "R3",
+        "current": "R1"
+      }
+    ],
     "changedStatistics": [
-      "1604759675000843",
-      "1311513210000927",
-      "1644943893000856",
-      "1500145514000927",
-      "1032469361000927",
-      "1312967191000927",
-      "1529582961000843",
-      "1867036308000905",
-      "2118929520000856",
-      "1360939579000863",
-      "1905736613000844",
-      "1276396135000866",
-      "1398298916000863",
-      "1945917207000844",
-      "1087497222000923",
-      "1436417874000866",
-      "1346884246000830",
-      "1689415806000891",
-      "1303662525000863",
-      "1164257150000927",
-      "1583897883000843",
-      "1651568712000863",
-      "1803857351000863",
-      "1415256998000915",
-      "1553246682000927",
-      "1257131454000866",
-      "1327568165000927",
-      "1666146601000931",
-      "2425046400000844",
-      "1263825980000906",
-      "1400285347000866",
-      "1650522690000856",
-      "1136632270000866",
-      "1345061146000927",
-      "1426415525000863",
-      "1432949252000866",
-      "1080182622000927",
-      "1201605079000922",
-      "1417138315000843",
-      "1110998471000866",
-      "1119083581000856",
-      "2944135611000844",
-      "1055557385000931",
-      "3195437630000844",
-      "1320072346000907",
-      "1880039573000844",
-      "2029779485000856",
-      "1492937533000866",
-      "1435629411000844",
-      "1916028325000844",
-      "2043162570000844",
-      "1584396710000844",
-      "1855357023000922",
-      "1007911659000844",
-      "1001286443000927",
-      "1619063466000856",
-      "1205420305000866",
-      "1045906174000919",
-      "1544524091000927",
-      "3197215313000844",
-      "1157942274000844",
-      "1511068813000844",
-      "1153137664000856",
-      "1666840305000844",
-      "1056579044000915",
-      "2101680014000844",
-      "1501336387000866",
-      "1044133159000908",
-      "1291563187000927",
-      "3198251769000844",
-      "1199403914000927",
-      "1543033399000841",
-      "1004904998000910",
-      "2655842506000856",
-      "1290641233000927",
-      "2655899837000856",
-      "1810478589000863",
-      "1794888799000844",
-      "2480441935000856",
-      "1354432303000927",
-      "1036648524000927",
-      "3174283120000844",
-      "1170729008000866",
-      "1290070340000927",
-      "1476079594000927",
-      "2157490861000844",
-      "1432984853000841",
-      "1666124342000844",
-      "2655813878000856",
-      "3021584716000844",
-      "2044381976000844",
-      "1445201149000927",
-      "1538930372000927"
+      "1269262662000927",
+      "1212993895000900",
+      "2857110336000836"
     ],
     "changedAvatars": [
-      "1045906174000919",
-      "1354432303000927"
+      "2857110336000836"
     ]
   },
   "members": [
@@ -207,11 +101,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:14.306Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:22.668482+01:00",
+        "retrievedAt": "2026-11-11T21:34:03.783Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:09.968399+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:09.968399+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -255,11 +149,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:20.803Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:29.035583+01:00",
+        "retrievedAt": "2026-11-11T21:34:04.831Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:19.529565+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:19.529565+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -303,11 +197,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:28.732Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:36.015053+01:00",
+        "retrievedAt": "2026-11-11T21:34:05.898Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:26.034285+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:26.034285+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -351,11 +245,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:34.518Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:42.691898+01:00",
+        "retrievedAt": "2026-11-11T21:34:06.944Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:34.274982+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:34.274982+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -399,11 +293,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:40.166Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:48.193617+01:00",
+        "retrievedAt": "2026-11-11T21:34:08.014Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:39.817195+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:39.817195+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -447,11 +341,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:45.619Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:59.533442+01:00",
+        "retrievedAt": "2026-11-11T21:34:09.067Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:45.418001+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:45.418001+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -495,11 +389,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:51.043Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:39:53.684220+01:00",
+        "retrievedAt": "2026-11-11T21:34:10.107Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:50.831588+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:50.831588+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -543,11 +437,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:14:56.487Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:05.353025+01:00",
+        "retrievedAt": "2026-11-11T21:34:11.164Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:14:56.293368+01:00",
         "sourceUpdatedAt": "2026-11-11T13:14:56.293368+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -591,11 +485,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:02.200Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:16.424433+01:00",
+        "retrievedAt": "2026-11-11T21:34:12.257Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:01.722766+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:01.722766+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -639,11 +533,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:08.101Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:10.894652+01:00",
+        "retrievedAt": "2026-11-11T21:34:13.281Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:07.491749+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:07.491749+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -687,11 +581,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:13.904Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:22.188111+01:00",
+        "retrievedAt": "2026-11-11T21:34:14.333Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:13.700429+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:13.700429+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -735,11 +629,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:19.511Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:27.864255+01:00",
+        "retrievedAt": "2026-11-11T21:34:15.406Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:19.300384+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:19.300384+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -783,11 +677,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:24.907Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:51.431693+01:00",
+        "retrievedAt": "2026-11-11T21:34:16.442Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:24.750583+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:24.750583+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -831,11 +725,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:30.855Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:21.997735+01:00",
+        "retrievedAt": "2026-11-11T21:34:17.513Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:30.423899+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:30.423899+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -879,11 +773,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:37.278Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:10.282981+01:00",
+        "retrievedAt": "2026-11-11T21:34:18.555Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:36.409557+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:36.409557+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -927,11 +821,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:42.682Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:56.877517+01:00",
+        "retrievedAt": "2026-11-11T21:34:19.600Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:42.529069+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:42.529069+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -975,11 +869,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:48.380Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:37.600460+01:00",
+        "retrievedAt": "2026-11-11T21:34:20.666Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:47.923838+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:47.923838+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1023,11 +917,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:53.795Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:04.229893+01:00",
+        "retrievedAt": "2026-11-11T21:34:21.761Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:53.616384+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:53.616384+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1071,11 +965,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:15:59.286Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:16.555939+01:00",
+        "retrievedAt": "2026-11-11T21:34:22.800Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:15:59.077243+01:00",
         "sourceUpdatedAt": "2026-11-11T13:15:59.077243+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1119,11 +1013,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:07.697Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:40:44.520517+01:00",
+        "retrievedAt": "2026-11-11T21:34:23.834Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:05.453092+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:05.453092+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1167,11 +1061,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:13.066Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:27.431541+01:00",
+        "retrievedAt": "2026-11-11T21:34:24.875Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:12.907905+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:12.907905+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1215,11 +1109,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:19.067Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:52.442045+01:00",
+        "retrievedAt": "2026-11-11T21:34:25.935Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:18.290460+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:18.290460+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1263,11 +1157,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:25.135Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:04.962054+01:00",
+        "retrievedAt": "2026-11-11T21:34:26.995Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:24.844938+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:24.844938+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1311,11 +1205,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:30.679Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:16.641068+01:00",
+        "retrievedAt": "2026-11-11T21:34:28.051Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:30.435751+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:30.435751+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1359,11 +1253,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:36.264Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:27.583326+01:00",
+        "retrievedAt": "2026-11-11T21:34:29.117Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:35.891206+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:35.891206+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1407,11 +1301,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:41.686Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:32.861639+01:00",
+        "retrievedAt": "2026-11-11T21:34:30.163Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:41.516619+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:41.516619+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1455,11 +1349,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:47.147Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:58.854115+01:00",
+        "retrievedAt": "2026-11-11T21:34:31.257Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:46.910601+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:46.910601+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1503,11 +1397,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:16:52.590Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:39.712543+01:00",
+        "retrievedAt": "2026-11-11T21:34:32.342Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:16:52.419542+01:00",
         "sourceUpdatedAt": "2026-11-11T13:16:52.419542+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1551,11 +1445,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:00.504Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:46.586935+01:00",
+        "retrievedAt": "2026-11-11T21:34:33.327Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:00.297004+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:00.297004+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1599,11 +1493,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:08.504Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:22.110004+01:00",
+        "retrievedAt": "2026-11-11T21:34:34.390Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:06.590701+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:06.590701+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1647,11 +1541,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:14.268Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:09.390632+01:00",
+        "retrievedAt": "2026-11-11T21:34:35.452Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:14.118472+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:14.118472+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1695,11 +1589,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:22.798Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:40.835020+01:00",
+        "retrievedAt": "2026-11-11T21:34:36.503Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:19.829242+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:19.829242+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1743,11 +1637,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:28.003Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:41:47.004312+01:00",
+        "retrievedAt": "2026-11-11T21:34:37.567Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:27.851928+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:27.851928+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1791,11 +1685,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:33.550Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:35.327879+01:00",
+        "retrievedAt": "2026-11-11T21:34:38.613Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:33.339017+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:33.339017+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1839,11 +1733,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:40.178Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:03.226695+01:00",
+        "retrievedAt": "2026-11-11T21:34:39.684Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:39.575260+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:39.575260+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1887,11 +1781,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:45.384Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:57.673199+01:00",
+        "retrievedAt": "2026-11-11T21:34:40.738Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:45.057118+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:45.057118+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1935,11 +1829,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:50.753Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:42:52.219642+01:00",
+        "retrievedAt": "2026-11-11T21:34:41.801Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:50.592822+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:50.592822+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -1983,11 +1877,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:17:56.345Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:26.905487+01:00",
+        "retrievedAt": "2026-11-11T21:34:42.844Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:17:56.056321+01:00",
         "sourceUpdatedAt": "2026-11-11T13:17:56.056321+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2031,11 +1925,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:01.907Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:21.011320+01:00",
+        "retrievedAt": "2026-11-11T21:34:43.903Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:01.573233+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:01.573233+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2079,11 +1973,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:07.211Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:33.594308+01:00",
+        "retrievedAt": "2026-11-11T21:34:44.982Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:07.005848+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:07.005848+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2127,11 +2021,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:13.039Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:39.249446+01:00",
+        "retrievedAt": "2026-11-11T21:34:46.009Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:12.836071+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:12.836071+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2175,11 +2069,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:18.655Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:44.936159+01:00",
+        "retrievedAt": "2026-11-11T21:34:47.083Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:18.349533+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:18.349533+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2223,11 +2117,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:24.085Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:14.832208+01:00",
+        "retrievedAt": "2026-11-11T21:34:48.131Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:23.885263+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:23.885263+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2271,11 +2165,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:29.874Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:07.821027+01:00",
+        "retrievedAt": "2026-11-11T21:34:49.196Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:29.628725+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:29.628725+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2319,11 +2213,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:35.354Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:15.273074+01:00",
+        "retrievedAt": "2026-11-11T21:34:50.299Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:35.146432+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:35.146432+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2367,11 +2261,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:40.960Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:51.239940+01:00",
+        "retrievedAt": "2026-11-11T21:34:51.299Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:40.650629+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:40.650629+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2415,11 +2309,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:46.574Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:21.850691+01:00",
+        "retrievedAt": "2026-11-11T21:34:52.343Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:46.383228+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:46.383228+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2463,11 +2357,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:52.182Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:02.373095+01:00",
+        "retrievedAt": "2026-11-11T21:34:53.468Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:51.918250+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:51.918250+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2511,11 +2405,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:18:57.619Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:01.162136+01:00",
+        "retrievedAt": "2026-11-11T21:34:54.535Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:18:57.413800+01:00",
         "sourceUpdatedAt": "2026-11-11T13:18:57.413800+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2559,11 +2453,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:03.128Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:43:56.858944+01:00",
+        "retrievedAt": "2026-11-11T21:34:55.555Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:02.924280+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:02.924280+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2607,11 +2501,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:08.917Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:44.181810+01:00",
+        "retrievedAt": "2026-11-11T21:34:56.646Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:08.459693+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:08.459693+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2655,11 +2549,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:14.380Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:27.312108+01:00",
+        "retrievedAt": "2026-11-11T21:34:57.659Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:14.184016+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:14.184016+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2703,11 +2597,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:19.917Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:27.703035+01:00",
+        "retrievedAt": "2026-11-11T21:34:58.714Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:19.692260+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:19.692260+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2751,11 +2645,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:25.295Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:32.988560+01:00",
+        "retrievedAt": "2026-11-11T21:34:59.767Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:25.111109+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:25.111109+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2799,11 +2693,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:36.493Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:52.771382+01:00",
+        "retrievedAt": "2026-11-11T21:35:01.895Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:36.268823+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:36.268823+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2847,11 +2741,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:41.969Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:07.220384+01:00",
+        "retrievedAt": "2026-11-11T21:35:02.931Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:41.779001+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:41.779001+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2895,11 +2789,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:47.891Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:38.671332+01:00",
+        "retrievedAt": "2026-11-11T21:35:03.991Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:47.211543+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:47.211543+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2928,7 +2822,7 @@
       "identityEvidence": {
         "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
         "initialSourceName": "SixConsoles",
-        "previousTrackerName": "Mothropocene",
+        "previousTrackerName": "SixConsoles",
         "avatarCorroborated": false
       },
       "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000919/051218ed9382e7aa1512a0c98b599f51.jpg",
@@ -2943,11 +2837,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:53.387Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:21.121820+01:00",
+        "retrievedAt": "2026-11-11T21:35:05.057Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:53.180361+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:53.180361+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -2991,11 +2885,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:19:58.836Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:15.631454+01:00",
+        "retrievedAt": "2026-11-11T21:35:06.105Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:19:58.628382+01:00",
         "sourceUpdatedAt": "2026-11-11T13:19:58.628382+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3039,11 +2933,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:04.367Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:14.097232+01:00",
+        "retrievedAt": "2026-11-11T21:35:07.163Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:04.154509+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:04.154509+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3087,11 +2981,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:15.401Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:46.403451+01:00",
+        "retrievedAt": "2026-11-11T21:35:09.290Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:15.225263+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:15.225263+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3135,11 +3029,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:20.974Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:19.711056+01:00",
+        "retrievedAt": "2026-11-11T21:35:10.344Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:20.744041+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:20.744041+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3183,11 +3077,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:26.418Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:33.439966+01:00",
+        "retrievedAt": "2026-11-11T21:35:11.395Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:26.234797+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:26.234797+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3231,11 +3125,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:32.008Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:40.338071+01:00",
+        "retrievedAt": "2026-11-11T21:35:12.462Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:31.807720+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:31.807720+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3279,11 +3173,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:37.429Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:19.179076+01:00",
+        "retrievedAt": "2026-11-11T21:35:13.531Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:37.243348+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:37.243348+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3303,6 +3197,54 @@
     },
     {
       "position": 66,
+      "uid": "1269262662000927",
+      "lastRankPublicId": "1186900",
+      "name": "BadLui",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 927,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "BadLui",
+        "previousTrackerName": "BadLui",
+        "avatarCorroborated": false
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000927/f7d99fde12350a160c06850943edf280.jpg",
+      "avatarFile": "avatars/rscl/1269262662000927.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-11-11T21:35:14.573Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:42.749822+01:00",
+        "sourceUpdatedAt": "2026-11-11T13:20:42.749822+01:00",
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-11-11",
+        "heroPower": null,
+        "heroPowerDisplay": "—",
+        "heroPowerLegacy": false,
+        "power": 316878483,
+        "powerDisplay": "316.88M",
+        "profession": "Engineer",
+        "killsApproximate": 11337481,
+        "killsDisplay": "11.34M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": null
+      }
+    },
+    {
+      "position": 67,
       "uid": "2101680014000844",
       "lastRankPublicId": "1171837",
       "name": "Zyzom",
@@ -3327,11 +3269,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:48.449Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:26.994011+01:00",
+        "retrievedAt": "2026-11-11T21:35:15.650Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:48.219468+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:48.219468+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3350,7 +3292,7 @@
       }
     },
     {
-      "position": 67,
+      "position": 68,
       "uid": "1501336387000866",
       "lastRankPublicId": "1171928",
       "name": "Private Drax",
@@ -3375,11 +3317,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:54.016Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:04.377171+01:00",
+        "retrievedAt": "2026-11-11T21:35:16.684Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:53.770238+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:53.770238+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3398,7 +3340,7 @@
       }
     },
     {
-      "position": 68,
+      "position": 69,
       "uid": "1044133159000908",
       "lastRankPublicId": "1186875",
       "name": "Stoops Visor",
@@ -3423,11 +3365,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:20:59.416Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:46.218671+01:00",
+        "retrievedAt": "2026-11-11T21:35:17.740Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:20:59.250691+01:00",
         "sourceUpdatedAt": "2026-11-11T13:20:59.250691+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3446,7 +3388,7 @@
       }
     },
     {
-      "position": 69,
+      "position": 70,
       "uid": "1291563187000927",
       "lastRankPublicId": "1186952",
       "name": "Sleddy Blas",
@@ -3471,11 +3413,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:04.897Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:40.037150+01:00",
+        "retrievedAt": "2026-11-11T21:35:18.800Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:04.683127+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:04.683127+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3494,7 +3436,7 @@
       }
     },
     {
-      "position": 70,
+      "position": 71,
       "uid": "3198251769000844",
       "lastRankPublicId": "658799",
       "name": "Msayter",
@@ -3519,11 +3461,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:10.248Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:44:49.648202+01:00",
+        "retrievedAt": "2026-11-11T21:35:19.855Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:10.082430+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:10.082430+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3542,7 +3484,7 @@
       }
     },
     {
-      "position": 71,
+      "position": 72,
       "uid": "1199403914000927",
       "lastRankPublicId": "1186894",
       "name": "구름DongJa",
@@ -3567,11 +3509,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:15.764Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:45:58.359966+01:00",
+        "retrievedAt": "2026-11-11T21:35:20.912Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:15.500158+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:15.500158+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3590,7 +3532,7 @@
       }
     },
     {
-      "position": 72,
+      "position": 73,
       "uid": "1543033399000841",
       "lastRankPublicId": "1186931",
       "name": "FRIJOLERO",
@@ -3615,11 +3557,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:21.113Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:51.699411+01:00",
+        "retrievedAt": "2026-11-11T21:35:21.969Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:20.944798+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:20.944798+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3638,7 +3580,7 @@
       }
     },
     {
-      "position": 73,
+      "position": 74,
       "uid": "1004904998000910",
       "lastRankPublicId": "1171773",
       "name": "Saralalaa",
@@ -3663,11 +3605,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:26.731Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:33.122265+01:00",
+        "retrievedAt": "2026-11-11T21:35:23.020Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:26.504912+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:26.504912+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3686,7 +3628,55 @@
       }
     },
     {
-      "position": 74,
+      "position": 75,
+      "uid": "1212993895000900",
+      "lastRankPublicId": "1186896",
+      "name": "Shan Baratheon",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 900,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Shan Baratheon",
+        "previousTrackerName": "Shan Baratheon",
+        "avatarCorroborated": false
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000900/96191c0ae8e47ba78a74cc35c2cab512.jpg",
+      "avatarFile": "avatars/rscl/1212993895000900.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-11-11T21:35:24.089Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:33.236552+01:00",
+        "sourceUpdatedAt": "2026-11-11T13:21:33.236552+01:00",
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-11-11",
+        "heroPower": null,
+        "heroPowerDisplay": "—",
+        "heroPowerLegacy": false,
+        "power": 286818934,
+        "powerDisplay": "286.82M",
+        "profession": "Engineer",
+        "killsApproximate": 3607412,
+        "killsDisplay": "3.61M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": null
+      }
+    },
+    {
+      "position": 76,
       "uid": "2655842506000856",
       "lastRankPublicId": "1171846",
       "name": "VHM7",
@@ -3711,11 +3701,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:38.907Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:46:59.870739+01:00",
+        "retrievedAt": "2026-11-11T21:35:25.138Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:38.707482+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:38.707482+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3734,7 +3724,7 @@
       }
     },
     {
-      "position": 75,
+      "position": 77,
       "uid": "1290641233000927",
       "lastRankPublicId": "1186902",
       "name": "PAYOBER",
@@ -3759,11 +3749,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:44.528Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:05.507650+01:00",
+        "retrievedAt": "2026-11-11T21:35:26.204Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:44.158971+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:44.158971+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3782,7 +3772,7 @@
       }
     },
     {
-      "position": 76,
+      "position": 78,
       "uid": "2655899837000856",
       "lastRankPublicId": "1171847",
       "name": "oMRADY",
@@ -3807,11 +3797,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:50.004Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:11.040484+01:00",
+        "retrievedAt": "2026-11-11T21:35:27.255Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:49.791274+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:49.791274+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3830,7 +3820,7 @@
       }
     },
     {
-      "position": 77,
+      "position": 79,
       "uid": "1810478589000863",
       "lastRankPublicId": "1171936",
       "name": "brucgjk",
@@ -3855,11 +3845,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:21:55.524Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:44.776085+01:00",
+        "retrievedAt": "2026-11-11T21:35:28.313Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:21:55.358276+01:00",
         "sourceUpdatedAt": "2026-11-11T13:21:55.358276+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3878,7 +3868,7 @@
       }
     },
     {
-      "position": 78,
+      "position": 80,
       "uid": "1794888799000844",
       "lastRankPublicId": "1171853",
       "name": "ᏗᏝᎥ ᏗᏦ47",
@@ -3903,11 +3893,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:01.113Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:16.522819+01:00",
+        "retrievedAt": "2026-11-11T21:35:29.378Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:00.786686+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:00.786686+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3926,7 +3916,7 @@
       }
     },
     {
-      "position": 79,
+      "position": 81,
       "uid": "2480441935000856",
       "lastRankPublicId": "1171844",
       "name": "abo hana ammar",
@@ -3951,11 +3941,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:06.886Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:21.991760+01:00",
+        "retrievedAt": "2026-11-11T21:35:30.430Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:06.325304+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:06.325304+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -3974,7 +3964,7 @@
       }
     },
     {
-      "position": 80,
+      "position": 82,
       "uid": "1354432303000927",
       "lastRankPublicId": "1186912",
       "name": "RezzZz",
@@ -3999,11 +3989,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:12.255Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:56.113133+01:00",
+        "retrievedAt": "2026-11-11T21:35:31.504Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:12.093383+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:12.093383+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4022,7 +4012,7 @@
       }
     },
     {
-      "position": 81,
+      "position": 83,
       "uid": "1036648524000927",
       "lastRankPublicId": "1186884",
       "name": "SᵒᵒᵒᵒʳʳʳY",
@@ -4047,11 +4037,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:17.822Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:50.381702+01:00",
+        "retrievedAt": "2026-11-11T21:35:32.558Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:17.484159+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:17.484159+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4070,7 +4060,7 @@
       }
     },
     {
-      "position": 82,
+      "position": 84,
       "uid": "3174283120000844",
       "lastRankPublicId": "658796",
       "name": "Mr CORONA Vi PRO MaX",
@@ -4095,11 +4085,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:23.763Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:02.049550+01:00",
+        "retrievedAt": "2026-11-11T21:35:33.610Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:23.070011+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:23.070011+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4118,7 +4108,7 @@
       }
     },
     {
-      "position": 83,
+      "position": 85,
       "uid": "1170729008000866",
       "lastRankPublicId": "1171908",
       "name": "Mąrk0o",
@@ -4143,11 +4133,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:29.416Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:39.309248+01:00",
+        "retrievedAt": "2026-11-11T21:35:34.663Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:28.997687+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:28.997687+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4166,7 +4156,7 @@
       }
     },
     {
-      "position": 84,
+      "position": 86,
       "uid": "1290070340000927",
       "lastRankPublicId": "1186901",
       "name": "Obsius",
@@ -4191,11 +4181,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:35.797Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:33.806612+01:00",
+        "retrievedAt": "2026-11-11T21:35:35.719Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:34.664227+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:34.664227+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4214,7 +4204,7 @@
       }
     },
     {
-      "position": 85,
+      "position": 87,
       "uid": "1476079594000927",
       "lastRankPublicId": "1186925",
       "name": "ApacheJohn",
@@ -4239,11 +4229,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:41.219Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:47:27.515718+01:00",
+        "retrievedAt": "2026-11-11T21:35:36.780Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:41.040519+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:41.040519+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4262,7 +4252,7 @@
       }
     },
     {
-      "position": 86,
+      "position": 88,
       "uid": "2157490861000844",
       "lastRankPublicId": "658778",
       "name": "bilal83",
@@ -4287,11 +4277,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:47.135Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:13.631124+01:00",
+        "retrievedAt": "2026-11-11T21:35:37.820Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:46.468049+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:46.468049+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4310,7 +4300,7 @@
       }
     },
     {
-      "position": 87,
+      "position": 89,
       "uid": "1432984853000841",
       "lastRankPublicId": "1186920",
       "name": "WARBLVCK",
@@ -4335,11 +4325,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:22:52.632Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:07.596369+01:00",
+        "retrievedAt": "2026-11-11T21:35:38.928Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:52.414611+01:00",
         "sourceUpdatedAt": "2026-11-11T13:22:52.414611+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4358,7 +4348,55 @@
       }
     },
     {
-      "position": 88,
+      "position": 90,
+      "uid": "2857110336000836",
+      "lastRankPublicId": "1187243",
+      "name": "Mãṛøúșĥ",
+      "active": true,
+      "rank": "R1",
+      "originServerId": 836,
+      "identityEvidence": {
+        "basis": "existing verified LastRank public ID to game UID mapping on the live tracker record",
+        "initialSourceName": "Mãṛøúșĥ",
+        "previousTrackerName": "Maroush łŘ1ł",
+        "avatarCorroborated": false
+      },
+      "avatarUrl": "https://lastwar-cdn.akamaized.net/img/000836/2c727bc0c41efbb3ab2dfd95f89d7c40.jpg",
+      "avatarFile": "avatars/rscl/2857110336000836-lastrank-2026-11-11.jpg",
+      "avatarStatus": "validated-current",
+      "sourceMembership": {
+        "allianceId": "fca3217524a04960a147436cda692b69",
+        "allianceTag": "RSCL",
+        "allianceName": "The Rascals",
+        "homeServerId": 927
+      },
+      "freshness": {
+        "status": "fresh",
+        "maxAgeHours": 24,
+        "retrievedAt": "2026-11-11T21:35:39.949Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:22:57.884578+01:00",
+        "sourceUpdatedAt": "2026-11-11T13:22:57.884578+01:00",
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
+      },
+      "profile": {
+        "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
+        "capturedOn": "2026-11-11",
+        "heroPower": 183055730,
+        "heroPowerDisplay": "183.06M",
+        "heroPowerLegacy": false,
+        "power": 268944022,
+        "powerDisplay": "268.94M",
+        "profession": "Engineer",
+        "killsApproximate": 9552982,
+        "killsDisplay": "9.55M",
+        "killsStatus": "exact source value; compact display",
+        "activityDate": null,
+        "heroPowerMeasuredAt": "2026-11-11T07:44:35.133927+01:00"
+      }
+    },
+    {
+      "position": 91,
       "uid": "1666124342000844",
       "lastRankPublicId": "658758",
       "name": "SAUĎ",
@@ -4383,11 +4421,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:04.319Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:30.628437+01:00",
+        "retrievedAt": "2026-11-11T21:35:40.999Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:03.900875+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:03.900875+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4406,7 +4444,7 @@
       }
     },
     {
-      "position": 89,
+      "position": 92,
       "uid": "2655813878000856",
       "lastRankPublicId": "1171845",
       "name": "ŁひƑƑɎ",
@@ -4431,11 +4469,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:10.049Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:36.053526+01:00",
+        "retrievedAt": "2026-11-11T21:35:42.049Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:09.570609+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:09.570609+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4454,7 +4492,7 @@
       }
     },
     {
-      "position": 90,
+      "position": 93,
       "uid": "3021584716000844",
       "lastRankPublicId": "1171849",
       "name": "art 1",
@@ -4479,11 +4517,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:16.620Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:24.835612+01:00",
+        "retrievedAt": "2026-11-11T21:35:43.109Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:15.926133+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:15.926133+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4502,7 +4540,7 @@
       }
     },
     {
-      "position": 91,
+      "position": 94,
       "uid": "2044381976000844",
       "lastRankPublicId": "1171835",
       "name": "Khaled 098",
@@ -4527,11 +4565,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:26.002Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:42.930902+01:00",
+        "retrievedAt": "2026-11-11T21:35:44.169Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:23.301927+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:23.301927+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4550,7 +4588,7 @@
       }
     },
     {
-      "position": 92,
+      "position": 95,
       "uid": "1445201149000927",
       "lastRankPublicId": "1186922",
       "name": "I  Mystery  l",
@@ -4575,11 +4613,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:31.564Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:48.401009+01:00",
+        "retrievedAt": "2026-11-11T21:35:45.236Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:31.345734+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:31.345734+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
@@ -4598,7 +4636,7 @@
       }
     },
     {
-      "position": 93,
+      "position": 96,
       "uid": "1538930372000927",
       "lastRankPublicId": "1187043",
       "name": "ZiggyStardůst",
@@ -4623,11 +4661,11 @@
       "freshness": {
         "status": "fresh",
         "maxAgeHours": 24,
-        "retrievedAt": "2026-11-11T12:23:37.088Z",
-        "previousSourceUpdatedAt": "2026-11-09T20:48:55.100076+01:00",
+        "retrievedAt": "2026-11-11T21:35:46.274Z",
+        "previousSourceUpdatedAt": "2026-11-11T13:23:36.801616+01:00",
         "sourceUpdatedAt": "2026-11-11T13:23:36.801616+01:00",
-        "refreshRequested": true,
-        "refreshResult": "fetched"
+        "refreshRequested": false,
+        "refreshResult": "already-fresh"
       },
       "profile": {
         "source": "https://lastrank.fun/a/fca3217524a04960a147436cda692b69",
